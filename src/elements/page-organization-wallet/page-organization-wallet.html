@@ -1,0 +1,385 @@
+<!-- Iron elements -->
+<link rel="import" href="../../bower-assets/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+
+<!-- Paper elements -->
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower-assets/paper-radio-button/paper-radio-button.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+
+<!-- Required behaviors -->
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- Commong Styles -->
+<link rel="import" href="../../styles/common-style.html">
+
+<dom-module id='page-organization-wallet'>
+
+  <template>
+    <style is='custom-style' include='iron-flex iron-flex-alignment common-style'>
+      /*util classes*/
+
+      .m-left-8 {
+        margin-left: 8px;
+      }
+
+      .m-right-8 {
+        margin-right: 8px;
+      }
+
+      .p-0 {
+        padding: 0 !important;
+      }
+
+      .type.body {
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+      }
+
+      .type.body-lead {
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 28px;
+      }
+
+      .type.caption {
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 18px;
+      }
+
+      .type.text-bold {
+        font-weight: bold;
+      }
+
+      .type.secondary {
+        color: rgba(0, 0, 0, .54) !important;
+      }
+
+      /*paper element*/
+
+      paper-button.colored {
+        background-color: var(--brand-primary-color);
+        color: #fff;
+      }
+
+      paper-dialog {
+        min-width: 320px;
+      }
+
+      paper-listbox {
+        padding: 0 !important;
+      }
+
+      paper-item.custom {
+        border-top: 1px solid #eee !important;
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
+      }
+
+      paper-item.custom:first-child {
+        border-top: none !important;
+      }
+
+      /*custom class*/
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        color: var(--brand-primary-color);
+      }
+
+      .card-sub-header {
+        padding: 8px 16px;
+        background-color: #f7f7f7;
+        border-bottom: 1px solid #eee;
+      }
+    </style>
+
+    <!-- Card - Transaction History - start -->
+    <div class="master-container">
+
+      <div class="limiting-container">
+        <paper-card>
+          <div class="card-custom-header">
+            <div class="layout horizontal justified center">
+              <div class="title">
+                <div class="type headline capitalize">{{currentOrganization.name}}</div>
+                <div class="type caption-2">Serial: [[currentOrganization.serial]]</div>
+                <div class="type caption-2">Address: [[currentOrganization.address]]</div>
+              </div>
+              <div class="text-right">
+                <div class="type headline primary"><span>[[_fixedToTwoDecimal(walletTransaction.balance)]] <span class="type caption-2">{{walletTransaction.nativeCurrency}}</span></span></div>
+                <div class="type caption-2 primary">[[orgSmsBalance]] SMS</div>
+              </div>
+              
+            </div>
+          </div>
+          <div class="card-custom-header">
+            <div class="layout horizontal justified center">
+              <div class="horizontal layout wrap end-justified m-top-8 flex">
+                <paper-button raised on-tap="showBuySmsDialog">Buy Bulk SMS</paper-button>
+                <paper-button raised on-tap="showSendMoneyDialog">Send Money</paper-button>
+                <paper-button class="colored" raised on-tap="showAddFundsDialog">Add funds</paper-button>
+              </div>
+              <!-- <paper-menu-button class="p-0" horizontal-align="right">
+                <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+                <paper-menu class="dropdown-content">
+
+                  <paper-item on-tap="showAddFundsDialog">Add Funds</paper-item>
+                  <paper-item on-tap="showBuySmsDialog">Buy Bulk SMS</paper-item>
+                  <paper-item on-tap="showSendMoneyDialog">Send Money</paper-item>
+                  <paper-item on-tap="showValidedVoucherDialog" disabled>Valided Voucher</paper-item>
+                  <paper-item on-tap="showRedeemVoucherDialog" disabled>Redeem Voucher</paper-item>
+
+                </paper-menu>
+              </paper-menu-button> -->
+              
+            </div>
+            
+          </div>
+        </paper-card>
+
+        <paper-card class="m-top-8">
+          <div class="card-custom-header">
+            <div class="layout horizontal justified center">
+              <div class="title horizontal layout center">
+                <iron-icon icon="history" class="m-right-8"></iron-icon>
+                <div>Transaction History</div>
+              </div>
+            </div>
+          </div>
+
+
+          <template is="dom-if" if="[[$isEmptyArray(walletTransactionList.length)]]">
+            <div class="card-content layout horizontal center center-justified">
+              <div class="type body secondary">-- empty --</div>
+            </div>
+          </template>
+          <template is="dom-if" if="[[!$isEmptyArray(walletTransactionList.length)]]">
+
+            <paper-listbox>
+
+              <template is="dom-repeat" items="[[walletTransactionList]]">
+                <paper-item class="custom layout horizontal center">
+                  <div class="type caption secondary">[[$returnSerial(index)]].</div>
+                  <div class="flex m-left-8">
+                    <div class="type body">{{item.notes}}</div>
+                    <div class="type caption secondary">[[$mkDateTime(item.createdDatetimeStamp)]]</div>
+                  </div>
+                  <div class="type body">{{item.currency}} {{item.amount}}</div>
+                </paper-item>
+
+              </template>
+
+            </paper-listbox>
+
+          </template>
+        </paper-card>
+        <!-- Card - Transaction History - end -->
+
+        <!-- Dialog for - Add Fund(s) - start -->
+        <paper-dialog id="dialogAddFund">
+          <div class="type body-lead" style="color: green;">
+            <iron-icon src="../../images/icons/ico_add_funds_b.png" class="m-right-8"></iron-icon>Add Fund</div>
+          <div class="horizontal layout">
+            <paper-input type='number' class="flex m-right-8" label="Amount" value="{{addFund.amountToAdd}}"></paper-input>
+            <paper-dropdown-menu label="Currency" disabled>
+              <paper-listbox class="dropdown-content " selected="{{currencyIndex}} " on-iron-select="_currencyValueChanged ">
+                <template is="dom-repeat " items="{{currencyList}} ">
+                  <paper-item>{{item}}</paper-item>
+                </template>
+
+              </paper-listbox>
+            </paper-dropdown-menu>
+          </div>
+          <paper-textarea label="Note" value="{{addFund.notes}}"></paper-textarea>
+          <div class="buttons">
+            <paper-button dialog-dismiss>Cancel</paper-button>
+            <paper-button class="colored" on-click="addFundRequest" autofocus raised>Proceed to Purchase</paper-button>
+          </div>
+        </paper-dialog>
+        <!-- Dialog for - Add Funds - end -->
+
+        <!-- Dialog for - Send Money(s) - start -->
+        <paper-dialog id="dialogSendMoney">
+          <div class="type body-lead" style="color: green;">
+            <iron-icon src="../../images/icons/ico_add_funds_b.png" class="m-right-8"></iron-icon>Send Money</div>
+
+          <paper-radio-group selected="{{sendMoney.recipientsType}}">
+            <paper-radio-button name="organization">Organization</paper-radio-button>
+            <paper-radio-button name="personal">Personal</paper-radio-button>
+          </paper-radio-group>
+
+          <template is="dom-if" if="[[$equals(sendMoney.recipientsType, 'organization')]]">
+            
+            <paper-autocomplete
+              class="flex" 
+              id="organizationSearch"
+              label="[[$TRANSLATE('Search for Organization',LANG)]]"
+              text="{{searchFieldOrganizationInput}}"
+              remote-source="true"
+              on-autocomplete-selected="organizationSelected"
+              on-autocomplete-reset="organizationSearchCleared"
+              on-keyup="organizationSearchStartKeyPressed"
+              text-property="name"
+              value-property="idOnServer"
+              min-length="4"
+              error-message="Input Required"
+              required
+              style="margin-left: 10px;">
+              <template autocomplete-custom-template>
+                <paper-item on-tap="_onSelect" id$="[[_getSuggestionId(index)]]" role="option" aria-selected="false">
+                    <div class="type bold">[[item.name]]</div>
+                    <div class="type secondary m-left-8">([[item.serial]])</div>
+                    <div class="type secondary m-left-8">[[item.idOnServer]]</div>
+                  <paper-ripple></paper-ripple>
+                </paper-item>
+              </template>
+            </paper-autocomplete>
+            <div class="horizontal layout end-justified">
+              <paper-button raised class="btn-add" on-tap="organizationSearchButtonPressed"><iron-icon icon="search" class="m-right-8"></iron-icon>Search</paper-button>
+            </div>
+            
+          </template>
+
+          <template is="dom-if" if="[[$equals(sendMoney.recipientsType, 'personal')]]">
+            <paper-input type="text" label="Recipients Email/Phone" value="{{sendMoney.recipientsEmailOrPhone}}"></paper-input>
+          </template>
+          
+          <paper-input type="number" label="Amount" value="{{sendMoney.amountInBdt}}"></paper-input>
+          <paper-textarea label="Note" value="{{sendMoney.notes}}"></paper-textarea>
+          <div class="buttons">
+            <paper-button dialog-dismiss>Cancel</paper-button>
+            <paper-button class="colored" on-click="sendMoneyRequest" autofocus raised>Send</paper-button>
+          </div>
+        </paper-dialog>
+        <!-- Dialog for - Send Money - end -->
+
+        <!-- Dialog for - Send Money - Verification Code - start -->
+        <paper-dialog id="dialogSendMoneyVerificationCode">
+          <div class="type body-lead" style="color: green;">
+            <iron-icon src="../../images/icons/ico_add_funds_b.png" class="m-right-8"></iron-icon>Please enter verification code</div>
+          <paper-input type="text" label="Verification Code" value="{{sendMoneyVerification.verificationCode}}"></paper-input>
+          <div class="buttons">
+            <paper-button dialog-dismiss>Cancel</paper-button>
+            <paper-button class="colored" on-click="checkVerificaitonCodeForSendMoney" autofocus raised>Check</paper-button>
+          </div>
+        </paper-dialog>
+        <!-- Dialog for - Send Money - Verification Code - end -->
+
+        <!-- Dialog for - Valided Voucher - start -->
+        <paper-dialog id="dialogValidedVoucher">
+          <div class="type body-lead" style="color: green;">
+            <iron-icon src="../../images/icons/ico_add_funds_b.png" class="m-right-8"></iron-icon>Valided Voucher</div>
+          <paper-input type="text" label="Enter your Voucher" value="{{validedVoucher.voucherCode}}"></paper-input>
+          <div class="buttons">
+            <paper-button dialog-dismiss>Cancel</paper-button>
+            <paper-button class="colored" on-click="sendValidedVoucherRequest" autofocus raised>Check</paper-button>
+          </div>
+        </paper-dialog>
+        <!-- Dialog for - Valided Voucher - end -->
+
+        <!-- Dialog for - Redeem Voucher - start -->
+        <paper-dialog id="dialogRedeemVoucher">
+          <div class="type body-lead" style="color: green;">
+            <iron-icon src="../../images/icons/ico_add_funds_b.png" class="m-right-8"></iron-icon>Redeem Voucher</div>
+          <paper-input type="text" label="Enter your Code" value="{{redeemVoucher.voucherCode}}"></paper-input>
+          <div class="buttons">
+            <paper-button dialog-dismiss>Cancel</paper-button>
+            <paper-button class="colored" on-click="sendRedeemVoucherRequest" autofocus raised>Redeem</paper-button>
+          </div>
+        </paper-dialog>
+        <!-- Dialog for - Redeem Voucher - end -->
+
+
+        <!-- Dialog for - Bulk SMS(s) - start -->
+        <paper-dialog id="dialogBulkSms">
+          <div class="type body-lead">Buy SMS</div>
+          <div class="horizontal layout">
+            <paper-input type="number" class="flex" label="quantity" value="{{bulkSms.quantity}}" on-keyup="quntityEntered" required>
+              <div suffix>sms</div>
+            </paper-input>
+          </div>
+
+          <div class="type body text-success">Calculated Amount is: <strong>{{bulkSms.currency}} {{bulkSms.calcAmount}}/=</strong></div>
+
+          <!-- <div class="horizontal layout">
+            <paper-dropdown-menu label="For" class="flex" value="{{smsUserType}}">
+              <paper-listbox class="dropdown-content" selected="0">
+                <paper-item>Organization</paper-item>
+                <paper-item>Personal</paper-item>
+              </paper-listbox>
+            </paper-dropdown-menu>
+          </div> -->
+
+          <paper-radio-group selected="{{smsBuyer.type}}">
+            <paper-radio-button name="{{currentOrganization.name}}">for {{currentOrganization.name}}</paper-radio-button>
+            <paper-radio-button name="otherOrganization">for Other Organization</paper-radio-button>
+          </paper-radio-group>
+
+          <template is="dom-if" if="[[$equals(smsBuyer.type, 'otherOrganization')]]">
+            
+            <paper-autocomplete
+              class="flex" 
+              id="organizationSearch2"
+              label="[[$TRANSLATE('Search for Organization',LANG)]]"
+              text="{{searchFieldOrganizationInput2}}"
+              remote-source="true"
+              on-autocomplete-selected="organizationSelected2"
+              on-autocomplete-reset="organizationSearchCleared2"
+              on-keyup="organizationSearchStartKeyPressed2"
+              text-property="name"
+              value-property="idOnServer"
+              min-length="4"
+              error-message="Input Required"
+              required
+              style="margin-left: 10px;">
+              <template autocomplete-custom-template>
+                <paper-item on-tap="_onSelect" id$="[[_getSuggestionId(index)]]" role="option" aria-selected="false">
+                    <div class="type bold">[[item.name]]</div>
+                    <div class="type secondary m-left-8">([[item.serial]])</div>
+                    <div class="type secondary m-left-8">[[item.idOnServer]]</div>
+                  <paper-ripple></paper-ripple>
+                </paper-item>
+              </template>
+            </paper-autocomplete>
+            <div class="horizontal layout end-justified">
+              <paper-button raised class="btn-add" on-tap="organizationSearchButtonPressed2"><iron-icon icon="search" class="m-right-8"></iron-icon>Search</paper-button>
+            </div>
+            
+          </template>
+
+
+          <div class="buttons m-top-24">
+            <paper-button dialog-dismiss>Cancel</paper-button>
+            <paper-button class="colored" on-click="buyBulkSmsBtnPressed" autofocus raised>Proceed</paper-button>
+          </div>
+        </paper-dialog>
+        <!-- Dialog for - Bulk SMS - end -->
+      </div>
+    </div>
+  </template>
+  <script src="page-organization-wallet.coffee-compiled.js"></script>
+</dom-module>

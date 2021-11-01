@@ -1,0 +1,1039 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box-light.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<dom-module id="page-duty-roster-manager">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      paper-dialog {
+        min-width: 210px;
+      }
+
+      app-header-layout ::content #contentContainer {
+        overflow: hidden !important;
+      }
+
+      :host {
+        /* height: calc(100% - 56px);
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 56px; */
+      }
+
+      vaadin-grid.grid-table vaadin-combo-box-light {
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+    
+
+      vaadin-grid.grid-table {
+        height: calc(100% - 60px) !important;
+        /* overflow: auto; */
+        font-family: Roboto, sans-serif;
+        --divider-color: rgba(0,0,0, .54);
+
+
+        /* --vaadin-grid-cell: {
+          padding: 0;
+        }; */
+
+        --vaadin-grid-header-cell: {
+          height: 48px;
+          /* color: rgba(0, 0, 0, var(--dark-secondary-opacity)); */
+          font-size: 16px;
+          text-align: center;
+          
+          border-right: 1px solid rgba(0,0,0, .64);
+        };
+
+        --vaadin-grid-body-cell: {
+          min-height: 54px;
+          color: rgba(0, 0, 0, var(--dark-primary-opacity));
+          font-size: 16px;
+          padding: 0 8px;
+          border-right: 1px solid rgba(0,0,0, .64) !important;
+          border-bottom: 1px solid rgba(0,0,0, .64) !important;
+          text-align: center;
+        };
+
+        --vaadin-grid-body-row-hover-cell: {
+          background-color: var(--paper-grey-200);
+        };
+
+        --vaadin-grid-body-row-selected-cell: {
+          background-color: var(--paper-grey-100);
+        };
+
+        --vaadin-grid-focused-cell: {
+          box-shadow: none;
+          font-weight: bold;
+        };
+
+      }
+
+
+      .top-container {
+        /* background-color: #f3f5f7; */
+        box-shadow:rgba(0, 0, 0, .54) 0 -10px 6px -10px inset;
+        height: 310px;
+      }
+
+      .filter {
+        padding: 8px 16px;
+        background-color: #f3f5f7;
+        position: relative;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+
+      .editor {
+        position: fixed;
+        right: -80%;
+        top: 104px;
+        bottom: 0;
+        z-index: 1;
+        width: 80%;
+        /* height: calc(100% - 104px); */
+        /* border-left: 1px solid #eee; */
+        background-color: #fff;
+        /* height: 100%; */
+        box-shadow: -3px 0px 2px rgba(0,0,0, 0.16);
+        transition: .5s;
+      }
+
+      .open {
+        transition: .5s;
+        right: 0;
+      }
+
+      .editor-content {
+        margin-top: 84px;
+        position: relative;
+        box-sizing: border-box;
+        padding: 16px;
+        height: calc(100% - 190px);
+      }
+
+      .editor-content vaadin-grid {
+        height: inherit;
+        overflow-y: auto;
+      }
+
+      .editor-buttons {
+        background-color: #eee;
+        padding: 12px 16px;
+        @apply(--layout-horizontal);
+        position: absolute;
+        bottom: -106px;
+        left: 0;
+        right: 0;
+      }
+
+      .custom-input {
+        padding-top: 6px;
+        padding-bottom: 6px;
+      }
+
+      .custom-button {
+        padding: 0.4em 2em;
+        font-size: 16px;
+        background-color: #f7f7f7;
+      }
+
+      .custom-flat-button {
+        font-weight: bold;
+        font-size: 14px;
+        text-transform: uppercase;
+      }
+
+      #importResult {
+        overflow-y: scroll;
+        height: 200px;
+        background: white;
+        padding: 12px;
+        margin-top: 16px;
+      }
+
+      .type.capton-2 {
+        line-height: 25px;
+      }
+
+      .left {
+        width: 30%;
+      }
+      .right {
+        width: 100%;
+        height: inherit;
+      }
+
+      .custom-title {
+        padding: 16px 20px;
+        background-color: #fafafa;
+        border-bottom: 1px solid #eee;
+      }
+
+      .custom-dialog-content {
+        height: 400px;
+        overflow-y: scroll;
+        margin-top: 0;
+        padding-top: 16px;
+      }
+
+      @media screen and (max-width: 859px) {
+        .left, .right {
+          width: 100%;
+        }
+      }
+
+      @media screen and (max-width: 479px) {
+        .filter-input {
+          width: 100%;
+        }
+
+        .btnFilter {
+          margin-top: 8px;
+          margin-bottom: 8px;
+        }
+      }
+
+
+
+      .label {
+        text-align: center;
+        height: 100%;
+        border-right: 1px solid #eee;
+      }
+
+      .text-left {
+        text-align: left;
+      }
+
+      .fixed-title {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 12px 12px 12px 16px;
+        border-bottom: 1px solid #eee;
+        z-index: 1;
+        background-color: #fafafa;
+        width: calc( 100% - 20px);
+      }
+
+
+      .label.red { background-color: #d50000; color: #fff; }
+      .label.pink { background-color: #c51162; color: #fff; }
+      .label.purple { background-color: #aa00ff; color: #fff; }
+      .label.deep-purple { background-color: #6200ea; color: #fff; }
+      .label.indigo { background-color: #3F51B5; color: #fff; }
+      .label.blue { background-color: #304ffe; color: #fff; }
+      .label.light-blue { background-color: #0091ea; color: #000; }
+      .label.cyan { background-color: #00BCD4; color: #000; }
+      .label.teal { background-color: #00b8d4; color: #000; }
+      .label.green { background-color: #00c853; color: #000; }
+      .label.light-green { background-color: #64dd17; color: #000; }
+      .label.lime { background-color: #aeea00; color: #000; }
+      .label.yellow { background-color: #ffd600; color: #000; }
+      .label.amber { background-color: #ffab00; color: #000; }
+      .label.orange { background-color: #ff6d00; color: #fff; }
+      .label.deep-orange { background-color: #dd2c00; color: #fff; }
+      .label.brown { background-color: #3e2723; color: #fff; }
+      .label.grey { background-color: #212121; color: #fff; }
+      .label.blue-grey { background-color: #263238; color: #fff; }
+
+
+
+      .date-input {
+        border: none;
+        background-color: inherit;
+        font-size: 16px;
+        /* font-weight: bold; */
+        outline: none;
+        padding: 0 10px;
+      }
+
+      #memberComboBox {
+        padding: 0 !important;
+      }
+
+      #memberComboBox ::content paper-input-container {
+        padding-bottom: 8px !important;
+      }
+
+      .filter-input  {
+        border: none;
+        background-color: inherit;
+        font-size: 16px;
+        /* height: 100%; */
+        width: 100%;
+        text-align: center;
+        outline: none;
+      }
+
+      .cell-avatar {
+        margin: 8px 0 0 8px;
+        border-radius: 16px;
+        padding: 3px 8px;
+        /* max-width: 179px; */
+        background-color: #b2dfdb;
+      }
+
+      .cell-avatar iron-image {
+        height: 30px;
+        width: 30px;
+        border-radius: 50%;
+        background-color: #eee;
+      }
+
+      .cell-avatar paper-icon-button ::content iron-icon {
+        color: #000;
+        height: 20px;
+        width: 20px;
+      }
+
+      .cell-avatar paper-icon-button {
+        text-align: center;
+        height: 24px;
+        width: 24px;
+        padding: 2px;
+        font-size: 16px;
+      }
+
+      .cell-child-item {
+        border-radius: 50%;
+        border: 1px solid #eee
+      }
+
+      .cell-avatar.danger {
+        background-color: #ef9a9a;
+      }
+
+      paper-dialog {
+        width: 80%;
+      }
+
+      .report-stats {
+        background-color: #fff;
+        padding: 16px;
+        text-align: center;
+      }
+
+      .report-stats-item {
+        width: 90px;
+        box-sizing: border-box;
+        height: 90px;
+        border-radius: 50%;
+        text-align: center;
+        background-color: #E0F2F1;
+        color: var(--brand-primary-color);
+        padding: 16px;
+        margin: 8px;
+        box-shadow: 1px 1px 2px #00000024;
+      }
+
+      .custom-dropdown ::content paper-input-container {
+        padding-bottom: 0;
+      }
+
+      .organizaiton-stats {
+        background-color: #fff;
+        padding: 4px 16px 16px;
+        text-align: center;
+      }
+
+      .custom-paper-input.auto-width {
+        width: auto;
+      }
+
+      .custom-paper-input {
+        width: 100%;
+        /* box-sizing: border-box; */
+      }
+
+      .custom-paper-input ::content .underline {
+        display: none;
+      }
+
+      .custom-paper-input ::content paper-input-container {
+        padding-bottom: 0;
+      }
+      .custom-paper-input ::content input {
+        font-weight: bold !important;
+        background-color: #eee !important;
+        padding: 4px 6px;
+        box-sizing: border-box !important;
+        border-radius: 6px !important;
+      }
+
+      .custom-paper-input ::content input::placeholder {
+        color: rgba(0, 0, 0, .87) !important;
+      }
+
+ 
+    </style>
+
+    <div id="tabContainer" class="tabs-container">
+      <paper-tabs class="tabs-container" id="tabs" selected="{{selectedPageIndex}}" scrollable noink='true'>
+        <paper-tab>Rosters</paper-tab>
+        <paper-tab>Reports</paper-tab>
+      </paper-tabs>
+    </div>
+
+    <div class="container horizontal layout wrap">
+
+      <!-- filter - start -->
+      <div class="filter horizontal layout center">
+        <div class="horizontal layout center wrap flex">
+
+          <vaadin-combo-box hidden$="{{!hasChildOrganization}}" class="m-horizontal-8" label="Organization" items="[[childOrganizationList]]" on-value-changed="organizationSelected"
+            loading="[[organizationLoading]]" id="organizationSelector" disabled="[[!childOrganizationList.length]]"></vaadin-combo-box>
+
+          
+    
+          <paper-dropdown-menu class="custom-dropdown m-horizontal-8" label="Select Date">
+            <paper-menu class="dropdown-content" selected="{{selectedDateRangeIndex}}">
+              <template is='dom-repeat' items='[[dayRange]]'>
+                <paper-item>[[item]]</paper-item>
+              </template>
+            </paper-menu>
+          </paper-dropdown-menu>
+
+          
+          <template is="dom-if" if="{{$equals(selectedDateRangeIndex, 4)}}">
+            <vaadin-date-picker class="m-horizontal-8" type="date" max="" value="{{filterBy.fromDate}}" label="From"></vaadin-date-picker>
+            <vaadin-date-picker class="m-horizontal-8" type="date" max="" value="{{filterBy.toDate}}" label="To"></vaadin-date-picker>
+            <!-- <paper-icon-button on-tap="onClearFilterTapped" icon="icons:clear"></paper-icon-button> -->
+            <paper-button on-tap="onFilterTapped" class="btnFilter custom-button"><iron-icon class="m-right-8" icon="icons:sort"></iron-icon>Filter</paper-button>
+          </template>
+
+          <!-- <paper-button on-tap="onTapGetReports" hidden$="{{$equals(selectedPageIndex, 0)}}" class="btnFilter custom-button colored" raised><iron-icon class="m-right-8" icon="icons:sort"></iron-icon>Get</paper-button> -->
+          
+        </div>
+
+        <!-- <paper-button on-tap="addRosterBtnPressed" class="btnFilter custom-button colored" raised>Add Roster</paper-button> -->
+        
+
+        <paper-menu-button class="p-0" vertical-align="top" horizontal-align="right" hidden$="{{$equals(selectedPageIndex, 1)}}">
+          <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+          <paper-menu class="dropdown-content">
+            <paper-item on-tap="addRosterBtnPressed"><iron-icon class="m-right-8" icon="icons:add"></iron-icon>Add New Roster</paper-item>
+            <paper-item on-tap="_showLocationDialog"><iron-icon class="m-right-8" icon="icons:add"></iron-icon>Manage Location</paper-item>
+            <paper-item on-tap="_showSlotDialog"><iron-icon class="m-right-8" icon="icons:add"></iron-icon>Manage Slot</paper-item>
+            <paper-item on-tap="_showOnHolidayDialog"><iron-icon class="m-right-8" icon="icons:add"></iron-icon>Manage On Holiday</paper-item>
+          </paper-menu>
+        </paper-menu-button>
+      </div>
+      <!-- filter - end -->
+
+      <iron-pages style="width: 100%;" selected="{{selectedPageIndex}}">
+        
+        <!-- Rosters - start -->
+        <section>
+
+          <div id="editor" class$="editor {{editorHasOpened(hideEditForm)}}">
+
+            <div class="fixed-title horizontal layout center">
+              <div class="flex">
+                <!-- <h2><span hidden$="{{!EDIT_MODE}}">Edit</span>
+                  <span hidden$="{{EDIT_MODE}}">New</span> Roster
+                </h2> -->
+                <h2>Date: {{roster.date}}</h2>
+                <div class="type body-lead secondary">{{_computeOrganizationName(roster.organizationId)}}</div>
+              </div>
+              
+              
+              <paper-icon-button icon="close" on-tap="_closeRosterEditForm"></paper-icon-button>
+              
+            </div>
+
+            <div class="editor-content">
+              
+              <div class="horizontal layout center">
+                <vaadin-date-picker  type="date" max="" value="{{roster.date}}" label="Roster Date"></vaadin-date-picker>
+                <div class="flex"></div>
+                <paper-button on-tap="_addMember" class="btnFilter custom-button" raised>Add New</paper-button>
+                <paper-menu-button style="z-index: 999;" class="p-0" vertical-align="top" horizontal-align="right">
+                  <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+                  <paper-menu class="dropdown-content">
+                    <paper-item on-tap="_onTapShowCloneASlotDialog"><iron-icon class="m-right-8" icon="icons:content-copy"></iron-icon>Clone Slot</paper-item>
+                    <paper-item on-tap="_onTapDeleteAllRosterMembers"><iron-icon class="m-right-8" icon="icons:delete"></iron-icon>Delete All</paper-item>
+                  </paper-menu>
+                </paper-menu-button>
+                
+                <!-- <paper-icon-button icon="add" on-tap="_addMember"></paper-icon-button> -->
+                
+              </div>
+              
+
+              <template is="dom-if" if="[[$isEmptyArray(roster.members.length)]]">
+                <div class="type caption-2 secondary" style="text-align: center; width: 100%; background: #fff; padding: 16px;"><i>-- No member available --</i></div>
+              </template>
+              
+
+              <template is="dom-if" if="[[!$isEmptyArray(roster.members.length)]]">
+                
+                <!-- <div class="type caption-2 secondary m-top-24">{{roster.members.length}} Members: </span></div> -->
+
+                <vaadin-grid items="{{roster.members}}" class="grid-table m-top-16">
+
+                  <vaadin-grid-column width="6em" frozen>
+                    <template class="header">
+                      <div class="horizontal layout center">
+                        <div>Action</div>
+                      </div>
+                    </template>
+                    <template>
+                      <div class="horizontal layout center center-justified">
+                        <paper-icon-button icon="delete" on-tap="_removeMember" ></paper-icon-button>
+                        <paper-icon-button icon="icons:content-copy" on-tap="_onTapDuplicateMember" ></paper-icon-button>
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column width="3em" frozen>
+                    <template class="header">No.</template>
+                    <template>[[$returnSerial(index)]].</template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column width="14em" frozen>
+                    <template class="header">
+                      <vaadin-grid-filter aria-label="Filter by Slot" path="slotId" value="[[slotFilterString]]">
+                        <vaadin-combo-box class="custom-paper-input" no-label-float placeholder="Filter By Slot" items="[[slots.list]]" item-label-path='name' item-value-path='id' value="{{slotFilterString}}"></vaadin-combo-box>
+                      </vaadin-grid-filter>
+                    </template>
+                    <template>
+                      <vaadin-combo-box-light items="[[slots.list]]" item-label-path='name' item-value-path='id' value="{{item.slotId}}">
+                        <input class="filter-input" is="iron-input">
+                      </vaadin-combo-box-light>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column width="12em">
+                    <template class="header">
+                      <vaadin-grid-filter aria-label="Location" path="name" value="[[nameFilterString]]">
+                        <paper-input class="custom-paper-input" no-label-float placeholder="Filter by Name" value="{{nameFilterString}}"></paper-input>
+                      </vaadin-grid-filter>
+                    </template>
+                    <template>
+                      <div class="horizontal layout center">
+                        <vaadin-combo-box-light items="[[availableMembers]]" item-label-path='name' item-value-path='name' on-selected-item-changed="_addMemberToRoster" value="[[item.name]]">
+                          <input class="filter-input" is="iron-input" value="[[item.name]]">
+                        </vaadin-combo-box-light>
+                      </div>
+                      
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column width="12em">
+                    <template class="header">
+                      <vaadin-grid-filter aria-label="Role" path="role" value="[[roleFilterString]]">
+                        <paper-input class="custom-paper-input" no-label-float placeholder="Filter by Role" value="{{roleFilterString}}"></paper-input>
+                      </vaadin-grid-filter>
+                    </template>
+                    <template>
+                      [[item.role]]
+                    </template>
+                  </vaadin-grid-column>
+        
+                  <vaadin-grid-column width="12em">
+                    <template class="header">
+                      <vaadin-grid-filter aria-label="Location" path="location" value="[[locationFilterString]]">
+                        <paper-input class="custom-paper-input" no-label-float placeholder="Filter by Location" value="{{locationFilterString}}"></paper-input>
+                      </vaadin-grid-filter>
+                    </template>
+                    <template>
+
+                      <vaadin-combo-box-light items="[[locations.list]]" item-label-path='name' item-value-path='name' value="{{item.location}}">
+                        <input class="filter-input" is="iron-input" value="{{item.location}}">
+                      </vaadin-combo-box-light>
+                        
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column width="6em">
+                    <template class="header">Present</template>
+                    <template>
+                      <paper-checkbox checked={{!item.isAbsent}}></paper-checkbox>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column width="6em">
+                    <template class="header">Absent</template>
+                    <template>
+                      <paper-checkbox checked={{item.isAbsent}}></paper-checkbox>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column width="8em">
+                    <template class="header">Late</template>
+                    <template>
+                      <div class="horizontal layout center">
+                        <paper-checkbox checked={{item.isLate}}></paper-checkbox>
+                        <paper-input hidden$="{{!item.isLate}}" type="number" label="In Minutes" value="{{item.lateInMinutes}}">
+                        </paper-input>    
+                      </div>
+                      
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column width="12em">
+                    <template class="header">On Holiday</template>
+                    <template>
+                      <div class="type caption"> <strong>{{_computeOnHolidayType(item.id, roster.date)}}</strong></div>
+                      <div class="type caption">{{_computeOnHolidayDates(item.id, roster.date)}}</div>
+                    </template>
+                  </vaadin-grid-column>
+
+                  
+                </vaadin-grid>
+                
+                <div class="editor-buttons">
+                  <paper-icon-button icon="icons:delete" on-tap="_deleteRoster" hidden$="{{!EDIT_MODE}}">Delete</paper-icon-button>
+          
+                  <div class="flex"></div>
+                  <!-- <paper-button on-click="_clearRoster">Clear</paper-button> -->
+                  <paper-button hidden$="{{!EDIT_MODE}}" on-tap="_onTapCloneRoster">
+                    Clone
+                  </paper-button>
+                  <paper-button class="btn btn-success" on-tap="_onTapAddOrUpdateRoster" autofocus raised>
+                    <span hidden$="{{!EDIT_MODE}}">Update</span>
+                    <span hidden$="{{EDIT_MODE}}">Save</span>
+                  </paper-button>
+                  
+                </div>
+              </template>
+              
+            </div>
+      
+            
+    
+          </div>
+
+          <!-- roster table - start -->
+          <template is="dom-if" if="[[$isEmptyArray(matchingRosters.length)]]">
+            <div class="type caption-2 secondary" style="text-align: center; width: 100%; background: #fff; padding: 16px;">No Roster Available!</div>
+          </template>
+          <template is="dom-if" if="[[!$isEmptyArray(matchingRosters.length)]]">
+            <div class="organizaiton-stats layout horizontal center-justified">
+              <div>
+                <div class="type title-2 text-center">{{_computeOrganizationName(selectedOrganizationId)}}</div>
+                <div class="type body secondary">({{$formatDate(filterBy.fromDate)}} - {{$formatDate(filterBy.toDate)}})</div>
+                <div class="type caption-2 secondary horizontal layout wrap bold" hidden$={{$equals(selectedOrganizationId, 'all-organization-include-parent')}} >
+                  <div class="m-horizontal-4">[[availableMembers.length]] Members</div>
+                  <div class="m-horizontal-4">[[locations.list.length]] Locaitons</div>
+                  <div class="m-horizontal-4">[[slots.list.length]] Slots</div>
+                </div>
+              </div>
+            </div>
+            
+            <vaadin-grid items="{{matchingRosters}}" id="rosterList" class="grid-table" active-item="{{activeItem}}">
+
+              <vaadin-grid-column width="8em" frozen>
+                <template class="header">
+                  <vaadin-grid-filter  aria-label="Date" path="date" value="[[dateString]]">
+                    <paper-input class="custom-paper-input" no-label-float placeholder="Roster Date" value="{{dateString}}"></paper-input>
+                  </vaadin-grid-filter>
+                </template>
+                <template>{{item.date}}</template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column width="8em" frozen>
+                <template class="header">
+                  <vaadin-grid-filter aria-label="Organization" path="organizationName" value="[[organizationString]]">
+                    <paper-input class="custom-paper-input" no-label-float placeholder="Organization" value="{{organizationString}}"></paper-input>
+                  </vaadin-grid-filter>
+                </template>
+                <template>{{_computeOrganizationName(item.organizationId)}}</template>
+              </vaadin-grid-column>
+    
+              <template is="dom-repeat" items="{{slots.list}}" as="slot" index-as="slotIndex">
+                <vaadin-grid-column width="8em">
+                  <template class="header">
+                    <div>{{slot.name}}</div>
+                    <div class="type caption-2 secondary">{{slot.startTime}} - {{slot.endTime}}</div>
+                  </template>
+                  <template>
+                    <div class="horizontal layout wrap type text-center">
+                      <div class="m-horizontal-4 flex type info">
+                        <div class="type caption secondary">Total</div>
+                        <div class="type body-lead">{{_computeTotalCount(slot.id, item.members)}}</div>
+                      </div>
+                      <div class="m-horizontal-4 flex type success">
+                        <div class="type caption secondary">Present</div>
+                        <div class="type body-lead">{{_computePresentCount(slot.id, item.members)}}</div>
+                      </div>
+                      <div class="m-horizontal-4 flex type danger">
+                        <div class="type caption secondary">Absent</div>
+                        <div class="type body-lead">{{_computeAbsentCount(slot.id, item.members)}}</div>
+                      </div>
+                    
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+              </template>
+    
+            </vaadin-grid>
+          </template>
+          <!-- roster table - start -->
+          
+        </section>
+        <!-- Rosters - end -->
+
+        <!-- Reports - start -->
+        <section>
+
+          <div class="report-stats horizontal layout wrap center-justified">
+            <template is="dom-repeat" items="[[reportStats]]">
+              <div class="report-stats-item layout vertical center">
+                <div class="type headline">[[item.count]]</div>
+                <div class="type caption-2">[[item.label]]</div>
+              </div>
+            </template>
+          </div>
+
+          <!-- report table - start -->
+          <template is="dom-if" if="[[$isEmptyArray(matchingReports.length)]]">
+            <div class="type caption-2 secondary" style="text-align: center; width: 100%; background: #fff; padding: 16px;">Please Select Organization and Dates</div>
+          </template>
+          <template is="dom-if" if="[[!$isEmptyArray(matchingReports.length)]]">
+            <vaadin-grid items="{{matchingReports}}" class="grid-table" active-item="{{memberActiveItem}}">
+
+              <vaadin-grid-column width="8em" frozen>
+                <template class="header">
+                    
+                  <vaadin-grid-filter aria-label="Member Name" path="name" value="[[memberNameString]]">
+                    <paper-input class="custom-paper-input" no-label-float placeholder="Filter by Member" value="{{memberNameString}}"></paper-input>
+                  </vaadin-grid-filter>
+
+
+                
+                </template>
+                <template>
+                  <div>{{item.name}}</div>
+                  <div class="type caption secondary">{{item.role}}</div>
+                </template>
+              </vaadin-grid-column>
+  
+              <!-- <vaadin-grid-column width="8em">
+                <template class="header">Role</template>
+                <template>
+                  {{item.role}}
+                </template>
+              </vaadin-grid-column> -->
+  
+              <vaadin-grid-column width="4em">
+                <template class="header">Present</template>
+                <template>
+                  {{item.presentCount}}
+                </template>
+              </vaadin-grid-column>
+  
+              <vaadin-grid-column width="4em">
+                <template class="header">Absent</template>
+                <template>
+                  {{item.absentCount}}
+                </template>
+              </vaadin-grid-column>
+  
+              <vaadin-grid-column width="4em">
+                <template class="header">Holiday</template>
+                <template>
+                  {{item.holidayCount}}
+                </template>
+              </vaadin-grid-column>
+  
+  
+            </vaadin-grid>
+          </template>
+          <!-- report table - start -->
+
+          <!-- memberScheduleArea - start -->
+          <div id="memberScheduleArea" class$="editor {{editorHasOpened(hideScheduleAreaForm)}}">
+
+            <div class="fixed-title horizontal layout center">
+              <div class="flex">
+                <h2>{{selectedMember.name}}</h2>
+                <div class="type body">{{$formatDate(filterBy.fromDate)}} to {{$formatDate(filterBy.toDate)}}</div>
+              </div>
+              <paper-icon-button icon="close" on-tap="_closeScheduleArea"></paper-icon-button>
+              
+            </div>
+
+            <div class="editor-content">
+
+              <vaadin-grid id="memberScheuduelTable" items="{{selectedMember.rosters}}" active-item="" class="grid-table">
+
+                <vaadin-grid-column width="6em" frozen>
+                  <template class="header">Date</template>
+                  <template>{{item.date}}</template>
+                  <template class="footer">
+                    <div>Total Dates: {{selectedMember.rosters.length}}</div>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="8em">
+                  <template class="header">
+                    <div>Present</div>
+                  </template>
+                  <template>
+                    <div hidden$="{{item.isAbsent}}">✔ {{_getSlotNameById(item.slotId)}}</div>
+                  </template>
+                  <template class="footer">
+                    <div>Total Present: {{selectedMember.presentCount}}</div>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="8em">
+                  <template class="header">
+                    <div>Absent</div>
+                  </template>
+                  <template>
+                    <div hidden$="{{!item.isAbsent}}">✔ {{_getSlotNameById(item.slotId)}}</div>
+                  </template>
+                  <template class="footer">
+                    <div>Total Absent: {{selectedMember.absentCount}}</div>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="8em">
+                  <template class="header">
+                    <div>Holiday</div>
+                  </template>
+                  <template>
+                    <div class="type body">{{_computeHolidayType(selectedMember.holiday, selectedMember.holidayCount, item.date)}}</div>
+                    <div class="type caption-2">{{_computeHolidayDates(selectedMember.holiday, selectedMember.holidayCount, item.date)}}</div>
+                  </template>
+                  <template class="footer">
+                    <div>Total Holidays: {{selectedMember.holidayCount}}</div>
+                  </template>
+                </vaadin-grid-column>
+        
+              </vaadin-grid>
+   
+            </div>
+      
+          </div>
+          <!-- memberScheduleArea - end -->
+
+
+
+        </section>
+        <!-- Reports - end -->
+      </iron-pages>
+      
+    </div>
+
+    <!-- Dialog for - Location - start -->
+    <paper-dialog id="dialogLocation" vertical-align='top'>
+      
+      <div class="custom-title horizontal layout center">
+        <h2 class="flex">Manage Location</h2>
+        <paper-icon-button icon="add" on-tap="_addLocation"></paper-icon-button>
+      </div>
+      <div class="custom-dialog-content">
+        
+        <template is="dom-repeat" items="{{locations.list}}">
+          <div class="custom-item horizontal layout center">
+            <div class="type caption-2 m-right-8">[[$returnSerial(index)]].</div>
+            <div class="flex">
+              <div class="horizontal layout center">
+                <paper-input class="flex m-right-16" label="Location Name" no-label-float value="{{item.name}}"></paper-input>
+                <!-- <vaadin-combo-box no-label-float label="Color" items="[[colors]]" value="{{item.color}}"></vaadin-combo-box> -->
+              </div>
+            </div>
+            <paper-icon-button icon="delete" on-tap="_deleteLocation" ></paper-icon-button>
+          </div>
+        </template>
+
+      </div>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button class="btn btn-success" on-click="_saveLocation" autofocus raised>Save</paper-button>
+      </div>
+    </paper-dialog>
+    <!-- Dialog for - Location - end -->
+
+    <!-- Dialog for - Time Slot - start -->
+    <paper-dialog id="dialogSlot" vertical-align='top'>
+      
+      <div class="custom-title horizontal layout center">
+        <h2 class="flex">Manage Slot</h2>
+        <paper-icon-button icon="add" on-tap="_addSlot"></paper-icon-button>
+      </div>
+      <div class="custom-dialog-content">
+        
+        <template is="dom-repeat" items="{{slots.list}}">
+          <div class="custom-item horizontal layout center">
+            <div class="type caption-2 m-right-8">[[$returnSerial(index)]].</div>
+            <div class="flex">
+              <div class="horizontal layout center">
+                <paper-input class="flex m-right-16" label="Slot Name" no-label-float value="{{item.name}}"></paper-input>
+                <paper-input type="time" class="flex m-right-16" label="Start" no-label-float value="{{item.startTime}}"></paper-input>
+                <paper-input type="time" class="flex m-right-16" label="End" no-label-float value="{{item.endTime}}"></paper-input>
+              </div>
+            </div>
+            <paper-icon-button icon="delete" on-tap="_deleteSlot" ></paper-icon-button>
+          </div>
+        </template>
+
+      </div>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button class="btn btn-success" on-click="_saveSlot" autofocus raised>Save</paper-button>
+      </div>
+    </paper-dialog>
+    <!-- Dialog for - Time Slot - end -->
+
+    <!-- Dialog for - on holiday - start -->
+    <paper-dialog id="dialogOnHoliday" vertical-align='top'>
+      
+      <div class="custom-title horizontal layout center">
+        <h2 class="flex">Manage On Holiday</h2>
+        <paper-icon-button icon="add" on-tap="_addOnHolidaySchedule"></paper-icon-button>
+      </div>
+      <div class="custom-dialog-content">
+        
+        <template is="dom-repeat" items="{{onHoliday.list}}">
+          <div class="custom-item horizontal layout center">
+            <div class="type caption-2 m-right-8">[[$returnSerial(index)]].</div>
+            <div class="flex">
+              <div class="horizontal layout center">
+                <vaadin-combo-box id="memberComboBox" no-label-float class="fliter-input flex m-horizontal-8" label="Member" items="[[availableMembers]]" value="{{item.name}}" item-label-path='name' item-value-path='name' on-selected-item-changed="_addOnHolidayScheduleMemberChanged"></vaadin-combo-box>
+                <vaadin-combo-box id="holidayTypeComboBox" no-label-float class="fliter-input flex m-horizontal-8" label="Holiday type" items="[[holidayTypes]]" value="{{item.type}}"></vaadin-combo-box>
+              </div>
+              <div class="horizontal layout">
+                <paper-input type="date" class="flex m-horizontal-8" label="Holiday Start" no-label-float value="{{item.startDate}}"></paper-input>
+                <paper-input type="date" class="flex m-horizontal-8" label="Holiday End" no-label-float value="{{item.endDate}}"></paper-input>
+              </div>
+              <paper-input class="m-horizontal-8" type="text" label="Notes" no-label-float value="{{item.note}}"></paper-input>
+              <paper-checkbox class="m-horizontal-8" checked="{{item.isAccepted}}"> Accepted</paper-checkbox>
+              
+            </div>
+            <!-- <paper-icon-button icon="delete" on-tap="_deleteOnHoliday" ></paper-icon-button> -->
+            <paper-menu-button class="p-0" vertical-align="top" horizontal-align="right">
+              <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+              <paper-menu class="dropdown-content">
+                <paper-item on-tap="acceptHolidayRequest" hidden$="{{!item.isAccepted}}">Accept</paper-item>
+                <paper-item on-tap="_deleteOnHoliday">Delete</paper-item>
+              </paper-menu>
+            </paper-menu-button>
+          </div>
+        </template>
+
+      </div>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button class="btn btn-success" on-click="_saveOnHoliday" autofocus raised>Save</paper-button>
+      </div>
+    </paper-dialog>
+    <!-- Dialog for - on holiday - end -->
+
+    <!-- Dialog for - clone a slot - start -->
+    <paper-dialog id="dialogCopySlotMembers" vertical-align='top'>
+      
+      <div class="custom-title">
+        <h2 class="flex">Roster Date: {{roster.date}}</h2>
+        <div class="type body-lead">Copy Slot Members To Another Slot</div>
+      </div>
+
+      <div class="custom-dialog-content">
+        <div class="horizontal layout wrap center center-justified">
+          <paper-dropdown-menu class="custom-paper-input auto-width m-8" placeholder="Select Slot" label="From Slot">
+            <paper-menu class="dropdown-content" selected="{{selectedFromSlotIndex}}">
+              <template is='dom-repeat' items='[[slots.list]]'>
+                <paper-item>[[item.name]]</paper-item>
+              </template>
+            </paper-menu>
+          </paper-dropdown-menu>
+          <paper-dropdown-menu class="custom-paper-input auto-width m-8" placeholder="Select Slot" label="From Slot">
+            <paper-menu class="dropdown-content" selected="{{selectedToSlotIndex}}">
+              <template is='dom-repeat' items='[[slots.list]]'>
+                <paper-item>[[item.name]]</paper-item>
+              </template>
+            </paper-menu>
+          </paper-dropdown-menu>   
+        </div>
+        
+        <vaadin-grid  items="{{copySlot.members}}" active-item="" class="grid-table">
+
+          <vaadin-grid-column width="3em" frozen>
+            <template class="header">No.</template>
+            <template>[[$returnSerial(index)]].</template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="8em">
+            <template class="header">Name</template>
+            <template>{{item.name}}</template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="8em">
+            <template class="header">Role</template>
+            <template>{{item.role}}</template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="8em">
+            <template class="header">Location</template>
+            <template>{{item.location}}</template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="3em">
+            <template class="header">
+              <paper-checkbox checked="{{isAllMemberSelected}}"></paper-checkbox>
+            </template>
+            <template>
+              <paper-checkbox checked="{{item.isSelected}}"></paper-checkbox>
+            </template>
+          </vaadin-grid-column>
+    
+        </vaadin-grid>
+      </div>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss>Close</paper-button>
+        <paper-button on-tap="_onTapApplySlotCloneConfig">Apply</paper-button>
+      </div>
+    </paper-dialog>
+    <!-- Dialog for - clone a slot - end -->
+
+  </template>
+
+  <script src="page-duty-roster-manager.coffee-compiled.js"></script>
+</dom-module>

@@ -1,0 +1,436 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box-light.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<dom-module id="page-duty-roster">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      paper-dialog {
+        min-width: 210px;
+      }
+
+      app-header-layout ::content #contentContainer {
+        overflow: hidden !important;
+      }
+
+      :host {
+        height: calc(100% - 56px);
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 56px;
+      }
+
+      .container {
+        width: 100%;
+        height: 100%;
+        /* background-color: #fff; */
+      }
+
+      vaadin-grid#list {
+        height: inherit;
+        font-family: Roboto, sans-serif;
+        --divider-color: #eee;
+
+
+        /* --vaadin-grid-cell: {
+          padding: 0;
+        }; */
+
+        --vaadin-grid-header-cell: {
+          height: 48px;
+          /* color: rgba(0, 0, 0, var(--dark-secondary-opacity)); */
+          font-size: 16px;
+          /* text-align: center; */
+          
+          border-right: 1px solid #eee;
+        };
+
+        --vaadin-grid-body-cell: {
+          min-height: 54px;
+          color: rgba(0, 0, 0, var(--dark-primary-opacity));
+          font-size: 16px;
+          padding: 0;
+          border-right: 1px solid #eee;
+          border-bottom: 1px solid #eee;
+          /* text-align: center; */
+        };
+
+        --vaadin-grid-body-row-hover-cell: {
+          background-color: var(--paper-grey-200);
+        };
+
+        --vaadin-grid-body-row-selected-cell: {
+          background-color: var(--paper-grey-100);
+        };
+
+        --vaadin-grid-focused-cell: {
+          box-shadow: none;
+          font-weight: bold;
+        };
+
+      }
+
+      .top-container {
+        /* background-color: #f3f5f7; */
+        box-shadow:rgba(0, 0, 0, .54) 0 -10px 6px -10px inset;
+        height: 310px;
+      }
+
+      #filter {
+        padding: 8px 16px;
+        background-color: #f3f5f7;
+        position: relative;
+      }
+
+      .filter {
+        padding: 0 6px 1px 6px;
+      }
+
+      #editor {
+        background-color: #fff;
+        /* border: 1px solid rgba(0, 0, 0, var(--dark-divider-opacity)); */
+        position: relative;
+        height: 100%;
+        
+      }
+
+      .editor-content {
+        margin-top: 64px;
+        padding: 16px;
+        width: calc(100%-32px);
+        height: calc(100% - 98px);
+        overflow-y: auto;
+      }
+
+      .editor-buttons {
+        background-color: #eee;
+        padding: 12px 16px;
+        @apply(--layout-horizontal);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+
+      .custom-input {
+        padding-top: 6px;
+        padding-bottom: 6px;
+      }
+
+      .custom-button {
+        padding: 0.4em 2em;
+        font-size: 16px;
+        background-color: #fff;
+      }
+
+      .custom-flat-button {
+        font-weight: bold;
+        font-size: 14px;
+        text-transform: uppercase;
+      }
+
+      #importResult {
+        overflow-y: scroll;
+        height: 200px;
+        background: white;
+        padding: 12px;
+        margin-top: 16px;
+      }
+
+      .type.capton-2 {
+        line-height: 25px;
+      }
+
+      .left {
+        width: 30%;
+      }
+      .right {
+        width: 100%;
+        height: inherit;
+      }
+
+      .custom-title {
+        padding: 16px 20px;
+        background-color: #fafafa;
+        border-bottom: 1px solid #eee;
+      }
+
+      .custom-dialog-content {
+        height: 400px;
+        overflow-y: scroll;
+        margin-top: 0;
+        padding-top: 16px;
+      }
+
+      @media screen and (max-width: 859px) {
+        .left, .right {
+          width: 100%;
+        }
+      }
+
+      @media screen and (max-width: 479px) {
+        .filter-input {
+          width: 100%;
+        }
+
+        #btnFilter {
+          margin-top: 8px;
+          margin-bottom: 8px;
+        }
+      }
+
+      #editor {
+        position: fixed;
+        right: 0;
+        top: 56px;
+        bottom: 0;
+        z-index: 1;
+        height: calc(100% - 156px);
+        border-left: 1px solid #eee;
+      }
+
+
+      .fixed-title {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 12px 8px 11px 12px;
+        border-bottom: 1px solid #eee;
+        z-index: 1;
+        background-color: #fafafa;
+        width: calc( 100% - 24px);
+      }
+
+      .label {
+        text-align: center;
+        height: 100%;
+        border-right: 1px solid #eee;
+      }
+
+      .text-left {
+        text-align: left;
+      }
+
+
+      .label.red { background-color: #d50000; color: #fff; }
+      .label.pink { background-color: #c51162; color: #fff; }
+      .label.purple { background-color: #aa00ff; color: #fff; }
+      .label.deep-purple { background-color: #6200ea; color: #fff; }
+      .label.indigo { background-color: #3F51B5; color: #fff; }
+      .label.blue { background-color: #304ffe; color: #fff; }
+      .label.light-blue { background-color: #0091ea; color: #000; }
+      .label.cyan { background-color: #00BCD4; color: #000; }
+      .label.teal { background-color: #00b8d4; color: #000; }
+      .label.green { background-color: #00c853; color: #000; }
+      .label.light-green { background-color: #64dd17; color: #000; }
+      .label.lime { background-color: #aeea00; color: #000; }
+      .label.yellow { background-color: #ffd600; color: #000; }
+      .label.amber { background-color: #ffab00; color: #000; }
+      .label.orange { background-color: #ff6d00; color: #fff; }
+      .label.deep-orange { background-color: #dd2c00; color: #fff; }
+      .label.brown { background-color: #3e2723; color: #fff; }
+      .label.grey { background-color: #212121; color: #fff; }
+      .label.blue-grey { background-color: #263238; color: #fff; }
+
+      .cell-input {
+        border: none;
+        width: calc(100% - 16px);
+        background-color: inherit;
+        font-size: 16px;
+        color: inherit;
+        height: calc( 100% - 12px);
+        padding: 6px 10px;
+        /* text-align: center; */
+        outline: none;
+      }
+
+      .date-input {
+        border: none;
+        background-color: inherit;
+        font-size: 16px;
+        /* font-weight: bold; */
+        outline: none;
+        padding: 0 10px;
+      }
+
+      .filter-input {
+        border: none;
+        background-color: inherit;
+        font-size: 16px;
+        height: 100%;
+        outline: none;
+      }
+
+      .cell-avatar {
+        margin-left: 8px;
+        border-radius: 16px;
+        padding: 3px 8px;
+        /* max-width: 179px; */
+        background-color: #b2dfdb;
+      }
+
+      .cell-avatar iron-image {
+        height: 30px;
+        width: 30px;
+        border-radius: 50%;
+        background-color: #eee;
+      }
+
+      .cell-avatar paper-icon-button ::content iron-icon {
+        color: #000;
+        height: 20px;
+        width: 20px;
+      }
+
+      .cell-avatar paper-icon-button {
+        text-align: center;
+        height: 24px;
+        width: 24px;
+        padding: 2px;
+        font-size: 16px;
+      }
+
+      .cell-avatar.danger {
+        background-color: #ef9a9a;
+      }
+
+      paper-dialog {
+        width: 80%;
+      }
+
+ 
+    </style>
+
+    <div class="container horizontal layout wrap">
+
+      <div class="right flex">
+
+        <!-- filter - start -->
+        <div id="filter" class="horizontal layout center">
+          <div class="horizontal layout center wrap flex">
+            <vaadin-combo-box class="filter-input m-horizontal-8" id="filterByLocation" label="Location" items="[[locations.list]]" value="{{filterBy.location}}" item-label-path='name' item-value-path='name'></vaadin-combo-box>
+            <vaadin-combo-box class="filter-input m-horizontal-8" id="filterByCategory" label="Role" items="[[availableRoles]]" value="{{filterBy.role}}" item-label-path='name' item-value-path='name'></vaadin-combo-box>
+            <vaadin-date-picker class="filter-input m-horizontal-8" type="date" max="" value="{{filterBy.fromDate}}" label="From"></vaadin-date-picker>
+            <vaadin-date-picker class="filter-input m-horizontal-8" type="date" max="" value="{{filterBy.toDate}}" label="To"></vaadin-date-picker>
+            <!-- <paper-icon-button on-tap="onClearFilterTapped" icon="icons:clear"></paper-icon-button> -->
+            <paper-button id="btnFilter" on-tap="onFilterTapped" class="custom-button m-top-8"><iron-icon class="m-right-8" icon="icons:sort"></iron-icon>Filter</paper-button>
+          </div>
+        </div>
+        <!-- filter - end -->
+
+        <!-- roster - start -->
+        <template is="dom-if" if="{{isLoaded}}">
+          <vaadin-grid items="{{matchingRosters}}" id="list">
+
+            <!-- <vaadin-grid-column width="40px" frozen>
+              <template class="header">No.</template>
+              <template>[[$returnSerial(index)]]</template>
+            </vaadin-grid-column> -->
+  
+            <vaadin-grid-column width="8em" frozen>
+              <template class="header">
+                <vaadin-grid-filter aria-label="Date" path="date" value="[[dateString]]">
+                  <input is="iron-input" class="filter-input" placeholder="Date" value="{{dateString}}"></input>
+                </vaadin-grid-filter>
+              </template>
+              <template>
+                <div class="m-left-8">{{item.date}}</div>
+              </template>
+            </vaadin-grid-column>
+  
+            <vaadin-grid-column width="12em">
+              <template class="header">
+                  
+                <vaadin-grid-filter aria-label="Location" path="location" value="[[locationString]]">
+                  <input is="iron-input" class="filter-input" placeholder="Location" value="{{locationString}}"></input>
+                </vaadin-grid-filter>
+              
+              </template>
+              <template>
+                <div class="m-left-8">{{item.location}}</div>
+              </template>
+            </vaadin-grid-column>
+  
+            <vaadin-grid-column width="12em">
+              <template class="header">
+                  
+                <vaadin-grid-filter aria-label="Role" path="role" value="[[roleString]]">
+                  <input is="iron-input" class="filter-input" placeholder="Role" value="{{roleString}}"></input>
+                </vaadin-grid-filter>
+              
+              </template>
+              <template>
+                <div class="m-left-8">{{item.role}}</div>
+              </template>
+            </vaadin-grid-column>
+  
+            <template is="dom-repeat" items="{{slots.list}}" as="slot" index-as="slotIndex">
+              <vaadin-grid-column width="14em">
+                <template class="header">
+                  <div>{{slot.name}}</div>
+                  <div class="type caption-2 secondary">{{slot.startTime}} - {{slot.endTime}}</div>
+                </template>
+                <template>
+  
+  
+                  <div class="horizontal layout wrap">
+                    <template is="dom-repeat" items="{{filterMemberBySlot(item.members, slot.id)}}" as="member" id="member-list-repeater">
+  
+                      <div class$="cell-avatar horizontal layout center {{_checkOnHolidayStatus(member.id, item.date)}}">
+                        <!-- <iron-image src="" preload sizing="cover" class="m-horizontal-8"></iron-image> -->
+                        <div class="flex">
+                          <div class="type body">{{member.name}}</div>
+                          <!-- <div class="type caption">{{member.role}}</div> -->
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+              </vaadin-grid-column>
+            </template>
+  
+          </vaadin-grid>
+        </template>
+        
+        <!-- inventory - end -->
+      </div>
+      
+    </div>
+
+  </template>
+
+  <script src="page-duty-roster.coffee-compiled.js"></script>
+</dom-module>

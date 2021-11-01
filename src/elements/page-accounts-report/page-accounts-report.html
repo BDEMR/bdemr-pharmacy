@@ -1,0 +1,452 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<dom-module id="page-accounts-report">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+        width: 90%;
+      }
+
+      .print-button-style {
+        margin-top: 16px;
+        background:burlywood;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      .search {
+        background-color: #fff;
+        border: 1px solid #dadada;
+        padding: 8px;
+        margin-bottom: 8px;
+      }
+
+      .table {
+        width: 50%;
+      }
+
+      .table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td {
+        color: #444;
+      }
+
+      .table td,
+      .table th {
+        vertical-align: middle;
+        padding: 10px 20px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+      .table tr:last-child td {
+        border-bottom: 0;
+      }
+    </style>
+
+    <!-- <module-accounts-top-nav page-name="accounts-report" organization-id="[[organization.idOnServer]]">
+    </module-accounts-top-nav> -->
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <!-- Card - Search - start -->
+        <paper-card heading="Accounts Report">
+
+          <paper-progress indeterminate hidden$="[[!loading]]"></paper-progress>
+
+          <div class="card-content custom-input-field">
+
+            <div class="search layout horizontal center wrap">
+
+              <vaadin-combo-box label="Search By User" class="organization-dropdown m-right-8 m-bottom-8" items="[[memberList]]"
+                item-label-path="name" on-selected-item-changed="memberSelected">
+                <template>
+                  <div><strong>[[item.name]]</strong></div>
+                  <div><span>[[item.phone]]</span></div>
+                </template>
+              </vaadin-combo-box>
+
+              <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
+
+              <div class="flex"></div>
+
+              <div>
+                <paper-button raised class="btn btn-success btn-large" on-tap="searchButtonClicked">Search</paper-button>
+                <paper-button raised on-tap="resetButtonClicked">Reset</paper-button>
+                <template is="dom-if" if="[[report]]">
+                  <paper-button raised class="print-button-style" on-tap="_printButtonPressed">Print the Report</paper-button>
+                </template>
+              </div>
+
+            </div>
+
+            <template is='dom-if' if='[[report]]'>
+              
+              <div class="horizontal layout">
+
+                <table class="table flex-1 m-right-8" style="border: 1px solid #eee;">
+                  <tr>
+                    <th colspan="2">Incomes</th>
+                  </tr>
+
+                  <template is='dom-repeat' items='[[report.incomeByInvoiceCategory]]'>
+                    <template is="dom-if" if="[[$equals(item.category, 'outdoor')]]">
+                      <tr>
+                        <td>Outdoor Collection:</td>
+                        <td>[[item.value]]</td>
+                      </tr>
+                    </template>
+                  </template>
+                  <template is='dom-repeat' items='[[report.dueByInvoiceCategory]]'>
+                    <template is="dom-if" if="[[$equals(item.category, 'outdoor')]]">
+                      <tr>
+                        <td>Outdoor Due Collection:</td>
+                        <td>[[item.value]]</td>
+                      </tr>
+                    </template>
+                  </template>
+                  <tr>
+                    <td>Advance Balance</td>
+                    <td width="150px">[[report.totalAdvanceBalanceFromInvoice]]</td>
+                  </tr>
+                  <!-- <tr>
+                    <td>ADMISSION FEE: TK.</td>
+                    <td width="150px">[[report.totalIncomeFromAdmissionCategory]]</td>
+                  </tr> -->
+                  <template is='dom-repeat' items='[[report.incomeByInvoiceCategory]]'>
+                    <template is="dom-if" if="[[$equals(item.category, 'admission')]]">
+                      <tr>
+                        <td>ADMISSION FEE: TK.</td>
+                        <td>[[item.value]]</td>
+                      </tr>
+                    </template>
+                  </template>
+                  <template is='dom-repeat' items='[[report.incomeByInvoiceCategory]]'>
+                    <template is="dom-if" if="[[$equals(item.category, 'indoor')]]">
+                      <tr>
+                        <td>Indoor Collection:</td>
+                        <td>[[item.value]]</td>
+                      </tr>
+                    </template>
+                  </template>
+                  <template is='dom-repeat' items='[[report.dueByInvoiceCategory]]'>
+                    <template is="dom-if" if="[[$equals(item.category, 'indoor')]]">
+                      <tr>
+                        <td>Indoor Due Collection:</td>
+                        <td>[[item.value]]</td>
+                      </tr>
+                    </template>
+                  </template>
+                  <tr>
+                    <td>Vat/Tax Collected</td>
+                    <td width="150px">[[report.totalIncomeVatOrTax]]</td>
+                  </tr>
+                  <tr>
+                    <td>Discount Given</td>
+                    <td>-[[report.totalIncomeDiscount]]</td>
+                  </tr>
+                  <!-- <tr>
+                    <td>Dues</td>
+                    <td>[[report.totalIncomeDueCombined]]</td>
+                  </tr>
+                  <tr>
+                    <th>Total Incomes</th>
+                    <th>[[$formatCurrency(totalIncome)]]</th>
+                  </tr> -->
+                </table>
+
+                <table class="table m-left-8 flex-1"  style="border: 1px solid #eee;">
+                  <tr>
+                    <th colspan="2">Expenses</th>
+                  </tr>
+                  <template is='dom-repeat' items='[[report.expenseByCategory]]'>
+                    <tr>
+                      <td>[[item.category]]</td>
+                      <td>[[item.value]]</td>
+                    </tr>
+                  </template>
+                  <tr>
+                    <td>Vat/Tax Paid</td>
+                    <td width="150px">[[report.totalExpenseVatOrTax]]</td>
+                  </tr>
+                  <tr>
+                    <td>Discount Received</td>
+                    <td>-[[report.totalExpenseDiscount]]</td>
+                  </tr>
+                  <tr>
+                    <td>Dues</td>
+                    <td>[[report.totalDueFromExpense]]</td>
+                  </tr>
+                  <tr>
+                    <th>Total Expenses</th>
+                    <th>[[$formatCurrency(totalExpense)]]</th>
+                  </tr>
+                </table>
+              </div>
+              
+            </template>
+
+            <template is='dom-if' if='[[report]]'>
+              <table class="table m-top-16">
+                <tr>
+                  <th>Total Cash</th>
+                  <th width="150px">[[$formatCurrency(totalIncome)]]</th>
+                </tr>
+                <tr>
+                  <th>Credit</th>
+                  <th width="150px">[[$formatCurrency(totalDueOrCredit)]]</th>
+                </tr>
+                <tr>
+                  <th>Total Expenditure</th>
+                  <th width="150px">[[$formatCurrency(totalExpense)]]</th>
+                </tr>
+                </table>
+            </template>
+
+            <table class="table m-top-16">
+              <tr>
+                <th>Net Cash</th>
+                <th width="150px">[[$formatCurrency(profitOrLoss)]]</th>
+              </tr>
+            </table>
+
+          </div>
+        </paper-card>
+
+      </div>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'page-accounts-report',
+      behaviors: [
+        app.behaviors.translating,
+        app.behaviors.pageLike,
+        app.behaviors.dbUsing,
+        app.behaviors.apiCalling,
+        app.behaviors.commonComputes
+      ],
+
+      properties: {
+        user: {
+          type: Object,
+          notify: true,
+          value: null
+        },
+
+        organization: {
+          type: Object,
+          value: {}
+        },
+
+        report: {
+          type: Object,
+          value: null,
+          observer: 'calculateTotal'
+        },
+
+        saveReportToLocalStorageObj: {
+          type: Object,
+          value: null,
+          observer: 'calculateTotal'
+        },
+
+        loading: {
+          type: Boolean,
+          value: false
+        },
+
+        totalIncome: Number,
+        totalExpense: Number,
+        totalDueOrCredit: Number,
+        profitOrLoss: Number
+      },
+
+      navigatedIn() {
+        this._loadUser();
+        this._loadOrganization(()=> {
+          this._loadMemberList()
+        })
+      },
+
+      _loadUser() {
+        const userList = app.db.find('user');
+        if (userList.length === 1) {
+          return this.user = userList[0];
+        }
+      },
+
+      _loadOrganization(cbfn) {
+        const currentOrganization = this.getCurrentOrganization();
+        this.loading = true;
+        const data = {
+          apiKey: this.user.apiKey,
+          idList: [currentOrganization.idOnServer]
+        };
+        return this.callApi('/bdemr-organization-list-organizations-by-ids', data, (err, response) => {
+          this.loading = false;
+          if (response.hasError) {
+            return this.domHost.showModalDialog(response.error.message);
+          } else {
+            if (response.data.matchingOrganizationList.length !== 1) {
+              this.domHost.showModalDialog("Invalid Organization");
+              return;
+            }
+            this.set('organization', response.data.matchingOrganizationList[0]);
+            return cbfn();
+          }
+        });
+      },
+
+      _loadMemberList() {
+        var data, user;
+        data = {
+          apiKey: this.user.apiKey,
+          organizationId: this.organization.idOnServer,
+          overrideWithIdList: (function () {
+            var i, len, ref, results;
+            ref = this.organization.userList;
+            results = [];
+            for (i = 0, len = ref.length; i < len; i++) {
+              user = ref[i];
+              results.push(user.id);
+            }
+            return results;
+          }).call(this),
+          searchString: 'N/A'
+        };
+        return this.callApi('/bdemr-organization-find-user', data, (function (_this) {
+          return function (err, response) {
+            if (response.hasError) {
+              return _this.domHost.showModalDialog(response.error.message);
+            } else {
+              _this.set('memberList', response.data.matchingUserList);
+              return
+            }
+          };
+        })(this));
+      },
+
+      memberSelected(e) {
+        var user;
+        if (!e.detail.value) {
+          return;
+        }
+        user = e.detail.value;
+        console.log(user)
+        return this.selectedUserSerial = user.serial;
+      },
+
+      filterByDateClicked(e) {
+        const startDate = new Date(e.detail.startDate);
+        startDate.setHours(0, 0, 0, 0);
+        this.startDate = startDate;
+        const endDate = new Date(e.detail.endDate);
+        endDate.setHours(23, 59, 59, 999);
+        this.endDate = endDate;
+      },
+
+      filterByDateClearButtonClicked(e) {
+        this.startDate = null;
+        this.endDate = null;
+      },
+
+      searchButtonClicked(e) {
+        this._loadAccountsReport();
+      },
+
+      _loadAccountsReport() {
+        let query = {
+          createdByUserSerial: this.selectedUserSerial,
+          apiKey: this.user.apiKey,
+          dateCreatedFrom: this.startDate,
+          dateCreatedTo: this.endDate,
+          organizationIdList: [this.organization.idOnServer]
+        }
+        console.log(query)
+        this.loading = true;
+        this.callApi('/bdemr--organization-accounts-report-rmh', query, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          this.report = response.data
+          console.log('report', this.report);
+          this.setAccountsReportToLocalStorage(this.report)
+        })
+      },
+
+      setAccountsReportToLocalStorage(data) {
+        this.set('saveReportToLocalStorageObj', data);
+        return localStorage.setItem("saveReportToLocalStorageObj", JSON.stringify(this.saveReportToLocalStorageObj));
+      },
+
+      calculateTotal() {
+        if (!this.report) return;
+        let grossIncome = this.report.incomeByInvoiceCategory.reduce((total, item) => {
+          return total += item.value;
+        }, 0);
+        let grossCollectionFromDue = this.report.dueByInvoiceCategory.reduce((total, item) => {
+          return total += item.value;
+        }, 0);
+        let grossExpense = this.report.expenseByCategory.reduce((total, item) => {
+          return total += item.value;
+        }, 0);
+        this.totalIncome = grossIncome;
+        this.totalExpense = (grossExpense + this.report.totalExpenseVatOrTax) - this.report.totalExpenseDiscount;
+        
+        let totalDueFromInvoice = this.report.totalDueFromInvoice;
+
+
+        this.totalDueOrCredit =  (Math.sign(totalDueFromInvoice) === -1) ? 0 :totalDueFromInvoice;
+        
+        this.profitOrLoss = this.totalIncome - this.totalExpense;
+      },
+
+      _printButtonPressed() {
+        this.domHost.navigateToPage("#/accounts-report-print-preview");
+      },
+
+      resetButtonClicked() {
+        window.location.reload()
+      },
+      navigatedOut() {
+        this.report = null;
+        this.totalIncome = 0;
+        this.totalExpense = 0;
+        this.profitOrLoss = 0;
+      }
+
+
+    })
+  </script>
+</dom-module>

@@ -1,0 +1,581 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower-assets/iron-pages/iron-pages.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-accounts-manager">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      paper-item {
+        border-bottom: 1px solid #eee;
+      }
+
+      .m-right-5 {
+        margin-right: 5px;
+      }
+
+      paper-tabs {
+        background-color: var(--paper-teal-600);
+        color: white;
+        --paper-tabs-selection-bar-color: var(--paper-yellow-a100);
+      }
+
+      .expense-tabs {
+        background-color: var(--paper-cyan-800);
+        color: white;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .text-muted {
+        color: var(--paper-grey-500);
+      }
+
+      .text-danger {
+        color: var(--paper-red-500);
+      }
+
+      paper-progress {
+				width: 100%;
+				--paper-progress-active-color: var(--paper-teal-500);
+			}
+
+      h3, p {
+        margin: 0;
+        padding: 0;
+      }
+
+      #balanceSheetMonthInput {
+        --paper-input-container: {
+          margin-left: 10px;
+          width: 200px;
+        }
+        --paper-input-container-label: {
+          font-size: 13px;
+        }
+        --paper-input-container-input: {
+          font-size: 13px;
+        }
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <paper-tabs selected="{{selectedPage}}">
+      <paper-tab>Income</paper-tab>
+      <paper-tab>Expense</paper-tab>
+      <paper-tab>Cash Book</paper-tab>
+    </paper-tabs>
+
+
+
+    <iron-pages selected="{{selectedPage}}">
+
+      <!-- INCOME SECTION -->
+      <section>
+        <div class="master-container">
+
+          <div class="limiting-container">
+
+            <paper-card heading="Add Income Item : [[organization.name]]">
+              <div class="card-content">
+                <div class="layout horizontal">
+                  <vaadin-date-picker label="Date" value="{{incomeItem.createdDatetimeStamp}}" class="m-right-5"></vaadin-date-picker>
+                  <paper-input class="flex m-right-5" required label="Item Name" value="{{incomeItem.data.name}}"></paper-input>
+                  <paper-input class="flex m-right-5" label="Category" value="{{incomeItem.data.category}}"></paper-input>
+                  <paper-input class="flex" label="Value" required value="{{incomeItem.data.value}}" type="number"></paper-input>
+                </div>
+              </div>
+              <div class="card-actions">
+                <paper-button class="btn btn-success" on-tap="addToIncomeButtonClicked">Add Entry</paper-button>
+              </div>
+            </paper-card>
+
+            <br>
+            <paper-card>
+              <div class="card-custom-header">
+                <div class="layout horizontal center">
+                  <div class="title flex">Income Items</div>
+                  <custom-vital-search id="incomeDateRange" on-date-select="incomeListCustomSearchClicked" on-clear="incomeListSearchClearButtonClicked"></custom-vital-search>
+                </div>
+              </div>
+              <div class="card-content">
+                <paper-item class="layout horizontal">
+                  <div class="flex-2">
+                    <strong>Date</strong>
+                  </div>
+                  <div class="flex">
+                    <strong>Item</strong>
+                  </div>
+                  <div class="flex">
+                    <strong>Category</strong>
+                  </div>
+                  <div class="flex">
+                    <strong>Value</strong>
+                  </div>
+                  <div class="flex">Actions</div>
+                </paper-item>
+                <template is="dom-repeat" items="[[matchingIncomeList]]" sort="_sortByDate">
+                  <paper-item class="layout horizontal center">
+                    <div class="flex-2">[[_formatDate(item.createdDatetimeStamp)]]</div>
+                    <div class="flex">[[item.data.name]]</div>
+                    <div class="flex">[[item.data.category]]</div>
+                    <div class="flex">[[$formatCurrency(item.data.value)]]</div>
+                    <div class="flex">
+                      <paper-icon-button hidden="[[isIncomeItemInvoice(item)]]" icon="create" on-tap="editIncomeItemButtonClicked"></paper-icon-button>
+                      <paper-icon-button hidden="[[!isIncomeItemInvoice(item)]]" icon="launch" on-tap="viewInvoiceButtonClicked"></paper-icon-button>
+                    </div>
+                  </paper-item>
+                </template>
+              </div>
+              <div class="card-actions">
+                <strong>TOTAL: [[$formatCurrency(totalIncome)]]</strong>
+              </div>
+            </paper-card>
+
+          </div>
+        </div>
+
+
+      </section>
+
+      <!-- INCOME SECTION ENDS -->
+
+
+      <!-- EXPENSE SECTION -->
+
+      <section>
+        <div class="master-container">
+
+          <div class="limiting-container">
+
+            <paper-tabs class="expense-tabs" selected="{{selectedExpensePage}}">
+              <paper-tab>General Expense</paper-tab>
+              <paper-tab>Salaries</paper-tab>
+              <paper-tab>Bills and Utility</paper-tab>
+            </paper-tabs>
+
+            <iron-pages selected="{{selectedExpensePage}}">
+              <!-- General Expense -->
+              <div>
+
+                <paper-card heading="Add Expense Items">
+                  <div class="card-content">
+                    <div class="layout horizontal">
+                      <vaadin-date-picker label="Date" value="{{expenseItem.createdDatetimeStamp}}" class="m-right-5"></vaadin-date-picker>
+                      <paper-input class="flex m-right-5" required label="Item Name" value="{{expenseItem.data.name}}"></paper-input>
+                      <paper-input class="flex m-right-5" label="Category" value="{{expenseItem.data.category}}"></paper-input>
+                      <paper-input class="flex m-right-5" label="QTY" type="number" value="{{expenseItem.data.qty}}"></paper-input>
+                      <paper-input class="flex" label="Unit Price" required value="{{expenseItem.data.unitCost}}" type="number"></paper-input>
+                    </div>
+                  </div>
+                  <div class="card-actions">
+                    <paper-button class="btn btn-success" on-tap="_addToExpenseButtonClicked">Add Entry</paper-button>
+                  </div>
+                </paper-card>
+
+                <br>
+                <paper-card>
+                  <div class="card-custom-header">
+                    <div class="layout horizontal center">
+                      <div class="title flex">Expenses</div>
+                      <custom-vital-search on-date-select="expenseListCustomSearchClicked" on-clear="expenseListSearchClearButtonClicked"></custom-vital-search>
+                    </div>
+                  </div>
+                  <div class="card-content">
+                    <paper-item class="layout horizontal">
+                      <div class="flex-2">
+                        <strong>Date</strong>
+                      </div>
+                      <div class="flex">
+                        <strong>Item</strong>
+                      </div>
+                      <div class="flex">
+                        <strong>Category</strong>
+                      </div>
+                      <div class="flex">
+                        <strong>Unit Price</strong>
+                      </div>
+                      <div class="flex">
+                        <strong>Qty</strong>
+                      </div>
+                      <div class="flex">
+                        <strong>Total Cost</strong>
+                      </div>
+                      <div class="flex">Actions</div>
+                    </paper-item>
+                    <template is="dom-repeat" items="[[matchingExpenseList]]" sort="_sortByDate">
+                      <paper-item class="layout horizontal center">
+                        <div class="flex-2">[[_formatDate(item.createdDatetimeStamp)]]</div>
+                        <div class="flex">[[item.data.name]]</div>
+                        <div class="flex">[[item.data.category]]</div>
+                        <div class="flex">[[$formatCurrency(item.data.unitCost)]]</div>
+                        <div class="flex">[[item.data.qty]]</div>
+                        <div class="flex">[[$formatCurrency(item.data.totalCost)]]</div>
+                        <div class="flex">
+                          <paper-icon-button icon="create" on-tap="editGeneralExpenseItemButtonClicked"></paper-icon-button>
+                        </div>
+                      </paper-item>
+                    </template>
+                  </div>
+                  <div class="card-actions">
+                    <div>
+                      <strong>Total General Expense : [[$formatCurrency(totalGeneralExpense)]]</strong>
+                    </div>
+                  </div>
+                </paper-card>
+
+              </div>
+
+              <!-- Salaries -->
+              <div>
+                <paper-card heading="Prepare Salary Sheet">
+                  <div class="card-content">
+                    <vaadin-date-picker label="Date" value="{{salaryEntryDatetimeStamp}}" class="m-right-5"></vaadin-date-picker>
+                    <br>
+                    <div class="layout horizontal center">
+                      <paper-input class="flex m-right-5" required label="Staff Name" value="{{salaryExpense.name}}"></paper-input>
+                      <paper-input class="flex m-right-5" required label="Position" value="{{salaryExpense.position}}"></paper-input>
+                      <paper-input class="flex m-right-5" required label="Monthly Amount" type="number" value="{{salaryExpense.monthlyAmount}}"
+                        type="number"></paper-input>
+                      <paper-input class="flex" label="Paid Amount" required value="{{salaryExpense.paidAmount}}" type="number"></paper-input>
+                      <paper-button class="btn btn-default" on-tap="_addToSalarySheetButtonClicked">Add TO Salary Sheet</paper-button>
+                    </div>
+                    <br>
+                    <p>
+                      <strong>Salary Sheet :</strong>
+                    </p>
+                    <div class="text-muted" hidden="[[!_isListEmpty(salarySheet)]]">Add Salary Data to Create A Salary
+                      Sheet First, then Click Add to Expense</div>
+                    <paper-item class="layout horizontal justified type bold" hidden="[[!salarySheet.length]]">
+                      <div class="flex-2">Name</div>
+                      <div class="flex-2">Position</div>
+                      <div class="flex-2">Monthly Amount</div>
+                      <div class="flex-2">Paid Amount</div>
+                      <div class="flex-2"></div>
+                    </paper-item>
+                    <template is="dom-repeat" items="[[salarySheet]]">
+                      <paper-item class="layout horizontal justified">
+                        <div class="flex-2">[[item.name]]</div>
+                        <div class="flex-2">[[item.position]]</div>
+                        <div class="flex-2">[[$formatCurrency(item.monthlyAmount)]]</div>
+                        <div class="flex-2">[[$formatCurrency(item.paidAmount)]]</div>
+                        <div class="flex-2">
+                          <paper-icon-button icon="create" on-tap="editSalarySheetItemButtonClicked"></paper-icon-button>
+                          <paper-icon-button class="type danger" icon="delete" on-tap="deleteSalarySheetItemButtonClicked"></paper-icon-button>
+                        </div>
+                      </paper-item>
+                    </template>
+                  </div>
+                  <div class="card-actions">
+                    <paper-button class="btn btn-success" on-tap="_addToSalaryExpenseButtonClicked">Add To Expense</paper-button>
+                  </div>
+                </paper-card>
+
+                <br>
+                <paper-card>
+                  <div class="card-custom-header">
+                    <div class="layout horizontal center">
+                      <div class="title flex">Expenses</div>
+                      <custom-vital-search on-date-select="expenseListCustomSearchClicked" on-clear="expenseListSearchClearButtonClicked"></custom-vital-search>
+                    </div>
+                  </div>
+                  <div class="card-content">
+                    <paper-item class="layout horizontal">
+                      <div class="flex-2">
+                        <strong>Date</strong>
+                      </div>
+                      <div class="flex">
+                        <strong>Item</strong>
+                      </div>
+
+                      <div class="flex">
+                        <strong>Total Cost</strong>
+                      </div>
+                      <div class="flex">Actions</div>
+                    </paper-item>
+                    <template is="dom-if" if="[[_isListEmpty(matchingSalaryExpenseList)]]">
+                      <paper-item>No Data Yet</paper-item>
+                    </template>
+                    <template is="dom-repeat" items="[[matchingSalaryExpenseList]]" sort="_sortByDate">
+                      <paper-item class="layout horizontal center">
+                        <div class="flex-2">[[_formatDate(item.createdDatetimeStamp)]]</div>
+                        <div class="flex">Salary</div>
+                        <div class="flex">[[$formatCurrency(item.data.totalCost)]]</div>
+                        <div class="flex">
+                          <paper-button class="btn btn-default btn-sm" on-tap="copySalaryItemButtonClicked">Copy</paper-button>
+                        </div>
+
+                      </paper-item>
+                    </template>
+                  </div>
+                  <div class="card-actions">
+                    <div>
+                      <strong>Total Salary Expense : [[$formatCurrency(totalSalaryExpense)]]</strong>
+                    </div>
+                  </div>
+                </paper-card>
+
+
+              </div>
+
+              <!-- Bills & Utilities  -->
+              <div>
+
+                <paper-card heading="Add Utility Entry">
+                  <div class="card-content">
+                    <div class="layout horizontal">
+                      <vaadin-date-picker label="Date" value="{{utilityExpenseItem.createdDatetimeStamp}}" class="m-right-5"></vaadin-date-picker>
+                      <paper-input class="flex m-right-5" required label="Item Name" value="{{utilityExpenseItem.data.name}}"></paper-input>
+                      <paper-input class="flex m-right-5" label="Category" value="{{utilityExpenseItem.data.category}}"></paper-input>
+                      <paper-input class="flex" label="Total Cost" required value="{{utilityExpenseItem.data.totalCost}}"
+                        type="number"></paper-input>
+                    </div>
+                  </div>
+                  <div class="card-actions">
+                    <paper-button class="btn btn-success" on-tap="_addToUtilityExpenseButtonClicked">Add Entry</paper-button>
+                  </div>
+                </paper-card>
+
+                <br>
+                <paper-card>
+                  <div class="card-custom-header">
+                    <div class="layout horizontal center">
+                      <div class="title flex">Utility Expenses</div>
+                      <custom-vital-search on-date-select="utilityExpenseListCustomSearchClicked" on-clear="utilityExpenseListSearchClearButtonClicked"></custom-vital-search>
+                    </div>
+                  </div>
+                  <div class="card-content">
+                    <paper-item class="layout horizontal">
+                      <div class="flex-2">
+                        <strong>Date</strong>
+                      </div>
+                      <div class="flex">
+                        <strong>Item</strong>
+                      </div>
+                      <div class="flex">
+                        <strong>Category</strong>
+                      </div>
+                      <div class="flex">
+                        <strong>Total Cost</strong>
+                      </div>
+                      <div class="flex">Actions</div>
+                    </paper-item>
+                    <template is="dom-repeat" items="[[matchingUtilityExpenseList]]" sort="_sortByDate">
+                      <paper-item class="layout horizontal center">
+                        <div class="flex-2">[[_formatDate(item.createdDatetimeStamp)]]</div>
+                        <div class="flex">[[item.data.name]]</div>
+                        <div class="flex">[[item.data.category]]</div>
+                        <div class="flex">[[$formatCurrency(item.data.totalCost)]]</div>
+                        <div class="flex">
+                          <paper-icon-button icon="create" on-tap="editUtilityExpenseItemButtonClicked"></paper-icon-button>
+                        </div>
+                      </paper-item>
+                    </template>
+                  </div>
+                  <div class="card-actions">
+                    <div>
+                      <strong>Total Utility Expense : [[$formatCurrency(totalUtilitiesExpense)]]</strong>
+                    </div>
+                  </div>
+                </paper-card>
+
+              </div>
+
+            </iron-pages>
+
+          </div>
+        </div>
+
+      </section>
+
+      <!-- EXPENSE SECTION ENDS -->
+
+      <!-- BALANCE SHEET SECTION START -->
+
+      <section>
+
+        <paper-card>
+          <div class="card-custom-header">
+            <div class="layout horizontal center">
+              <div class="title flex">Balance Sheet</div>
+              <input no-label-float label="Filter By Month" id="balanceSheetMonthInput" type="month" on-change="getBalanceSheetByMonthClicked" />
+              <custom-vital-search on-date-select="grossProftCustomSearchClicked" on-clear="grossProftSearchClearButtonClicked"></custom-vital-search>
+            </div>
+          </div>
+          <paper-progress indeterminate hidden="[[!isLoading]]"></paper-progress>
+          <div class="card-content">
+            <div class="layout horizontal">
+
+              <div class="flex">
+                <h3 class="p-vertical-16 type title-2 bold">Income</h3>
+                <vaadin-grid items="[[matchingIncomeList]]" id="incomeListGrid">
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter path="createdDatetimeStamp" direction="desc">Date</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <div class="type secondary">[[$formatDateTime(item.createdDatetimeStamp)]]</div>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column>
+                    <template class="header">
+                      <div>Name</div>
+                    </template>
+                    <template>
+                      <div>[[item.data.name]]</div>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column>
+                    <template class="header">
+                      <div>Category</div>
+                    </template>
+                    <template>
+                      <div>[[item.data.category]]</div>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column>
+                    <template class="header">
+                      <div>Income</div>
+                    </template>
+                    <template>
+                      <div>[[item.data.value]]</div>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column>
+                    <template class="header">
+                      <div>Profit</div>
+                    </template>
+                    <template>
+                      <div>[[item.data.profit]]</div>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column>
+                    <template class="header">
+                      <div>Profit</div>
+                    </template>
+                    <template>
+                      <div>
+                        <paper-icon-button hidden="[[!item.invoiceSerial]]" icon="launch" on-tap="viewInvoiceButtonClicked"></paper-icon-button>
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+                </vaadin-grid>
+              </div>
+
+              <div class="flex m-left-8">
+                <h3 class="p-vertical-16 text-right type title-2 bold">Expense</h3>
+                <vaadin-grid items="[[combinedExpenseList]]" id="expenseGridList">
+                  <vaadin-grid-column flex-grow="2">
+                    <template class="header">
+                      <vaadin-grid-sorter path="createdDatetimeStamp" direction="desc">Date</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <div class="flex type secondary">[[_formatDate(item.createdDatetimeStamp)]]</div>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column>
+                    <template class="header">
+                      <span>Name</span>
+                    </template>
+                    <template>
+                      <div class="flex">[[item.data.name]]</div>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column>
+                    <template class="header">
+                      <span>Category</span>
+                    </template>
+                    <template>
+                      <div class="flex">[[item.data.category]]</div>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column>
+                    <template class="header">
+                      <span>Net Expense</span>
+                    </template>
+                    <template>
+                      <div class="flex">[[item.data.totalCost]]</div>
+                    </template>
+                  </vaadin-grid-column>
+                </vaadin-grid>
+              </div>
+            </div>
+
+          </div>
+          <div class="card-actions layout horizontal text-left type bold">
+            <div class="flex type secondary">Total Income: [[$formatCurrency(totalIncome)]]</div>
+            <div class="flex">Profit from Income: [[$formatCurrency(totalProfit)]]</div>
+            <div class="flex">Total Expense:
+              <span class="">[[$formatCurrency(totalExpense)]]</span>
+            </div>
+            <div class="flex">
+              <span class="type danger" hidden="[[!ifLoss(grossProfit)]]">Net Loss: ([[$formatCurrency(grossProfit)]])</span>
+              <span class="type success" hidden="[[ifLoss(grossProfit)]]">Net Profit: [[$formatCurrency(grossProfit)]]</span>
+            </div>
+          </div>
+        </paper-card>
+
+      </section>
+
+      <!-- BALANCE SHEET SECTION ENDS -->
+
+
+    </iron-pages>
+
+
+
+    </div>
+
+    </div>
+
+  </template>
+  <script src="page-accounts-manager.coffee-compiled.js"></script>
+</dom-module>

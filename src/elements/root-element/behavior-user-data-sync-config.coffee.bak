@@ -1,0 +1,54 @@
+unless app.behaviors.local['root-element']
+  app.behaviors.local['root-element'] = {}
+app.behaviors.local['root-element'].userDataSyncConfig =
+
+  syncSettings:
+    collectionName: 'settings'
+    deletedCollectionName: 'settings--deleted'
+    headerApi: '/bdemr-clinic-app--sync--settings--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--settings--exchange-data'
+
+  syncThirdPartyUserList:
+    collectionName: 'third-party-user-list'
+    deletedCollectionName: 'third-party-user-list--deleted'
+    headerApi: '/bdemr-clinic-app--sync--third-party-user-list--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--third-party-user-list--exchange-data'
+
+  syncUserNotificationGroupList:
+    collectionName: 'user-defined-notification-group'
+    deletedCollectionName: 'user-defined-notification-group--deleted'
+    headerApi: '/bdemr-clinic-app--sync--user-defined-notification-group--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--user-defined-notification-group--exchange-data'
+
+  syncVisitedPatientLogConfig:
+    collectionName: 'visited-patient-log'
+    deletedCollectionName: 'visited-patient-log--deleted'
+    headerApi: '/bdemr-clinic-app--sync--visited-patient-log--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--visited-patient-log--exchange-data'
+
+  syncInvoiceCategoryList:
+    collectionName: 'invoice-category-list'
+    deletedCollectionName: 'invoice-category-list--deleted'
+    headerApi: '/bdemr-clinic-app--sync--invoice-category-list--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--invoice-category-list--exchange-data'
+
+  syncCustomInvestigationConfig:
+    collectionName: 'custom-investigation-list'
+    deletedCollectionName: 'custom-investigation-list--deleted'
+    headerApi: '/bdemr-doctor-app--sync--custom-investigation-list--exchange-headers'
+    dataApi: '/bdemr-doctor-app--sync--custom-investigation-list--exchange-data'
+
+  syncOtList:
+    collectionName: 'ot-management'
+    deletedCollectionName: 'ot-management--deleted'
+    headerApi: '/bdemr-clinic-app--sync--operation-list--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--operation-list--exchange-data'
+
+  syncFavoriteAdvisedTestConfig:
+    collectionName: 'favorite-advised-test'
+    deletedCollectionName: 'favorite-advised-test--deleted'
+    headerApi: '/bdemr-clinic-app--sync--favorite-advised-test--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--favorite-advised-test--exchange-data'
+
+
+  

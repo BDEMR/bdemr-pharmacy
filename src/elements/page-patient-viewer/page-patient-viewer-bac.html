@@ -1,0 +1,886 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower-assets/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower-assets/iron-icons/av-icons.html">
+<link rel="import" href="../../bower-assets/iron-icons/communication-icons.html">
+<link rel="import" href="../../bower-assets/iron-pages/iron-pages.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input-container.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../elements/custom-vital-search/custom-vital-search.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-patient-viewer">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .tabs-container {
+        width: 100%;
+        background-color: #4285f4;
+      }
+
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .patient-info-card-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .patient-info-cards {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+
+      .patient-info-cards .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+
+      .patient-info-cards .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+
+      .patient-info-cards .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+
+      .patient-info-cards .row .modifier.online {
+        background: #757575;
+      }
+
+      .patient-info-cards .row .modifier.local-only {
+        background: #039BE5;
+      }
+
+      .patient-info-cards .row .modifier.locally-updated {
+        background: #009688;
+      }
+
+      .patient-info-cards .row .modifier.imported {
+        background: #4CAF50;
+      }
+
+      .info-row {
+        margin-top: 10px;
+      }
+
+      .top-info-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      .address1 {
+        margin-right: 10px;
+      }
+
+      .break-on-tablet {
+        @apply(--layout-horizontal);
+      }
+
+      @media screen and (max-width: 740px) {
+        .break-on-tablet {
+          display: block;
+        }
+      }
+
+      .val {
+        text-decoration: underline;
+      }
+
+      .search-result-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .search-results {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+
+      .search-results .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+
+      .search-results .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+
+      .search-results .row .name {
+        font-size: 18px;
+        margin-left: 10px;
+      }
+
+      .search-results .row .email {
+        font-size: 14px;
+        color: #777777;
+        margin-left: 10px;
+      }
+
+      .search-results .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+
+      .search-results .row .modifier.online {
+        background: #757575;
+      }
+
+      .search-results .row .modifier.local-only {
+        background: #039BE5;
+      }
+
+      .search-results .row .modifier.locally-updated {
+        background: #009688;
+      }
+
+      .search-results .row .modifier.imported {
+        background: #4CAF50;
+      }
+
+      .new-patient-fab {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      paper-button {
+        background: white;
+      }
+
+      .comment-history-item.right {
+        @apply(--layout-end-justified);
+      }
+
+      .header {
+        position: relative;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px
+      }
+
+      .header .title {
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: #009688;
+      }
+      /*custom-vital-search {
+        margin-left: 30px;
+      }*/
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td {
+        color: #444;
+      }
+
+      .table td,
+      .table th {
+        vertical-align: middle;
+        padding: 10px 20px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+      .table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .table.two-col th {
+        text-align: right;
+        background-color: white;
+        width: 50%;
+      }
+
+      .two-col .header th {
+        background-color: var(--paper-grey-50);
+        text-align: center;
+        padding: 20px 0;
+        text-transform: uppercase;
+      }
+
+      .block {
+        display: block
+      }
+
+
+      .pagination li {
+        display: inline-block;
+        list-style: none;
+      }
+
+      .pagination paper-button {
+        min-width: 2em;
+        font-size: 14px;
+        background-color: var(--google-grey-100);
+      }
+
+      .filter-query {
+        --paper-input-container: {
+          width: 250px;
+          padding: 0;
+        }
+        --paper-input-container-label: {
+          font-size: 13px;
+        }
+        --paper-input-container-input: {
+          font-size: 13px;
+        }
+      }
+
+      .search {
+        @apply(--layout-end-justified);
+      }
+
+      @media only screen and (min-width: 320px) and (max-width: 480px) {
+        .table td,
+        .table th {
+          vertical-align: top;
+          font-size: 14px;
+        }
+        .search {
+          margin-top: 10px;
+          @apply(--layout-start-justified);
+        }
+      }
+
+      .type.success {
+        color: var(--paper-green-500);
+      }
+      /*Region - Patient Gallary*/
+
+      .new-attachment-preview {
+        display: block;
+        width: 256px;
+        height: 256px;
+      }
+
+      .descriptive-area {
+        padding: 4px;
+      }
+
+      paper-button {
+        background: white;
+      }
+
+      .print-button-style {
+        float: right;
+        width: 65px;
+        height: 65px;
+      }
+
+      .attachment-card {
+        background: white;
+        /*
+        margin: 4px;
+        padding: 4px;
+        */
+      }
+
+      .image {
+        display: block;
+        max-width: 256px;
+        max-height: 256px;
+        width: 256px;
+        ;
+        height: auto;
+      }
+
+      .footer {
+        margin-top: 4px;
+      }
+
+      .usage {
+        margin-right: 20px;
+      }
+
+      .usage .title {
+        font-size: 36px;
+        text-align: left;
+      }
+
+      .attachment-card-list {
+        margin: 10px 0;
+      }
+
+      .attachment-card-list paper-material {
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+
+      .attachment-card .footer {
+        padding: 10px;
+      }
+
+      .heading {
+        background-color: var(--paper-grey-100);
+      }
+
+      .text-muted {
+        color: var(--paper-grey-500);
+      }
+
+      .label {
+        background-color: #eee;
+        padding: 5px;
+        border-radius: 5px;
+        text-transform: uppercase;
+      }
+
+      .test-result-count {
+        margin-top: 12px;
+        margin-bottom: 12px;
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="tabs-container horizontal layout">
+      <paper-tabs class="flex tabs-container" id="tabs" selected="{{selectedPage}}" scrollable noink='true'>
+        <paper-tab>[[$TRANSLATE('Details',LANG)]]</paper-tab>
+        <paper-tab>[[$TRANSLATE('Advised Test',LANG)]]</paper-tab>
+        <paper-tab>[[$TRANSLATE('Test Results',LANG)]]</paper-tab>
+        <paper-tab>[[$TRANSLATE('Patient Stay',LANG)]]</paper-tab>
+        <paper-tab>[[$TRANSLATE('Invoice',LANG)]]</paper-tab>
+      </paper-tabs>
+    </div>
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <!-- editing patient - start -->
+        <template is="dom-if" if="{{isPatientValid}}">
+          <iron-pages selected="{{selectedPage}}">
+
+            <!-- Page - Demography - start -->
+            <section>
+              <!-- Demography - start -->
+              <paper-card heading="Demography">
+                <div class="card-content">
+
+                  <div class="basic-list">
+
+                    <!-- <div class="layout horizontal">
+                      <iron-image class="avatar" sizing="cover" src="../../images/avatar.png"></iron-image>
+                      <div class="m-horizontal-5 flex">
+                        <div class="type caption m-horizontal-5 bg-gray">DA1234</div>
+                        <div class="type body-lead m-horizontal-5">Mr. John Doe</div>
+                      </div>
+                    </div> -->
+
+                    <div class="layout horizontal center">
+                      <div class="type body-lead capitalize">{{patient.name}}</div>
+                      <div class="m-left-8 type caption bg-gray">{{patient.serial}}</div>
+                    </div>
+                    <div class="type caption secondary">Created on [[$mkDate(patient.createdDatetimeStamp)]] by [[$findCreator(patient.createdByUserSerial)]]</div>
+
+
+
+                    <div class="layout horizontal">
+                      <!-- <div class="type body">Male</div> -->
+                      <div class="type body" hidden$="[[_isEmptyString(patient.dob)]]">[[$computeAge(patient.dob)]]</div>
+                      <!-- <div class="m-left-10 type body">AB+</div> -->
+                      <!-- <div class="m-left-10 type body">5'4"</div> -->
+                      <!-- <div class="m-left-10 type body">65Kgs</div> -->
+                    </div>
+
+                    <div hidden$="[[_isEmptyString(patient.nIdOrSsn)]]">
+                      <iron-icon class="icon small" icon="icons:perm-identity"></iron-icon><span class="type body m-left-10">{{patient.nIdOrSsn}}</span>
+                    </div>
+
+                    <div hidden$="[[_isEmptyString(patient.phone)]]">
+                      <iron-icon class="icon small" icon="communication:phone"></iron-icon><span class="type body m-left-10">{{patient.phone}}</span>
+                    </div>
+                    <div hidden$="[[_isEmptyString(patient.email)]]">
+                      <iron-icon class="icon small" icon="communication:mail-outline"></iron-icon><span class="type body m-left-10"> {{patient.email}}</span>
+                    </div>
+
+                    <div>
+                      <iron-icon hidden$="[[_isEmptyString(patient.address.line1)]]" class="icon small" icon="home"></iron-icon>
+                      <span class="m-left-10" hidden$="[[_isEmptyString(patient.address.line1)]]">{{patient.address.line1}}</span>
+                      <span hidden$="[[_isEmptyString(patient.address.line2)]]">, {{patient.address.line2}}</span>
+                      <span hidden$="[[_isEmptyString(patient.address.postalCode)]]">, {{patient.address.postalCode}}</span>
+                      <span hidden$="[[_isEmptyString(patient.address.cityOrTown)]]">, {{patient.address.cityOrTown}}</span>
+                      <span hidden$="[[_isEmptyString(patient.address.stateOrProvince)]]">, {{patient.address.stateOrProvince}}</span>
+                      <span hidden$="[[_isEmptyString(patient.address.country)]]">, {{patient.address.country}}</span>
+                    </div>
+
+                    <!-- <template is="dom-if" if="[[_isEmptyArray(patient.doctorsPrivateNote)]]"> -->
+                    <div hidden$="[[_isEmptyString(patient.doctorsPrivateNote)]]">
+                      <div class="sp"></div>
+                      <div>
+                        <span class="type bold">Quick Notes (Kept Private): </span>
+                        <span>{{patient.doctorsPrivateNote}}</span>
+                      </div>
+                    </div>
+
+
+                    <!-- </template> -->
+
+
+
+                  </div>
+
+                </div>
+              </paper-card>
+              <!-- Demography - end -->
+            </section>
+            <!-- Page - Demography - end -->
+
+            <!-- Page - Advised Test - start -->
+            <section>
+              <!-- Advised Test - start -->
+              <paper-card heading="Advised Test">
+                <template is="dom-if" if="[[_isEmptyArray(matchingAdvisedTestList)]]">
+                  <div class="card-content layout horizontal center center-justified">
+                    <div class="type body secondary">-- empty --</div>
+                  </div>
+                </template>
+                <template is="dom-if" if="[[!_isEmptyArray(matchingAdvisedTestList)]]">
+                  <div class="p-0">
+                    <paper-listbox>
+
+                      <template id="advised-test-list-repeater" is="dom-repeat" items="[[matchingAdvisedTestList]]">
+
+                        <paper-item class="custom layout horizontal">
+                          <div class="type body"> <span class="type caption secondary m-right-8">[[_returnSerial(index)]]</span>
+                          </div>
+                          <div class="flex">
+                            <template is="dom-repeat" items="{{item.data.testList}}">
+                              <paper-checkbox on-change="advisedTestItemClicked">
+                                <span class="type body-lead">{{item.name}}</span>
+                                <paper-menu-button id="addToInvoice">
+                                  <paper-button raised class="dropdown-trigger btn btn-xs btn-success">Add To Invoice</paper-button>
+                                  <paper-menu id="addToInvoiceDropdownMenu" class="dropdown-content" on-iron-activate="addItemToInvoiceSelected" selected="{{selectedInvoiceIndex}}">
+                                    <template is="dom-repeat" items="[[invoiceList]]">
+                                      <paper-item style="text-transform: uppercase">[[item.referenceNumber]]</paper-item>
+                                    </template>
+                                    <paper-item>Add To New Invoice</paper-item>
+                                  </paper-menu>
+                                </paper-menu-button>
+                              </paper-checkbox>
+                            </template>
+
+                            <div>
+                              <span class="type caption-2">
+                                <strong>Advised by:</strong> {{item.doctorName}} - {{item.doctorSpeciality}}
+                              </span>
+                            </div>
+
+                            <div class="type caption-2"><strong>Advised Date:</strong> [[_formatDateTime(item.createdDatetimeStamp)]]</div>
+                          </div>
+                        </paper-item>
+                      </template>
+                    </paper-listbox>
+                  </div>
+                </template>
+                <div class="card-actions">
+                  <paper-button on-click="_onCreateNewTestResultBtnPressed">
+                    <iron-icon class="icon medium-small m-right-8" icon="add"></iron-icon>New Advise Test</paper-button>
+                  <paper-button raised class="colored" on-tap="_onClickTakeThisTestToResultPage">
+                    <iron-icon class="icon medium-small m-right-8" icon="icons:open-in-new"></iron-icon>GoTo Result</paper-button>
+
+                </div>
+              </paper-card>
+              <!-- Advised Test - end -->
+            </section>
+            <!-- Page - Advised Test - end -->
+
+            <!-- Page - Test Resuls - start -->
+            <section>
+              <!-- Test Results - start -->
+              <div class="test-result-count">You have uploaded [[testResultUploadCount]] test resul(s) so far.</div>
+              <paper-card heading="Test Results">
+                <div class="horizontal layout end-justified p-horizontal-16">
+                  <custom-vital-search on-date-select="testResultsCustomSearchClicked" on-clear="testResultsSearchClearButtonClicked"></custom-vital-search>
+                  <template is="dom-if" if="[[!_isEmptyArray(matchingTestResultsList)]]">
+                    <paper-icon-button class="print-button-style" icon="print" on-tap="printAllTestResultsClicked"></paper-icon-button>
+                  </template>
+                </div>
+                <template is="dom-if" if="[[_isEmptyArray(matchingTestResultsList)]]">
+                  <div class="card-content layout horizontal center center-justified">
+                    <div class="type body secondary">-- empty --</div>
+                  </div>
+                </template>
+                <template is="dom-if" if="[[!_isEmptyArray(matchingTestResultsList)]]">
+                  <div class="p-0">
+                    <paper-listbox>
+
+                      <template id="test-results-list-repeater" is="dom-repeat" items="[[matchingTestResultsList]]">
+
+                        <paper-item class="custom layout horizontal">
+                          <div class="flex">
+                            <template is="dom-if" if="[[_compareFn(item.data.testList.length, '!=', 1)]]">
+                              <div class="type body"> <span class="type body m-right-8">[[_returnSerial(index)]].</span>{{item.investigationName}}</div>
+
+                              <ul>
+                                <template is="dom-repeat" items="{{item.data.testList}}">
+
+                                  <li>
+                                    <div>
+                                      {{item.testName}}: {{item.testResult}} {{item.testUnit}}
+                                    </div>
+                                    <div class="type caption secondary"><strong>Institution/Hospital Name:</strong> {{item.institutionName}}</div>
+                                    <div class="type caption secondary">Date Performed: {{item.datePerform}}</div>
+                                    <div class="type caption secondary">Reference Range: {{item.referenceRange}}</div>
+                                  </li>
+
+                                </template>
+                              </ul>
+
+                              <div>
+                                <span class="type caption-2">
+                                  <strong>Advised by:</strong> {{item.advisedDoctorName}} - {{item.advisedDoctorSpeciality}}
+                                </span>
+                              </div>
+
+                              <div>
+                                <span class="type caption-2">
+                                  <strong>Reported by:</strong> {{item.reportedDoctorName}} - {{item.reportedDoctorSpeciality}}
+                                </span>
+                              </div>
+
+                              <!-- <div class="type caption-2"><strong>Advised Date:</strong> [[_formatDateTime(item.createdDatetimeStamp)]]</div> -->
+                            </template>
+
+                            <template is="dom-if" if="[[_compareFn(item.data.testList.length, '==', 1)]]">
+                              <div class="type body"> <span class="type body m-right-8">[[_returnSerial(index)]].</span>{{item.investigationName}}:
+                                {{item.data.testList.0.testResult}} {{item.data.testList.0.testUnit}}</div>
+
+                              <div class="type caption secondary"><strong>Institution/Hospital Name:</strong> {{item.institutionName}}</div>
+                              <div class="type caption secondary">Date Performed: {{item.data.testList.0.datePerform}}</div>
+                              <div class="type caption secondary">Reference Range: {{item.data.testList.0.referenceRange}}</div>
+
+                              <div>
+                                <span class="type caption-2">
+                                  <strong>Advised by:</strong> {{item.advisedDoctorName}} - {{item.advisedDoctorSpeciality}}
+                                </span>
+                              </div>
+
+                              <div>
+                                <span class="type caption-2">
+                                  <strong>Reported by:</strong> {{item.reportedDoctorName}} - {{item.reportedDoctorSpeciality}}
+                                </span>
+                              </div>
+                            </template>
+
+                            <!-- <div class="type caption-2"><strong>Advised Date:</strong> [[_formatDateTime(item.createdDatetimeStamp)]]</div> -->
+
+                          </div>
+
+                          <div class="type warning" hidden$="[[!item.data.flags.flagAsError]]">Flagged as Error</div>
+
+                          <paper-menu-button class="p-0" vertical-align="bottom" horizontal-align="right" hidden$="[[item.data.flags.flagAsError]]">
+                            <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+                            <paper-menu class="dropdown-content">
+                              <!-- <paper-item on-tap="previewTestResultsItemClicked">
+                                <iron-icon class="m-right-8" icon="icons:launch" item-icon></iron-icon>
+                                Preview
+                              </paper-item>
+                              <paper-item on-tap="editTestResultsItemClicked">
+                                <iron-icon class="m-right-8" icon="icons:create" item-icon></iron-icon>
+                                Edit
+                              </paper-item> -->
+                              <!-- <paper-item on-tap="deleteTestResultsItemClicked">
+                                <iron-icon class="m-right-8" icon="icons:delete" item-icon></iron-icon>
+                                Delete
+                              </paper-item> -->
+                              <paper-item on-tap="flagAsErrorTestResultsItemClicked">
+                                Flag as Error
+                              </paper-item>
+                            </paper-menu>
+                          </paper-menu-button>
+                        </paper-item>
+                      </template>
+                    </paper-listbox>
+                  </div>
+                </template>
+              </paper-card>
+              <!-- Test Results - end -->
+            </section>
+            <!-- Page - Test Resuls - end -->
+
+            <!-- Page - Patient Stay - start -->
+            <section>
+              <!-- Visit - start -->
+              <paper-card heading="Patient Stay">
+
+                <template is="dom-if" if="[[_isEmptyArray(matchingPatientStayList)]]">
+                  <div class="card-content layout horizontal center center-justified">
+                    <div class="type body secondary">-- empty --</div>
+                  </div>
+                </template>
+
+                <template is="dom-if" if="[[!_isEmptyArray(matchingPatientStayList)]]">
+                  <div class="p-0">
+                    <paper-listbox>
+
+                      <template id="patient-stay-list-repeater" is="dom-repeat" items="[[matchingPatientStayList]]" as="patientStay">
+
+                        <paper-item class="custom layout horizontal">
+                          <div class="flex">
+                            <div class="type body layout vertical p-16">
+                              <div class="layout horizontal"><span class="type bold"> Admission Date: </span> <span>&nbsp;[[$mkDate(patientStay.data.admissionDateTimeStamp)]]</span></div>
+                              <div class="type italic">
+                                <span>[[patientStay.data.locationHospitalName]]</span> >
+                                <span>[[patientStay.data.locationDepartment]]</span> >
+                                <span>[[patientStay.data.locationUnit]]</span> >
+                                <span>[[patientStay.data.locationWard]]</span> >
+                                <span>[[patientStay.data.locationBed]]</span>
+                              </div>
+                              <div><span class="type bold">Type: </span> [[patientStay.data.admissionType]]</div>
+                              <template is="dom-if" if="[[patientStay.data.currentLocation.length]]">
+                                <div><span class="type bold"> Current Location:</span> <span>[[patientStay.data.currentLocation.0.location]]</span></div>
+                              </template>
+                              <template is="dom-if" if="[[patientStay.data.dischargeDatetimeStamp]]">
+                                <div><span class="type bold"> Discharge Date:</span> <span>[[$mkDate(patientStay.data.dischargeDatetimeStamp)]]</span></div>
+                              </template>
+                              <template is="dom-if" if="[[patientStay.data.dischargeReason.length]]">
+                                <div><span class="type bold">Discharge Reason: </span> [[patientStay.data.dischargeReason]]</div>
+                              </template>
+
+                              <div>
+                                <template is="dom-if" if="[[patientStay.data.dischargeTo.length]]">
+                                  <span class="type bold"> Discharged To:</span> [[patientStay.data.dischargeTo]]
+                                </template>
+                              </div>
+
+                            </div>
+                            <!-- end of type body div -->
+                          </div>
+                          <template is="dom-if" if="[[patientStay.data.dischargeDatetimeStamp]]">
+                            <span class="type bold danger">Discharged</span>
+                          </template>
+                          <template is="dom-if" if="[[!patientStay.data.dischargeDatetimeStamp]]">
+                            <paper-icon-button icon="create" on-tap="editPatientStayPressed"></paper-icon-button>
+                          </template>
+                          <paper-icon-button icon="icons:visibility" on-tap="printPatientStayPressed"></paper-icon-button>
+                        </paper-item>
+                      </template>
+                    </paper-listbox>
+                  </div>
+                </template>
+
+                <div class="card-actions">
+                  <paper-button class="colored" raised on-tap="createNewPatientStayPressed">New Patient Stay
+                    <iron-icon class="icon medium-small m-left-8" icon="add"></iron-icon>
+                  </paper-button>
+                </div>
+
+              </paper-card>
+              <!-- Visit - end -->
+            </section>
+            <!-- Page - Patient Stay - end -->
+
+            <!-- Page - Invoice - start -->
+            <section>
+              <!-- Invoice Start -->
+              <paper-card heading="Invoice">
+                <div class="card-content">
+                  <paper-item class="heading">
+                    <div class="flex-2"><strong>Date</strong></div>
+                    <div class="flex-2"><strong># Invoice</strong></div>
+                    <div class="flex-2"><strong>Total Billed</strong></div>
+                    <div class="flex-2"><strong>Amt. Received</strong></div>
+                    <div class="flex-4"><strong></strong></div>
+                  </paper-item>
+                  <template is="dom-if" if="[[_isEmptyArray(invoiceList)]]">
+                    <div class="card-content layout horizontal center center-justified">
+                      <div class="type body secondary">-- empty --</div>
+                    </div>
+                  </template>
+                  <template id="invoice-list-repeater" is="dom-repeat" items="[[invoiceList]]" sort="_sortByCreatedDate">
+                    <paper-item>
+                      <div class="flex-2">[[_formatDateTime(item.lastModifiedDatetimeStamp)]]</div>
+                      <div class="flex-2">
+                        <template is="dom-if" if="[[!item.referenceNumber]]">
+                          <strong class="label">[[item.serial]]</strong>
+                        </template>
+                        <template is="dom-if" if="[[item.referenceNumber]]">
+                          <strong class="label">[[item.referenceNumber]]</strong>
+                        </template>
+                      </div>
+                      <div class="flex-2">[[item.totalBilled]] <span class="text-muted">BDT</span></div>
+                      <div class="flex-2">[[item.totalAmountReceieved]] <span class="text-muted">BDT</span></div>
+                      <div class="flex-4 layout horizontal end-justified center">
+                        <div class="type warning" hidden$="[[!item.flags.flagAsError]]">Flagged as Error</div>
+                        <div class="type success" hidden$="[[!item.flags.markAsCompleted]]">Flagged as Completed</div>
+                        <paper-menu-button id="invoiceMenuButton" class="p-0" vertical-align="bottom" horizontal-align="right" hidden$="[[item.flags.flagAsError]]"
+                          close-on-activate>
+                          <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+                          <paper-menu class="dropdown-content">
+                            <paper-item on-tap="previewInvoiceItemClicked">
+                              <iron-icon class="m-right-8" icon="icons:launch" item-icon></iron-icon>
+                              Print Preview
+                            </paper-item>
+                            <!--Do not show if invoice is marked as Completed-->
+                            <template is="dom-if" if="[[!item.flags.markAsCompleted]]">
+                              <paper-item on-tap="editInvoiceItemClicked">
+                                <iron-icon class="m-right-8" icon="icons:create" item-icon></iron-icon>
+                                Edit
+                              </paper-item>
+                              <paper-item on-tap="invoiceMarkedAsCompleteButtonClicked">
+                                <iron-icon class="m-right-8" icon="icons:done" item-icon style="color: green"></iron-icon>
+                                Complete
+                              </paper-item>
+                            </template>
+                            <paper-item on-tap="flagAsErrorInvoiceItemClicked">
+                              <iron-icon class="m-right-8" icon="icons:info-outline" item-icon style="color: red"></iron-icon>
+                              Flag as Error
+                            </paper-item>
+                          </paper-menu>
+                        </paper-menu-button>
+                      </div>
+                    </paper-item>
+                  </template>
+                </div>
+                <div class="card-actions">
+                  <paper-button class="btn btn-success" on-tap="createInvoiceButtonClicked">Create New Invoice</paper-button>
+                </div>
+              </paper-card>
+              <!-- Invoice End -->
+            </section>
+            <!-- Page - Invoice - end -->
+
+          </iron-pages>
+        </template>
+        <!-- editing patient - end -->
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-patient-viewer.coffee-compiled.js"></script>
+</dom-module>

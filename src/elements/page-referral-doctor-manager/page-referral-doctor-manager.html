@@ -1,0 +1,319 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+
+
+<link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-referral-doctor-manager">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+        width: 90%;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .header {
+        background-color: var(--paper-grey-100);
+        padding: 15px;
+      }
+
+      .label {
+        background-color: var(--paper-grey-100);
+        padding: 5px;
+      }
+
+      .border-bottom {
+        border-bottom: 1px solid rgb(235, 230, 230);
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      paper-dialog {
+      min-width: 450px;
+      }
+      
+      .top-margin {
+      margin-top: 10px
+      }
+      
+      .table {
+      width: 100%;
+      border-collapse: collapse;
+      }
+      
+      .table th {
+      text-align: left;
+      background-color: var(--paper-grey-50);
+      }
+      
+      .table td,
+      .table th {
+      vertical-align: left;
+      padding: 10px;
+      border: 1px solid var(--paper-grey-300);
+      }
+      
+      paper-progress {
+      width: 100%;
+      --paper-progress-active-color: var(--paper-orange-500);
+      }
+      
+      .card-custom-header {
+      padding: 15px;
+      border-bottom: 1px solid var(--paper-grey-200);
+      }      
+    </style>
+
+    
+    <!-- <module-accounts-top-nav page-name="referral-doctor-manager" organization-id="[[organization.idOnServer]]"></module-accounts-top-nav> -->
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <template is="dom-if" if="[[isLoading]]">
+          <div class="layout horizontal center type bold text-center">
+            <paper-progress indeterminate></paper-progress>
+          </div>
+          <h2 class="type center">[[$TRANSLATE('Please Wait, Loading', LANG)]]...</h2>
+        </template>
+
+
+        <paper-card heading="[[$TRANSLATE('Referral Doctor Manager', LANG)]]">
+          <div class="card-actions">
+            <paper-button class="btn btn-success" raised on-tap="_addNewDoctorButtonClicked">+ [[$TRANSLATE('Add a New Doctor', LANG)]]</paper-button>
+              <paper-menu-button class="p-0" vertical-align="top" horizontal-align="right">
+                <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+                <paper-menu class="dropdown-content">
+                  <paper-item on-tap="showBulkImportForm">
+                    <iron-icon class="m-right-8" icon="icons:cloud-upload"></iron-icon>[[$TRANSLATE('Bulk Import/Export', LANG)]]
+                    </iron-icon>
+                  </paper-item>
+                  <paper-item on-tap="_exportBtnPressed">
+                    <iron-icon class="m-right-8" icon="icons:file-download"></iron-icon>[[$TRANSLATE('Export', LANG)]]
+                  </paper-item>
+                  <!-- <paper-item on-tap="_downloadDemoTemplate"><iron-icon class="m-right-8" icon="icons:file-download"></iron-icon>Download CSV Template (Demo)</paper-item> -->
+                </paper-menu>
+              </paper-menu-button>
+          </div>
+          <div class="card-content custom-input-field">
+
+            <div class="layout horizontal end wrap">
+              <paper-input type="search" class="filter-query m-right-8" label="[[$TRANSLATE('Filter By Mobile', LANG)]]" no-label-float value="{{searchString}}"></paper-input>
+
+              <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
+              <div class="flex"></div>
+              <paper-button class="btn btn-success" raised on-tap="searchButtonClicked">[[$TRANSLATE('Search', LANG)]]</paper-button>
+              <paper-button raised on-tap="resetButtonClicked">[[$TRANSLATE('Reset', LANG)]]</paper-button>
+            </div>
+          </div>
+          <div class="card-content">
+            <!-- <template is="dom-if" if="[[!thirdPartyPaymentList.length]]">
+              <h3 class="type center">[[$TRANSLATE('NO DATA YET', LANG)]]</h3>
+            </template> -->
+            
+              <vaadin-grid class="" items="[[doctorList]]">
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <vaadin-grid-sorter path="name">
+                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Name', LANG)]]" path="name"
+                        value="[[filterName]]">
+                        <paper-input label="[[$TRANSLATE('Name', LANG)]]" value="{{filterName}}" no-label-float>
+                        </paper-input>
+                      </vaadin-grid-filter>
+                    </vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[item.name]]
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <vaadin-grid-sorter path="phone">
+                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Mobile', LANG)]]" path="phone"
+                        value="[[filterMobile]]">
+                        <paper-input label="[[$TRANSLATE('Mobile', LANG)]]" value="{{filterMobile}}" no-label-float>
+                        </paper-input>
+                      </vaadin-grid-filter>
+                    </vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[item.phone]]
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <vaadin-grid-sorter path="email">
+                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Email', LANG)]]" path="email"
+                        value="[[filterEmail]]">
+                        <paper-input label="[[$TRANSLATE('Email', LANG)]]" value="{{filterEmail}}" no-label-float>
+                        </paper-input>
+                      </vaadin-grid-filter>
+                    </vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[item.email]]
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <vaadin-grid-sorter path="address">
+                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Address', LANG)]]" path="address"
+                        value="[[filterAddress]]">
+                        <paper-input label="[[$TRANSLATE('Address', LANG)]]" value="{{filterAddress}}" no-label-float>
+                        </paper-input>
+                      </vaadin-grid-filter>
+                    </vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[item.address]]
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+
+
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    [[$TRANSLATE('Actions', LANG)]]
+                  </template>
+                  <template>
+                    <div class="layout horizontal">
+                      <paper-icon-button style="color: green;" on-tap="_editDoctor" icon="create"></paper-icon-button>
+                      <paper-icon-button style="color: red;" on-tap="_deleteDoctor" icon="delete"></paper-icon-button>
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+              </vaadin-grid>
+
+          </div>
+        </paper-card>
+
+        <!-- Dialog for - Add New doctor - start -->
+        <paper-dialog class="custom-input-field" id="addNewDoctorDialog">
+          <div class="type body-lead" style="color: green;">
+            <iron-icon icon="add" class="m-right-8 m-bottom-8"></iron-icon>[[$TRANSLATE('Add Doctor Details', LANG)]]
+          </div>
+          <paper-input label="[[$TRANSLATE('Name', LANG)]]" value="{{referralDoctorObj.name}}"></paper-input>
+          <paper-input label="[[$TRANSLATE('Mobile', LANG)]]" value="{{referralDoctorObj.phone}}" required></paper-input>
+          <paper-input label="[[$TRANSLATE('Email', LANG)]]" value="{{referralDoctorObj.email}}"></paper-input>
+          <paper-input label="[[$TRANSLATE('Address', LANG)]]" value="{{referralDoctorObj.address}}"></paper-input>
+
+          <div class="buttons">
+            <paper-button dialog-dismiss>[[$TRANSLATE('Dismiss', LANG)]]</paper-button>
+            <paper-button class="colored" on-click="_addDoctor" autofocus raised>[[$TRANSLATE('Add', LANG)]]</paper-button>
+          </div>
+        </paper-dialog>
+        <!-- Dialog for - Add New doctor - end -->
+
+        <!-- dialog - bulk import - start -->
+        <paper-dialog id="dialogBulkImport">
+          <div class="p-16">
+            <h2>Doctor Bulk Import</h2>
+            <div class="type body">
+              <ol>
+                <li>Export CSV from the organization you are trying to get referral doctors list from</li>
+                <li>Come back here and Choose your csv file and Click 'Import' Button in order to import</li>
+              </ol>
+              <div class="type caption-2"><i>*Maximum 500 doctors allowed to upload at a time, you can edit your csv on google sheet</i></div>
+            </div>
+
+
+            <div class="layout horizontal">
+              <input id="inputCsvFile" class="p-24 m-top-16" type='file' on-change='openFile'>
+            </div>
+            <div class="buttons">
+              <paper-button dialog-dismiss class="custom-button">Close</paper-button>
+              <template is="dom-if" if="{{IMPORT_DONE}}">
+                <paper-button on-tap="onClearImportBulkBtnPressed" class="custom-button">Clear</paper-button>
+              </template>
+              <template is="dom-if" if="{{!IMPORT_DONE}}">
+                <paper-button on-tap="onBulkImportBtnPressed" raised class="custom-button colored">Import</paper-button>
+              </template>
+            </div>
+
+
+            <div id="importResult">
+              <template is="dom-if" if="{{bulkImportLog}}">
+                <div class="type body"><span class="type text-success">Success: {{bulkImportLog.counter.success}}</span>, <span
+                    class="type text-success">Failed: {{bulkImportLog.counter.failed}}</span></div>
+                <template is="dom-repeat" items="{{bulkImportLog.stats}}">
+                  <div class="type caption horizontal layout">
+                    <div class="m-right-8">[[$returnSerial(index)]].</div>
+                    <div class$="type text-{{item.status}}">[[item.name]] : [[item.comments]]</div>
+                  </div>
+                </template>
+              </template>
+            </div>
+
+          </div>
+        </paper-dialog>
+        <!-- dialog - bulk import - end -->
+      </div>
+
+    </div>
+
+
+
+  </template>
+  <script src="page-referral-doctor-manager.coffee-compiled.js"></script>
+</dom-module>

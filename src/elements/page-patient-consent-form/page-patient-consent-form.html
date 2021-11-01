@@ -1,0 +1,264 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/page-like.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-patient-consent-form">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .group {
+        @apply(--layout-vertical);
+        background-color: var(--paper-grey-50);
+        padding: 10px;
+        border-radius: 5px;
+      }
+
+      .group img {
+        max-width: 150px;
+        height: auto;
+      }
+    </style>
+
+    <div class="master-container">
+      <div class="limiting-container">
+        <paper-card heading="Consent Form">
+          <div class="card-content custom-input-field">
+
+            <div class="group">
+              <div class="layout horizontal wrap">
+                <paper-input class="flex-2" label="Patient's Name" value="[[consentForm.data.patientName]]" readonly></paper-input>
+                <paper-input class="m-left-8 flex" value="[[$computeAge(patient.dateOfBirth)]]" label="Age" disabled></paper-input>
+              </div>
+              <paper-input label="Cabin/Ward/Bed" value="{{consentForm.data.location}}"></paper-input>
+              <paper-input type="file" accept="image/*" on-change="patientSignatureFileInputChanged" label="Patient's Signature"></paper-input>
+              <template is="dom-if" if="[[consentForm.data.patientSignatureDataUri]]">
+                <div><img class="logo-preview" src$="[[consentForm.data.patientSignatureDataUri]]" /></div>
+              </template>
+            </div>
+
+            <div class="m-top-16 group">
+              <div class="layout horizontal wrap">
+                <paper-input class="flex" label="Representative Name" value="{{consentForm.data.representativeName}}"></paper-input>
+                <paper-input class="m-left-8 flex" label="Representative Relation" value="{{consentForm.data.representativeRelation}}"></paper-input>
+              </div>
+
+              <paper-textrea label="Representative Address" value="{{consentForm.data.representativeAddress}}"></paper-textrea>
+              <paper-input label="Representative Contact No." value="{{consentForm.data.representativeContactNumber}}"></paper-input>
+              <paper-input type="file" accept="image/*" on-change="representativeSignatureFileInputChanged" label="Representative Signature"></paper-input>
+              <template is="dom-if" if="[[consentForm.data.representativeSignatureDataUri]]">
+                <div><img class="logo-preview" src$="[[consentForm.data.representativeSignatureDataUri]]" /></div>
+              </template>
+            </div>
+
+            <div class="m-top-16 group">
+              <paper-input class="flex" label="Witness Name" value="{{consentForm.data.witnessName}}"></paper-input>
+              <paper-textrea label="Witnes Address" value="{{consentForm.data.witnessAddress}}"></paper-textrea>
+              <paper-input label="Witnes Contact No." value="{{consentForm.data.witnessContactNumber}}"></paper-input>
+              <paper-input type="file" accept="image/*" on-change="witnessSignatureFileInputChanged" label="Witnes Signature"></paper-input>
+              <template is="dom-if" if="[[consentForm.data.witnessSignatureDataUri]]">
+                <div><img class="logo-preview" src$="[[consentForm.data.witnessSignatureDataUri]]" /></div>
+              </template>
+            </div>
+
+            <div class="m-top-16 group">
+              <paper-input label="Surgeons's Name" value="{{consentForm.data.doctorName}}"></paper-input>
+              <paper-input label="Assistant's Name" value="{{consentForm.data.assistantName}}"></paper-input>
+              <paper-input label="Anaesthesist's Name" value="{{consentForm.data.anaesthesistName}}"></paper-input>
+              <paper-input label="Operation Name" value="{{consentForm.data.operationName}}"></paper-input>
+            </div>
+
+            <div class="m-top-16 group">
+              <paper-textarea rows="2" label="Consent Details" value="{{consentForm.data.details}}"></paper-textarea>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <paper-button class="btn btn-default" on-tap="consentFormCancelButtonClicked">Cancel</paper-button>
+            <paper-button class="btn btn-success" on-tap="consentFormSaveButtonClicked">SAVE</paper-button>
+          </div>
+        </paper-card>
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'page-patient-consent-form',
+      behaviors: [
+        app.behaviors.commonComputes,
+        app.behaviors.dbUsing,
+        app.behaviors.pageLike
+      ],
+      properties: {
+        user: Object,
+        patient: Object,
+        organization: Object,
+        consentForm: Object,
+        consentFormText: String
+      },
+
+      _getPatientsCurrentOperationName (patientIdentifier) {
+        list = app.db.find('visit-patient-stay', ({ patientSerial }) => patientSerial === patientIdentifier);
+        if (list.length === 0) return '';
+        objectFound = (list.filter ((item) => item.data.dischargeDatetimeStamp === null))[0];
+
+        if (!objectFound) return ''
+
+        return objectFound.data.operationName
+
+      },
+
+      navigatedIn() {
+        const params = this.domHost.getPageParams()
+        this._loadUser();
+        this._loadOrganization();
+        this._loadPatient(params['patient']);
+        this._makeNewConsentForm();
+        this._loadConsentDetails();
+      },
+
+      _loadPatient(patientIdentifier) {
+        const list = app.db.find('patient-list', ({ serial }) => serial === patientIdentifier);
+        if (list.length) {
+          this.patient = list[0];
+        } else {
+          return this.domHost.showModalDialog('Invalid Patient');
+        }
+      },
+
+      _loadUser(cbfn) {
+        const userList = app.db.find('user');
+        if (userList.length === 1) {
+          this.user = userList[0];
+        } else {
+          return this.domHost.showModalDialog('Invalid User');
+        }
+      },
+
+      _loadOrganization(cbfn) {
+        const organizationList = app.db.find('organization');
+        if (organizationList.length) {
+          this.set('organization', organizationList[0]);
+        } else {
+          return this.domHost.showModalDialog('Invalid Organization');
+        }
+      },
+
+      _loadConsentDetails() {
+        const list = app.db.find('organization-settings', ({ serial }) => serial === this.organization.idOnServer);
+        if (list.length) {
+          const organizationSettings = list[0];
+          console.log(organizationSettings)
+          this.set('consentForm.data.details', organizationSettings.data.nocText || '')
+        }
+      },
+
+      arrowBackButtonPressed() {
+        return this.domHost.navigateToPreviousPage()
+      },
+
+      _makeNewConsentForm() {
+        return this.consentForm = {
+          serial: '',
+          createdDatetimeStamp: lib.datetime.now(),
+          lastModifiedDatetimeStamp: null,
+          patientSerial: this.patient.serial,
+          createByUserSerial: this.user.serial,
+          organizationId: this.organization.idOnServer,
+          data: {
+            patientName: this.$getFullName(this.patient.name),
+            patientDateOfBirth: this.patient.dateOfBirth,
+            representativeName: this.patient.emergencyContact ? this.patient.emergencyContact.name : '',
+            representativeRelation: this.patient.emergencyContact ? this.patient.emergencyContact.relation : '',
+            representativeAddress: this.patient.emergencyContact ? this.patient.emergencyContact.address : '',
+            representativeContactNumber: this.patient.emergencyContact ? this.patient.emergencyContact.contact : '',
+            witnessName: '',
+            witnessAddress: '',
+            doctorName: '',
+            assistantName: '',
+            location: '',
+            operationName: this._getPatientsCurrentOperationName(this.patient.serial),
+            anaesthesistName: '',
+            representativeSignatureDataUri: '',
+            patientSignatureDataUri: '',
+            witnessSignatureDataUri: '',
+            details: ''
+          }
+        };
+      },
+
+      consentFormCancelButtonClicked() {
+        this._makeNewConsentForm()
+        this.arrowBackButtonPressed()
+      },
+
+      consentFormSaveButtonClicked() {
+        this.consentForm.serial = this.generateConsentFormSerial();
+        this.consentForm.lastModifiedDatetimeStamp = lib.datetime.now();
+        app.db.upsert('patient-consent-form', this.consentForm, ({ serial }) => serial === this.consentForm.serial);
+        this.domHost.showSuccessToast('Saved Successfully');
+        this.arrowBackButtonPressed()
+      },
+
+      patientSignatureFileInputChanged(e) {
+        const reader = new FileReader;
+        const file = e.target.files[0];
+        if (file.size > (1000 * 1000)) {
+          this.domHost.showModalDialog('Please provide a file less than 1mb in size.');
+          return;
+        }
+        reader.readAsDataURL(file);
+        return reader.onload = () => {
+          const dataUri = reader.result;
+          return this.set('consentForm.data.patientSignatureDataUri', dataUri);
+        };
+      },
+
+      representativeSignatureFileInputChanged(e) {
+        const reader = new FileReader;
+        const file = e.target.files[0];
+        if (file.size > (1000 * 1000)) {
+          this.domHost.showModalDialog('Please provide a file less than 1mb in size.');
+          return;
+        }
+        reader.readAsDataURL(file);
+        return reader.onload = () => {
+          const dataUri = reader.result;
+          return this.set('consentForm.data.representativeSignatureDataUri', dataUri);
+        };
+      },
+
+      witnessSignatureFileInputChanged(e) {
+        const reader = new FileReader;
+        const file = e.target.files[0];
+        if (file.size > (1000 * 1000)) {
+          this.domHost.showModalDialog('Please provide a file less than 1mb in size.');
+          return;
+        }
+        reader.readAsDataURL(file);
+        return reader.onload = () => {
+          const dataUri = reader.result;
+          return this.set('consentForm.data.witnessSignatureDataUri', dataUri);
+        };
+      }
+
+
+    })
+  </script>
+
+</dom-module>

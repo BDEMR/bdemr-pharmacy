@@ -1,0 +1,1290 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower-assets/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-ndr-editor">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      paper-tabs.basic-tabs {
+        --paper-tabs-selection-bar: {
+          color: var(--paper-teal-500);
+          background-color: var(--paper-teal-500);
+        }
+        font-weight: 18px;
+      }
+
+      vaadin-date-picker ::content .paper-input-container-2 {
+        padding: 0 !important;
+      }
+
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .patient-info-card-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .patient-info-cards {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+
+      .patient-info-cards .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+
+      .patient-info-cards .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+
+      .patient-info-cards .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+
+      .patient-info-cards .row .modifier.online {
+        background: #757575;
+      }
+
+      .patient-info-cards .row .modifier.local-only {
+        background: #039BE5;
+      }
+
+      .patient-info-cards .row .modifier.locally-updated {
+        background: #009688;
+      }
+
+      .patient-info-cards .row .modifier.imported {
+        background: #4CAF50;
+      }
+
+      /*.info-row {
+        margin-top: 10px;
+      }*/
+
+      .top-info-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      .address1 {
+        margin-right: 10px;
+      }
+
+      .break-on-tablet {
+        @apply(--layout-horizontal);
+      }
+
+      @media screen and (max-width: 740px) {
+        .break-on-tablet {
+          display: block;
+        }
+      }
+
+      .val {
+        text-decoration: underline;
+      }
+
+      .custom-input{
+        margin-left: 8px;
+        margin-right: 8px;
+        width: calc(100% - 16px);
+      }
+
+      @media screen and (min-width: 656px) {
+        .custom-input{
+          width: calc(50% - 16px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .custom-input{
+          width: calc(33.33333% - 16px);
+        }
+      }
+
+      .custom-checkbox {
+        width: calc(100% - 16px);
+        margin-left: 8px;
+        margin-right: 8px;
+      }
+
+      @media screen and (min-width: 656px) {
+        .custom-checkbox {
+          width: calc(50% - 16px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .custom-checkbox {
+          width: calc(33.33333% - 16px);
+        }
+      }
+
+      .card-custom-header {
+        padding: 8px;
+        /*border-bottom: 1px solid var(--paper-grey-200);*/
+        background-color: var(--paper-grey-50);
+      }
+
+      .deep {
+        background-color: var(--paper-grey-200);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        color: var(--brand-primary-color);
+      }
+
+      vaadin-combo-box ::content paper-input-container {
+        padding: 8px 0;
+      }
+
+      .custom-radio-button-group {
+        margin: 8px;
+        width: calc(100% - 16px);
+      }
+
+      @media screen and (min-width: 656px) {
+        .custom-radio-button-group {
+          width: calc(50% - 16px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .custom-radio-button-group {
+          width: calc(33.33333% - 16px);
+        }
+      }
+
+      .btn-add {
+        min-width: 3em;
+      }
+
+      .custom-item {
+        padding: 6px 12px;
+        border-radius: 6px;
+        margin: 6px 4px;
+        border: 1px solid #dadada;
+        background-color: #fff
+      }
+
+      .full-width {
+        width: calc(100% - 16px) !important;
+      }
+      .full {
+        width: calc(100% - 26px) !important;
+      }
+
+      .profile-image {
+        height: 78px;
+        width: 78px;
+        border-radius: 50%;
+        border: 2px solid #f7f7f7;
+      }
+      .card-item {
+        border-radius: 6px;
+        margin: 4px;
+        border: 1px solid #eee;
+        background-color: #fff;
+        position: relative;
+      }
+      .btn-add {
+        min-width: 0;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+        background-color: #eceff1;
+        color: rgba(0, 0, 0, .87);
+      }
+
+      .btn-add.small {
+        margin: 3px;
+        font-size: 14px;
+      }
+
+      .custom-label {
+        padding: 4px 8px;
+        border: 1px solid #dadada;
+        border-radius: 6px;
+        margin: 8px;
+        /*background-color: #f7f7f7;*/
+        width: calc(100% - 34px);
+      }
+
+      .custom-label-2 {
+        padding: 4px 8px;
+        border: 1px solid #dadada;
+        border-radius: 6px;
+        margin: 8px;
+        /*background-color: #f7f7f7;*/
+        width: calc(100% - 34px);
+      }
+
+      @media screen and (min-width: 656px) {
+        .custom-label {
+          width: calc(50% - 34px);
+        }
+        .custom-label-2 {
+          width: calc(50% - 34px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .custom-label {
+          width: calc(33.33333% - 34px);
+        }
+        .custom-label-2 {
+          width: calc(33.33333% - 34px);
+        }
+      }
+
+      .bg-gray {
+        padding: 3px 6px;
+        display: table;
+      }
+
+      .custom-input ::content paper-input-container [suffix] {
+        color: rgba(0,0,0, .54) !important;
+      }
+
+      .custom-label-2.normal {
+        border-color: #43A047;
+        color: #43A047 !important;
+      }
+
+      .custom-label-2.warning {
+        border-color: #E65100;
+        color: #E65100 !important;
+      }
+
+      .custom-label-2.danger {
+        border-color: #E53935;
+        color: #E53935 !important;
+      }
+
+      .fixed-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+      }
+
+      .basic-tabs paper-tab {
+        font-size: 16px;
+        text-transform: uppercase;
+        color: var(--paper-teal-600);
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+        <!-- Page :: New Visit - Start -->
+        <paper-card>
+
+
+          <!-- headline - start -->
+          <div class="card-item p-8">
+            <div class="horizontal layout center">
+              <iron-image class="profile-image m-right-8" src="../../assets/img/partners/badas.jpg" preload sizing="cover"></iron-image>
+              <div class="flex">
+                <div class="p-horizontal-4 type headline">Nationwide Diabetic Registry</div>
+                <div class="horizontal layout wrap type caption-2">
+                  <template is="dom-if" if="{{ndr.serial}}">
+                    <div class="m-horizontal-4">
+                      Record: {{ndr.serial}}
+                    </div>
+                  </template>
+                  <template is="dom-if" if="{{!ndr.serial}}">
+                    <div class="m-horizontal-4">
+                      Record: New
+                    </div>
+                  </template>
+                  
+                  <div class="m-horizontal-4">
+                    Created on: {{$mkDateTime(ndr.createdDatetimeStamp)}}
+                  </div>
+                  <div class="m-horizontal-4">
+                    Created by: {{ndr.createdByUserName}}
+                  </div>
+                  <div class="m-horizontal-4">
+                    Last Modified on: {{$mkDateTime(ndr.lastModifiedDatetimeStamp)}}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="horizontal layout center end-justified m-top-16">
+              <paper-button class="btn-add" on-tap="printButtonPressed"><iron-icon icon="icons:print" class="m-right-8"></iron-icon>Print</paper-button>
+              <paper-button raised class="btn-add colored" on-tap="saveButtonPressed"><iron-icon icon="icons:save" class="m-right-8"></iron-icon>Save</paper-button>
+            </div> -->
+          </div>
+          <!-- headline - end -->
+
+          <!-- patient details - start -->
+          <div class="card-item p-8">
+            <!-- <div class="type body-lead primary m-horizontal-4">Patient Details</div> -->
+            <div class="horizontal layout wrap center">
+              <iron-image class="profile-image m-right-8" src$="[[patient.profileImage]]" preload sizing="cover"></iron-image>
+
+              <div class="flex">
+                <div class="m-horizontal-4 horizontal layout center wrap">
+                  <div class="type body-lead capitalize">{{$getFullName(patient.name)}}</div>
+                  <div class="m-left-8 type caption bg-gray">{{patient.serial}}</div>
+                </div>
+                <div class="horizontal layout wrap type caption-2">
+
+                  <!-- <template is="dom-if" if="[[!patient.isForOrganizationOnly]]"> -->
+
+                  <div class="m-horizontal-4">
+                    <span>Sex: </span>
+                    <span>{{patient.gender}}</span>
+                  </div>
+                  <div class="m-horizontal-4">
+                    <span>Age: </span>
+                    <span>[[$computeAge(patient.dateOfBirth)]] </span>
+                  </div>
+                  <div class="m-horizontal-4">
+                    <span>Blood Group: </span>
+                    <span> [[patient.bloodGroup]]</span>
+                  </div>
+                  <div class="m-horizontal-4">
+                    <span>Allergy: </span>
+                    <span>[[patient.allergy]] </span>
+                  </div>
+                  <!-- </template> -->
+
+                  <!-- <template is="dom-if" if="[[patient.isForOrganizationOnly]]">
+                    <div class="m-horizontal-4">
+                      <span>Patient Name: </span>
+                      <i>REDACTED FOR CONFIDENTIALITY</i>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <span>Age: </span>
+                      <i>REDACTED FOR CONFIDENTIALITY</i>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <span>Blood Group: </span>
+                      <span>[[patient.bloodGroup]]</span>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <span>Allergy: </span>
+                      <span>[[patient.allergy]]</span>
+                    </div>
+                  </template> -->
+                </div>
+              </div>
+            </div>
+            <paper-icon-button icon="create" class="fixed-btn" on-tap="editPatientBtnPressed"></paper-icon-button>
+          </div>
+          <!-- patient details - end -->
+
+          <paper-tabs selected="{{selectedPage}}" noink='true' scrollable class="basic-tabs">
+            <paper-tab>General</paper-tab>
+            <paper-tab>Diabetes History</paper-tab>
+            <paper-tab>Examination</paper-tab>
+            <paper-tab>Investigation</paper-tab>
+            <paper-tab>Complication</paper-tab>
+            <paper-tab>Personal Habit(s)</paper-tab>
+            <paper-tab>Family History</paper-tab>
+            <paper-tab>Previous Advice</paper-tab>
+            <paper-tab>Current Advice</paper-tab>
+          </paper-tabs>
+          
+          <iron-pages selected="{{selectedPage}}">
+
+            <!-- visit reason - start -->
+            <div class="card-item p-8">
+              <div class="type body-lead primary m-horizontal-4">
+                <span>Visit Details</span>
+                <template is="dom-if" if="[[EDIT_MODE_ON]]">
+                  <span>: {{ndr.data.visitType}}</span>
+                </template>
+              </div>
+              <template is="dom-if" if="[[EDIT_MODE_ON]]">
+                <div class="type caption-2 secondary m-horizontal-4">Visit Date: {{ndr.data.visitDate}}</div>
+              </template>
+              <template is="dom-if" if="[[!EDIT_MODE_ON]]">
+                <div class="horizontal layout wrap center">
+
+                  <vaadin-combo-box class="flex m-horizontal-8" label="Visit Type" items="{{visitTypeList}}" allow-custom-value="true" value="{{ndr.data.visitType}}"></vaadin-combo-box>
+
+                  <!-- <paper-dropdown-menu class="flex m-horizontal-4" label="Visit Type" placeholder="Type/Select Reason" value="{{ndr.data.visitType}}" vertical-align="top" horizontal-align="left">
+                    <paper-menu class="dropdown-content" selected="{{visitTypeIndex}}">
+                      <template is="dom-repeat" items="[[visitTypeList]]">
+                        <paper-item>{{item}}</paper-item>
+                      </template>
+                    </paper-menu>
+                  </paper-dropdown-menu> -->
+                  <vaadin-date-picker class="m-horizontal-8" type="date" value="{{ndr.data.visitDate}}" label="Visit Date"></vaadin-date-picker>
+                </div>
+                
+              </template>
+            </div>
+            <!-- visit reason - end -->
+
+          <!-- Diabetcs Status - start -->
+          <div class="card-item p-8">
+            <div class="type body-lead primary m-horizontal-4">Diabetes History</div>
+            <div class="horizontal layout wrap">
+              <div class="custom-label-2">
+                <div class="horizontal layout wrap center">
+                  <div>Symptomatic?: </div>
+                  <paper-radio-group selected="{{ndr.data.symptomatic.isYes}}">
+                    <paper-radio-button name="yes">Yes</paper-radio-button>
+                    <paper-radio-button name="no">No</paper-radio-button>
+                  </paper-radio-group>
+                </div>
+                <paper-dropdown-menu hidden$="[[!$equals(ndr.data.symptomatic.isYes, 'yes')]]" class="custom-input full-width" label="Select Type" value="{{ndr.data.symptomatic.value}}">
+                  <paper-menu class="dropdown-content">
+                    <template is="dom-repeat" items="{{symptomaticTypeList}}">
+                      <paper-item>[[item]]</paper-item>
+                    </template>
+                  </paper-menu>
+                </paper-dropdown-menu>
+              </div>
+
+              <div class="custom-label-2">
+                <div class="horizontal layout wrap center">
+                  <div></div>
+                  <paper-radio-group selected="{{ndr.data.diabeticsInfo.patientType}}">
+                    <paper-radio-button name="Old Patient">Old Patient</paper-radio-button>
+                    <paper-radio-button name="New Patient">New Patient</paper-radio-button>
+                  </paper-radio-group>
+                </div>
+                <template is="dom-if" if="[[ndr.data.diabeticsInfo.patientType]]">
+                  <paper-dropdown-menu class="custom-input full-width" label="Diabetes Duration" value="{{ndr.data.diabeticsInfo.duration}}">
+                    <paper-menu class="dropdown-content" selected="0">
+                      <template is="dom-repeat" items="{{dmStatusList}}">
+                        <paper-item>[[item]]</paper-item>
+                      </template>
+                    </paper-menu>
+                  </paper-dropdown-menu>
+                </template>
+                
+
+              </div>
+            </div>
+            
+            <div class="horizontal layout wrap">
+              <paper-input class="custom-input" label="Registration Centre" value="{{ndr.data.registeredCenter.name}}"></paper-input>
+              <paper-input class="custom-input" label="Patient Guide Book No." value="{{ndr.data.diabeticsInfo.patientBookSerial}}"></paper-input>
+              
+              <paper-dropdown-menu class="custom-input" label="Type of Diabetes" value="{{ndr.data.diabeticsInfo.typeOfDiabetics}}">
+                <paper-menu class="dropdown-content" selected="0">
+                  <paper-item>Type 1</paper-item>
+                  <paper-item>Type 2</paper-item>
+                  <paper-item>Gestational Diabetes</paper-item>
+                  <paper-item>Others</paper-item>
+                </paper-menu>
+              </paper-dropdown-menu>
+              <!-- <paper-input type="number" class="custom-input" label="Diabetics Duration" value="{{ndr.data.diabeticsInfo.diabeticsDuration}}"></paper-input> -->
+            </div>
+          </div>
+          <!-- Diabetcs Status - end -->
+
+          <!-- Cinical - start -->
+          <div class="card-item p-8">
+            <div class="type body-lead primary m-horizontal-4">General Examination</div>
+            <div class="custom-label m-4 full horizontal layout center wrap">
+              <paper-input class="flex custom-input" value="{{customExamination.name}}" label="Name">
+              </paper-input>
+              <paper-input class="custom-input" value="{{customExamination.unit}}" label="Unit">
+              </paper-input>
+              <paper-button class="btn-add" on-tap="addCustomExamination">Add New</paper-button>
+            </div>
+            <div class="horizontal layout wrap">
+              <template is="dom-if" if="[[_compareFn(bmi.calculatedBMI, '>', 0)]]">
+                <div class$="custom-label-2 {{bmi.class}} horizontal layout center">
+                  <div class="flex">
+                    <div class="type body-lead">
+                      <strong>BMI: </strong>{{bmi.calculatedBMI}}</div>
+                    <div class="type body">{{bmi.classification}}</div>
+                  </div>
+                </div>
+              </template>
+              <template is="dom-if" if="[[waistHipRatio.value]]">
+                <div class$="custom-label-2 {{waistHipRatio.class}} horizontal layout center">
+                  <div class="flex">
+                    <div class="type body-lead"><strong>Waist-Hip Ratio: </strong>{{waistHipRatio.value}}</div>
+                    <div class="type body">{{waistHipRatio.comment}}</div>
+                  </div>
+                </div>
+              </template>
+              <template is="dom-if" if="[[!_compareFn(hypertension.type, '==', '')]]">
+                <div class$="custom-label-2 {{hypertension.class}} horizontal layout center">
+                  <div class="flex">
+                    <div class="type body-lead">
+                      <strong>Hypertension Type: </strong>{{hypertension.type}}, </div>
+                    <div class="type body">
+                      <strong>Comment: </strong>{{hypertension.comment}}</div>
+                  </div>
+                  <!-- <paper-icon-button icon="close" on-tap="hideHypertension"></paper-icon-button> -->
+                </div>
+              </template>
+            </div>
+            <div class="horizontal layout wrap">
+              <template id="examination-test-list-repeater" is="dom-repeat" items=[[ndr.data.clinicalInfoList]]>
+
+                <paper-input type="{{item.inputType}}" class="custom-input" label="{{item.name}}" value="{{item.value}}" on-change="computeClinicalData">
+                  <div suffix>{{item.unit}}</div>
+                </paper-input>
+
+                <template is="dom-if" if="[[item.isCustom]]">
+                  <paper-icon-button icon="delete" on-tap="deleteExamination"></paper-icon-button>
+                </template>
+                
+              </template>
+            </div>
+          </div>
+          <!-- Cinical - end -->
+
+          <!-- Laboratory - start -->
+          <div class="card-item p-8">
+            <div class="horizontal layout center wrap">
+              <div class="type body-lead primary m-horizontal-4">Laboratory Investigation</div>
+              <div class="flex"></div>
+              <paper-dropdown-menu class="custom-input" label="Type">
+                <paper-menu class="dropdown-content" selected="0">
+                  <paper-item>Social Welfare</paper-item>
+                  <paper-item>Paid</paper-item>
+                  <paper-item>Others</paper-item>
+                </paper-menu>
+              </paper-dropdown-menu>
+            </div>
+
+            <div class="custom-label m-4 full horizontal layout center wrap">
+              <paper-input class="flex custom-input" value="{{customTest.name}}" label="Add Custom Test">
+              </paper-input>
+              <paper-input class="custom-input" value="{{customTest.unit}}" label="Unit">
+              </paper-input>
+              <paper-button class="btn-add" on-tap="addCustomTest">Add New</paper-button>
+            </div>
+
+            <div class="horizontal layout wrap">
+              <template is="dom-repeat" id="lab-test-list-repeater" items=[[laboratoryTestList]]>
+
+                <template is="dom-if" if="[[!$equals(item.name, 'ECG')]]">
+                  <div class="horizontal layout custom-label m-4">
+                    <paper-input type="{{item.inputType}}" class="flex" label="{{item.name}}" value="{{item.value}}">
+                      <div suffix>{{item.unit}}</div>
+                    </paper-input>
+                    <template is="dom-if" if="[[item.isCustomTest]]">
+                      <div class="horizontal layout center">
+                        <paper-icon-button class="m-left-8" icon="delete" on-tap="deleteCustomTest"></paper-icon-button>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+
+                <template is="dom-if" if="[[$equals(item.name, 'ECG')]]">
+                  <div class="custom-label-2 full-width">
+                    <div>
+                      <div>{{item.name}}:</div>
+                    </div>
+                    <paper-radio-group selected="{{item.value}}">
+                      <paper-radio-button name="normal">Normal</paper-radio-button>
+                      <paper-radio-button name="abnormal">Abnormal</paper-radio-button>
+                    </paper-radio-group>
+                    <template is="dom-if" if="[[$equals(item.value, 'abnormal')]]">
+                      <div class="horizontal layout center">
+                        <vaadin-combo-box class="custom-input full-width m-horizontal-4" label="Select Abnormal Type" items="{{ecgTypeList}}" allow-custom-value="true" value="{{abnormalityValue}}"></vaadin-combo-box>
+                        <paper-button class="btn-add" on-tap="addEcgAbonormalValue" >Add</paper-button>
+                      </div>
+                      <div class="horizontal layout wrap">
+                        <template is="dom-repeat" items="[[item.ecgAbnormalityList]]">
+                          <div class="m-horizontal-4 horizontal layout center">
+                            <paper-icon-button icon="icons:remove-circle" on-tap="removeEcgAbnormalValue"></paper-icon-button>
+                            <div class="flex">{{item}}</div>
+                          </div>
+                          
+                        </template>
+                      </div>
+                      
+                    </template>
+                  </div>                  
+                </template>
+
+                
+
+              </template>
+            </div>
+          
+          </div>
+          <!-- Laboratory - end -->
+
+          <!-- Complication  - start -->
+          <div class="card-item p-8">
+            <div class="horizontal layout center wrap">
+              <div class="type body-lead primary m-horizontal-4 flex">Complication</div>
+              <paper-button class="btn-add" on-tap="addCustomComplication" >Add New</paper-button>
+            </div>
+            
+            <paper-input class="custom-input full-width" value="{{customComplication}}" label="Other Complication"></paper-input>
+              
+            <div class="horizontal layout wrap m-top-16">
+              <template is="dom-repeat" items=[[ndr.data.complicationList]] id="complication-list-repeater">
+                <paper-checkbox class="custom-checkbox m-8" checked="{{item.isSelected}}">{{item.name}}
+                  <template is="dom-if" if="[[item.isCustom]]">
+                    <paper-icon-button class="m-left-8" icon="delete" on-tap="deleteCustomComplication"></paper-icon-button>
+                  </template>
+                </paper-checkbox>
+              </template>
+            </div>
+          </div>
+          <!-- Complication - end -->
+
+          <!-- Personal Habit(s) - start -->
+          <div class="card-item p-8">
+            <div class="type body-lead primary m-horizontal-4"></div>
+            <div class="horizontal layout center">
+              <div class="type body-lead primary m-horizontal-4 flex">Personal Habit(s)</div>
+              <paper-button class="btn-add" on-tap="addAddiction">add new</paper-button>
+            </div>
+
+            <paper-input class="custom-input full-width" value="{{otherAddiction.type}}" label="Add Other Personal habits"></paper-input>
+
+            <div class="horizontal layout wrap m-top-16">
+              <template is="dom-repeat" items="[[ndr.data.medicalInfo.drugAddictionList]]" id="addiction-list-repeater">
+                <div class="custom-radio-button-group">
+                  <div id="grpVaccination">
+                    <div>{{item.type}}:</div>
+                  </div>
+                  <paper-radio-group selected="{{item.isYes}}">
+                    <paper-radio-button name="Regular">Regular</paper-radio-button>
+                    <paper-radio-button name="Occasional">Occasional</paper-radio-button>
+                    <paper-radio-button name="Never">Never</paper-radio-button>
+                  </paper-radio-group>
+                  <template is="dom-if" if="[[!$equals(item.isYes, 'Never')]]">
+                    <paper-input label="Amount" value="{{item.amount}}"></paper-input>
+                  </template>
+                </div>
+                <template is="dom-if" if="[[item.isCustom]]">
+                  <paper-icon-button class="m-left-8" icon="delete" on-tap="deleteAddictionItem"></paper-icon-button>
+                </template>
+              </template>
+            </div>
+
+          </div>
+          <!-- Personal Habit(s) - end -->
+
+          <!-- Family History - start -->
+          <div class="card-item p-8">
+
+            <div class="horizontal layout center">
+              <div class="type body-lead primary m-horizontal-4 flex">Family History</div>
+              <paper-button class="btn-add" on-tap="addFamilyHistoryDisease">add new</paper-button>
+            </div>
+
+            <paper-input class="custom-input full-width" value="{{otherFamilyHistoryDisease.disease}}" label="Other"></paper-input>
+
+            <div class="horizontal layout wrap m-top-16">
+              <template is="dom-repeat" items="[[ndr.data.medicalInfo.familyHistoryList]]" id="family-history-list-repeater">
+                <div class="custom-radio-button-group">
+                  <div>
+                    <!-- <span class="type caption secondary m-right-8">[[_returnSerial(index)]]</span> -->
+                    <span>{{item.disease}}:</span>
+                  </div>
+                  <paper-radio-group selected="{{item.value}}">
+                    <paper-radio-button name="yes">Yes</paper-radio-button>
+                    <paper-radio-button name="no">No</paper-radio-button>
+                    <paper-radio-button name="Not Known">Not Known</paper-radio-button>
+                  </paper-radio-group>
+                </div>
+                <template is="dom-if" if="[[item.isCustom]]">
+                  <paper-icon-button class="m-left-8" icon="delete" on-tap="deleteFamilyHistoryItem"></paper-icon-button>
+                </template>
+              </template>
+
+            </div>
+          </div>
+          <!-- Family History - end -->
+
+          <!-- previous advised - end -->
+          <div class="p-8">
+
+            <!-- Previous Advice - Dietary history - start -->
+            <div class="card-item p-8">
+              <div class="horizontal layout center">
+                <div class="type body-lead primary m-horizontal-4">Dietary History</div>
+                <paper-radio-group class="flex" selected="{{ndr.data.medicalInfo.havePrevDietaryHistory}}">
+                  <paper-radio-button name="yes">Yes</paper-radio-button>
+                  <paper-radio-button name="no">No</paper-radio-button>
+                </paper-radio-group>
+                <div class="flex"></div>
+                <paper-button hidden$="{{!$equals(ndr.data.medicalInfo.havePrevDietaryHistory, 'yes')}}" class="btn-add" on-tap="addDietItem2">add</paper-button>
+              </div>
+        
+              <vaadin-combo-box hidden$="{{!$equals(ndr.data.medicalInfo.havePrevDietaryHistory, 'yes')}}" class="flex custom-input full-width" label="Add Food Item" items="{{foodItemPreList}}" allow-custom-value="true" value="{{otherDietItem2.type}}"></vaadin-combo-box>
+            
+              <div hidden$="{{!$equals(ndr.data.medicalInfo.havePrevDietaryHistory, 'yes')}}">
+                <template id="dietary-list-repeater-2" is="dom-repeat" items="[[ndr.data.medicalInfo.dietaryHistoryList2]]" as="dietItem">
+                  <div class="custom-item">
+                    <div class="horizontal layout center">
+                      <div class="type caption secondary m-right-8">[[_returnSerial(index)]]</div>
+                      <div class="type body-lead flex">{{dietItem.type}}</div>
+                      <paper-icon-button icon="delete" on-tap="deleteDietItem2"></paper-icon-button>
+                    </div>
+                    <div>
+                      <div class="horizontal layout wrap">
+                        <template is="dom-repeat" items="[[dietItem.consumeAmount]]">
+                          <paper-input class="custom-input" label="{{item.time}}" value="{{item.value}}" on-change="onDietaryItemValue2">
+                            <div class="type secondary" suffix>{{item.unit}}</div>
+                          </paper-input>
+                        </template>
+                      </div>
+                      <div class="horizontal layout wrap">
+                        <paper-input class="custom-input" label="Calorie" value="{{dietItem.calorie}}"></paper-input>
+                        <paper-input class="custom-input" label="Diet Chart" value="{{dietItem.dietChart}}"></paper-input>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>        
+            </div>
+            <!-- Previous Advice - Dietary history - end -->
+
+            <!-- Previous Advice - Type of cooking oil - start -->
+            <div class="card-item p-8">
+              <div class="horizontal layout wrap center">
+                <div class="type body-lead primary m-horizontal-4">Type of cooking oil</div>
+                <paper-radio-group class="flex" selected="{{ndr.data.medicalInfo.havePrevCookingOil}}">
+                  <paper-radio-button name="yes">Yes</paper-radio-button>
+                  <paper-radio-button name="no">No</paper-radio-button>
+                </paper-radio-group>
+                <div class="flex"></div>
+                <paper-button  hidden$="{{!$equals(ndr.data.medicalInfo.havePrevCookingOil, 'yes')}}" class="btn-add" on-tap="addCookingOil2">add new</paper-button>
+              </div>
+
+              <paper-input hidden$="{{!$equals(ndr.data.medicalInfo.havePrevCookingOil, 'yes')}}" class="custom-input full-width" value="{{otherTypeOfCookingOil2.type}}" label="Add Custom Oil Name"></paper-input>
+              
+              <div class="horizontal layout wrap" hidden$="{{!$equals(ndr.data.medicalInfo.havePrevCookingOil, 'yes')}}">
+                <template is="dom-repeat" items="[[ndr.data.medicalInfo.typeOfCookingOilList2]]" id="prev-cooking-oil-list-repeater">
+                  <div class="custom-radio-button-group">
+                    <div>
+                      <div>{{item.type}}:</div>
+                    </div>
+                    <paper-radio-group selected="{{item.isYes}}">
+                      <paper-radio-button name="yes">Yes</paper-radio-button>
+                      <paper-radio-button name="no">No</paper-radio-button>
+                    </paper-radio-group>
+                    <template is="dom-if" if="[[$equals(item.isYes, 'yes')]]">
+                      <paper-input label="Amount" value="{{item.amount}}">
+                        <div class="type secondary" suffix>{{item.unit}}/{{item.duration}}</div>
+                      </paper-input>
+                    </template>
+                  </div>
+                  <template is="dom-if" if="[[item.isCustom]]">
+                    <paper-icon-button class="m-left-8" icon="delete" on-tap="deletePrevCookingOilItem"></paper-icon-button>
+                  </template>
+                </template>
+              </div>
+            </div>
+            <!-- Previous Advice - Type of cooking oil - end -->
+
+            <!-- Previous Advice - Physical activity - start -->
+            <div class="card-item p-8">
+              <div class="layout horizontal center wrap">
+                <div class="type body-lead primary p-horizontal-4">Physical Activity</div>
+                <paper-radio-group class="flex" selected="{{ndr.data.medicalInfo.havePrevPhysicalActivity}}">
+                  <paper-radio-button name="yes">Yes</paper-radio-button>
+                  <paper-radio-button name="no">No</paper-radio-button>
+                </paper-radio-group>
+                <paper-button hidden$="{{!$equals(ndr.data.medicalInfo.havePrevPhysicalActivity, 'yes')}}" class="btn-add" on-tap="addPhysicalActivity2">add</paper-button>
+              </div>
+
+              <div hidden$="{{!$equals(ndr.data.medicalInfo.havePrevPhysicalActivity, 'yes')}}">
+
+                <div class="horizontal layout center wrap">
+                  <vaadin-combo-box class="flex m-right-16" label="Physical Activity" placeholder="Type/Select Activtiy" items="[[physicalActivityPreList]]"
+                    allow-custom-value="true" value="{{physicalActivityObj2.name}}"></vaadin-combo-box>
+                  <paper-input type="number" class="" value="{{physicalActivityObj2.duration}}" label="Duration">
+                    <div class="type secondary" suffix>{{physicalActivityObj2.unit}}</div>
+                  </paper-input>
+                </div>
+
+                <div class="horizontal layout wrap">
+                  <template is="dom-repeat" items="[[ndr.data.physicalActivityList2]]">
+                    <div class="custom-label horizontal layout center">
+
+                      <div class="flex">
+                        <div>{{item.name}}: </div>
+                        <span>{{item.duration}} {{item.unit}}</span>
+                      </div>
+
+                      <paper-icon-button icon="delete" on-tap="deletePhysicalActivity2"></paper-icon-button>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+            <!-- Previous Advice - Physical activity - end -->
+
+            <!-- Previous Advice - Medication - start -->
+            <div class="card-item p-8">
+              <div class="layout horizontal center">
+                <div class="type body-lead primary flex p-horizontal-4">Medication</div>
+                <paper-button class="btn-add" on-tap="addOgldDrug2">add another</paper-button>
+              </div>
+
+              <div>
+                <template is="dom-repeat" items={{ndr.data.ogld2.ogldDrugList}}>
+                  <div class="custom-item horizontal layout center wrap">
+                    <div class="m-right-8 type caption secondary">{{_returnSerial(index)}}.</div>
+                    <!-- <paper-input class="flex m-right-16" label="Add OAD Drug" value={{item.ogldDrugName}}></paper-input> -->
+                    <paper-autocomplete
+                      class="flex" 
+                      id="oad"
+                      label="[[$TRANSLATE('Add OAD Drug',LANG)]]"
+                      source="[[pccMedicineBrandNameSourceDataList]]"
+                      text="{{item.ogldDrugName}}"
+                      on-autocomplete-selected="oadAutocompleteSelected2"
+                      on-autocomplete-reset="brandNameCleared" min-length="2"
+                      error-message="Input Required"
+                      required></paper-autocomplete>
+                    <paper-input label="Dosage" value={{item.drugDosage}} class="m-left-8"></paper-input>
+                    <paper-icon-button icon="delete" on-tap="deleteSelectedOgldDrug2"></paper-icon-button>
+                  </div>
+                </template>
+              </div>     
+            </div>
+            <!-- Previous Advice - Medication - end -->
+
+            <!-- Previous Advice- Insulin - start -->
+            <div class="card-item p-8">
+
+              <div class="layout horizontal center">
+                <div class="type body-lead primary flex p-horizontal-4">Insulin</div>
+                <paper-radio-group selected="{{showInsulin2}}">
+                  <paper-radio-button name="yes">Yes</paper-radio-button>
+                  <paper-radio-button name="no">No</paper-radio-button>
+                </paper-radio-group>
+              </div>
+
+              <div hidden$="{{!$equals(showInsulin2, 'yes')}}">
+                <vaadin-combo-box class="flex custom-input full-width" label="Insuline Type" placeholder="Type/Select Insulin type" items="{{insulinTypeList}}" allow-custom-value="true" value="{{ndr.data.insulin2.insulinType}}"></vaadin-combo-box>
+
+                <!-- <div style="padding: 4px;" class="type body caption-2 secondary"><div>Insulin</div></div> -->
+
+                <div class="custom-item horizontal layout center wrap">
+                  <vaadin-combo-box style="min-width: 210px;" class="flex" label="{{ndr.data.insulin2.insulinTherapyList.0.therapyType}}" placeholder="Type/Select Drug" items="{{basalDrugList}}" allow-custom-value="true" value="{{ndr.data.insulin2.insulinTherapyList.0.drugName}}"></vaadin-combo-box>
+                  <template is="dom-repeat" items=[[ndr.data.insulin2.insulinTherapyList.0.dosageList]] as="dose">
+                    <paper-input class="m-horizontal-8" label="{{dose.time}}" value={{dose.value}}></paper-input>
+                  </template>
+                </div>
+
+                <div class="custom-item horizontal layout center wrap">
+                  <vaadin-combo-box style="min-width: 210px;" class="flex" label="{{ndr.data.insulin2.insulinTherapyList.1.therapyType}}" placeholder="Type/Select Drug" items="{{bolusDrugList}}" allow-custom-value="true" value="{{ndr.data.insulin2.insulinTherapyList.1.drugName}}"></vaadin-combo-box>
+                  <template is="dom-repeat" items=[[ndr.data.insulin2.insulinTherapyList.1.dosageList]] as="dose">
+                    <paper-input class="m-horizontal-8" label="{{dose.time}}" value={{dose.value}}></paper-input>
+                  </template>
+                </div>
+
+                <!-- <div class="custom-item horizontal layout center wrap">
+                  <vaadin-combo-box style="min-width: 210px;" class="flex" label="{{ndr.data.insulin.insulinTherapyList.1.therapyType}}" placeholder="Type/Select Drug" items="{{bolusDrugList}}" allow-custom-value="true" value="{{ndr.data.insulin.insulinTherapyList.1.drugName}}"></vaadin-combo-box>
+                  <template is="dom-repeat" items=[[ndr.data.insulin.insulinTherapyList.1.dosageList]] as="dose">
+                    <paper-input class="m-horizontal-8" label="{{dose.time}}" value={{dose.value}}></paper-input>
+                  </template>
+                </div> -->
+
+                <div class="custom-item horizontal layout center wrap">
+                  <vaadin-combo-box style="min-width: 210px;" class="flex" label="{{ndr.data.insulin2.insulinTherapyList.2.therapyType}}" placeholder="Type/Select Drug" items="{{premixDrugList}}" allow-custom-value="true" value="{{ndr.data.insulin2.insulinTherapyList.2.drugName}}"></vaadin-combo-box>
+                  <template is="dom-repeat" items=[[ndr.data.insulin2.insulinTherapyList.2.dosageList]] as="dose">
+                    <paper-input class="m-horizontal-8" label="{{dose.time}}" value={{dose.value}}></paper-input>
+                  </template>
+                </div>
+
+                <div class="custom-item horizontal layout center wrap">
+                  <vaadin-combo-box style="min-width: 210px;" class="flex" label="{{ndr.data.insulin2.insulinTherapyList.3.therapyType}}" placeholder="Type/Select Drug" items="{{otherInsulinDrugList}}" allow-custom-value="true" value="{{ndr.data.insulin2.insulinTherapyList.3.drugName}}"></vaadin-combo-box>
+                  <template is="dom-repeat" items=[[ndr.data.insulin2.insulinTherapyList.3.dosageList]] as="dose">
+                    <paper-input class="m-horizontal-8" label="{{dose.time}}" value={{dose.value}}></paper-input>
+                  </template>
+                </div>
+              </div>
+            </div>
+            <!-- Previous Advice - Insulin - end -->
+
+            <!-- Previous Advice - Other Medication - start -->
+            <div class="card-item p-8">
+              <div class="layout horizontal center">
+                <div class="type body-lead primary flex">Other Medication</div>
+              </div>
+
+              <div>
+
+                <div class="horizontal layout wrap">
+                  <template id="repeat-other-medication-list-2" is="dom-repeat" items="[[ndr.data.otherMedicationList2]]" index-as="otherMedicineIndex">
+                    <div class="custom-label p-8 full-width">
+                      <div class="horizontal layout center">
+                        <div>{{item.name}}:</div>
+                        <paper-radio-group class="flex" selected="{{item.isYes}}">
+                          <paper-radio-button name="yes">Yes</paper-radio-button>
+                          <paper-radio-button name="no">No</paper-radio-button>
+                        </paper-radio-group>
+                        <paper-button hidden$="[[!$equals(item.isYes, 'yes')]]" class="btn-add" on-tap="addMedicine2"><iron-icon icon="add"></iron-icon></paper-button>
+                      </div>
+                      <div hidden$="[[!$equals(item.isYes, 'yes')]]">
+                        <div>
+                          <template is="dom-repeat" items="[[item.medicineList]]" as="medicine" index-as="medicineIndex">
+                            <div class="horizontal layout center">
+                              <div class="m-right-8 type caption secondary">{{_returnSerial(medicineIndex)}}.</div>
+                              <!-- <paper-input class="flex m-horizontal-8" label="Name" value="{{medicine.name}}"></paper-input> -->
+                              <paper-autocomplete
+                                class="flex" 
+                                label="Add {{item.name}}"
+                                source="[[pccMedicineBrandNameSourceDataList]]"
+                                text="{{medicine.name}}"
+                                on-autocomplete-selected="otherMedicineAutocompleteSelected2"
+                                min-length="2"
+                                error-message="Input Required"
+                                required></paper-autocomplete>
+                              <paper-input class="m-horizontal-8" label="Dose" value="{{medicine.dose}}">
+                                <div class="type secondary" suffix>{{medicine.unit}}</div>
+                              </paper-input>
+    
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+
+              </div>
+            </div>
+            <!-- Previous Advice - Other Medication - end -->
+          </div>
+          <!-- previous advised - end -->
+
+          <!-- current advised - start -->
+          <div class="p-8">
+
+            <!-- Dietary history - start -->
+            <div class="card-item p-8">
+              <div class="horizontal layout center">
+                <div class="type body-lead primary m-horizontal-4">Dietary History</div>
+                <paper-radio-group class="flex" selected="{{ndr.data.medicalInfo.haveDietaryHistory}}">
+                  <paper-radio-button name="yes">Yes</paper-radio-button>
+                  <paper-radio-button name="no">No</paper-radio-button>
+                </paper-radio-group>
+                <div class="flex"></div>
+                <paper-button hidden$="{{!$equals(ndr.data.medicalInfo.haveDietaryHistory, 'yes')}}" class="btn-add" on-tap="addDietItem">add</paper-button>
+              </div>
+        
+              <vaadin-combo-box hidden$="{{!$equals(ndr.data.medicalInfo.haveDietaryHistory, 'yes')}}" class="flex custom-input full-width" label="Add Food Item" items="{{foodItemPreList}}" allow-custom-value="true" value="{{otherDietItem.type}}"></vaadin-combo-box>
+            
+              <div hidden$="{{!$equals(ndr.data.medicalInfo.haveDietaryHistory, 'yes')}}">
+                <template id="dietary-list-repeater" is="dom-repeat" items="[[ndr.data.medicalInfo.dietaryHistoryList]]" as="dietItem">
+                  <div class="custom-item">
+                    <div class="horizontal layout center">
+                      <div class="type caption secondary m-right-8">[[_returnSerial(index)]]</div>
+                      <div class="type body-lead flex">{{dietItem.type}}</div>
+                      <paper-icon-button icon="delete" on-tap="deleteDietItem"></paper-icon-button>
+                    </div>
+                    <div>
+                      <div class="horizontal layout wrap">
+                        <template is="dom-repeat" items="[[dietItem.consumeAmount]]">
+                          <paper-input class="custom-input" label="{{item.time}}" value="{{item.value}}" on-change="onDietaryItemValue">
+                            <div class="type secondary" suffix>{{item.unit}}</div>
+                          </paper-input>
+                        </template>
+                      </div>
+                      <div class="horizontal layout wrap">
+                        <paper-input class="custom-input" label="Calorie" value="{{dietItem.calorie}}"></paper-input>
+                        <paper-input class="custom-input" label="Diet Chart" value="{{dietItem.dietChart}}"></paper-input>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>        
+            </div>
+            <!-- Dietary history - end -->
+
+            <!--  Type of cooking oil - start -->
+            <div class="card-item p-8">
+              <div class="horizontal layout wrap center">
+                <div class="type body-lead primary m-horizontal-4">Type of cooking oil</div>
+                <paper-radio-group class="flex" selected="{{ndr.data.medicalInfo.haveCookingOil}}">
+                  <paper-radio-button name="yes">Yes</paper-radio-button>
+                  <paper-radio-button name="no">No</paper-radio-button>
+                </paper-radio-group>
+                <div class="flex"></div>
+                <paper-button  hidden$="{{!$equals(ndr.data.medicalInfo.haveCookingOil, 'yes')}}" class="btn-add" on-tap="addCookingOil">add new</paper-button>
+              </div>
+
+              <paper-input hidden$="{{!$equals(ndr.data.medicalInfo.haveCookingOil, 'yes')}}" class="custom-input full-width" value="{{otherTypeOfCookingOil.type}}" label="Add Custom Oil Name"></paper-input>
+              
+              <div class="horizontal layout wrap" hidden$="{{!$equals(ndr.data.medicalInfo.haveCookingOil, 'yes')}}">
+                <template is="dom-repeat" items="[[ndr.data.medicalInfo.typeOfCookingOilList]]" id="cooking-oil-list-repeater">
+                  <div class="custom-radio-button-group">
+                    <div id="grpVaccination">
+                      <div>{{item.type}}:</div>
+                    </div>
+                    <paper-radio-group aria-labelledby="grpVaccination" selected="{{item.isYes}}">
+                      <paper-radio-button name="yes">Yes</paper-radio-button>
+                      <paper-radio-button name="no">No</paper-radio-button>
+                    </paper-radio-group>
+                    <template is="dom-if" if="[[$equals(item.isYes, 'yes')]]">
+                      <paper-input label="Amount" value="{{item.amount}}">
+                        <div class="type secondary" suffix>{{item.unit}}/{{item.duration}}</div>
+                      </paper-input>
+                    </template>
+                  </div>
+                  <template is="dom-if" if="[[item.isCustom]]">
+                    <paper-icon-button class="m-left-8" icon="delete" on-tap="deleteCookingOilItem"></paper-icon-button>
+                  </template>
+                </template>
+              </div>
+            </div>
+            <!-- Type of cooking oil - end -->
+
+            <!-- Physical activity - start -->
+            <div class="card-item p-8">
+              <div class="layout horizontal center wrap">
+                <div class="type body-lead primary p-horizontal-4">Physical Activity</div>
+                <paper-radio-group class="flex" selected="{{ndr.data.medicalInfo.havePhysicalActivity}}">
+                  <paper-radio-button name="yes">Yes</paper-radio-button>
+                  <paper-radio-button name="no">No</paper-radio-button>
+                </paper-radio-group>
+                <paper-button hidden$="{{!$equals(ndr.data.medicalInfo.havePhysicalActivity, 'yes')}}" class="btn-add" on-tap="addPhysicalActivity">add</paper-button>
+              </div>
+
+              <div hidden$="{{!$equals(ndr.data.medicalInfo.havePhysicalActivity, 'yes')}}">
+
+                <div class="horizontal layout center wrap">
+                  <vaadin-combo-box class="flex m-right-16" label="Physical Activity" placeholder="Type/Select Activtiy" items="[[physicalActivityPreList]]"
+                    allow-custom-value="true" value="{{physicalActivityObj.name}}"></vaadin-combo-box>
+                  <paper-input type="number" class="" value="{{physicalActivityObj.duration}}" label="Duration">
+                    <div class="type secondary" suffix>{{physicalActivityObj.unit}}</div>
+                  </paper-input>
+                </div>
+
+                <div class="horizontal layout wrap">
+                  <template is="dom-repeat" items="[[ndr.data.physicalActivityList]]">
+                    <div class="custom-label horizontal layout center">
+
+                      <div class="flex">
+                        <div>{{item.name}}: </div>
+                        <span>{{item.duration}} {{item.unit}}</span>
+                      </div>
+
+                      <paper-icon-button icon="delete" on-tap="deletePhysicalActivity"></paper-icon-button>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+            <!-- Physical activity - end -->
+
+            <!-- Medication - start -->
+            <div class="card-item p-8">
+              <div class="layout horizontal center">
+                <div class="type body-lead primary flex p-horizontal-4">Medication</div>
+                <paper-button class="btn-add" on-tap="addOgldDrug">add another</paper-button>
+              </div>
+
+              <div>
+                <template is="dom-repeat" items={{ndr.data.ogld.ogldDrugList}}>
+                  <div class="custom-item horizontal layout center wrap">
+                    <div class="m-right-8 type caption secondary">{{_returnSerial(index)}}.</div>
+                    <!-- <paper-input class="flex m-right-16" label="Add OAD Drug" value={{item.ogldDrugName}}></paper-input> -->
+                    <paper-autocomplete
+                      class="flex" 
+                      id="oad"
+                      label="[[$TRANSLATE('Add OAD Drug',LANG)]]"
+                      source="[[pccMedicineBrandNameSourceDataList]]"
+                      text="{{item.ogldDrugName}}"
+                      on-autocomplete-selected="oadAutocompleteSelected"
+                      on-autocomplete-reset="brandNameCleared" min-length="2"
+                      error-message="Input Required"
+                      required></paper-autocomplete>
+                    <paper-input label="Dosage" value={{item.drugDosage}} class="m-left-8"></paper-input>
+                    <paper-icon-button icon="delete" on-tap="deleteSelectedOgldDrug"></paper-icon-button>
+                  </div>
+                </template>
+              </div>     
+            </div>
+            <!-- Medication - end -->
+
+            <!-- Insulin - start -->
+            <div class="card-item p-8">
+
+              <div class="layout horizontal center">
+                <div class="type body-lead primary flex p-horizontal-4">Insulin</div>
+                <paper-radio-group selected="{{showInsulin}}">
+                  <paper-radio-button name="yes">Yes</paper-radio-button>
+                  <paper-radio-button name="no">No</paper-radio-button>
+                </paper-radio-group>
+              </div>
+
+              <div hidden$="{{!$equals(showInsulin, 'yes')}}">
+                <vaadin-combo-box class="flex custom-input full-width" label="Insuline Type" placeholder="Type/Select Insulin type" items="{{insulinTypeList}}" allow-custom-value="true" value="{{ndr.data.insulin.insulinType}}"></vaadin-combo-box>
+
+                <!-- <div style="padding: 4px;" class="type body caption-2 secondary"><div>Insulin</div></div> -->
+
+                <div class="custom-item horizontal layout center wrap">
+                  <vaadin-combo-box style="min-width: 210px;" class="flex" label="{{ndr.data.insulin.insulinTherapyList.0.therapyType}}" placeholder="Type/Select Drug" items="{{basalDrugList}}" allow-custom-value="true" value="{{ndr.data.insulin.insulinTherapyList.0.drugName}}"></vaadin-combo-box>
+                  <template is="dom-repeat" items=[[ndr.data.insulin.insulinTherapyList.0.dosageList]] as="dose">
+                    <paper-input class="m-horizontal-8" label="{{dose.time}}" value={{dose.value}}></paper-input>
+                  </template>
+                </div>
+
+                <div class="custom-item horizontal layout center wrap">
+                  <vaadin-combo-box style="min-width: 210px;" class="flex" label="{{ndr.data.insulin.insulinTherapyList.1.therapyType}}" placeholder="Type/Select Drug" items="{{bolusDrugList}}" allow-custom-value="true" value="{{ndr.data.insulin.insulinTherapyList.1.drugName}}"></vaadin-combo-box>
+                  <template is="dom-repeat" items=[[ndr.data.insulin.insulinTherapyList.1.dosageList]] as="dose">
+                    <paper-input class="m-horizontal-8" label="{{dose.time}}" value={{dose.value}}></paper-input>
+                  </template>
+                </div>
+
+                <!-- <div class="custom-item horizontal layout center wrap">
+                  <vaadin-combo-box style="min-width: 210px;" class="flex" label="{{ndr.data.insulin.insulinTherapyList.1.therapyType}}" placeholder="Type/Select Drug" items="{{bolusDrugList}}" allow-custom-value="true" value="{{ndr.data.insulin.insulinTherapyList.1.drugName}}"></vaadin-combo-box>
+                  <template is="dom-repeat" items=[[ndr.data.insulin.insulinTherapyList.1.dosageList]] as="dose">
+                    <paper-input class="m-horizontal-8" label="{{dose.time}}" value={{dose.value}}></paper-input>
+                  </template>
+                </div> -->
+
+                <div class="custom-item horizontal layout center wrap">
+                  <vaadin-combo-box style="min-width: 210px;" class="flex" label="{{ndr.data.insulin.insulinTherapyList.2.therapyType}}" placeholder="Type/Select Drug" items="{{premixDrugList}}" allow-custom-value="true" value="{{ndr.data.insulin.insulinTherapyList.2.drugName}}"></vaadin-combo-box>
+                  <template is="dom-repeat" items=[[ndr.data.insulin.insulinTherapyList.2.dosageList]] as="dose">
+                    <paper-input class="m-horizontal-8" label="{{dose.time}}" value={{dose.value}}></paper-input>
+                  </template>
+                </div>
+
+                <div class="custom-item horizontal layout center wrap">
+                  <vaadin-combo-box style="min-width: 210px;" class="flex" label="{{ndr.data.insulin.insulinTherapyList.3.therapyType}}" placeholder="Type/Select Drug" items="{{otherInsulinDrugList}}" allow-custom-value="true" value="{{ndr.data.insulin.insulinTherapyList.3.drugName}}"></vaadin-combo-box>
+                  <template is="dom-repeat" items=[[ndr.data.insulin.insulinTherapyList.3.dosageList]] as="dose">
+                    <paper-input class="m-horizontal-8" label="{{dose.time}}" value={{dose.value}}></paper-input>
+                  </template>
+                </div>
+              </div>
+            </div>
+            <!-- Insulin - end -->
+
+            <!-- Other Medication - start -->
+            <div class="card-item p-8">
+              <div class="layout horizontal center">
+                <div class="type body-lead primary flex">Other Medication</div>
+              </div>
+              <div>
+                <div class="horizontal layout wrap">
+                  <template id="repeat-other-medication-list" is="dom-repeat" items="[[ndr.data.otherMedicationList]]" index-as="otherMedicineIndex">
+                    <div class="custom-label p-8 full-width">
+                      <div class="horizontal layout center">
+                        <div>{{item.name}}:</div>
+                        <paper-radio-group class="flex" selected="{{item.isYes}}">
+                          <paper-radio-button name="yes">Yes</paper-radio-button>
+                          <paper-radio-button name="no">No</paper-radio-button>
+                        </paper-radio-group>
+                        <paper-button hidden$="[[!$equals(item.isYes, 'yes')]]" class="btn-add" on-tap="addMedicine"><iron-icon icon="add"></iron-icon></paper-button>
+                      </div>
+                      <div hidden$="[[!$equals(item.isYes, 'yes')]]">
+                        <div>
+                          <template is="dom-repeat" items="[[item.medicineList]]" as="medicine" index-as="medicineIndex">
+                            <div class="horizontal layout center">
+                              <div class="m-right-8 type caption secondary">{{_returnSerial(medicineIndex)}}.</div>
+                              <!-- <paper-input class="flex m-horizontal-8" label="Name" value="{{medicine.name}}"></paper-input> -->
+                              <paper-autocomplete
+                                class="flex" 
+                                label="Add {{item.name}}"
+                                source="[[pccMedicineBrandNameSourceDataList]]"
+                                text="{{medicine.name}}"
+                                on-autocomplete-selected="otherMedicineAutocompleteSelected"
+                                min-length="2"
+                                error-message="Input Required"
+                                required></paper-autocomplete>
+                              <paper-input class="m-horizontal-8" label="Dose" value="{{medicine.dose}}">
+                                <div class="type secondary" suffix>{{medicine.unit}}</div>
+                              </paper-input>
+
+                              <!-- <paper-icon-button hidden$="[[_compareFn(medicineIndex, '==', 0)]]" icon="delete" on-tap="_deleteDrug"></paper-icon-button> -->
+                            
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+
+              </div>
+            </div>
+            <!-- Other Medication - end -->
+          </div>
+          <!-- current advised - end -->
+
+        </paper-card>
+        <!-- national diabetic form - end -->
+                
+
+      </div>
+
+
+    </div>
+    
+
+  </template>
+  <script src="page-ndr-editor.coffee-compiled.js"></script>
+</dom-module>

@@ -1,0 +1,387 @@
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-commission-report-print-preview">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .master-container {
+        /*background: #fff;*/
+      }
+
+      .break-on-tablet {
+        @apply(--layout-horizontal);
+      }
+
+      @media screen and (max-width: 740px) {
+        .break-on-tablet {
+          display: block;
+        }
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      paper-button {
+        background: white;
+      }
+
+      .header {
+        position: relative;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px
+      }
+
+      .header .title {
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: #5c4575;
+      }
+
+      .limiting-container {
+        margin-top: 10px;
+        max-width: 410mm;
+      }
+
+      .document {
+        font-family: 'Times New Roman';
+        background: white;
+        width: 100%;
+      }
+
+      .document-title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      @media print {
+        .limiting-container {
+          /*margin-top: -60px;*/
+          /*border: 1px solid black;*/
+          width: 100%;
+        }
+
+        .hideOnPrint {
+          display: none !important;
+        }
+
+        /*.print-container {
+          width: 100%;
+        }*/
+      }
+
+      .document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+      .item {
+        padding: 10px;
+        border: 1px solid grey;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td,
+      .table th {
+        vertical-align: left;
+        padding: 10px;
+        border: 1px solid var(--paper-grey-300);
+      }
+
+      .table td.special-td {
+        padding: 0px;
+        margin: 0px;
+        height: 100%;
+      }
+    </style>
+
+    <!-- local DOM -->
+
+
+
+    <div class="master-container">
+      <div class="limiting-container">
+
+        <!-- document - start -->
+        <template is="dom-if" if="[[isReportValid]]">
+          <div class="document">
+
+            <template is="dom-if" if="[[settings.printDecoration.headerLine]]">
+              <div class="header vertical layout">[[settings.printDecoration.headerLine]]</div>
+            </template>
+
+            <div class="document-header horizontal layout center">
+
+              <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+                <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+              </template>
+
+              <div class="leftSide vertical layout">
+                <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+                <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+                <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+              </div>
+              <div class="flex"></div>
+              <div class="rightSide vertical layout end">
+                <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+                <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+                <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+              </div>
+            </div>
+
+            <div class="horiline"></div>
+            <div style="text-align: center">
+              <h4 class="type secondary">Commission Report</h4>
+            </div>
+
+            <template is='dom-if' if='[[commissionReport]]'>
+
+              <table class="table">
+                <tr>
+                  <th>Date Invoice Created</th>
+                  <th>#Invoice</th>
+                  <th>Name</th>
+                  <th>Mobile</th>
+                  <th>Amount</th>
+                  <th>Payment Status</th>
+                </tr>
+
+                <template is="dom-repeat" items="[[commissionReport]]" sort="_sortByDate">
+                  <tr>
+                    <td>[[$formatDateTime(item.createdDatetimeStamp)]]</td>
+                    <td>
+                      <template is="dom-if" if="[[!item.referenceNumber]]">
+                        <strong class="label">[[item.serial]]</strong>
+                      </template>
+                      <template is="dom-if" if="[[item.referenceNumber]]">
+                        <strong class="label">[[item.referenceNumber]]</strong>
+                      </template>
+                    </td>
+                    <td>[[item.commission.name]]</td>
+                    <td>[[item.commission.mobile]]</td>
+                    <td>[[item.commission.amount]]</td>
+                    <td>
+                      <span></span>
+                    </td>
+                  </tr>
+                </template>
+              </table>
+              <!-- <div style="text-allign: right; margin-top: 16px">
+                <strong>Total: [[$formatCurrency(totalCommission)]]</strong>
+              </div> -->
+
+            </template>
+
+            <br>
+            <template is="dom-if" if="[[settings.printDecoration.footerLine]]">
+              <div class="footer vertical layout">[[settings.printDecoration.footerLine]]</div>
+            </template>
+            
+            <div style="text-align: center; margin-top: 16px">
+              <span class="type secondary">Report Generation Date & Time - [[_formatDateTime(reportCreatedTime)]]</span>
+            </div>
+          </div>
+        </template>
+        <!-- document - end -->
+
+      </div>
+    </div>
+
+    <div class="horizontal layout center center-justified p-horizontal-16">
+      <div class="type body italic"><strong>Printed by: </strong>[[user.name]]</div>
+    </div>
+
+
+  </template>
+  <script>
+    Polymer({
+
+      is: 'page-commission-report-print-preview',
+
+      behaviors: [
+        app.behaviors.commonComputes,
+        app.behaviors.dbUsing,
+        app.behaviors.translating,
+        app.behaviors.pageLike,
+        app.behaviors.apiCalling
+      ],
+
+      properties: {
+
+        user: {
+          type: Object,
+          notify: true,
+          value: null
+        },
+
+        commissionReport: {
+          type: Object,
+          notify: true,
+          observer: 'calculateTotal',
+          value: null
+        },
+
+        settings: {
+          type: Object,
+          notify: true,
+          value: {}
+        },
+
+        isReportValid: {
+          type: Boolean,
+          value: false
+        },
+
+        totalCommission: Number
+      },
+
+      _getSettings() {
+        const list = app.db.find('settings', ({ serial }) => serial === this.getSerialForSettings());
+        if (list.length > 0) {
+          this.settings = list[0];
+          if ((typeof this.settings.settingsModifiedBy === 'undefined') || (this.settings.settingsModifiedBy === 'organization')) {
+            if (this.organization.printSettings) {
+              this.settings.printDecoration = this.organization.printSettings;
+            }
+          }          
+        }
+      },
+
+      _sortByDate(a, b) {
+        if (a.lastModifiedDatetimeStamp < b.lastModifiedDatetimeStamp) {
+          return 1;
+        }
+        if (a.lastModifiedDatetimeStamp > b.lastModifiedDatetimeStamp) {
+          return -1;
+        }
+      },
+
+      printButtonPressed(e) {
+        return window.print();
+      },
+
+      _formatDateTime(dateTime) {
+        return lib.datetime.format((new Date(dateTime)), 'mmm d, yyyy h:MMTT');
+      },
+
+      _loadUser() {
+        const userList = app.db.find('user');
+        if (userList.length === 1) {
+          return this.user = userList[0];
+        }
+      },
+
+
+      loadCommissionReportFromLocalStorage() {
+        report = localStorage.getItem("saveReportToLocalStorageObj");
+        report = JSON.parse(report);
+        this._calculateTotalCommission(report)
+        console.log(report)
+        this.reportCreatedTime = lib.datetime.now();
+        if (report) {
+          this.set('isReportValid', true);
+          this.set('commissionReport', report);
+        }
+        else {
+          this.set('isReportValid', false);
+          this.domHost.showToast("Invalid Report");
+        }
+      },
+      _calculateTotalCommission(list) {
+        let totalCommission = 0;
+        for (let item of Array.from(list)) {
+          totalCommission += parseInt(item.commission.amount != null ? item.commission.amount : (item.commission.amount = 0));
+        }
+        return this.set('totalCommission', totalCommission);
+      },
+      arrowBackButtonPressed() {
+        return this.domHost.navigateToPreviousPage();
+      },
+
+      navigatedIn() {
+        this.organization = this.getCurrentOrganization();
+        if (!this.organization) {
+          return this.domHost.navigateToPage("#/select-organization");
+        }
+        this._loadUser();
+        this._getSettings();
+        this.loadCommissionReportFromLocalStorage();
+      },
+
+      navigatedOut() { }
+
+    });
+
+  </script>
+</dom-module>

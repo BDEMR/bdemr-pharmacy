@@ -1,0 +1,623 @@
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-single-test-result-print">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      paper-card {
+        background: #fff;
+      }
+
+      /* .master-container {
+        background: #fff;
+      } */
+
+      .patient-info-card-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .patient-info-cards {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+
+      .patient-info-cards .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+
+      .patient-info-cards .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+
+      .patient-info-cards .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+
+      .patient-info-cards .row .modifier.online {
+        background: #757575;
+      }
+
+      .patient-info-cards .row .modifier.local-only {
+        background: #039BE5;
+      }
+
+      .patient-info-cards .row .modifier.locally-updated {
+        background: #009688;
+      }
+
+      .patient-info-cards .row .modifier.imported {
+        background: #4CAF50;
+      }
+
+      .info-row {
+        margin-top: 10px;
+      }
+
+      .top-info-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      .address1 {
+        margin-right: 10px;
+      }
+
+      .break-on-tablet {
+        @apply(--layout-horizontal);
+      }
+
+      @media screen and (max-width: 740px) {
+        .break-on-tablet {
+          display: block;
+        }
+      }
+
+      .val {
+        text-decoration: underline;
+      }
+
+      .search-result-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .search-results {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+
+      .search-results .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+
+      .search-results .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+
+      .search-results .row .name {
+        font-size: 18px;
+        margin-left: 10px;
+      }
+
+      .search-results .row .email {
+        font-size: 14px;
+        color: #777777;
+        margin-left: 10px;
+      }
+
+      .search-results .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+
+      .search-results .row .modifier.online {
+        background: #757575;
+      }
+
+      .search-results .row .modifier.local-only {
+        background: #039BE5;
+      }
+
+      .search-results .row .modifier.locally-updated {
+        background: #009688;
+      }
+
+      .search-results .row .modifier.imported {
+        background: #4CAF50;
+      }
+
+      .new-patient-fab {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      paper-button {
+        background: white;
+      }
+
+      .comment-history-item.right {
+        @apply(--layout-end-justified);
+      }
+
+
+
+      custom-vital-search {
+        margin-left: 30px;
+      }
+
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .limiting-container {
+        max-width: 210mm;
+        /*min-height: 230mm;*/
+        /*min-height: 297mm;*/
+      }
+
+      .document {
+        font-family: 'Times New Roman';
+        background: white;
+        width: 100%;
+      }
+
+      .document-title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .center-elements {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .top-header-title {
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 30px;
+        font-weight: 500;
+        margin: 5px;
+        color: #5c4575;
+      }
+
+      .top-header-logo {
+        max-width: 100px !important;
+        max-height: 100px !important;
+      }
+
+      .patient-info {
+        font-size: 16px;
+      }
+
+      @media print {
+        .limiting-container {
+          /*margin-top: -60px;*/
+          /*border: 1px solid black;*/
+          width: 100%;
+        }
+
+        .hideOnPrint {
+          display: none !important;
+        }
+
+        /*.print-container {
+          width: 100%;
+        }*/
+      }
+
+      .collection {
+        color: red;
+        background: grey;
+      }
+
+      .document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+        text-align: left;
+      }
+
+      .rightSide {
+        margin-right: 6px;
+        text-align: right;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+      
+      .item {
+        padding: 10px;
+        border: 1px solid grey;
+      }
+
+      /* .custom-table{
+        border: none !important;
+      }
+
+      .custom-table th td {
+        padding: 3px 8px;
+      } */
+
+      .investigation-name-style {
+        /* border: solid 2px black; */
+        width: 400px;
+        padding: 2px;
+        margin: auto;
+        text-align: center;
+        font-size: 30px;
+        font-weight: bold;
+      }
+
+      .hide-border {
+        padding: 4px;
+        width: 40%;
+        border: 0;
+        margin: auto;
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <template is="dom-if" if="{{isPatientValid}}">
+
+      <div class="master-container">
+
+        <div class="limiting-container">
+          <!-- editing patient - start -->
+          <div class="document">
+
+            
+            <!-- top organization header -->
+            <template is="dom-if" if="{{showPrintDetails}}">
+              <div class="layout horizontal center-elements m-bottom-8">
+                <!-- logo -->
+                <div>
+                  <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+                    <img class="top-header-logo m-right-16" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+                  </template>
+                </div>
+
+                <div class="layout vertical">
+                  <!-- org name -->
+                  <div class="top-header-title">
+                    <template is="dom-if" if="[[organization.printSettings.headerLine]]">
+                      <div class="top-header-title">[[organization.printSettings.headerLine]]</div>
+                    </template>
+                  </div>
+                  <div class="layout vertical">
+                    <!-- address -->
+                    <div>
+                      <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+                    </div>
+                    <!-- email, phone -->
+
+                    <div class="layout horizontal">
+                      <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+                      <div class="flex"></div>
+                      <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+                    </div>
+
+                    <!-- web -->
+                    <div>
+                      <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </template>
+
+            <div class="horiline"></div>
+            <div class="m-bottom-16"></div>
+            <div style="text-align: center">
+              <div class="type display-regular">{{testResult.data.heading}}</div>
+            </div>
+            <div class="m-top-16 m-bottom-16">
+              <template is="dom-if" if="[[!patient.isForOrganizationOnly]]">
+                <table class="m-top-8 custom-table" border="1">
+                  <tbody>
+                    <tr>
+                      <td><strong>Name:</strong></td>
+                      <td>{{$getFullName(patient.name)}}</td>
+                      <td><strong>Age:</strong></td>
+                      <td>[[$computeAge(patient.dateOfBirth)]]</td>
+                      <td><strong>Sex:</strong></td>
+                      <td>{{patient.gender}}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Phone:</strong></td>
+                      <td>{{patient.phone}}</td>
+                      <td><strong>Blood Group:</strong></td>
+                      <td>{{patient.bloodGroup}}</td>
+                      <td><strong>Ref. By:</strong></td>
+                      <td>{{testResult.advisedDoctorName}} ({{testResult.advisedDoctorSpeciality}})</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <!-- <div class="layout vertical patient-info">
+                  
+                  <div class="layout horizontal">
+                    <div class="m-left-16">Name: {{$getFullName(patient.name)}}</div>
+                    <div class="flex"></div>
+                    <div>Age: [[$computeAge(patient.dateOfBirth)]]</div>
+                    <div class="flex"></div>
+                    <div class="m-right-16">Sex: {{patient.gender}}</div>
+  
+                  </div>
+  
+                  
+                  <div class="layout horizontal m-top-8">
+                    <div class="m-left-16">Blood Group: {{patient.bloodGroup}}</div>
+                    <div class="flex"></div>
+                    <div>Phone: {{patient.phone}}</div>
+                    <div class="flex"></div>
+                    <div class="m-right-16">Ref. By: {{testResult.advisedDoctorName}} ({{testResult.advisedDoctorSpeciality}})</div>
+                  </div>
+  
+  
+                </div> -->
+              <div class="layout horizontal m-top-16">
+                <div class="flex"></div>
+                <h4 style="margin-right: 16px;">Date: {{$formatDate(testResult.createdDatetimeStamp)}}</h4>
+              </div>
+              </template>
+              <br>
+              <div class="investigation-name-style">{{testResult.investigationName}}</div>
+              <div style="text-align: center">
+                <div class="type headline">{{testResult.data.subHeading}}</div>
+              </div>
+              <template is="dom-if" if="[[patient.isForOrganizationOnly]]">
+                <div class="layout horizontal">
+                  <!-- left info -->
+                  <div class="m-left-16">Name: REDACTED FOR CONFIDENTIALITY</div>
+                  <div class="flex"></div>
+                  <!-- middle info -->
+                  <div>Age : REDACTED FOR CONFIDENTIALITY</div>
+                  <div class="flex"></div>
+                  <!-- right info -->
+                  <div class="m-right-16">Blood Group : </div>
+                </div>
+              </template>
+            </div>
+
+
+            <paper-card elevation="0" class="m-top-24">
+              <div>
+                <template is="dom-if" if="[[!testResult.data.groupInvestigation]]">
+                  <table class="m-top-8 custom-table m-bottom-24" border="1">
+                    <thead style="background: #eee; border:black solid 2px;">
+                      <tr>
+                        <th style="width: 25%; text-align: left;">Test</th>
+                        <th style="width: 20%; text-align: left;">Result</th>
+                        <th style="width: 15%; text-align: left;">Unit</th>
+                        <th style="width: 40%; text-align: left;">Reference Range</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <template is="dom-repeat" items="{{testResult.data.testList}}">
+                        <tr>
+                          <template is="dom-if" if="[[item.testResult]]">
+                            <td style="width: 25%;">{{item.testName}}</td>
+                            <td style="width: 20%;">{{item.testResult}}</td>
+                            <td style="width: 15%;">{{item.testUnit}}</td>
+                            <td style="width: 40%;">{{item.referenceRange}}</td>
+                          </template>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                </template>
+
+                <template is="dom-if" if="[[testResult.data.groupInvestigation]]">
+                  <template is="dom-repeat" items="{{testResult.data.groupTestList}}" as="group">
+                    <h4 style="text-align: center;">{{group.groupName}}</h4>
+                    <table class="m-top-8 custom-table m-bottom-24" border="1">
+                      <thead style="background: #eee; border:black solid 2px;">
+                        <tr>
+                          <th style="width: 25%; text-align: left;">Test</th>
+                          <th style="width: 20%; text-align: left;">Result</th>
+                          <th style="width: 15%; text-align: left;">Unit</th>
+                          <th style="width: 40%; text-align: center;">Reference Range</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <template is="dom-repeat" items="{{group.testList}}">
+                          <tr>
+                            <template is="dom-if" if="[[item.testResult]]">
+                              <td style="width: 25%;">{{item.testName}}</td>
+                              <td style="width: 20%;">{{item.testResult}}</td>
+                              <td style="width: 15%;">{{item.testUnit}}</td>
+                              <td style="width: 40%;">{{item.referenceRange}}</td>
+                            </template>
+                          </tr>
+                        </template>
+                      </tbody>
+                    </table>
+                  </template>
+                </template>
+
+                <br>
+                <br>
+                <br>
+
+                <!-- bottom-info -->
+                <div class="layout horizontal m-top-24">
+                  <!-- left - printed by -->
+                
+                
+                  <div class="layout vertical m-left-16 m-top-24">
+                
+                    <div hidden$="{{!testResult.showCheckedByUserNameOnPrintPreview}}">
+                      <div class="type italic">Checked by ............</div>
+                      <div class="type">{{testResult.checkedByUserName}}</div>
+                      <div class="type">{{testResult.checkedByUserSpeciality}}</div>
+                      <div class="type">[[organization.name]]</div>
+                    </div>
+                
+                  </div>
+                
+                
+                  <div class="flex"></div>
+                
+                  <!-- right - reported by -->
+                  <div class="layout vertical m-right-16" hidden$="{{!testResult.showReportedByUserNameOnPrintPreview}}">
+                    <div class="type m-top-24" style="font-size: 18px;"><strong>{{testResult.reportedDoctorName}}</strong></div>
+                    <div class="type">{{testResult.reportedDoctorSpeciality}}</div>
+                  </div>
+                
+                </div>
+                <br>
+
+              </div>
+            </paper-card>
+
+
+            <div class="sp-2"></div>
+          </div>
+          <!-- editing patient - end -->
+        </div>
+
+
+        <div class="limiting-container">
+          <template is="dom-if" if="{{haveAttachment}}">
+            <div class="document m-top-8">
+              <div class="p-16 horizontal layout end-justified hideOnPrint">
+                <paper-toggle-button checked="{{!hideAttachment}}">show attachments</paper-toggle-button>
+              </div>
+
+              <template is="dom-if" if="[[attachmentList]]">
+                <div class="attachment-card-list horizontal layout wrap" hidden$="{{hideAttachment}}">
+
+                  <template is="dom-repeat" items="[[attachmentList]]" as="attachment" index-as="attachmentIndex">
+                    <div style="position: relative; text-align: left;">
+                      <div class="attachment-card vertical layout">
+                        <img class="image" src$="[[$getImageSrc(attachment)]]" hidden$="[[!attachment.isImage]]" />
+                        <div class="footer">
+                          <div class="title horizontal layout center">
+                            <div class="flex m-left-8">[[attachment.title]]</div>
+                            <paper-icon-button on-tap="downloadPressed" icon="file-download"></paper-icon-button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+
+                </div>
+              </template>
+            </div>
+          </template>
+        </div>
+      </div>
+
+    </template>
+
+  </template>
+  <script src="page-single-test-result-print.coffee-compiled.js"></script>
+</dom-module>

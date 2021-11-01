@@ -1,0 +1,1596 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html" />
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html" />
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html" />
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html" />
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html" />
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link
+  rel="import"
+  href="../../bower-assets/paper-menu-button/paper-menu-button.html"
+/>
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html" />
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html" />
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html" />
+<link
+  rel="import"
+  href="../../bower-assets/paper-checkbox/paper-checkbox.html"
+/>
+<link
+  rel="import"
+  href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html"
+/>
+<link
+  rel="import"
+  href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html"
+/>
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html" />
+<link
+  rel="import"
+  href="../../bower-assets/paper-toggle-button/paper-toggle-button.html"
+/>
+<link
+  rel="import"
+  href="../../bower-assets/paper-progress/paper-progress.html"
+/>
+<link
+  rel="import"
+  href="../../elements/custom-vital-search/custom-vital-search.html"
+/>
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html" />
+<link rel="import" href="../bdemr-qrcode-reader/bdemr-qrcode-reader.html" />
+<link
+  rel="import"
+  href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html"
+/>
+<link
+  rel="import"
+  href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html"
+/>
+
+<!-- style -->
+<link
+  rel="import"
+  href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html"
+/>
+<link rel="import" href="../../styles/common-style.html" />
+<link rel="import" href="./page-icons.html" />
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html" />
+<link rel="import" href="../../behaviors/page-like.html" />
+<link rel="import" href="../../behaviors/api-calling.html" />
+<link rel="import" href="../../behaviors/common-computes.html" />
+<link rel="import" href="../../behaviors/db-using.html" />
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-chamber-patients">
+  <template>
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+        width: 90%;
+      }
+      paper-dialog {
+        top: 64px !important;
+      }
+
+
+      .new-fab {
+        position: fixed;
+        right: 20px;
+        bottom: 164px;
+      }
+
+      paper-button {
+        margin: 3px;
+      }
+      paper-dialog {
+        max-width: 610px;
+      }
+      paper-button:last-child {
+        margin-right: 0px;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin: 0 4px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: 400;
+      }
+
+      .modifier.type1 {
+        background: #757575;
+      }
+
+      .organization-info-cards {
+        @apply (--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+
+      .organization-info-card-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .std1 {
+        padding: 12px;
+      }
+      .video-icon {
+        width: 30px;
+        height: 12px;
+        padding-right: 5px;
+      }
+
+      .mr12 {
+        margin-right: 12px;
+      }
+
+      .chamber-prop {
+        margin-right: 2px;
+      }
+
+      .calendar {
+        max-width: 960px;
+        min-width: 960px;
+      }
+
+      .calendar-entry {
+        min-width: 128px;
+        min-height: 96px;
+        margin: 4px;
+      }
+
+      .calendar-entry.white {
+        background: white;
+      }
+
+      .calendar-entry.day-name {
+        background: #dddddd;
+        text-align: center;
+      }
+
+      .status.booked {
+        color: var(--paper-teal-500);
+      }
+
+      .status.awaiting {
+        color: var(--paper-orange-500);
+      }
+
+      .status.completed {
+        color: green;
+      }
+
+      .status.require-second-visit {
+        color: var(--paper-purple-500);
+      }
+
+      .status.canceled {
+        color: red;
+      }
+
+      .list {
+        border-bottom: 1px solid var(--paper-teal-300);
+        padding: 10px 0;
+        @apply (--layout-start);
+      }
+
+      .list:nth-last-child(2) {
+        border: none;
+      }
+      .slots {
+        margin-right: 10px;
+        width: 80%;
+
+        text-align: center;
+        /* background: #dd890b; */
+        border-radius: 10px;
+        color: white !important;
+        box-shadow: 1px 2px 5px #8b8b8b;
+        padding: 5px;
+      }
+      .slots:hover {
+        cursor: pointer;
+      }
+      .chamberHeader {
+        background: var(--app-primary-color);
+        padding: 20px;
+        /* background: linear-gradient(90deg, rgba(49,4,80,1) 0%, rgba(101,9,121,1) 55%, rgba(147,52,166,1) 100%); */
+        color: white;
+      }
+
+      #sample-modal > vaadin-combo-box,
+      #time-slot-modal > vaadin-combo-box {
+        padding: 0 24px;
+      }
+
+      .paper-custom {
+        background-color: var(--paper-grey-100);
+        border: 1px solid #dadada;
+        border-radius: 6px;
+        padding: 0px 8px 12px 8px;
+      }
+
+      .report-row {
+        padding: 15px;
+        background-color: var(--paper-grey-100);
+        font-weight: bold;
+        margin: 10px 0;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      .patient-picture {
+        width: 40px;
+        height: 40px;
+        margin-top: 2px;
+        border-radius: 20px;
+      }
+      vaadin-combo-box.combobox-custom-style {
+        padding: 2px;
+      }
+
+      vaadin-combo-box.combobox-custom-style ::content paper-input-container {
+        padding: 4px 0;
+      }
+
+      vaadin-combo-box.combobox-custom-style ::content label {
+        font-size: 18px !important;
+        /*color: rgba(0, 0, 0, .87) !important;*/
+      }
+
+      /*vaadin-combo-box.combobox-custom-style ::content .unfocused-line {
+        border-bottom: none;
+      }*/
+      .dashboard-item {
+        position: relative;
+        margin: 4px;
+        padding: 8px;
+        border: 1px solid #eee;
+        background-color: #f7f7f7;
+        width: calc(15% - 26px);
+        text-align: center;
+        border-radius: 20px;
+        box-shadow: 5px 5px 10px #b9b9b9;
+        /* color: white; */
+        margin: 10px;
+        transition: all 0.2s ease-in-out;
+      }
+
+      .dashboard-item-2 {
+        position: relative;
+        margin: 8px 16px;
+        width: 128px;
+        @apply (--layout-center-justified);
+        @apply (--layout-horozontal);
+        @apply (--layout-center);
+        text-align: center;
+      }
+
+      .uppercase {
+        text-transform: uppercase !important;
+      }
+
+      .dashboard-item:hover {
+        cursor: pointer;
+      }
+
+      .dashboard-item .title {
+        font-weight: 300;
+        text-align: center;
+        margin: 0;
+        padding: 5px 0;
+        font-size: 16px;
+      }
+
+      .dashboard-item .icon {
+        text-align: center;
+        padding: 16px;
+      }
+
+      iron-icon {
+        --iron-icon-height: 40px;
+        --iron-icon-width: 40px;
+      }
+      .dashboard-item:hover iron-icon {
+        color: white;
+      }
+      .dashboard-item:hover {
+        background-color: var(--app-primary-color);
+        color: white;
+        transform: scale(1.1);
+      }
+
+      .hide-on-mobile {
+        display: block;
+      }
+      .dialogWidth {
+        width: 50%;
+      }
+      /* .horizontal-to-vertical{
+          flex-direction: row;
+          -webkit-flex-direction: row;
+        } */
+      @media screen and (max-width: 960px) and (min-width: 640px) {
+        .hide-on-mobile {
+          display: none;
+        }
+        .slots {
+          font-size: 12px;
+        }
+      }
+
+      @media screen and (max-width: 639px) {
+        .hide-on-mobile {
+          display: none;
+        }
+        .slots {
+          /* font-size: 10px; */
+          padding: 4px;
+          margin-bottom: 10px;
+          width: 100%;
+        }
+        .dialogWidth {
+          width: 100%;
+        }
+        .refresh-button {
+          display: none;
+        }
+        .custom-font-size {
+          font-size: 13px;
+        }
+        .max-width {
+          width: 100% !important;
+        }
+        .switchDate {
+          display: none;
+        }
+        .horizontal-to-vertical {
+          flex-direction: column !important;
+          -webkit-flex-direction: column !important;
+        }
+
+        .dashboard-item {
+          width: calc(50% - 26px);
+          @apply (--layout-horozontal);
+          @apply (--layout-center);
+          @apply (--layout-wrap);
+          padding: 4px;
+        }
+
+        .dashboard-item-2 {
+          width: 96px;
+        }
+      }
+      .switchDate {
+        background: white;
+        color: black;
+        padding-right: 10px;
+        border-radius: 10px;
+        margin-left: 10px;
+        padding-top: 5px;
+        font-size: 15px;
+        cursor: pointer;
+      }
+      .completeDialog {
+        border-radius: 10px;
+        padding: 10px;
+      }
+      .dialogHeader {
+        color: #fafafa;
+        background: var(--app-primary-color);
+        text-align: center;
+        margin-bottom: 10px;
+        border-bottom: 2px solid #ffbc07;
+        border-radius: 0px 0px 10px 10px;
+        padding: 10px;
+        margin-top: 0px !important;
+      }
+
+      vaadin-combo-box.combobox-custom-style ::content input {
+        font-size: 18px !important;
+        color: rgba(0, 0, 0, 0.87) !important;
+      }
+      paper-dropdown-menu-light {
+        --paper-dropdown-menu-input: {
+          border-bottom: 1px solid white;
+        }
+        --paper-dropdown-menu-label: {
+          color: white;
+        }
+        --paper-dropdown-menu-focus-color: {
+          color: white;
+        }
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+      <template is="dom-if" if="[[isLoading]]">
+        <div class="layout horizontal center type bold text-center">
+          <paper-progress indeterminate></paper-progress>
+        </div>
+        <h2 class="type center">
+          [[$TRANSLATE('Please Wait, Loading', LANG)]]...
+        </h2>
+      </template>
+
+      <div class="limiting-container">
+        <div class="layout horizontal center m-bottom-8">
+          <div class="flex"></div>
+        </div>
+
+        <div class="limiting-container custom-input-field">
+          <!--  -->
+
+          <template is="dom-if" if="[[schedule]]">
+            <!-- Card - Header - start -->
+            <paper-card class="m-top-8 chamberHeader">
+              <div class="std1 horizontal layout">
+                <div class="layout vertical">
+                  <div class="layout horizontal">
+                    <div
+                      class="title flex"
+                      style="font-size: 2em; font-weight: bold"
+                    >
+                      [[chamber.name]]
+                      <template is="dom-if" is="[[isDefault]]">
+                        <div class="type bg-green m-4">Default</div>
+                      </template>
+                    </div>
+                  </div>
+
+                  <div
+                    class="vertical flex layout"
+                    style="
+                      justify-content: space-around;
+                      color: rgb(255 255 255 / 72%);
+                    "
+                  >
+                    <div class="horizontal horizontal-to-vertical layout flex">
+                      <div class="flex layout center custom-font-size">
+                        <strong>[[$TRANSLATE('Chamber Date', LANG)]]:</strong>
+                        [[$formatDate(schedule.dateString)]]
+                      </div>
+                    </div>
+                    <!-- <div><strong>[[$TRANSLATE('Starts', LANG)]]:</strong> [[$formatTimeString(schedule.startTimeString)]]</div>
+                <div><strong>[[$TRANSLATE('Ends', LANG)]]:</strong> [[$formatTimeString(schedule.endTimeString)]]</div>
+                <div><strong>[[$TRANSLATE('Reschedule Delay', LANG)]]:</strong> [[schedule.rescheduleDelayInMinutes]]</div> -->
+                  </div>
+                  <div>
+                    <h3
+                      on-tap="showChamberDetails"
+                      style="color: rgb(255 255 255 / 72%)"
+                    >
+                      Details
+                    </h3>
+                  </div>
+                </div>
+                <div class="flex"></div>
+                <div class="vertical layout">
+                  <div class="horizontal layout">
+                    <div
+                      class="custom-font-size switchDate"
+                      on-click="showSelectedChamber"
+                    >
+                      <paper-icon-button
+                        icon="icons:swap-horiz"
+                      ></paper-icon-button>
+                      Switch Chamber
+                    </div>
+                    <div class="switchDate" on-click="goToChamberCalanderView">
+                      <paper-icon-button
+                        icon="icons:swap-vertical-circle"
+                      ></paper-icon-button
+                      >Switch Date
+                    </div>
+
+                    <div class="layout vertical" style="align-items: end">
+                      <paper-menu-button
+                        class="p-0"
+                        vertical-align="top"
+                        horizontal-align="right"
+                      >
+                        <paper-icon-button
+                          icon="icons:more-vert"
+                          class="dropdown-trigger"
+                          alt="options"
+                        ></paper-icon-button>
+                        <paper-menu class="dropdown-content" style="color:black">
+                          <paper-item on-tap="_goToDisplayQueue" 
+                            >[[$TRANSLATE('Display Queue', LANG)]]</paper-item
+                          >
+
+                          <paper-item on-tap="setDefaultChamber"
+                            >[[$TRANSLATE('Set as default', LANG)]]</paper-item
+                          >
+                          <paper-item on-tap="navigateToChamber"
+                            >[[$TRANSLATE('Chamber Manager', LANG)]]</paper-item
+                          >
+                          <paper-item on-tap="showSelectedChamber"
+                            >[[$TRANSLATE('Select Chamber', LANG)]]</paper-item
+                          >
+                        </paper-menu>
+                      </paper-menu-button>
+                    </div>
+                  </div>
+                  <div class="flex"></div>
+                  <div
+                    class="colored refresh-button"
+                    style="display: flex; justify-content: right;width: fit-content;
+                    right: -260px;
+                    position: relative;"
+                    raised
+                    on-tap="reloadPage"
+                  >
+                    [[$TRANSLATE('Refresh ', LANG)]]<iron-icon
+                      icon="icons:refresh"
+                      style="height: 20px; width: 20px"
+                      class="m-right-8"
+                    ></iron-icon>
+                  </div>
+                </div>
+              </div>
+              <paper-progress
+                indeterminate
+                hidden="[[!isLoading]]"
+              ></paper-progress>
+            </paper-card>
+            <!-- Card - Header - end -->
+
+            <paper-card
+              header="[[$TRANSLATE('Search and Add Patient', LANG)]]"
+              class="m-top-8"
+            >
+              <div class="card-content">
+                <!-- new-entry - start -->
+                <template is="dom-if" if="[[isLoading]]">
+                  <div class="layout horizontal center type bold text-center">
+                    <!-- <paper-progress indeterminate></paper-progress> -->
+                  </div>
+                  <h2 class="type center">
+                    [[$TRANSLATE('Processing Booking', LANG)]]
+                  </h2>
+                </template>
+                <div class="horizontal horizontal-to-vertical layout center">
+                  <template is="dom-if" if="[[!isLoading]]">
+                    <vaadin-combo-box
+                      no-label-float
+                      id="patientSearch"
+                      class="flex"
+                      label="[[$TRANSLATE('Search By Name/Mobile/Email or Input Name', LANG)]]"
+                      item-label-path="name"
+                      filter="{{patientSearchQuery}}"
+                      loading="[[fetchingPatientSearchResult]]"
+                      on-selected-item-changed="patientSelected"
+                      value=""
+                    >
+                      <template>
+                        <div><strong>[[$getFullName(item.name)]]</strong></div>
+                        <div>
+                          <small>[[item.phone]] | [[item.email]]</small>
+                        </div>
+                      </template>
+                    </vaadin-combo-box>
+                  </template>
+                  <paper-button
+                    on-tap="newPatientButtonPressed"
+                    style="height: 40px; margin: 10px; background: #5c4575"
+                    raised
+                    class="btn btn-success"
+                  >
+                    <iron-icon icon="add"></iron-icon>
+                    [[$TRANSLATE('Book New Patient', LANG)]]
+                  </paper-button>
+                </div>
+                <!-- new-entry - end -->
+              </div>
+
+              <div class="card-custom-header">
+                <div class="layout center horizontal horizontal-to-vertical">
+                  <div class="title flex max-width">
+                    <div class="slots" style="background: #36a1b2">
+                      [[$TRANSLATE('Available:', LANG)]] [[availableSlot]]
+                    </div>
+                  </div>
+                  <div class="title flex max-width">
+                    <div class="slots" style="background: #dc2c4c">
+                      [[$TRANSLATE('Booked:', LANG)]]
+                      [[schedule.bookingList.length]]
+                    </div>
+                  </div>
+                  <div class="title flex max-width">
+                    <div class="slots" style="background: #fb5c00">
+                      [[$TRANSLATE('Awaiting:', LANG)]] [[awatingPatientCount]]
+                    </div>
+                  </div>
+                  <div class="title flex max-width">
+                    <div class="slots" style="background: green">
+                      [[$TRANSLATE('Completed:', LANG)]]
+                      [[completedPatientCount]]
+                    </div>
+                  </div>
+                  <!-- <div class="title flex-2" style="color: rgb(0, 162, 255)">[[secondVisitPatientCount]] Patient(s)
+                    Requires a Second Visit</div> -->
+                  <div class="flex layout horizontal">
+                    <paper-toggle-button checked="{{hideActivityLog}}"
+                      >[[$TRANSLATE('Show Activity Log',
+                      LANG)]]</paper-toggle-button
+                    >
+                    <paper-button
+                      raised
+                      class="btn btn-success"
+                      on-tap="chamberPatientsListPrintButtonPressed"
+                      >Print</paper-button
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="results">
+                <x-array-data-provider></x-array-data-provider>
+
+                <!-- <paper-progress indeterminate hidden="[[!loading]]"></paper-progress> -->
+                <vaadin-grid
+                  class="custom-agent-table"
+                  id="visitList"
+                  items="[[schedule.bookingList]]"
+                >
+                  <vaadin-grid-column width="50px" flex-grow="0" resizable>
+                    <template class="header">
+                      <div>[[$TRANSLATE('Serial', LANG)]]</div>
+                    </template>
+                    <template>
+                      <div class="layout horizontal flex">
+                        <div class="flex">
+                          <div class="">#[[_returnSerial(index)]]</div>
+                        </div>
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable width="100px">
+                    <template class="header">
+                      <vaadin-grid-filter
+                        aria-label="Patient Details"
+                        path="patientFullName"
+                        value="[[filterPatientFullName]]"
+                      >
+                        <paper-input
+                          label="Patient Details"
+                          value="{{filterPatientFullName}}"
+                          no-label-float
+                        >
+                        </paper-input>
+                      </vaadin-grid-filter>
+                    </template>
+                    <template>
+                      <div class="layout horizontal flex">
+                        <div class="m-right-8">
+                          <iron-image
+                            class="patient-picture"
+                            src$="[[$getProfileImage(item.patientProfilePicture)]]"
+                            preload
+                            sizing="cover"
+                          >
+                          </iron-image>
+                        </div>
+                        <div class="flex">
+                          <div>
+                            <span class="type capitalize bold"
+                              >[[item.patientFullName]]</span
+                            >
+                          </div>
+                          <div>
+                            <span class="type caption"
+                              >[[item.patientEmail]]</span
+                            >
+                          </div>
+                          <div>
+                            <span class="type caption"
+                              >[[item.patientPhone]]</span
+                            >
+                          </div>
+                          <template is="dom-if" if="[[item.remarks]]">
+                            <div>
+                              <strong>Remarks : </strong
+                              ><small>[[item.remarks]]</small>
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable width="100px">
+                    <template class="header">
+                      <vaadin-grid-sorter path="timeSlot">
+                        <vaadin-grid-filter
+                          aria-label="[[$TRANSLATE('Time Slot', LANG)]]"
+                          path="timeSlot"
+                          value="[[filterTimeSlot]]"
+                        >
+                          <paper-input
+                            label="[[$TRANSLATE('Time Slot', LANG)]]"
+                            value="{{filterTimeSlot}}"
+                            no-label-float
+                          >
+                          </paper-input>
+                        </vaadin-grid-filter>
+                      </vaadin-grid-sorter>
+                    </template>
+
+                    <template>
+                      <div class="m-left-8 flex layout">
+                        <div class="type body capitalize">
+                          [[item.timeSlot]]
+                          <paper-icon-button
+                            icon="create"
+                            on-tap="setTimeSlotClicked"
+                          ></paper-icon-button>
+                        </div>
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable width="100px">
+                    <template class="header">
+                      <vaadin-grid-sorter path="status">
+                        <vaadin-grid-filter
+                          aria-label="[[$TRANSLATE('Status', LANG)]]"
+                          path="status"
+                          value="[[filterStatus]]"
+                        >
+                          <paper-input
+                            label="[[$TRANSLATE('Status', LANG)]]"
+                            value="{{filterStatus}}"
+                            no-label-float
+                          >
+                          </paper-input>
+                        </vaadin-grid-filter>
+                      </vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <div class="m-left-24 flex">
+                        <div class="type body capitalize">
+                          <div class="horizontal layout wrap">
+                            <div
+                              class$="{{_changeStatusColorForPatientChamberBooking(item.status)}} label type bg-gray m-horizontal-4"
+                            >
+                              [[item.status]]
+                            </div>
+
+                            <div
+                              hidden$="[[item.isOnline]]"
+                              class="type bg-gray m-4"
+                            >
+                              Patient is Offline
+                            </div>
+                            <div
+                              hidden$="[[!item.isOnline]]"
+                              class="type bg-green m-4"
+                            >
+                              Patient is Online
+                            </div>
+
+                            <div
+                              hidden$="[[!item.isAgentOnline]]"
+                              class="type bg-green m-4"
+                            >
+                              Agent is Online
+                            </div>
+                          </div>
+                          <template is="dom-if" if="[[item.isOnline]]">
+                            <div class="type m-4">
+                              <div hidden>[[item]]</div>
+                              <paper-button
+                                raised
+                                on-tap="startVideoChatWithPatient"
+                                class="btn btn-success btn-sm"
+                              >
+                                <iron-icon
+                                  class="video-icon"
+                                  icon="extra-icons:video"
+                                ></iron-icon>
+                                Video Call to Patient</paper-button
+                              >
+                            </div>
+                          </template>
+                          <template is="dom-if" if="[[item.isAgentOnline]]">
+                            <div hidden$="[[!item.agentId]]" class="type m-4">
+                              <div hidden>[[item]]</div>
+                              <paper-button
+                                raised
+                                on-tap="startVideoChatViaAgent"
+                                class="btn btn-success btn-sm"
+                              >
+                                <iron-icon
+                                  class="video-icon"
+                                  icon="extra-icons:video"
+                                ></iron-icon>
+                                Video Call to Agent</paper-button
+                              >
+                            </div>
+                          </template>
+
+                          <!-- <div hidden$="[[!item.isOnline]]" class="type m-4">
+                            <paper-button raised on-tap="startVideoChatWithPatient" class="btn btn-success btn-sm">Video Call to Patient</paper-button>
+            
+                          </div> -->
+                          <div
+                            style="
+                              font-size: 14px;
+                              margin-left: 4px;
+                              margin-top: 8px;
+                            "
+                          >
+                            <div
+                              hidden$="[[!$equals(item.paymentStatus, 'online-pending')]]"
+                            >
+                              <span>Payment not complete</span>
+                            </div>
+                            <div
+                              hidden$="[[!$equals(item.paymentStatus, 'manual')]]"
+                            >
+                              <span>Payment not complete</span>
+                            </div>
+                            <div
+                              hidden$="[[!$equals(item.paymentStatus, 'online successful by patient')]]"
+                            >
+                              <span>Payment Done by Patient</span>
+                            </div>
+                            <div
+                              hidden$="[[!$equals(item.paymentStatus, 'online successful by agent')]]"
+                            >
+                              <span>Payment Done by Agent</span>
+                            </div>
+                            <div
+                              hidden$="[[!$equals(item.paymentStatus, 'online-successful')]]"
+                            >
+                              <span>Payment not complete</span>
+                            </div>
+                            <div
+                              hidden$="[[!$equals(item.paymentStatus, 'online-failure')]]"
+                            >
+                              <span>Payment Failed</span>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- <div class="type body capitalize">
+                          <span class="type secondary">Payment Status:</span>
+                          <br> [[entry.paymentStatus]]</div> -->
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <div>Created By</div>
+                    </template>
+                    <template>
+                      <template
+                        is="dom-if"
+                        if="{{item.originalPayload.agentName}}"
+                      >
+                        <!-- <div on-click="showAgentDetails"><span class="type caption" style="background: #c7dcf7ba;
+                          padding: 2px 10px;
+                          border-radius: 4px;
+                          color: #6979ffe8;
+                          font-weight: bold;
+                          box-shadow: 1px 1px 2px #d8d8d8;">Agent</span></div> -->
+                        <div
+                          class="layout vertical"
+                          style="padding-right: 10px"
+                        >
+                          <div>
+                            <span class="type caption"
+                              ><span></span>Agent:
+                              [[item.originalPayload.agentName]]</span
+                            >
+                          </div>
+                          <div>
+                            <span class="type caption"
+                              >Agent Org:
+                              [[item.originalPayload.organizationName]]</span
+                            >
+                          </div>
+                          <div>
+                            <span class="type caption"
+                              >Agent Org Address:
+                              [[item.originalPayload.organizationAddrs]]</span
+                            >
+                          </div>
+                          <div>
+                            <i class="type caption"
+                              >Booked Type: [[item.bookedType]] booking</i
+                            >
+                          </div>
+                        </div>
+                      </template>
+                      <template
+                        is="dom-if"
+                        if="[[$equals(item.originalPayload.bookedType,'self')]]"
+                      >
+                        <div>
+                          <span
+                            class="type caption"
+                            style="
+                              background: #8be5d46e;
+                              padding: 2px 10px;
+                              border-radius: 4px;
+                              color: #31ceb9e8;
+                              font-weight: bold;
+                              box-shadow: 1px 1px 2px #d8d8d8;
+                            "
+                            ><span></span>Patient</span
+                          >
+                        </div>
+                      </template>
+                      <template
+                        is="dom-if"
+                        if="[[$equals(item.bookedByUserType,'doctor')]]"
+                      >
+                        <div>
+                          <span
+                            class="type caption"
+                            style="
+                              background: #8ac3dd6e;
+                              padding: 2px 10px;
+                              border-radius: 4px;
+                              color: #319ccee8;
+                              font-weight: bold;
+                              box-shadow: 1px 1px 2px #d8d8d8;
+                            "
+                            ><span></span>Doctor</span
+                          >
+                        </div>
+                      </template>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable flex-grow="0">
+                    <template class="header">
+                      <div>Action</div>
+                    </template>
+                    <template>
+                      <template
+                        is="dom-if"
+                        if="[[!$equals(item.status, 'canceled')]]"
+                      >
+                        <div hidden>[[item]]</div>
+                        <paper-icon-button
+                          icon="icons:more-vert"
+                          class="dropdown-trigger"
+                          raised
+                          on-tap="actionPressed"
+                          alt="options"
+                        ></paper-icon-button>
+                      </template>
+                      <!-- <template is="dom-if" if="[[!$equals(item.status,'booked')]]">
+                      Not Allowed
+                   </template> -->
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column
+                    resizable
+                    width="200px"
+                    hidden="[[!hideActivityLog]]"
+                  >
+                    <template class="header">
+                      <div>Activity Log</div>
+                    </template>
+                    <template>
+                      <div class="flex-2">
+                        <ul>
+                          <template
+                            is="dom-repeat"
+                            items="[[item.activityLog]]"
+                            as="activity"
+                          >
+                            <li style="font-size: 15px">
+                              Status:
+                              <span class="type bold">[[activity.status]]</span>
+                              on
+                              [[$formatDateTime(activity.createdDateTimeStamp)]]
+                            </li>
+                          </template>
+                        </ul>
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+                </vaadin-grid>
+              </div>
+            </paper-card>
+
+            <!-- Card - Booking - start -->
+
+            <!-- Card - Booking - end -->
+          </template>
+        </div>
+      </div>
+      <paper-dialog
+        class="custom-input-field"
+        cancel-on-outside-click
+        id="action-modal"
+      >
+        <h2
+          style="
+            color: #fafafa;
+            background: rgb(49, 4, 80);
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #ffbc07;
+            border-radius: 0px 0px 10px 10px;
+            padding: 10px;
+            margin-top: 0px !important;
+          "
+        >
+          [[$TRANSLATE('Actions', LANG)]]
+        </h2>
+        <div class="vertical layout" style="padding: 10px">
+          <div
+            class="horizontal flex layout wrap"
+            style="justify-content: center"
+          >
+            <template
+              is="dom-if"
+              if="[[$equals(actionData.status, 'require-second-visit')]]"
+            >
+              <div hidden>[[actionData]]</div>
+              <paper-button
+                raised
+                on-tap="markAsDoneTapped"
+                class="btn btn-success btn-sm"
+                >[[$TRANSLATE('Mark as Completed', LANG)]]
+              </paper-button>
+            </template>
+
+            <template is="dom-if" if="[[$equals(actionData.status, 'booked')]]">
+              <div hidden>[[actionData]]</div>
+
+              <!-- <template is="dom-if" if="[[actionData.isOnline]]">
+              <div class="dashboard-item" on-tap="startVideoChatViaPatient">
+              <div class="icon">
+              
+              <iron-icon icon="icons:send" class="m-right-8"></iron-icon> 
+            </div>
+            <div class="type body uppercase">[[$TRANSLATE('Video Call', LANG)]]</div>
+            <paper-ripple></paper-ripple>
+          </div>
+          </template>
+          <template is="dom-if" if="[[actionData.isAgentOnline]]">
+            <div class="dashboard-item" on-tap="startVideoChatViaAgent">
+            <div class="icon">
+           
+            <iron-icon icon="icons:send" class="m-right-8"></iron-icon> 
+            </div>
+            <div class="type body uppercase" hidden$=[[!actionData.agentId]]>[[$TRANSLATE('Video Call to Agent', LANG)]]</div>
+            <paper-ripple></paper-ripple>
+            </div>
+          </template> -->
+
+              <!-- <template is="dom-if" if="[[$equals(actionData.bookingType, 'video-call')]]">
+              <template is="dom-if" if="[[actionData.isOnline]]">
+                <div class="dashboard-item" on-tap="startVideoChatViaPatient">
+                <div class="icon">
+               
+                <iron-icon icon="icons:send" class="m-right-8"></iron-icon> 
+              </div>
+              <div class="type body uppercase">[[$TRANSLATE('Video Call', LANG)]]</div>
+              <paper-ripple></paper-ripple>
+            </div>
+            </template>
+          
+            </template>
+             -->
+              <!-- <template is="dom-if" if="[[$equals(actionData.bookedByUserType, 'doctor')]]">
+              <template is="dom-if" if="[[actionData.isOnline]]">
+                <div class="dashboard-item" on-tap="startVideoChatViaPatient">
+                  <div class="icon">
+                   
+                    <iron-icon icon="icons:send" class="m-right-8"></iron-icon> 
+                  </div>
+                  <div class="type body uppercase">[[$TRANSLATE('Video Call', LANG)]]</div>
+                  <paper-ripple></paper-ripple>
+                </div>
+                         
+              </template>
+            </template> -->
+
+              <div class="dashboard-item" on-tap="sendSMSButtonClicked">
+                <div class="icon">
+                  <!-- <img width="64" height="64"  src$="{{item.imagePath}}" /> -->
+                  <iron-icon icon="icons:send" class="m-right-8"></iron-icon>
+                </div>
+                <div class="type body uppercase">
+                  [[$TRANSLATE('Send Confirmation SMS', LANG)]]
+                </div>
+                <paper-ripple></paper-ripple>
+              </div>
+              <div
+                class="dashboard-item"
+                style="background-color: #24b2b2; color: white"
+                on-tap="viewChamberPatient"
+              >
+                <div class="icon">
+                  <!-- <img width="64" height="64"  src$="{{item.imagePath}}" /> -->
+                  <iron-icon
+                    icon="icons:pageview"
+                    class="m-right-8"
+                  ></iron-icon>
+                </div>
+                <div class="type body uppercase">
+                  [[$TRANSLATE('View Patient', LANG)]]
+                </div>
+                <paper-ripple></paper-ripple>
+              </div>
+              <!-- <div class="dashboard-item" on-tap="generateToken">
+                <div class="icon">
+                  
+                  <iron-icon icon="icons:create" class="m-right-8"></iron-icon> 
+                </div>
+                <div class="type body uppercase"> [[$TRANSLATE('Generate Token', LANG)]]</div>
+                <paper-ripple></paper-ripple>
+              </div> -->
+              <div
+                class="dashboard-item"
+                style="background-color: #24b2b2; color: white"
+                on-tap="markAsDoneTapped"
+              >
+                <div class="icon">
+                  <!-- <img width="64" height="64"  src$="{{item.imagePath}}" /> -->
+                  <iron-icon icon="icons:done" class="m-right-8"></iron-icon>
+                </div>
+                <div class="type body uppercase">
+                  [[$TRANSLATE('Mark as Completed', LANG)]]
+                </div>
+                <paper-ripple></paper-ripple>
+              </div>
+              <div
+                class="dashboard-item"
+                style="background-color: #24b2b2; color: white"
+                on-tap="addRemarksTapped"
+              >
+                <div class="icon">
+                  <!-- <img width="64" height="64"  src$="{{item.imagePath}}" /> -->
+                  <iron-icon icon="icons:done" class="m-right-8"></iron-icon>
+                </div>
+                <div class="type body uppercase">
+                  [[$TRANSLATE('Add Remarks', LANG)]]
+                </div>
+                <paper-ripple></paper-ripple>
+              </div>
+              <div class="dashboard-item" on-tap="requiresSecondVisitTapped">
+                <div class="icon">
+                  <!-- <img width="64" height="64"  src$="{{item.imagePath}}" /> -->
+                  <iron-icon
+                    icon="icons:thumb-up"
+                    class="m-right-8"
+                  ></iron-icon>
+                </div>
+                <div class="type body uppercase">
+                  [[$TRANSLATE('Requires Second Visit', LANG)]]
+                </div>
+                <paper-ripple></paper-ripple>
+              </div>
+              <div
+                class="dashboard-item btn btn-danger"
+                on-tap="doctorCancelTapped"
+              >
+                <div class="icon">
+                  <!-- <img width="64" height="64"  src$="{{item.imagePath}}" /> -->
+                  <iron-icon icon="icons:cancel" class="m-right-8"></iron-icon>
+                </div>
+                <div class="type body uppercase">
+                  [[$TRANSLATE('Cancel booking', LANG)]]
+                </div>
+                <paper-ripple></paper-ripple>
+              </div>
+
+              <!-- <paper-menu-button class="p-0" vertical-align="top" horizontal-align="right">
+              <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+              <paper-menu class="dropdown-content">
+                
+                <paper-item on-tap="sendSMSButtonClicked">[[$TRANSLATE('Send Confirmation SMS', LANG)]]</paper-item>
+                <paper-item on-tap="viewChamberPatient">[[$TRANSLATE('View Patient', LANG)]]</paper-item>
+                <paper-item on-tap="generateToken">[[$TRANSLATE('Generate Token', LANG)]]</iron-icon></paper-item>
+                <paper-item on-tap="markAsDoneTapped">[[$TRANSLATE('Mark as Completed', LANG)]]</paper-item>
+                <paper-item on-tap="requiresSecondVisitTapped">[[$TRANSLATE('Requires Second Visit', LANG)]]</paper-item>
+                <paper-item on-tap="doctorCancelTapped">[[$TRANSLATE('Cancel', LANG)]]</paper-item>
+                <template is="dom-if" if="[[$equals(item.bookedByUserType, 'doctor')]]">
+                  <template is="dom-if" if="[[item.isOnline]]">
+                    <div hidden>[[item]]</div>
+                <paper-item on-tap="startVideoChatWithPatient">[[$TRANSLATE('Video Call to Patient', LANG)]]</paper-item>
+                             
+                  </template>
+                </template>
+              </paper-menu>
+            </paper-menu-button> -->
+            </template>
+            <template
+              is="dom-if"
+              if="[[$equals(actionData.status, 'completed')]]"
+            >
+              <div hidden>[[actionData]]</div>
+
+              <div
+                class="dashboard-item"
+                style="width: 20%"
+                on-tap="sendSMSButtonClicked"
+              >
+                <div class="icon">
+                  <!-- <img width="64" height="64"  src$="{{item.imagePath}}" /> -->
+                  <iron-icon icon="icons:send" class="m-right-8"></iron-icon>
+                </div>
+                <div class="type body uppercase">
+                  [[$TRANSLATE('Send Confirmation SMS', LANG)]]
+                </div>
+                <paper-ripple></paper-ripple>
+              </div>
+              <div
+                class="dashboard-item"
+                style="background-color: #24b2b2; color: white; width: 20%"
+                on-tap="viewChamberPatient"
+              >
+                <div class="icon">
+                  <!-- <img width="64" height="64"  src$="{{item.imagePath}}" /> -->
+                  <iron-icon
+                    icon="icons:pageview"
+                    class="m-right-8"
+                  ></iron-icon>
+                </div>
+                <div class="type body uppercase">
+                  [[$TRANSLATE('View Patient', LANG)]]
+                </div>
+                <paper-ripple></paper-ripple>
+              </div>
+              <!-- <div class="dashboard-item" on-tap="generateToken">
+                <div class="icon">
+                  
+                  <iron-icon icon="icons:create" class="m-right-8"></iron-icon> 
+                </div>
+                <div class="type body uppercase"> [[$TRANSLATE('Generate Token', LANG)]]</div>
+                <paper-ripple></paper-ripple>
+              </div> -->
+
+              <div
+                class="dashboard-item"
+                style="width: 20%"
+                on-tap="requiresSecondVisitTapped"
+              >
+                <div class="icon">
+                  <!-- <img width="64" height="64"  src$="{{item.imagePath}}" /> -->
+                  <iron-icon
+                    icon="icons:thumb-up"
+                    class="m-right-8"
+                  ></iron-icon>
+                </div>
+                <div class="type body uppercase">
+                  [[$TRANSLATE('Requires Second Visit', LANG)]]
+                </div>
+                <paper-ripple></paper-ripple>
+              </div>
+            </template>
+
+            <template
+              is="dom-if"
+              if="[[$equals(actionData.status, 'awaiting')]]"
+            >
+              <div hidden>[[actionData]]</div>
+              <paper-button
+                raised
+                on-tap="viewChamberPatient"
+                class="btn btn-success btn-sm"
+                >[[$TRANSLATE('View Patient', LANG)]]
+              </paper-button>
+              <paper-button raised on-tap="generateToken" class="btn btn-sm"
+                >[[$TRANSLATE('Generate Token', LANG)]]</paper-button
+              >
+              <paper-button
+                raised
+                on-tap="markAsDoneTapped"
+                class="btn btn-success btn-sm"
+                >[[$TRANSLATE('Mark as Completed', LANG)]]
+              </paper-button>
+              <paper-button
+                raised
+                on-tap="requiresSecondVisitTapped"
+                class="btn btn-primary btn-sm"
+                >[[$TRANSLATE('Requires Second Visit', LANG)]]</paper-button
+              >
+              <paper-button
+                raised
+                on-tap="doctorCancelTapped"
+                class="btn btn-danger btn-sm"
+                >[[$TRANSLATE('Cancel booking', LANG)]]
+              </paper-button>
+            </template>
+          </div>
+        </div>
+        <div class="buttons" style="border-top: 1px solid #cacaca">
+          <paper-button raised on-tap="cancelAction" dialog-dismiss
+            >[[$TRANSLATE('Close', LANG)]]</paper-button
+          >
+        </div>
+      </paper-dialog>
+
+      <paper-dialog
+        class="custom-input-field"
+        cancel-on-outside-click
+        id="chamber-details"
+      >
+        <h2 class="dialogHeader">[[$TRANSLATE('Chamber Details', LANG)]]</h2>
+
+        <div class="vertical flex layout">
+          <template is="dom-if" if="[[schedule]]">
+            <div>
+              <strong>[[$TRANSLATE('Chamber Date', LANG)]]:</strong>
+              [[$formatDate(schedule.dateString)]]
+            </div>
+            <div>
+              <strong>[[$TRANSLATE('Starts', LANG)]]:</strong>
+              [[$formatTimeString(schedule.startTimeString)]]
+            </div>
+            <div>
+              <strong>[[$TRANSLATE('Ends', LANG)]]:</strong>
+              [[$formatTimeString(schedule.endTimeString)]]
+            </div>
+            <div>
+              <strong>[[$TRANSLATE('Reschedule Delay', LANG)]]:</strong>
+              [[schedule.rescheduleDelayInMinutes]]
+            </div>
+          </template>
+          <template is="dom-repeat" items="[[timeSlotAvailability]]">
+            <div>
+              From [[$formatTimeSlotString(item.timeSlot)]]:
+              [[item.availableCount]] Free
+            </div>
+          </template>
+        </div>
+
+        <div class="buttons" style="border-top: 1px solid #cacaca">
+          <paper-button dialog-dismiss
+            >[[$TRANSLATE('Cancel', LANG)]]</paper-button
+          >
+        </div>
+      </paper-dialog>
+
+      <paper-dialog
+        class = "dialogWidth"
+        cancel-on-outside-click
+        on-iron-overlay-opened="patchOverlay"
+        id="select-chamber"
+      >
+        <h2 class="dialogHeader">[[$TRANSLATE('Chamber List', LANG)]]</h2>
+        
+          <div class="info-row horizontal layout">
+            <paper-input class="flex paper-custom" value="{{chamberSearchString}}" label="[[$TRANSLATE('Short Code/Chamber Name', LANG)]]"></paper-input>
+            <paper-button raised class="btn btn-primary" on-tap="searchChamberTapped">[[$TRANSLATE('Search', LANG)]]</paper-button>
+          </div>
+          <paper-dialog-scrollable>
+          <template is="dom-repeat" items="[[matchingChamberList]]">
+            
+            <paper-item
+              class="chamberLists"
+              style="border-bottom: 1px solid rgb(199, 199, 199)"
+            >
+              <div class="flex layout">
+                <div class="flex">
+                  <div>
+                    <span class="type capitalize bold"
+                      >[[_returnSerial(index)]].</span
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="flex layout">
+                <div class="flex">
+                  <div>
+                    <span class="type capitalize bold">[[item.shortCode]]</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex layout">
+                <div class="type body capitalize">
+                  <div><span class="type caption">[[item.name]]</span></div>
+                </div>
+              </div>
+              <div class="flex layout">
+                <div class="type body capitalize">
+                  <span class="type caption">Doctor:</span>
+                  <template is="dom-repeat" items="[[item.assignedDoctors]]" as="docName">
+                  <div><span class="type caption-3">[[docName.name]]</span></div>
+                </template>
+                </div>
+              </div>
+              <div class="flex layout">
+                <div class="type body capitalize">
+                  <div hidden>[[item]]</div>
+                  <paper-button
+                    style="background: #009688; color: white"
+                    on-tap="viewChamberSchedule"
+                    >Select</paper-button
+                  >
+                </div>
+              </div>
+            </paper-item>
+          </template>
+        </paper-dialog-scrollable>
+        
+        
+      </paper-dialog>
+
+      <paper-dialog
+        style="padding: 10px"
+        class="custom-input-field"
+        cancel-on-outside-click
+        id="available-slot"
+        on-iron-overlay-closed="availableSlotClosed"
+      >
+        <h2
+          style="
+            color: #fafafa;
+            background: #24b2b2;
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #ffbc07;
+            border-radius: 0px 0px 10px 10px;
+          "
+        >
+          [[$TRANSLATE('Available Slots', LANG)]]
+        </h2>
+        <div class="vertical layout" style="padding: 10px">
+          <template is="dom-repeat" items="[[timeSlotAvailability]]">
+            <div>
+              From [[$formatTimeSlotString(item.timeSlot)]]:
+              [[item.availableCount]] Free
+            </div>
+          </template>
+        </div>
+        <div class="buttons" style="border-top: 1px solid #cacaca">
+          <paper-button dialog-dismiss
+            >[[$TRANSLATE('Cancel', LANG)]]</paper-button
+          >
+        </div>
+      </paper-dialog>
+      <paper-dialog
+        class="custom-input-field"
+        no-cancel-on-outside-click
+        id="time-slot-modal"
+        on-iron-overlay-closed="timeSlotModalClosed"
+      >
+        <h2>[[$TRANSLATE('Change Time Slot', LANG)]]</h2>
+        <vaadin-combo-box
+          id="timeSlotComboBox"
+          label="[[$TRANSLATE('Time Slot', LANG)]]"
+          items="[[schedule.timeSlotList]]"
+          value="{{timeSlot}}"
+        >
+        </vaadin-combo-box>
+        <div class="buttons">
+          <paper-button dialog-dismiss
+            >[[$TRANSLATE('Cancel', LANG)]]</paper-button
+          >
+          <paper-button dialog-confirm
+            >[[$TRANSLATE('Confirm', LANG)]]</paper-button
+          >
+        </div>
+      </paper-dialog>
+      <paper-dialog
+        class="custom-input-field completeDialog"
+        no-cancel-on-outside-click
+        id="mark-asDone-modal"
+        on-iron-overlay-closed="markAsDoneClosed"
+      >
+        <div class="layout horizontal">
+          <h2>
+            [[$TRANSLATE('Are you want to complete this booking?', LANG)]]
+          </h2>
+          <div class="flex"></div>
+          <!-- <paper-icon-button style="bottom: 6px;" icon="close" dialog-dismiss></paper-icon-button> -->
+        </div>
+
+        <div class="buttons">
+          <paper-button style="background: #c46969; color: white" dialog-dismiss
+            >[[$TRANSLATE('No', LANG)]]</paper-button
+          >
+          <paper-button style="background: green; color: white" dialog-confirm
+            >[[$TRANSLATE('Yes', LANG)]]</paper-button
+          >
+        </div>
+      </paper-dialog>
+
+      <paper-dialog
+        class="p-16 custom-input-field"
+        no-cancel-on-outside-click
+        id="tokenDialog"
+      >
+        <h2>[[$TRANSLATE('Generate Token', LANG)]]</h2>
+        <paper-input
+          label="[[$TRANSLATE('Department', LANG)]]"
+          value="{{tokenObject.data.departmentName}}"
+        ></paper-input>
+        <paper-input
+          label="[[$TRANSLATE('Room', LANG)]]"
+          value="{{tokenObject.data.roomNumber}}"
+        ></paper-input>
+        <div class="buttons">
+          <paper-button dialog-dismiss
+            >[[$TRANSLATE('Cancel', LANG)]]</paper-button
+          >
+          <paper-button class="colored" raised on-click="tokenDialogConfirm"
+            >[[$TRANSLATE('Generate', LANG)]]</paper-button
+          >
+        </div>
+      </paper-dialog>
+      <paper-dialog
+        class="p-16 custom-input-field"
+        no-cancel-on-outside-click
+        id="remarksDialog"
+        on-iron-overlay-closed="addRemarksClosed"
+      >
+        <h2>[[$TRANSLATE('Add Remarks', LANG)]]</h2>
+        <paper-input
+          label="[[$TRANSLATE('Write..', LANG)]]"
+          value="{{addRemarks}}"
+        ></paper-input>
+
+        <div class="buttons">
+          <paper-button dialog-dismiss
+            >[[$TRANSLATE('Cancel', LANG)]]</paper-button
+          >
+          <paper-button class="colored" dialog-confirm
+            >[[$TRANSLATE('Add', LANG)]]</paper-button
+          >
+        </div>
+      </paper-dialog>
+
+      <paper-dialog id="dialogShowQrCode">
+        <h2 style="text-align: center">
+          [[$TRANSLATE('Scan Patients', LANG)]]
+        </h2>
+        <div class="dialog-container">
+          <bdemr-qrcode-reader
+            id="qrCodeReader"
+            active="{{isQrCodeActive}}"
+            result="{{qrCode}}"
+            on-qrcode-change="_onQrCodeChanged"
+          ></bdemr-qrcode-reader>
+        </div>
+        <div class="buttons">
+          <paper-button on-tap="_dismissQrcodeDialog"
+            >[[$TRANSLATE('Cancel', LANG)]]</paper-button
+          >
+        </div>
+      </paper-dialog>
+    </div>
+  </template>
+  <script src="page-chamber-patients.coffee-compiled.js"></script>
+</dom-module>

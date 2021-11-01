@@ -1,0 +1,13 @@
+RewriteEngine on 
+
+RewriteRule ^/?signup$ signup.html
+RewriteRule ^/?agent$ agent.html
+RewriteRule ^/?doctor-finder$ doctor-finder.html
+RewriteRule ^/?faq$ faq.html
+RewriteRule ^/?help$ help.html
+RewriteRule ^/?video-gallery$ video-gallery.html
+RewriteRule ^/?terms-and-condition$ terms-and-condition.html
+RewriteRule ^/?privacy-policy$ privacy-policy.html
+
+RewriteRule ^/?staff/([a-zA-Z_\-]+)$ staff.html?which=$1
+RewriteRule ^/?staff/([a-zA-Z_\/\.\-]+)$ /$1

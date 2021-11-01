@@ -1,0 +1,103 @@
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+
+<link rel="import" href="../bdemr-qrcode/bdemr-qrcode.html">
+
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-my-id-card">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+
+      .profile-image {
+        width: 80px !important;
+        height: 80px !important;
+        border-radius: 4px;
+      }
+
+      .text-bold {
+        font-weight: bold;
+      }
+
+     
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+      <div class="limiting-container">
+        <paper-card heading="[[organization.name]]">
+          <div class="card-content">
+
+            <div class="horizontal layout">
+              <iron-image class="profile-image m-right-16" src$="[[$getProfileImage(user.profileImage)]]" preload 
+                sizing="cover"></iron-image>
+              <div class="flex type capton-2">
+                <div>
+                  <span class="text-bold">[[$TRANSLATE('Name', LANG)]]: </span>
+                  <span>[[$getFullName(user.name)]]</span>
+                </div>
+                <div>
+                  <span class="text-bold">[[$TRANSLATE('Gender', LANG)]]: </span>
+                  <span>{{user.gender}}</span>
+                </div>
+                <div>
+                  <span class="text-bold">[[$TRANSLATE('DOB', LANG)]]: </span>
+                  <span>[[user.dateOfBirth]] </span>
+                </div>
+                <div>
+                  <span class="text-bold">[[$TRANSLATE('Blood Group', LANG)]]: </span>
+                  <span> [[user.bloodGroup]]</span>
+                </div>
+    
+                <div>
+                  <span class="text-bold">[[$TRANSLATE('Phone', LANG)]]: </span>
+                  <span> [[user.phone]]</span>
+                </div>
+                <div>
+                  <span class="text-bold">[[$TRANSLATE('Email', LANG)]]: </span>
+                  <span> [[user.email]]</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div class="horizontal layout center center-justified m-top-24 m-bottom-16">
+                <template is="dom-if" if="[[user.serial]]">
+                  <bdemr-qrcode code="{{user.serial}}" width="128" height="128"></bdemr-qrcode>
+                </template>
+              </div>
+              <!-- <div class="type body center center-justified m-top-4">{{user.serial}}</div> -->
+            </div>
+
+            
+          </div>
+          
+        </paper-card>
+      </div>
+    </div>
+
+
+
+
+  </template>
+  <script src="page-my-id-card.coffee-compiled.js"></script>
+  
+
+</dom-module>

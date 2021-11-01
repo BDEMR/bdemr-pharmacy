@@ -1,0 +1,421 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower-assets/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+
+<link rel="import" href="../../elements/bdemr-generic-template/bdemr-generic-template.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-patient-template">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .patient-info-card-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .patient-info-cards {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+
+      .patient-info-cards .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+
+      .patient-info-cards .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+
+      .patient-info-cards .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+
+      .patient-info-cards .row .modifier.online {
+        background: #757575;
+      }
+
+      .patient-info-cards .row .modifier.local-only {
+        background: #039BE5;
+      }
+
+      .patient-info-cards .row .modifier.locally-updated {
+        background: #009688;
+      }
+
+      .patient-info-cards .row .modifier.imported {
+        background: #4CAF50;
+      }
+
+      /*.info-row {
+        margin-top: 10px;
+      }*/
+
+      .top-info-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      .address1 {
+        margin-right: 10px;
+      }
+
+      .break-on-tablet {
+        @apply(--layout-horizontal);
+      }
+
+      @media screen and (max-width: 740px) {
+        .break-on-tablet {
+          display: block;
+        }
+      }
+
+      .val {
+        text-decoration: underline;
+      }
+
+      .custom-input{
+        margin-left: 8px;
+        margin-right: 8px;
+        width: calc(100% - 16px);
+      }
+
+      @media screen and (min-width: 656px) {
+        .custom-input{
+          width: calc(50% - 16px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .custom-input{
+          width: calc(33.33333% - 16px);
+        }
+      }
+
+      .custom-checkbox {
+        width: calc(100% - 16px);
+        margin-left: 8px;
+        margin-right: 8px;
+      }
+
+      @media screen and (min-width: 656px) {
+        .custom-checkbox {
+          width: calc(50% - 16px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .custom-checkbox {
+          width: calc(33.33333% - 16px);
+        }
+      }
+
+      .card-custom-header {
+        padding: 8px;
+        /*border-bottom: 1px solid var(--paper-grey-200);*/
+        background-color: var(--paper-grey-50);
+      }
+
+      .deep {
+        background-color: var(--paper-grey-200);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        color: var(--brand-primary-color);
+      }
+
+      vaadin-combo-box ::content paper-input-container {
+        padding: 8px 0;
+      }
+
+      .custom-radio-button-group {
+        margin: 8px;
+        width: calc(100% - 16px);
+      }
+
+      @media screen and (min-width: 656px) {
+        .custom-radio-button-group {
+          width: calc(50% - 16px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .custom-radio-button-group {
+          width: calc(33.33333% - 16px);
+        }
+      }
+
+      .btn-add {
+        min-width: 3em;
+      }
+
+      .custom-item {
+        padding: 6px 12px;
+        border-radius: 6px;
+        margin: 6px 4px;
+        border: 1px solid #dadada;
+        background-color: #fff
+      }
+
+      .full-width {
+        width: calc(100% - 16px) !important;
+      }
+
+      .profile-image {
+        height: 78px;
+        width: 78px;
+        border-radius: 50%;
+        border: 2px solid #f7f7f7;
+      }
+      .card-item {
+        border-radius: 6px;
+        margin: 4px;
+        border: 1px solid #eee;
+        background-color: #fff;
+      }
+      .btn-add {
+        min-width: 0;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+        background-color: #eceff1;
+        color: rgba(0, 0, 0, .87);
+      }
+
+      .btn-add.small {
+        margin: 3px;
+        font-size: 14px;
+      }
+
+      .custom-label {
+        padding: 4px 8px;
+        border: 1px solid #dadada;
+        border-radius: 6px;
+        margin: 8px;
+        /*background-color: #f7f7f7;*/
+        width: calc(100% - 26px);
+      }
+
+      @media screen and (min-width: 656px) {
+        .custom-label {
+          width: calc(50% - 26px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .custom-label {
+          width: calc(33.33333% - 26px);
+        }
+      }
+
+      .bg-gray {
+        padding: 3px 6px;
+        display: table;
+      }
+
+      .custom-input ::content paper-input-container [suffix] {
+        color: rgba(0,0,0, .54) !important;
+      }
+
+      .text-bold {
+        font-weight: 500;
+        color: rgba(0,0,0,.87);
+      }
+      .profile-image-area {
+        position: relative;
+        height: 128px;
+        width: 128px;
+      }
+
+      #fileInput {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        left: 0;
+        top: 0;
+        cursor: pointer;
+        opacity: 0;
+      }
+
+      #fileInput:hover {
+        background-color: rgba(0,0,0, .56)
+      }
+
+      .p-horizontal-40 {
+        padding-left: 40px;
+        padding-right: 40px;
+      }
+      .user-avatar {
+        height: 64px;
+        width: 64px;
+        border-radius: 50%;
+      }
+
+      .user-avatar.small {
+        height: 36px;
+        width: 36px;
+      }
+
+      .user-avatar.medium {
+        height: inherit;
+        width: inherit;
+      }
+
+      #loader {
+        background: rgba(255, 255, 255, .87);
+        position: absolute;
+        left: 0;
+        top: 0;
+        border-radius: 16px;
+        z-index: 1;
+        height: 100%;
+        width: 100%;
+      }
+
+      
+    </style>
+
+    <!-- local DOM -->
+    <div class="master-container">
+
+      <div class="limiting-container custom-input-field">
+
+        <!-- patient details - start -->
+        <paper-card>
+          <div class="card-item p-8">
+            <div class="horizontal layout wrap center">
+
+              <div class="horizontal layout center-justified center m-right-16">
+                <div class="profile-image-area">
+                  <iron-image class="user-avatar medium" src$="[[profileImage]]" preload sizing="cover"></iron-image>
+                  <!-- loader - start -->
+                  <div id="loader" class="horizontal layout center center-justified" hidden$="{{!isUploading}}">
+                    <div style="text-align: center;">
+                      <paper-spinner active></paper-spinner>
+                      <div class="type body secondary">please wait...</div>
+                    </div>
+                  </div>
+                  <!-- loader - end -->
+                </div>
+              </div>
+
+              <div class="flex">
+                <div class="m-horizontal-4 horizontal layout center wrap">
+                  <div class="type body-lead capitalize">{{$getFullName(patient.name)}}</div>
+                  <div class="m-left-8 type caption bg-gray">{{patient.serial}}</div>
+                </div>
+                <div class="type body p-horizontal-4"><span class="text-bold">Registerd Number: </span>{{patient.phone}}</div>
+                <div class="horizontal layout wrap type caption-2">
+
+                  <template is="dom-if" if="[[!patient.isForOrganizationOnly]]">
+
+                    <div class="m-horizontal-4">
+                      <span class="text-bold">Sex: </span>
+                      <span>{{patient.gender}}</span>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <span class="text-bold">Age: </span>
+                      <span>[[$computeAge(patient.dateOfBirth)]] </span>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <span class="text-bold">Blood Group: </span>
+                      <span> [[patient.bloodGroup]]</span>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <span class="text-bold">Allergy: </span>
+                      <span>[[patient.allergy]] </span>
+                    </div>
+                  </template>
+
+                <iron-icon icon="icons:info-outline" class="icon small m-right-4"></iron-icon>
+                </div>
+              </div>
+            </div>
+          </div>
+        </paper-card>
+
+        <paper-card heading="Add from template">
+          <bdemr-generic-template template-data="{{otTemplateObject.data}}"></bdemr-generic-template>
+          <paper-checkbox class="m-left-8 m-bottom-8" checked="{{otTemplateObject.sendToPatient}}">Send to Patient</paper-checkbox>
+        </paper-card>
+
+        <paper-card class="m-top-8">
+          <div class="card-actions">
+            <paper-button raised class="btn btn-success" on-tap="saveOtButtonPressed">SAVE DATA</paper-button>
+          </div>
+        </paper-card>
+                  
+      </div>
+    </div>
+
+  </template>
+  <script src="page-patient-template.coffee-compiled.js"></script>
+</dom-module>

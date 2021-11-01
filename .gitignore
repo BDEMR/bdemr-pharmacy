@@ -1,0 +1,7 @@
+node_modules
+build-debug/
+polymer-build
+gcp-production/app
+
+.DS_Store
+npm-shrinkwrap.json

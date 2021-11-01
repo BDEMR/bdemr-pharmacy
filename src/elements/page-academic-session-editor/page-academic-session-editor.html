@@ -1,0 +1,452 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-academic-session-editor">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+        width: 70%;
+      }
+
+      paper-checkbox {
+        margin-right: 10px;
+      }
+
+      .flex-item {
+        margin-left: 16px;
+        box-sizing: border-box;
+      }
+
+      .flex-item:first-child {
+        margin-left: 0;
+      }
+
+      .paper-custom-input ::content input {
+        border-color: #dadada !important;
+      }
+
+      .b-radius {
+        border: 1px solid #dadada;
+        border-radius: 6px;
+        padding: 12px;
+      }
+
+
+      @media screen and (max-width: 639px) {
+        .flex-item {
+          width: 100%;
+          margin-left: 0;
+        }
+      }
+    </style>
+
+    <div class="master-container">
+      <div class="limiting-container">
+
+        <paper-card heading="Session Details">
+          <paper-progress class="progress" indeterminate hidden="[[!loading]]"></paper-progress>
+          <div class="card-content">
+            <paper-input class="paper-custom-input" label="Title" value="{{session.title}}"></paper-input>
+            <vaadin-combo-box class="paper-custom-input" label="Type" id="sessionType" items="[[sessionTypeList]]"
+              value="{{session.type}}">
+            </vaadin-combo-box>
+            <paper-input class="paper-custom-input" label="Subject" value="{{session.subject}}"></paper-input>
+            <paper-input class="paper-custom-input" label="Topics" value="{{session.topics}}"></paper-input>
+            <paper-input class="paper-custom-input" label="Presenter's Name" value="{{session.presenter.name}}">
+            </paper-input>
+            <paper-input class="paper-custom-input" label="Presenter's Designation"
+              value="{{session.presenter.designation}}"></paper-input>
+            <paper-input class="paper-custom-input" label="Award Points Type" value="{{session.awardPoints.type}}">
+            </paper-input>
+            <paper-input class="paper-custom-input" type="number" label="Award Points Value"
+              value="{{session.awardPoints.value}}"></paper-input>
+            <vaadin-combo-box class="paper-custom-input" label="Assign A Member Who Can Also Take Attendance"
+              id="assignMember" items="[[memberList]]" item-label-path="name" allow-custom-value
+              value="{{assignedMemberName}}" on-selected-item-changed="memberSelected">
+              <template>
+                <div><strong>[[item.name]]</strong></div>
+                <div><small>[[item.phone]], [[item.email]]</small></div>
+              </template>
+            </vaadin-combo-box>
+
+            <div class="horizontal layout wrap">
+              <paper-input class="paper-custom-input flex-item flex four" label="Date" value="{{session.date}}"
+                type="date"></paper-input>
+              <paper-input label="Start Time" class="paper-custom-input flex-item flex one"
+                value="{{session.startTime}}" type="time"></paper-input>
+              <paper-input class="paper-custom-input flex-item flex one" label="End Time" value="{{session.endTime}}"
+                type="time"></paper-input>
+            </div>
+            <!-- <vaadin-combo-box label="Group" id="group" items="[[groupList]]"
+              item-label-path="name" allow-custom-value value="{{groupName}}" on-selected-item-changed="groupSelected">
+              <template>
+                <div><strong>[[item.name]]</strong></div>
+              </template>
+            </vaadin-combo-box> -->
+            <template is="dom-if" if=[[!userCameToEdit]]>
+              <div class="m-top-16">
+                <h4 class="type text-secondary">Groups: </h4>
+                <div class="m-left-8 m-top-8 b-radius">
+                  <template is="dom-repeat" items="[[groupList]]">
+                    <paper-checkbox class="m-8" on-change="groupSelected" value="[[item]]">[[item.name]]
+                    </paper-checkbox>
+                  </template>
+                </div>
+              </div>
+            </template>
+          </div>
+          <div class="card-actions">
+            <paper-button on-tap="saveButtonPressed" class="btn btn-success">Save</paper-button>
+          </div>
+        </paper-card>
+
+      </div>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'page-academic-session-editor',
+      behaviors: [
+        app.behaviors.commonComputes,
+        app.behaviors.dbUsing,
+        app.behaviors.pageLike,
+        app.behaviors.apiCalling
+      ],
+      properties: {
+        user: Object,
+        organization: Object,
+        session: Object,
+        memberList: Array,
+        groupList: Array,
+        attendeeIdListFromGroup: {
+          type: Array,
+          value: []
+        },
+        assignedMemberName: String,
+        groupName: String,
+        sessionTypeList: {
+          type: Array,
+          value: [
+            'General Lecture',
+            'Special Lecture',
+            'Additional Lecture',
+            'Demonstration',
+            'Outdoor Placement',
+            'Operation Theatre Placement',
+            'Community Placement',
+            'Morning Ward Placement',
+            'Evening Ward Placement',
+            'Emergency Placement'
+          ]
+        },
+        userCameToEdit: {
+          type: Boolean,
+          value: false
+        }
+      },
+      navigatedIn() {
+        const params = this.domHost.getPageParams()
+        this._loadUser();
+        if (params['organization']) {
+          this._loadOrganization(params['organization'], () => {
+            this._loadMemberList()
+            this._loadGroupList(this.organization.idOnServer)
+            if (params['session'] === 'new') {
+              return this._makeNewSessionObject()
+            } else {
+              this.userCameToEdit = true;
+              return this._loadSession(params['session']);
+            }
+          })
+        } else {
+          return this.domHost.showModalDialog("Missing Organization params");
+        }
+      },
+
+      _loadUser(cbfn) {
+        const userList = app.db.find('user');
+        if (userList.length === 1) {
+          this.user = userList[0];
+        } else {
+          return this.domHost.showModalDialog('Invalid User');
+        }
+      },
+
+      _loadOrganization(idOnServer, cbfn) {
+        const data = {
+          apiKey: this.user.apiKey,
+          idList: [idOnServer]
+        };
+        this.loading = true;
+        return this.callApi('/bdemr-organization-list-organizations-by-ids', data, (err, response) => {
+          this.loading = false;
+          if (err) {
+            return this.domHost.showModalDialog(err.message);
+          }
+          if (response.hasError) {
+            return this.domHost.showModalDialog(response.error.message);
+          } else {
+            if (!response.data.matchingOrganizationList.length) {
+              this.domHost.showModalDialog("Invalid Organization");
+              return;
+            }
+            this.set('organization', response.data.matchingOrganizationList[0]);
+            cbfn()
+          }
+        });
+      },
+
+      _loadMemberList() {
+        const query = {
+          apiKey: this.user.apiKey,
+          organizationId: this.organization.idOnServer,
+          overrideWithIdList: (function () {
+            var i, len, ref, results;
+            ref = this.organization.userList;
+            results = [];
+            for (i = 0, len = ref.length; i < len; i++) {
+              user = ref[i];
+              results.push(user.id);
+            }
+            return results;
+          }).call(this),
+          searchString: 'N/A'
+        }
+        this.loading = true;
+        this.callApi('/bdemr-organization-find-user', query, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (response.data.matchingUserList.length) {
+            memberList = response.data.matchingUserList
+            this.set('memberList', memberList);
+            console.log('Member List', this.memberList)
+          }
+        })
+      },
+
+      _loadGroupList(organizationIdentifier) {
+        const query = {
+          apiKey: this.user.apiKey,
+          payload: {
+            organizationId: organizationIdentifier
+          }
+        }
+        this.loading = true;
+        this.callApi('/get-organization-attendance-groups', query, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (response.data.length) {
+            this.set('groupList', response.data);
+            console.log(this.groupList)
+          }
+        })
+      },
+
+      memberSelected(e) {
+        var member;
+        if (!e.detail.value) {
+          return;
+        }
+        else {
+          member = e.detail.value;
+          console.log(member)
+          this.set('session.assignedMember.id', member.idOnServer);
+        }
+      },
+
+      // laterOptimization(e) {
+      //   value = e.target.value
+      //   console.log(value)
+      //   if (!e.target.checked) {
+      //     this.groupList.forEach((item) => {
+      //       item.isChecked = false
+      //     })
+      //     console.log(this.groupList)                    
+      //     return;
+      //   }
+      //   if (e.target.checked) {
+      //     this.groupList.forEach((item) => {
+      //       item.isChecked = true
+      //     })
+      //   }
+      //   console.log(this.groupList)
+      // },
+
+      groupSelected(e) {
+        if (!e.target.checked) {
+          return
+        }
+        else {
+          value = e.target.value
+          value.attendees.forEach((item) => {
+            this.push('session.attendees',
+              {
+                attendeeId: item,
+                minutesAwarded: 0,
+                isAwarded: false,
+                isPresent: false,
+                takenById: null,
+                takenByDatetimeStamp: null,
+                groupId: value._id
+              }
+            )
+          })
+        }
+      },
+
+      _loadSession(sessionIdentifier) {
+        const query = {
+          apiKey: this.user.apiKey,
+          payload: {
+            sessionId: sessionIdentifier,
+            organizationId: this.organization.idOnServer
+          }
+        }
+        this.loading = true;
+        this.callApi('/get-organization-attendance-session', query, (err, response) => {
+          this.loading = false;
+          if (err) {
+            this._makeNewSessionObject()
+            return this.domHost.showModalDialog(err.message);
+          }
+          if (response.hasError) {
+            this._makeNewSessionObject()
+            return this.domHost.showModalDialog(response.error.message);
+          } else {
+            let session = response.data;
+            if (session.date) {
+              let date = new Date(session.date)
+              session.date = date.toISOString().split('T')[0];
+              let startingTime = this.$getFormatted24HRTimeFromMS(session.startTime)
+              session.startTime = startingTime
+              let endingTime = this.$getFormatted24HRTimeFromMS(session.endTime)
+              session.endTime = endingTime
+            }
+            this.set('session', session)
+            console.log(this.session)
+          }
+        })
+      },
+
+      _makeNewSessionObject() {
+        const session = {
+          organizationId: this.organization.idOnServer,
+          title: '',
+          type: '',
+          subject: '',
+          topics: '',
+          presenter: {
+            name: '',
+            designation: ''
+          },
+          awardPoints: {
+            type: '',
+            value: null
+          },
+          assignedMember: {
+            id: null
+          },
+          date: null,
+          startTime: null,
+          endTime: null,
+          attendees: [],
+          sessionDelayTimestamp: 0
+        }
+        this.set('session', session);
+      },
+
+      _convertDateTimeStringToStamp() {
+        if (this.session.date && this.session.startTime && this.session.endTime) {
+          console.log(this.session.startTime, this.session.endTime, this.session.date)
+          dateTimeStamp = new Date(this.session.date).getTime()
+          startTimeTimeStamp = new Date(this.session.date + "T" + this.session.startTime).getTime()
+          endTimeTimeStamp = new Date(this.session.date + "T" + this.session.endTime).getTime()
+          this.session.startTime = startTimeTimeStamp
+          this.session.date = dateTimeStamp
+          this.session.endTime = endTimeTimeStamp
+        } else {
+          console.log("Date or Time missing")
+        }
+      },
+
+      _validateSessionData(session) {
+        if (!session.subject) {
+          this.domHost.showModalDialog('Subject is required');
+          return false;
+        }
+        if (!session.presenter.name && !session.presenter.designation) {
+          this.domHost.showModalDialog('Please write Presenter name and designation');
+          return false;
+        }
+        if (!session.startTime && !session.endTime) {
+          this.domHost.showModalDialog('Please select start and endtime');
+          return false;
+        }
+        if (!session.date) {
+          this.domHost.showModalDialog('Date is required');
+          return false;
+        }
+        return true;
+      },
+
+      saveButtonPressed() {
+        const valid = this._validateSessionData(this.session);
+        if (valid) {
+          this._convertDateTimeStringToStamp()
+
+          var data = {
+            payload: this.session,
+            apiKey: this.user.apiKey
+          }
+          this.loading = true;
+          this.callApi('/set-organization-attendance-session', data, (err, response) => {
+            this.loading = false;
+            if (err) return this.domHost.showModalDialog(err.message);
+            if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+            this._makeNewSessionObject()
+            return this.domHost.showModalDialog('Session Saved Successfully');
+          })
+          this.assignedMemberName = ''
+          return console.log(this.session)
+          // this.domHost.navigateToPage('#/manage-academic-session/session' + this.)
+          this.domHost.addActivityLog('attendance', 'session', 'add', {
+            createdByUserSerial: this.user.serial,
+            createdDatetimeStamp: lib.datetime.now()
+          });
+
+        }
+      },
+
+      arrowBackButtonPressed() {
+        return this.domHost.navigateToPreviousPage()
+      }
+
+
+
+    })
+  </script>
+</dom-module>

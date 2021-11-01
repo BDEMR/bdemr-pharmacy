@@ -1,0 +1,393 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../bower-assets/iron-list/iron-list.html">
+<link rel="import" href="../../bower-assets/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower-assets/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-organization-rolewise-member-statistics">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .organization-info-card-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .organization-info-cards {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+
+      .organization-info-cards .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+
+      .organization-info-cards .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+
+      .organization-info-cards .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+
+      .organization-info-cards .row .modifier.online {
+        background: #757575;
+      }
+
+      .organization-info-cards .row .modifier.local-only {
+        background: #039BE5;
+      }
+
+      .organization-info-cards .row .modifier.locally-updated {
+        background: #009688;
+      }
+
+      .organization-info-cards .row .modifier.imported {
+        background: #4CAF50;
+      }
+
+      .info-row {
+        margin-top: 10px;
+      }
+
+      .top-info-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      .address1 {
+        margin-right: 10px;
+      }
+
+      .break-on-tablet {
+        @apply(--layout-horizontal);
+      }
+
+      @media screen and (max-width: 740px) {
+        .break-on-tablet {
+          display: block;
+        }
+      }
+
+      .val {
+        text-decoration: underline;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <template is="dom-if" if="{{!isOrganizationValid}}">
+          Organization invalid
+        </template>
+
+        <!-- editing organization - start -->
+        <template is="dom-if" if="{{isOrganizationValid}}">
+
+          <div class="organization-info-card-counter">
+            <div>Basic Information</div>
+          </div>
+
+          <paper-card class="organization-info-cards">
+            <div class="card-content">
+              <div class="horizontal layout center top-info-row">
+                <div>ID: </div>
+                <div class="serial-number">[[organization.idOnServer]]</div>
+                <div class="flex"></div>
+              </div>
+              <div class="info-row">
+                <div>Name: [[organization.name]]</div>
+              </div>
+              <div class="info-row">
+                <div>Region: [[organization.effectiveRegion]]</div>
+              </div>
+              <div class="info-row">
+                <div>Address: [[organization.address]]</div>
+              </div>
+            </div>
+          </paper-card>
+
+          <div class="organization-info-card-counter">
+            <div>Member's of this Organization</div>
+          </div>
+
+          <paper-card class="organization-info-cards">
+
+            <div class="card-custom-header">
+              <div class="layout horizontal center">
+                <div class="title flex">Currently there are [[memberList.length]] members in this organization.</div>
+              </div>
+            </div>
+
+            <template is="dom-if" if="[[memberList.length]]">
+              <div class="p-0">
+                <paper-listbox>
+
+                  <!-- Doctor -->
+                  <paper-item class="custom layout horizontal center">
+                    <div class="flex m-left-8">
+                      <div class="type body capitalize">
+                        <strong>Doctors:</strong> [[roleWiseCounter.doctor]]
+                      </div>
+                    </div>
+                    <paper-button raised class="btn btn-success" on-tap="toggleDoctorList">View</paper-button>
+                  </paper-item>
+                  <!-- toggle details for Doctor view button -->
+                  <div class="flex m-left-8">
+                    <iron-collapse id="doctorList">
+                      <div class="collapse-content">
+                        <template is="dom-repeat" items="[[memberList]]">
+                          <div class="layout vertical wrap" hidden$="[[!_roleCheckOfTheMembers(item, 'doctor')]]">
+                            <div>
+                              <strong>[[item.name]]</strong>&nbsp;</div>
+                            <div class="m-left-8">Email: [[item.email]]&nbsp;</div>
+                            <div class="m-left-8">Phone: [[item.phone]]</div>
+                          </div>
+                        </template>
+                      </div>
+                    </iron-collapse>
+                  </div>
+
+                  <!-- Doctor Assistant -->
+                  <paper-item class="custom layout horizontal center">
+                    <div class="flex m-left-8">
+                      <div class="type body capitalize">
+                        <strong>Doctor Assistant:</strong> [[roleWiseCounter.doctorAssistant]]
+                      </div>
+                    </div>
+                    <paper-button raised class="btn btn-success" on-tap="toggleDoctorAssistantList">View</paper-button>
+                  </paper-item>
+                  <!-- toggle details for Doctor Assistant view button -->
+                  <div class="flex m-left-8">
+                    <iron-collapse id="doctorAssistantList">
+                      <div class="collapse-content">
+                        <template is="dom-repeat" items="[[memberList]]">
+                          <div class="layout vertical wrap" hidden$="[[!_roleCheckOfTheMembers(item, 'doctor-assistant')]]">
+                            <div>
+                              <strong>[[item.name]]</strong>&nbsp;</div>
+                            <div class="m-left-8">Email: [[item.email]]&nbsp;</div>
+                            <div class="m-left-8">Phone: [[item.phone]]</div>
+                          </div>
+                        </template>
+                      </div>
+                    </iron-collapse>
+                  </div>
+
+                  <!-- Physician Non-BMDC -->
+                  <paper-item class="custom layout horizontal center">
+                    <div class="flex m-left-8">
+                      <div class="type body capitalize">
+                        <strong>Physician Non-BMDC:</strong> [[roleWiseCounter.physicianNonBmdc]]
+                      </div>
+                    </div>
+                    <paper-button raised class="btn btn-success" on-tap="togglPhysicianNonBmdcList">View</paper-button>
+                  </paper-item>
+                  <!-- toggle details for Physician Non-BMDC view button -->
+                  <div class="flex m-left-8">
+                    <iron-collapse id="physicianList">
+                      <div class="collapse-content">
+                        <template is="dom-repeat" items="[[memberList]]">
+                          <div class="layout vertical wrap" hidden$="[[!_roleCheckOfTheMembers(item, 'physician-non-bmdc')]]">
+                            <div>
+                              <strong>[[item.name]]</strong>&nbsp;</div>
+                            <div class="m-left-8">Email: [[item.email]]&nbsp;</div>
+                            <div class="m-left-8">Phone: [[item.phone]]</div>
+                          </div>
+                        </template>
+                      </div>
+                    </iron-collapse>
+                  </div>
+
+                  <!-- nurse -->
+                  <paper-item class="custom layout horizontal center">
+                    <div class="flex m-left-8">
+                      <div class="type body capitalize">
+                        <strong>Nurses:</strong> [[roleWiseCounter.nurse]]
+                      </div>
+                    </div>
+                    <paper-button raised class="btn btn-success" on-tap="toggleNurseList">View</paper-button>
+                  </paper-item>
+                  <!-- toggle details for nurse view button -->
+                  <div class="flex m-left-8">
+                    <iron-collapse id="nurseList">
+                      <div class="collapse-content">
+                        <template is="dom-repeat" items="[[memberList]]">
+                          <div class="layout vertical wrap" hidden$="[[!_roleCheckOfTheMembers(item, 'nurse')]]">
+                            <div>
+                              <strong>[[item.name]]</strong>&nbsp;</div>
+                            <div class="m-left-8">Email: [[item.email]]&nbsp;</div>
+                            <div class="m-left-8">Phone: [[item.phone]]</div>
+                          </div>
+                        </template>
+                      </div>
+                    </iron-collapse>
+                  </div>
+
+                  <!-- Clinic Staff -->
+                  <paper-item class="custom layout horizontal center">
+                    <div class="flex m-left-8">
+                      <div class="type body capitalize">
+                        <strong>Clinic Staff:</strong> [[roleWiseCounter.clinicStaff]]
+                      </div>
+                    </div>
+                    <paper-button raised class="btn btn-success" on-tap="toggleClincStaffListt">View</paper-button>
+                  </paper-item>
+                  <!-- toggle details for Clinic Staff view button -->
+                  <div class="flex m-left-8">
+                    <iron-collapse id="clinicStaffList">
+                      <div class="collapse-content">
+                        <template is="dom-repeat" items="[[memberList]]">
+                          <div class="layout vertical wrap" hidden$="[[!_roleCheckOfTheMembers(item, 'clinic-staff')]]">
+                            <div>
+                              <strong>[[item.name]]</strong>&nbsp;</div>
+                            <div class="m-left-8">Email: [[item.email]]&nbsp;</div>
+                            <div class="m-left-8">Phone: [[item.phone]]</div>
+                          </div>
+                        </template>
+                      </div>
+                    </iron-collapse>
+                  </div>
+
+                  <!-- Clinic Owner -->
+                  <paper-item class="custom layout horizontal center">
+                    <div class="flex m-left-8">
+                      <div class="type body capitalize">
+                        <strong>Clinic Owner:</strong> [[roleWiseCounter.clinicOwner]]
+                      </div>
+                    </div>
+                    <paper-button raised class="btn btn-success" on-tap="toggleClinicOwnerList">View</paper-button>
+                  </paper-item>
+                  <!-- toggle details for Clinic Owner view button -->
+                  <div class="flex m-left-8">
+                    <iron-collapse id="clinicOwnerList">
+                      <div class="collapse-content">
+                        <template is="dom-repeat" items="[[memberList]]">
+                          <div class="layout vertical wrap" hidden$="[[!_roleCheckOfTheMembers(item, 'clinic-owner')]]">
+                            <div>
+                              <strong>[[item.name]]</strong>&nbsp;</div>
+                            <div class="m-left-8">Email: [[item.email]]&nbsp;</div>
+                            <div class="m-left-8">Phone: [[item.phone]]</div>
+                          </div>
+                        </template>
+                      </div>
+                    </iron-collapse>
+                  </div>
+
+                  <!-- Student -->
+                  <paper-item class="custom layout horizontal center">
+                    <div class="flex m-left-8">
+                      <div class="type body capitalize">
+                        <strong>Student:</strong> [[roleWiseCounter.student]]
+                      </div>
+                    </div>
+                    <paper-button raised class="btn btn-success" on-tap="toggleStudentList">View</paper-button>
+                  </paper-item>
+                  <!-- toggle details for Student view button -->
+                  <div class="flex m-left-8">
+                    <iron-collapse id="studentList">
+                      <div class="collapse-content">
+                        <template is="dom-repeat" items="[[memberList]]">
+                          <div class="layout vertical wrap" hidden$="[[!_roleCheckOfTheMembers(item, 'student')]]">
+                            <div>
+                              <strong>[[item.name]]</strong>&nbsp;</div>
+                            <div class="m-left-8">Email: [[item.email]]&nbsp;</div>
+                            <div class="m-left-8">Phone: [[item.phone]]</div>
+                          </div>
+                        </template>
+                      </div>
+                    </iron-collapse>
+                  </div>
+
+                </paper-listbox>
+
+              </div>
+            </template>
+          </paper-card>
+
+        </template>
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-organization-rolewise-member-statistics.coffee-compiled.js"></script>
+</dom-module>

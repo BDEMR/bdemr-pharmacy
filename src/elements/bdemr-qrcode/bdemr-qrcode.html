@@ -1,0 +1,65 @@
+<dom-module id="bdemr-qrcode">
+    <style>
+      :host {
+        display: block;
+      }
+  
+  
+    </style>
+    <template>
+      <div id="display"></div>
+    </template>
+  
+    <script src="./qrcode.min.js"></script>
+    <script>
+      Polymer({
+        is: 'bdemr-qrcode',
+        properties: {
+          qrCode: {
+            type: Object,
+            value: ''
+          },
+          user: {
+            type: Object,
+            value: (app.db.find('user'))[0]
+          },
+          code: {
+            type: String,
+            value: ''
+          },
+          width: {
+            type: String,
+            value: 400
+          },
+          height: {
+            type: String,
+            value: 400
+          }
+        },
+  
+        ready: function() {
+          // console.log(this.user);
+          if (!this.user) {
+            console.log('Invalid User!');
+            return;
+          }
+          var displayQrCode = this.$$('#display');
+          // console.log('hello from qr code!')
+  
+          console.log (this.code);
+        
+          var qrcode = new QRCode(displayQrCode, {
+            text: this.code,
+            width: this.width,
+            height: this.height,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
+          });
+  
+        }
+       
+      });
+    </script>
+  </dom-module>
+  

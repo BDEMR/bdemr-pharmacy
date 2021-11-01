@@ -1,0 +1,177 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-tooltip/paper-tooltip.html">
+
+
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<link rel="import" href="../../styles/common-style.html">
+
+<dom-module id="module-patient-stay">
+  <template>
+
+    <style is="custom-style" include="common-style">
+      paper-tooltip.tooltip-text-scale {
+        --paper-tooltip: {
+          font-size: 16px;
+        }
+      }
+    </style>
+
+    <paper-card class="m-top-8">
+
+      <div class="card-custom-header">
+        <div class="layout horizontal center">
+          <div class="title flex">Patient Stay</div>
+          <paper-button class="btn btn-primary" raised on-tap="createNewPatientStayPressed">
+            <iron-icon class="icon medium-small m-left-8" icon="add"></iron-icon>
+            New Patient Stay
+          </paper-button>
+        </div>
+      </div>
+
+      <template is="dom-if" if="[[!patientStayRecords.length]]">
+        <div class="card-content layout horizontal center center-justified">
+          <div class="type body secondary">-- empty --</div>
+        </div>
+      </template>
+
+      <template is="dom-if" if="[[patientStayRecords.length]]">
+        <paper-listbox>
+          <template id="patient-stay-list-repeater" is="dom-repeat" items="[[patientStayRecords]]" as="patientStay">
+            <paper-item class="custom layout horizontal">
+              <div class="flex">
+                <div class="type body layout vertical p-16">
+                  <div class="layout horizontal">
+                    <span class="type bold"> Admission Date: </span>
+                    <span>&nbsp;[[$formatDateTime(patientStay.data.admissionDateTimeStamp)]]</span>
+                  </div>
+                  <div>
+                    <span class="type bold">Type: </span> [[patientStay.data.admissionType]]
+                  </div>
+                  <div hidden="[[!patientStay.adviseOnly]]">
+                    <span class="type bold">Advice: </span> [[patientStay.data.advise]]
+                  </div>
+                  <template is="dom-if" if="[[!patientStay.adviseOnly]]">
+                    <div>
+                      <span class="type bold">Referred By: </span> [[patientStay.data.referredByDoctorName]]
+                    </div>
+                    <div>
+                      <span class="type bold">Admitted By: </span> [[patientStay.data.admittedByDoctorName]]
+                    </div>
+                    <template is="dom-if" if="[[patientStay.data.operationName]]">
+                      <div>
+                        <span class="type bold">Operation Name: </span> [[patientStay.data.operationName]]
+                      </div>
+                    </template>
+                    <template is="dom-if" if="[[!patientStay.data.dischargeDatetimeStamp]]">
+                      <div class="type italic">
+                        <span>[[patientStay.data.locationHospitalName]]</span> >
+                        <span>[[patientStay.data.locationDepartment]]</span> >
+                        <span>[[patientStay.data.locationUnit]]</span> >
+                        <span>[[patientStay.data.locationWard]]</span> >
+                        <span>[[patientStay.data.locationBed]]</span>
+                      </div>
+                    </template>
+                  </template>
+                  <template is="dom-if" if="[[patientStay.data.currentLocation.length]]">
+                    <div>
+                      <span class="type bold"> Current Location:</span>
+                      <span>[[patientStay.data.currentLocation.0.location]]</span>
+                    </div>
+                  </template>
+
+                  <template is="dom-if" if="[[patientStay.data.currentPatientStatus.length]]">
+                    <div>
+                      <span class="type bold"> Current Patient Status:</span>
+                      <span>[[patientStay.data.currentPatientStatus.0.status]]</span>
+                    </div>
+                  </template>
+                  <template is="dom-if" if="[[patientStay.data.dischargeDatetimeStamp]]">
+                    <div>
+                      <span class="type bold"> Discharge Date:</span>
+                      <span>[[$formatDateTime(patientStay.data.dischargeDatetimeStamp)]]</span>
+                    </div>
+                    <div>
+                      <span class="type bold">Discharged By: </span>
+                      [[patientStay.data.dischargedByDoctorName]]
+                    </div>
+                    <div>
+                      <span class="type bold"> Length of Stay:</span>
+                      <span>[[calculateLengthOfStay(patientStay.data.admissionDateTimeStamp,
+                        patientStay.data.dischargeDatetimeStamp)]]
+                        Days
+                      </span>
+                    </div>
+                  </template>
+                  <template is="dom-if" if="[[patientStay.data.dischargeReason.length]]">
+                    <div>
+                      <span class="type bold">Discharge Reason: </span> [[patientStay.data.dischargeReason]]</div>
+                  </template>
+
+                  <div>
+                    <template is="dom-if" if="[[patientStay.data.dischargeTo.length]]">
+                      <span class="type bold"> Discharged To:</span> [[patientStay.data.dischargeTo]]
+                    </template>
+                  </div>
+                </div>
+                <!-- end of type body div -->
+              </div>
+              <template is="dom-if" if="[[patientStay.data.dischargeDatetimeStamp]]">
+                <span class="type bold danger">Discharged</span>
+              </template>
+              <paper-tooltip for="toolTipForViewButton" offset="4" position="top" class="tooltip-text-scale">View Details</paper-tooltip>
+              <paper-icon-button id="toolTipForViewButton" icon="icons:visibility" on-tap="printPatientStayPressed"></paper-icon-button>
+              <paper-button hidden$="[[patientStay.data.dischargeDatetimeStamp]]" on-tap="editPatientStayPressed" class="btn btn-primary" style="border-radius: 8px;">Discharge/ Edit Patient</paper-button>
+            </paper-item>
+          </template>
+        </paper-listbox>
+      </template>
+
+    </paper-card>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'module-patient-stay',
+      behaviors: [app.behaviors.commonComputes],
+      properties: {
+        patientStayRecords: {
+          type: Array,
+          notify: true
+        },
+        patient: Object
+      },
+
+      calculateLengthOfStay(admissionDate, dischargeDate) {
+        const diff = lib.datetime.diff((new Date(dischargeDate)), (new Date(admissionDate)));
+        return diff / (1000 * 60 * 60 * 24);
+      },
+
+      createNewPatientStayPressed(e) {
+        return this.domHost.domHost.navigateToPage(`#/patient-stay-editor/patient:${this.patient.serial}/patient-stay:new`);
+      },
+
+      editPatientStayPressed(e) {
+        // const el = this.locateParentNode(e.target, 'PAPER-ITEM');
+        // el.opened = false;
+        // const repeater = this.$$('#patient-stay-list-repeater');
+        // const index = repeater.indexForElement(el);
+        const { patientStay } = e.model;
+        return this.domHost.domHost.navigateToPage(`#/patient-stay-editor/patient:${this.patient.serial}/patient-stay:${patientStay.serial}`);
+      },
+
+      printPatientStayPressed(e) {
+        // const el = this.locateParentNode(e.target, 'PAPER-ITEM');
+        // el.opened = false;
+        // const repeater = this.$$('#patient-stay-list-repeater');
+        // const index = repeater.indexForElement(el);
+        const { patientStay } = e.model;
+        return this.domHost.domHost.navigateToPage(`#/print-patient-stay/patient:${this.patient.serial}/patient-stay:${patientStay.serial}`);
+      }
+    })
+  </script>
+</dom-module>

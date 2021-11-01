@@ -1,0 +1,605 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower-assets/paper-ripple/paper-ripple.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower-assets/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-list/iron-list.html">
+<link rel="import" href="../../bower-assets/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<dom-module id="page-pharmacy-invoice-editor">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+        width: 90%;
+      }
+
+      paper-card {
+        --paper-card-content: {
+          padding: 0;
+        }
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .item {
+        padding: 10px;
+      }
+
+      .item:nth-child(even) {
+        background-color: var(--paper-grey-100);
+      }
+
+      .text-mute {
+        color: var(--paper-grey-700);
+      }
+
+      .text-warning {
+        color: var(--paper-orange-600);
+      }
+
+      .choice-list,
+      .invoice-list {
+        width: 100%;
+        margin-top: 10px;
+      }
+
+      .choice-list {
+        height: 100vh;
+        overflow: auto;
+      }
+
+      .invoice-list {
+        margin-left: 10px;
+        height: 100vh;
+        overflow: auto;
+      }
+
+      .invoice-list .invoice-item {
+        padding: 10px 0;
+        margin-left: 20px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .invoice-item :first-child {
+        padding-right: 15px;
+      }
+
+      .add {
+        color: var(--paper-green-500);
+      }
+
+      .page-invoice {
+        @apply(--layout-horizontal);
+        width: 100%;
+      }
+
+      .calculation {
+        background-color: var(--paper-blue-grey-50);
+      }
+
+      .calculation>* {
+        padding: 5px 0;
+        border-bottom: 1px solid #f5f5f5;
+      }
+
+      .calculation>div:last-child {
+        border-bottom: 0;
+      }
+
+      .calculation paper-input {
+        --paper-input-prefix: {
+          margin-right: 10px;
+          color: #999;
+        }
+      }
+
+      .text-success {
+        color: var(--paper-green-400);
+      }
+
+      iron-list {
+        height: 400px;
+      }
+
+      #invoiceSearchInput {
+        padding: 0 15px;
+      }
+
+      .big-text-input {
+        width: 300px;
+        --paper-input-container-input: {
+          font-size: 21px;
+        }
+        --paper-input-prefix: {
+          font-size: 21px;
+        }
+      }
+
+      .custom-input {
+        font-size: 16px;
+        border: 1px solid var(--paper-blue-grey-300);
+        padding: 5px;
+        border-radius: 4px;
+        width: 150px;
+        @apply(--paper-font-subhead);
+      }
+
+      @media only screen and (max-width: 1024px) {
+        .page-invoice {
+          @apply(--layout-vertical);
+        }
+
+        .choice-list,
+        .invoice-list {
+          height: 100%;
+        }
+
+        .invoice-list {
+          margin-left: 0;
+        }
+      }
+
+      .fixed-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+      }
+
+      .custom-img {
+        border-radius: 50%;
+      }
+
+      .profile-image {
+        height: 78px;
+        width: 78px;
+        border-radius: 50%;
+        border: 2px solid #f7f7f7;
+      }
+
+      paper-listbox {
+        padding: 0 !important;
+      }
+
+      paper-item.custom {
+        border-top: 1px solid #eee !important;
+        padding: 4px 16px !important;
+        word-break: break-word;
+      }
+
+      paper-item.custom:first-child {
+        border-top: none !important;
+      }
+
+      .btn-add {
+        min-width: 0;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+        background-color: #eceff1;
+        color: rgba(0, 0, 0, .87);
+      }
+
+      .patient-search-dialog {
+        width: 550px;
+      }
+
+      /*#showPatientMedicaitonDialog {
+        top: 42px !important;
+      }*/
+
+      #showPatientMedicaitonDialog paper-dialog-scrollable ::content .scrollable {
+        padding: 0 !important;
+      }
+    </style>
+
+    <div class="master-container">
+
+      <div class="limiting-container custom-input-field">
+
+        <paper-card>
+
+          <div class="card-custom-header">
+            <div class="layout horizontal center">
+              <div class="title flex">[[$TRANSLATE('Invoice', LANG)]]</div>
+              <template is="dom-if" if="[[showPatientSearchBox]]">
+                <paper-button raised class="btn" on-tap="showAddPatientDialog">[[$TRANSLATE('Add Patient', LANG)]]</paper-button>
+              </template>
+              <template is="dom-if" if="[[!showPatientSearchBox]]">
+                <paper-button raised class="btn" on-tap="showAddPatientDialog">[[$TRANSLATE('Change Patient', LANG)]]</paper-button>
+              </template>
+            </div>
+          </div>
+
+          <!-- Patient area - start -->
+          <div>
+            <!-- <template is="dom-if" if="[[showPatientSearchBox]]"> 
+              <div class="p-8">
+                <paper-autocomplete class="flex" id="patientSearch" label="[[$TRANSLATE('Search for Patient ',LANG)]]" on-autocomplete-selected="patientSelected"
+                  on-autocomplete-reset="patientSearchCleared" on-keyup="patientSearchEnterKeyPressed" error-message="Input Required"
+                  text-property="name" value-property="serial" required>
+                  <template autocomplete-custom-template>
+                    <paper-item on-tap="_onSelect" id$="[[_getSuggestionId(index)]]" role="option" aria-selected="false">
+                      <div class="type bold">[[item.name]]</div>
+                      <div class="type secondary m-left-8">([[item.phone]])</div>
+                      <div class="type secondary m-left-8">[[item.email]]</div>
+                      <paper-ripple></paper-ripple>
+                    </paper-item>
+                  </template>
+                </paper-autocomplete>
+              </div>
+            </template> -->
+
+            <template is="dom-if" if="[[!showPatientSearchBox]]">
+              <div class="card-content p-12">
+                <template is='dom-if' if='[[importingPatientData]]'>
+                  <div class="layout vertical center">
+                    <div class="layout horizontal center" style="height: 100px;">
+                      <paper-spinner active></paper-spinner>
+                    </div>
+                  </div>
+                </template>
+                <template is='dom-if' if='[[!importingPatientData]]'>
+                  <div class="horizontal layout wrap center">
+                    <iron-image class="profile-image m-right-8" src$="[[$getProfileImage(patient.profileImage)]]"
+                      preload sizing="cover"></iron-image>
+                    <div class="flex">
+                      <div class="m-horizontal-4 horizontal layout">
+                        <div class="type body-lead capitalize">{{$getFullName(patient.name)}}</div>
+                        <div class="m-left-8 type caption bg-gray">{{patient.serial}}</div>
+                      </div>
+                      <div class="horizontal layout wrap type caption-2 secondary">
+                        <div class="m-horizontal-4">
+                          <strong>[[$TRANSLATE('Sex', LANG)]]: </strong>
+                          <span>{{patient.gender}}</span>
+                        </div>
+                        <div class="m-horizontal-4">
+                          <strong>[[$TRANSLATE('Age', LANG)]]: </strong>
+                          <span>[[$computeAge(patient.dateOfBirth)]] </span>
+                        </div>
+                        <div class="m-horizontal-4">
+                          <strong>[[$TRANSLATE('Blood Group', LANG)]]: </strong>
+                          <span> [[patient.bloodGroup]]</span>
+                        </div>
+                        <div class="m-horizontal-4">
+                          <strong>[[$TRANSLATE('Allergy', LANG)]]: </strong>
+                          <span>[[patient.allergy]] </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <paper-button raised class="fixed-btn btn-add colored" on-tap="showPatientMedicine">[[$TRANSLATE('Show Medicine', LANG)]]</paper-button>
+                </template>
+              </div>
+
+            </template>
+          </div>
+          <!-- Patient area - end -->
+
+          <!-- Searach item area - start -->
+          <div class="p-8 horizontal layout center">
+            <!-- <vaadin-combo-box class="flex" label="Add Medicine" items="[[inventoryItemList]]" item-label-path="data.name"
+              on-selected-item-changed="medicineItemSelected">
+              <template>
+                <div><strong>[[item.data.name]]</strong> <small>[[item.data.batch]]</small></div>
+              </template>
+            </vaadin-combo-box> -->
+
+            <vaadin-combo-box class="flex" id="invoiceSearchInput" label="[[$TRANSLATE('Add Medicine', LANG)]]" items="[[inventoryItemList]]" 
+              item-label-path="label" item-value-path="value" value="{{selectedMedicineValue}}" 
+              filter="{{medicineItemSearchQuery}}" on-selected-item-changed="medicineItemSelected" loading="[[fetchingMedicineItemSearchResult]]">
+              <template>
+                <div><strong>[[item.label]]</strong>&nbsp;<small>[[item.batch]]</small></div>
+              </template>
+            </vaadin-combo-box>
+
+            <!-- <paper-button class="btn btn-default m-left-8" raised on-tap="addCustomItemToInvoiceButtonPressed">+Add
+              Custom Item</paper-button> -->
+          </div>
+          <!-- Searach item area - end -->
+
+          <div class="card-content">
+
+            <template is="dom-if" if="[[!invoice.data.length]]">
+              <div class="layout horizontal center center-justified p-16">[[$TRANSLATE('Add Item', LANG)]]</div>
+            </template>
+
+            <template id="invoice-item-repeater" is="dom-repeat" items="[[invoice.data]]">
+              <paper-item class="invoice-item m-left-8">
+                <div class="layout horizontal">
+
+                  <template is="dom-if" if="[[item.price]]">
+                    <strong class="m-top-8">Price: </strong>
+                    <div class="flex m-top-8">[[item.price]] BDT</div>
+                  </template>
+
+                  <template is="dom-if" if="[[!item.price]]">
+                    <paper-input class="flex" type="number" label="Price" on-change="itemUnitPriceChanged" no-label-float style="padding-right:10px;">BDT</paper-input>
+                  </template>
+
+                  <strong class="m-left-8 m-top-8">QTY:&nbsp;</strong>
+                  <paper-input class="flex-1" label="[[$TRANSLATE('Qty', LANG)]]" type="number" value="[[item.qty]]" on-input="quantityChanged"
+                    no-label-float style="padding-right:10px;"></paper-input>
+
+                  <strong class="m-left-8 m-top-8">Discount:&nbsp;</strong>
+                  <paper-input class="flex-1" label="Discount" type="number" min="0" value="[[item.discountAmount]]"
+                    on-input="discountAmountChanged" no-label-float style="padding-right:10px;">BDT</paper-input>
+                    
+                </div>
+                <div class="flex-2 layout vertical">
+                  <div>
+                    <strong>[[item.name]]</strong>
+                    <template is="dom-if" if="[[item.type]]">
+                      <span class="type secondary">[[item.type]]</span>
+                    </template>
+                    <template is="dom-if" if="[[item.batch]]">
+                      <span class="type secondary">[[item.batch]]</span>
+                    </template>
+                  </div>
+                  <template is="dom-if" if="[[item.itemList]]">
+                    <ul>
+                      <template is="dom-repeat" items="[[item.itemList]]" as="packageItem">
+                        <li>[[packageItem.name]]</li>
+                      </template>
+                    </ul>
+                  </template>
+                </div>
+                
+                <div class="flex-2">[[item.totalPrice]]
+                  <span class="text-mute">[[$TRANSLATE('BDT', LANG)]]</span>
+                </div>
+                <paper-icon-button class="flex-1" icon="delete" on-tap="deleteInvoiceItem"></paper-icon-button>
+              </paper-item>
+
+              <!-- <div class="flex-2 layout vertical">
+                <span class="text-mute">Discount: [[item.discountedPrice]] BDT</span>
+              </div> -->
+            </template>
+
+
+
+            <div class="layout vertical calculation p-16">
+
+              <div class="layout horizontal center">
+                <div class="flex-2">
+                  <paper-dropdown-menu no-label-float>
+                    <paper-menu selected="{{discountType}}" id="discountType" class="dropdown-content" on-iron-select="discountTypeChanged">
+                      <paper-item>Discount Percentage</paper-item>
+                      <paper-item>Discount Amount</paper-item>
+                    </paper-menu>
+                  </paper-dropdown-menu>
+                </div>
+                <input class="flex-4 custom-input" is="iron-input" label="[[$TRANSLATE('Discount', LANG)]]" type="number" value="{{invoice.discount::input}}"
+                  max="99" maxlength="2" />
+              </div>
+              <div class="layout horizontal type body-lead">
+                <label class="flex-2">[[$TRANSLATE('Gross', LANG)]]</label>
+                <div class="flex-4">[[invoiceGrossPrice]] [[$TRANSLATE('BDT', LANG)]]</div>
+              </div>
+              <div class="layout horizontal type body-lead">
+                <label class="flex-2">[[$TRANSLATE('Discount' , LANG)]]</label>
+                <div class="flex-4">[[invoiceDiscountAmt]] [[$TRANSLATE('BDT', LANG)]]</div>
+              </div>
+              <div class="layout horizontal type title-2 bold">
+                <label class="flex-2 type bold">[[$TRANSLATE('Total Bill', LANG)]]</label>
+                <div class="flex-4">[[invoice.totalBilled]] [[$TRANSLATE('BDT', LANG)]]</div>
+              </div>
+              <div class="layout horizontal center">
+                <label class="flex-2" for="">[[$TRANSLATE('Paid Amount', LANG)]]</label>
+                <input is="iron-input" class="flex-4 custom-input" value="{{invoice.paid::input}}" min="0" max="[[invoice.totalBilled]]"
+                  allowed-pattern="[0-9]" auto-validate error-message="Amount can't be more than Total" />
+              </div>
+              <div class="layout horizontal type body-lead">
+                <label for="" class="flex-2">[[$TRANSLATE('Due', LANG)]]</label>
+                <div class="flex-4 text-warning ">[[_calculateDue(invoice.advancePayment, invoice.totalBilled,
+                  invoice.paid,
+                  invoice.lastPaid)]] [[$TRANSLATE('BDT', LANG)]]</div>
+              </div>
+              <div class="layout horizontal center">
+                <label for="" class="flex-2">[[$TRANSLATE('Last Paid Amount', LANG)]]</label>
+                <input is="iron-input" class="flex-4 custom-input" value="{{invoice.lastPaid::input}}" min="0"
+                  on-change="lastPaymentChanged" allowed-pattern="[0-9]" disabled$="[[!invoice.paid]]" error-message="Last Payment Can not be more than the Due Amount" />
+              </div>
+              <div class="layout horizontal text-success type body-lead bold">
+                <label class="flex-2" for="">[[$TRANSLATE('Total Amount Received', LANG)]]: </label>
+                <div class="flex-4">[[_calculateTotalAmtReceived(invoice.advancePayment, invoice.paid,
+                  invoice.lastPaid,
+                  invoice.totalBilled)]] [[$TRANSLATE('BDT', LANG)]]
+                </div>
+              </div>
+
+              <div class="layout horizontal center" hidden="[[!invoice.cashBackPaid]]">
+                <label for="" class="flex-2">[[$TRANSLATE('Cash Back Paid', LANG)]]</label>
+                <div class="flex-4">
+                  <span>[[invoice.cashBackPaid]] [[$TRANSLATE('BDT', LANG)]]</span>
+                  <paper-icon-button icon="delete" on-tap="revertCashBack"></paper-icon-button>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+          <div class="card-actions vertical layout">
+            <div class="m-top-16 layout horizontal center">
+              <paper-checkbox checked="{{invoice.availableToPatient}}">[[$TRANSLATE('Send To Patient', LANG)]]</paper-checkbox>
+              <div class="flex"></div>
+              <!-- <paper-button raised class="btn btn-success" on-tap="saveAndCompleteInvoiceButtonClicked">Save + Complete Invoice</paper-button> -->
+              <paper-button class="btn btn-success" on-tap="saveInvoiceButtonClicked">[[$TRANSLATE('Save Invoice', LANG)]]</paper-button>
+            </div>
+          </div>
+        </paper-card>
+
+      </div>
+    </div>
+
+    <!--Modal for Custom Unit and Price-->
+    <paper-dialog class="custom-input-field" id="customItemModal" on-iron-overlay-closed="modalClosedEvent" no-cancel-on-esc-key
+      no-cancel-on-outside-click>
+      <h2>[[$TRANSLATE('Add Item', LANG)]]</h2>
+      <paper-dialog-scrollable>
+        <paper-item class="layout vertical">
+          <paper-input autofocus label="[[$TRANSLATE('Item Name', LANG)]]" value="{{customUnit.name}}"></paper-input>
+          <paper-input label="[[$TRANSLATE('Actual Cost', LANG)]]" type="number" value="{{customUnit.actualCost}}"></paper-input>
+          <paper-input label="[[$TRANSLATE('Unit Price', LANG)]]" type="number" value="{{customUnit.price}}"></paper-input>
+        </paper-item>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+        <paper-button raised dialog-confirm>[[$TRANSLATE('Add', LANG)]]</paper-button>
+      </div>
+    </paper-dialog>
+
+
+    <!-- page - Current Medicine - start -->
+    <paper-dialog class="custom-input-field" id="showPatientMedicaitonDialog" no-cancel-on-esc-key no-cancel-on-outside-click>
+      <h2>[[$TRANSLATE('Patient Current Medication', LANG)]]</h2>
+      <paper-dialog-scrollable>
+        <template is="dom-if" if="[[_isEmptyArray(selectedPatientMedicationList.length)]]">
+          <div class="card-content layout horizontal center center-justified">
+            <div class="type body secondary">-- [[$TRANSLATE('no medication found', LANG)]] --</div>
+          </div>
+        </template>
+        <template is="dom-if" if="[[!_isEmptyArray(selectedPatientMedicationList.length)]]">
+          <div class="p-0" style="background: #fff;">
+            <paper-listbox>
+
+              <template id="patient-medicine-list-repeater" is="dom-repeat" items="[[selectedPatientMedicationList]]">
+                <paper-item class="custom layout horizontal center">
+                  <div class="type caption secondary">[[_returnSerial(index)]]</div>
+                  <div class="flex m-left-8">
+                    <div class="custom layout horizontal wrap center">
+
+                      <div class="flex">
+                        <div class="type body">{{item.data.brandName}} {{item.data.strength}}
+                          <template is="dom-if" if="[[!item.data.flags.hideMedicineManufacturerName]]">
+                            <span class="type caption bg-gray">[[item.data.manufacturer]]</span>
+                          </template>
+
+                          <span class="type caption italic secondary">
+                            <template is="dom-if" if="[[!item.data.flags.hideMedicineGenericName]]">
+                              <span>{{item.data.genericName}}</span>
+                            </template>
+
+                            <span>{{item.data.strength}}</span>
+                          </span>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div class="type caption m-horizontal-4">
+                          [[$TRANSLATE_NUMBER(item.data.dose, LANG)]] [[$TRANSLATE(item.data.form, LANG)]]
+                          <span hidden="[[!item.data.timesPerInterval]]">
+                            [[$TRANSLATE('Every', LANG)]] [[$TRANSLATE_NUMBER(item.data.intervalInHours, LANG)]]
+                            [[$TRANSLATE('Hour', LANG)]] </span>
+                          <span hidden="[[!item.data.doseDirection]]">
+                            [[$TRANSLATE_NUMBER(item.data.doseDirection, LANG)]]</span>
+                          for [[_computeTotalDaysCount(item.data.endDateTimeStamp,item.data.startDateTimeStamp)]]
+                          <span hidden$="[[!item.data.endDateTimeStamp]]">[[$TRANSLATE('Days',LANG)]]</span>
+                        </div>
+
+                        <div class="type caption m-horizontal-4">
+                          <span>By </span>
+                          <span class="text-cap">[[$TRANSLATE(item.data.route, LANG)]]</span>
+                          <span>[[$TRANSLATE(item.data.direction, LANG)]] </span>
+                        </div>
+                        <div class="type caption m-horizontal-4">[[item.data.comments]]</div>
+                      </div>
+
+                    </div>
+                  </div>
+                  <paper-checkbox class="m-left-8" checked="{{item.isSelected}}"></paper-checkbox>
+                </paper-item>
+              </template>
+
+            </paper-listbox>
+
+          </div>
+        </template>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+        <paper-button raised dialog-confirm class="colored" on-tap="addItemFromPatientMedication">[[$TRANSLATE('Add to invoice', LANG)]]</paper-button>
+      </div>
+    </paper-dialog>
+    <!-- /dialog - Current Medicine - end -->
+
+
+    <!-- /dialog - Add patient- start -->
+    <paper-dialog class="patient-search-dialog custom-input-field" id="addPatientDialog">
+      <h2>[[$TRANSLATE('Add patients to invoice', LANG)]]</h2>
+
+      <vaadin-combo-box class="p-12" id="patientSearch" label="[[$TRANSLATE('Search Patient', LANG)]]" item-label-path="name" item-value-path="userId"
+        filter="{{patientSearchQuery}}" loading="[[fetchingPatientSearchResult]]" on-value-changed="patientSelected"
+        error-message="No Patient Found">
+        <template>
+          <div>[[item.name]]</div>
+          <div>[[item.phone]], [[item.email]]</div>
+        </template>
+      </vaadin-combo-box>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss>[[$TRANSLATE('Close', LANG)]]</paper-button>
+      </div>
+    </paper-dialog>
+    <!-- /dialog - Add patient- end -->
+
+    <!--Modal for Custom Unit and Price-->
+    <paper-dialog class="custom-input-field" id="customItemModal">
+      <h2>[[$TRANSLATE('Add Item', LANG)]]</h2>
+      <paper-dialog-scrollable>
+        <paper-item class="layout vertical">
+          <paper-input id="customUnitNameField" autofocus label="[[$TRANSLATE('Item Name', LANG)]]" required error-message="Item Name is required"
+            auto-validate></paper-input>
+          <paper-input id="customUnitCostField" label="[[$TRANSLATE('Actual Cost', LANG)]]" type="number"></paper-input>
+          <paper-input id="customUnitPriceField" label="[[$TRANSLATE('Unit Price', LANG)]]" type="number" required error-message="Item Price is required"
+            auto-validate></paper-input>
+        </paper-item>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+        <paper-button raised on-tap="customUnitAddButtonClicked">[[$TRANSLATE('Add', LANG)]]</paper-button>
+      </div>
+    </paper-dialog>
+
+
+  </template>
+
+  <script src="page-pharmacy-invoice-editor.coffee-compiled.js"></script>
+</dom-module>

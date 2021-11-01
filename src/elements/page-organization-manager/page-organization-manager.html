@@ -1,0 +1,329 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-organization-manager">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+    
+      .limiting-container {
+        margin-top: 8px;
+      }
+
+      paper-card {
+        background-color: #fff;
+      }
+      
+      .new-fab {
+        position: fixed;
+        right: 20px;
+        bottom: 164px;
+      }
+      
+      paper-button {
+        margin: 3px;
+      }
+
+      paper-button:last-child {
+        margin-right: 0px;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .modifier {
+        font-size: 11px;
+        background: #eee;
+        color: #ffffff;
+        margin: 0 4px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      .absolute {
+        position: absolute;
+        top: 8px;
+      }
+
+      .absolute.left {
+        left: 4px;
+      }
+
+      .absolute.right {
+        right: 4px;
+      }
+      
+      .modifier.type1 {
+        background: #757575;
+      }
+      .dashboard-item:hover .modifier.type1{
+        background: #fff;
+        color: #47baaf;
+        transition: 20ms all ease;
+      }
+
+
+      .organization-info-card-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+      .caption{
+      color: white;
+    }
+    
+
+      .dashboard-item {
+        position: relative;
+        margin: 6px;
+        padding: 8px;
+        /* border: 1px solid #eee; */
+        border-radius: 5px;
+        background-color: #fafafa;
+        width: calc(25% - 28px);
+        text-align: center;
+        box-shadow: 1px 1px 4px rgb(194, 194, 194);
+        transition: all 0.2s ease-in-out;
+      }
+      .dashboard-item-2 {
+        position: relative;
+        margin: 8px 16px;
+        width: 128px;
+        @apply(--layout-center-justified);
+        @apply(--layout-horozontal);
+        @apply(--layout-center);
+        text-align: center;
+      }
+
+      .uppercase {
+        text-transform: uppercase !important;
+      }
+
+      .dashboard-item:hover {
+        cursor: pointer;
+        background-color: #47baaf;
+        color: white;
+        transform: scale(1.05);
+        
+      }
+
+      .dashboard-item .title {
+        font-weight: 300;
+        text-align: center;
+        margin: 0;
+        padding: 5px 0;
+        font-size: 16px;
+      }
+
+      .dashboard-item .profile-pic {
+        text-align: center;
+        padding: 16px;
+        border-radius: 50%;
+        height: 40px;
+        width: 40px;
+        background: #eee;
+        margin: 26px 0 8px 0;
+      }
+      .dashboard-item:hover .profile-pic{
+        background: #3a9990;
+        transition: 20ms all ease;
+      }
+      .dashboard-item:hover .caption{
+        color: white;
+      }
+
+      iron-icon {
+        --iron-icon-height: 40px;
+        --iron-icon-width: 40px;
+      }
+
+      .hide-on-mobile {
+        display: block;
+      }
+      @media screen and (max-width: 639px) {
+        .hide-on-mobile {
+          display: none;
+        }
+
+        .dashboard-item {
+          width: calc(50% - 26px);
+          @apply(--layout-horozontal);
+          @apply(--layout-center);
+          @apply(--layout-wrap);
+          padding: 4px;
+        }
+        .dashboard-item-2 {
+          width: 96px;
+        }
+
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <!-- Organization list - start -->
+        <paper-card>
+
+          <div class="p-8" >
+
+            <div class="type caption-2 secondary"><iron-icon icon="icons:info-outline" class="icon small-tiny m-right-8"></iron-icon>You belong in total [[organizationsIBelongToList.length]] organizations.</div>
+            
+            <div class="layout horizontal wrap m-top-8">
+
+              <template is="dom-repeat" items="[[organizationsIBelongToList]]" as="organization">
+                <div class="dashboard-item" on-tap="_goToOrganizationDashboard">
+
+                  <div class="horizontal layout center center-justified">
+                    <div class="profile-pic">
+                      <iron-icon icon="icons:account-balance"></iron-icon>
+                    </div>
+                  </div>
+                  <div class="type body capitalize">[[organization.name]]</div>
+                  <div class="type caption secondary">[[organization.address]]&nbsp;</div>
+                  <div class="type caption secondary">([[organization.effectiveRegion]])</div>
+
+
+                  <div class="type caption-2 secondary absolute left">#[[organization.serial]]</div>
+
+                  <template is="dom-if" if="[[!organization.isClaimed]]">
+                    <div class="modifier absolute right type1">[[$TRANSLATE('Unclaimed', LANG)]]</div>
+                  </template>
+
+                  <template is="dom-if" if="[[organization.isCurrentUserAnAdmin]]">
+                    <div class="modifier absolute right type1">[[$TRANSLATE('Admin', LANG)]]</div>
+                  </template>
+                  
+                  <paper-ripple></paper-ripple>
+                </div>
+              </template>
+              <div class="dashboard-item" on-tap="newOrganizationFabPressed">
+                <div class="horizontal layout center center-justified">
+                  <div class="profile-pic">
+                    <iron-icon icon="icons:add-circle"></iron-icon>
+                  </div>
+                </div>
+                
+                <div class="type body capitalize">[[$TRANSLATE('Add new', LANG)]]</div>
+                <div class="type caption secondary">[[$TRANSLATE('click here to add new organization', LANG)]]</div>
+                <paper-ripple></paper-ripple>
+              </div>
+
+            </div>
+          </div>
+        </paper-card>
+        <!-- Organization list - end -->
+
+
+        <!-- Card - Search - start -->
+        <!-- <paper-card class="organization-info-cards">
+  
+          <div class="card-custom-header">
+            <div class="layout horizontal center">
+              <div class="title flex">Search existing organizations to join</div>           
+            </div>
+          </div>
+
+          <div class="card-content">
+            <div class="info-row horizontal layout center">
+              <paper-input class="flex" always-float-label value="{{organizationSearchString}}" label="Name/Region/Address of the organization"></paper-input>
+              <paper-button raised on-tap="searchOrganizationTapped">Search</paper-button>
+            </div>
+          </div>
+
+          <template is="dom-if" if="[[organizationSearchResultList.length]]">
+            <div class="p-0">
+              <paper-listbox>
+                
+                <template id="assistant-list-repeater" is="dom-repeat" items="[[organizationSearchResultList]]" as="organization">
+                  <paper-item class="custom layout horizontal center">
+                    
+                    <div class="flex m-left-8">
+                      <div class="type body capitalize">[[organization.name]]</div>
+                      <div class="type caption secondary">[[organization.idOnServer]]</div>
+                    </div>
+
+                    <div class="layout horizontal m-horizontal-4 wrap">
+                      <div class="type caption">[[organization.address]]&nbsp;</div>
+                       <div class="type caption">([[organization.effectiveRegion]])</div>
+                    </div>
+          
+                    <paper-menu-button horizontal-align="right" no-animations>
+                      <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                      <paper-menu class="dropdown-content">
+
+                      <template is="dom-if" if="[[!organization.isCurrentUserAMember]]">
+                        <div hidden>[[organization]]</div>
+                        <paper-item on-tap="joinOrganizationTapped">Join as a user</paper-item>
+                      </template>
+
+                      <template is="dom-if" if="[[!organization.isClaimed]]">
+                        <div hidden>[[organization]]</div>
+                        <paper-item on-tap="claimOrganizationTapped">Claim Ownership</paper-item>
+                      </template>
+
+                      </paper-menu>
+                    </paper-menu-button>
+
+                  </paper-item>
+                </template>
+
+              </paper-listbox>
+              
+            </div>
+          </template>
+        </paper-card> -->
+        <!-- Card - Search Organizations - end -->
+
+
+
+
+
+
+        
+        <!-- <paper-fab class="new-fab" icon="add" on-tap="newOrganizationFabPressed"></paper-fab> -->
+
+      </div>
+
+    </div>
+
+    
+
+  </template>
+  <script src="page-organization-manager.coffee-compiled.js"></script>
+</dom-module>

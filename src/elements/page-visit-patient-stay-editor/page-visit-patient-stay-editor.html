@@ -1,0 +1,419 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/iron-list/iron-list.html">
+<link rel="import" href="../../bower-assets/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower-assets/paper-radio-button/paper-radio-button.html">
+
+<link rel="import" href="../../bower-assets/paper-tooltip/paper-tooltip.html">
+
+<link rel="import" href="./module-patient-details.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-visit-patient-stay-editor">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .external-card-title {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .account-box {
+        --iron-icon-width: 96px;
+        --iron-icon-height: 96px;
+      }
+
+      .checkboxPadding {
+        margin-top: 10px;
+      }
+
+      .page-action {
+        float: right;
+        margin-top: 20px;
+      }
+
+      [raised] {
+        background: white;
+      }
+
+      .checkboxPadding {
+        margin: 5px 0;
+      }
+
+      .checkbox-group paper-checkbox {
+        padding: 15px 0;
+      }
+
+      .seat {
+        padding: 10px 0;
+        border-bottom: 1px solid #ccc;
+      }
+
+      .seat paper-input {
+        width: 100px;
+      }
+
+      .pull-div-up {
+        position: relative;
+        top: -8px;
+      }
+
+      .pull-preview-up {
+        position: relative;
+        top: -4px;
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container custom-input-field">
+
+      <div class="limiting-container">
+
+        <template is="dom-if" if="{{!isPatientValid}}">
+          Patient invalid
+        </template>
+
+        <iron-pages selected="{{selectedView}}">
+
+          <section id="admission-section">
+
+            <paper-card class="m-top-16" heading="Type">
+              <div class="card-content layout vertical types">
+                <paper-radio-group id="admissionTypeRadioGroup" selected="{{patientStay.data.admissionType}}"
+                  class="layout vertical" on-iron-select="admissionTypeChanged">
+                  <template is="dom-repeat" items="[[admissionTypeList]]">
+                    <paper-radio-button name="[[item]]">[[item]]</paper-radio-button>
+                  </template>
+                </paper-radio-group>
+
+                <template is="dom-if" if="[[!advisedAdmission]]">
+                  <paper-input class="p-16" label="Advice" value="{{patientStay.data.advise}}"></paper-input>
+                </template>
+              </div>
+
+            </paper-card>
+
+            <template is="dom-if" if="[[advisedAdmission]]">
+
+              <!-- Admission to - start -->
+              <paper-card class="m-top-16" heading="Admission to">
+                <div class="card-content layout horizontal start">
+                  <div class="m-right-8">
+                    <vaadin-date-picker label="Admission Date" value="{{patientStayAdmissionDate}}">
+                    </vaadin-date-picker>
+                  </div>
+                  <paper-dropdown-menu class="m-right-8" label="Clinic/Hospital" id="organizationDropdown">
+                    <paper-listbox class="dropdown-content" on-iron-select="organizationSelected"
+                      selected="{{selectedOrganizationIndex}}">
+                      <template is="dom-repeat" items="[[organizationsIBelongToList]]" as="organization">
+                        <paper-item>[[organization.name]]</paper-item>
+                      </template>
+                    </paper-listbox>
+                  </paper-dropdown-menu>
+
+                  <template is="dom-if" if="[[$notUndefined(selectedOrganizationIndex)]]">
+                    <paper-dropdown-menu class="m-right-8" label="Department" id="departmentDropdown">
+                      <paper-listbox class="dropdown-content" on-iron-select="departmentSelected"
+                        selected="{{selectedDepartmentIndex}}">
+                        <template is="dom-repeat" items="[[patientStayObject.departmentList]]" as="department">
+                          <paper-item>[[department.name]]</paper-item>
+                        </template>
+                      </paper-listbox>
+                    </paper-dropdown-menu>
+                  </template>
+
+                  <template is="dom-if" if="[[$notUndefined(selectedDepartmentIndex)]]">
+                    <paper-dropdown-menu class="m-right-8" label="Unit" id="unitDropdown">
+                      <paper-listbox class="dropdown-content" on-iron-select="unitSelected"
+                        selected="{{selectedUnitIndex}}">
+                        <template is="dom-repeat" items="[[unitList]]" as="unit">
+                          <paper-item>[[unit.name]]</paper-item>
+                        </template>
+                      </paper-listbox>
+                    </paper-dropdown-menu>
+                  </template>
+
+                  <template is="dom-if" if="[[$notUndefined(selectedUnitIndex)]]">
+                    <paper-dropdown-menu class="m-right-8" label="Ward" id="wardDropdown">
+                      <paper-listbox class="dropdown-content" on-iron-select="wardSelected"
+                        selected="{{selectedWardIndex}}">
+                        <template is="dom-repeat" items="[[wardList]]" as="ward">
+                          <paper-item>[[ward.name]]</paper-item>
+                        </template>
+                      </paper-listbox>
+                    </paper-dropdown-menu>
+                  </template>
+
+                </div>
+              </paper-card>
+              <!-- Admission to - end -->
+              <!-- Seat List - start -->
+              <template is="dom-if" if="[[seatList.length]]">
+                <paper-card>
+                  <div class="card-content">
+                    <iron-list id="seatList" items="[[seatList]]" style="max-height: 300px;">
+                      <template>
+                        <paper-item class="layout horizontal seat center">
+                          <div class="m-right-16">
+                            <paper-input value="[[item.department]]" label="department" disabled="disabled">
+                            </paper-input>
+                          </div>
+                          <div class="m-right-16">
+                            <paper-input value="[[item.unit]]" label="unit" disabled="disabled"></paper-input>
+                          </div>
+                          <div class="m-right-16">
+                            <paper-input value="[[item.ward]]" label="ward" disabled="disabled"></paper-input>
+                          </div>
+                          <div class="m-right-16">[[item.name]]</div>
+                          <template is="dom-if" if="[[item.isOverflow]]">
+                            <div style="color: red">OVERFLOW</div>
+                          </template>
+                          <template is="dom-if" if="[[$equals(patient.serial, item.patientSerial)]]">
+                            Occupied by this patient ([[item.location]])
+                            <div hidden>[[index]]</div>
+
+                            <div hidden$="[[!_checkUserAccess('C040')]]">
+                              <template is="dom-if" if="[[!patientClearForDischarge]]">
+                                <button class="btn btn-default btn-sm btn-danger" raised disabled
+                                  title="Patient cannot be discharged as payments not cleared">Discharge</button>
+                              </template>
+
+                              <template is="dom-if" if="[[patientClearForDischarge]]">
+                                <paper-button class="btn btn-default btn-sm btn-danger" raised on-tap="dischargeTapped">
+                                  Discharge
+                                </paper-button>
+                              </template>
+                            </div>
+                          </template>
+
+
+                          <template is="dom-if" if="[[!$equals(patient.serial, item.patientSerial)]]">
+                            <template is="dom-if" if="[[!item.patientSerial]]">
+                              Vacant &nbsp;
+                              <div hidden>[[index]]</div>
+                              <paper-button class="btn btn-default btn-sm" raised on-tap="fillTapped">Fill
+                              </paper-button>
+                            </template>
+                            <template is="dom-if" if="[[item.patientSerial]]">
+                              Occupied
+                            </template>
+                          </template>
+                        </paper-item>
+                      </template>
+                    </iron-list>
+                  </div>
+                  <div class="card-actions">
+                    <paper-button class="btn btn-default" raised on-tap="addOverflow">Add as overflow</paper-button>
+                  </div>
+                </paper-card>
+              </template>
+              <!-- Seat List - end -->
+
+              <paper-card class="m-top-16">
+                <div class="card-content ">
+                  <div class="layout horizontal center">
+                    <label class="flex"><strong>Operation Name</strong></label>
+                    <div class="flex-4 layout horizontal end">
+                      <vaadin-combo-box no-label-float class="flex" label=" Write an Operation Name/ Search By Name"
+                        items="[[proceduralAdviceList]]" allow-custom-value
+                        value="{{patientStay.data.operationName}}" 
+                        on-selected-item-changed="operationNameSelected">
+                        <template>
+                          <div>[[item]]</div>
+                        </template>
+                      </vaadin-combo-box>
+                    </div>
+                  </div>
+                </div>
+              </paper-card>
+
+              <module-patient-details class="m-top-16" patient="{{patient}}"></module-patient-details>
+
+              <paper-card class="m-top-16">
+                <div class="card-content">
+                  <paper-input label="Referred By" value="{{patientStay.data.referredByDoctorName}}"></paper-input>
+                  <paper-input label="Admitted By" value="{{patientStay.data.admittedByDoctorName}}"></paper-input>
+                  <paper-input label="Marketing Referral By" value="{{patientStay.data.marketingReferralByPersonName}}">
+                  </paper-input>
+                </div>
+              </paper-card>
+
+
+
+              <template is="dom-if" if="[[seatList.length]]">
+
+                <paper-card class="m-top-16" heading="Location Logs">
+                  <div class="card-content" style="max-height: 200px;overflow: auto">
+                    <template is="dom-repeat" items="[[patientStay.data.currentLocation]]" sort="_sortByDate">
+                      <paper-item class="layout center">
+                        <div class="flex">[[$mkDateTime(item.datetimeStamp)]] :
+                          <span class="type primary">[[item.location]]</span>
+                        </div>
+                        <paper-icon-button class="type danger" icon="delete" on-tap="deleteLocationEntry">
+                        </paper-icon-button>
+                      </paper-item>
+                    </template>
+                  </div>
+                </paper-card>
+
+                <!-- Patient's Current Location - start -->
+                <paper-card class="m-top-8" heading="Patient's Current Location">
+                  <div class="card-content pull-div-up">
+                    <paper-radio-group id="locationRadioGroup" selected="{{selectedLocation}}" class="layout"
+                      on-iron-select="locationChanged">
+                      <template is="dom-repeat" items="[[patientStayObject.locations]]">
+                        <paper-radio-button name="[[item]]">[[item]]</paper-radio-button>
+                      </template>
+                    </paper-radio-group>
+                    <paper-textarea label="Custom Location" on-keyup="customLocationAdded"></paper-textarea>
+                  </div>
+                </paper-card>
+
+                <paper-card class="m-top-16" heading="Patient Status Logs">
+                  <div class="card-content" style="max-height: 200px;overflow: auto">
+                    <template is="dom-repeat" items="[[patientStay.data.currentPatientStatus]]" sort="_sortByDate">
+                      <paper-item class="layout center">
+                        <div class="flex">[[$mkDateTime(item.datetimeStamp)]] :
+                          <span class="type primary">[[item.status]]</span>
+                        </div>
+                        <paper-icon-button class="type danger" icon="delete" on-tap="deleteStatusHistory">
+                        </paper-icon-button>
+                      </paper-item>
+                    </template>
+                  </div>
+                </paper-card>
+
+                <paper-card class="m-top-8" heading="Patient Status">
+                  <template is="dom-if" if="[[patientStayObject.statusList]]">
+                    <paper-dropdown-menu class="m-left-16 m-bottom-8" label="Status">
+                      <paper-listbox class="dropdown-content" selected="{{selectedStatusIndex}}">
+                        <template is="dom-repeat" items="[[patientStayObject.statusList]]">
+                          <paper-item>[[item]]</paper-item>
+                        </template>
+                      </paper-listbox>
+                    </paper-dropdown-menu>
+                  </template>
+                </paper-card>
+
+              </template>
+
+            </template>
+
+
+          </section>
+
+          <section id="discharge-section">
+            <template is="dom-if" if="[[patientDischarged]]">
+
+              <!-- Discharged Reason - start -->
+              <paper-card class="m-top-16" heading="Discharged Reason">
+                <div class="card-content layout vertical discharge-reason">
+                  <div>
+                    <vaadin-date-picker class="m-left-16" label="Discharged Date" value="{{patientStayDischargeDate}}">
+                    </vaadin-date-picker>
+                    <br>
+                  </div>
+                  <div class="checkbox-group layout vertical m-left-16">
+                    <template is="dom-repeat" items="[[dischargeReasonList]]">
+                      <paper-checkbox on-change="dischargeReasonChanged" name="[[item]]">[[item]]</paper-checkbox>
+                    </template>
+                  </div>
+
+                  <template is="dom-if" if="[[patientStay.data.dischargeReason.length]]">
+                    <div class="p-16 bg-gray" style="text-align: left;">
+                      <template is="dom-repeat" items="[[patientStay.data.dischargeReason]]">
+                        <span class="type italic bold m-right-8 primary">[[item]]</span>,
+                      </template>
+                    </div>
+                  </template>
+
+                  <paper-textarea class="m-left-16" label="Discharged Custom Resaon"
+                    on-keyup="customDischargeReasonAdded"></paper-textarea>
+                </div>
+              </paper-card>
+              <!-- Discharged Reason - end -->
+
+              <!-- Discharged to - start -->
+              <paper-card class="m-top-16" heading="Discharged to">
+                <div class="card-content layout vertical discharge-reason">
+                  <div class="checkbox-group layout vertical m-left-16">
+                    <template is="dom-repeat" items="[[dischargedToList]]">
+                      <paper-checkbox on-change="dischargedToChanged" name="[[item]]">[[item]]</paper-checkbox>
+                    </template>
+                  </div>
+                  <template is="dom-if" if="[[patientStay.data.dischargeTo.length]]">
+                    <div class="p-16 bg-gray" style="text-align: left;">
+                      <template is="dom-repeat" items="[[patientStay.data.dischargeTo]]">
+                        <span class="type italic bold m-right-8 primary">[[item]]</span>,
+                      </template>
+                    </div>
+                  </template>
+                  <paper-textarea class="m-left-16" label="Discharged To Custom Resaon"
+                    on-keyup="customDischargeToAdded"></paper-textarea>
+                </div>
+              </paper-card>
+              <!-- Discharged to - end -->
+
+              <paper-card class="m-top-16">
+                <div class="card-content">
+                  <paper-input label="Discharged By" value="{{patientStay.data.dischargedByDoctorName}}"></paper-input>
+                </div>
+              </paper-card>
+
+            </template>
+          </section>
+
+        </iron-pages>
+
+        <paper-card class="m-top-8">
+          <div class="card-actions">
+            <paper-button class="btn btn-primary pull-preview-up" on-tap="showPrintPreviewButtonPressed">Print Preview
+            </paper-button>
+            <paper-button class="btn btn-success" raised on-tap="savePatientStayButtonPressed">
+              <iron-icon class="icon medium-small m-right-8" icon="save"></iron-icon>
+              <span>[[patientStayButtonLabel]]</span>
+            </paper-button>
+          </div>
+        </paper-card>
+
+
+
+        <!-- </template> -->
+        <!-- editing Patient Stay - end -->
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-visit-patient-stay-editor.coffee-compiled.js"></script>
+</dom-module>

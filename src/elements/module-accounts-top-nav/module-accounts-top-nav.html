@@ -1,0 +1,125 @@
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+
+<dom-module id="module-accounts-top-nav">
+
+  <template>
+    <!-- style -->
+    <style is="custom-style">
+      :host {
+        display: block;
+        width: 100%;
+      }
+
+      .tabs {
+        --paper-tabs-selection-bar-color: yellow;
+
+        --paper-tabs: {
+          background-color: var(--paper-teal-400);
+          color: #fff;
+        }
+
+        --paper-tabs-selection-bar: {
+          z-index: 1;
+        }
+      }
+
+      .tabs paper-tab {
+        --paper-tab-ink: #fff !important;
+        font-size: 16px;
+        text-transform: uppercase;
+        margin: 0 3px;
+        padding: 0 10px;
+      }
+
+      paper-tab[link] a {
+        @apply --layout-horizontal;
+        @apply --layout-center-center;
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+
+    <paper-tabs selected="[[pageName]]" attr-for-selected="name" class="tabs" scrollable>
+      <paper-tab link name="accounts-manager-dashboard">
+        <a tabindex="-1" href="#/accounts-manager-dashboard/organization:[[organizationId]]">Dashboard</a>
+      </paper-tab>
+      <paper-tab link name="accounts-cash-balance">
+        <a tabindex="-1" href="#/accounts-cash-balance/organization:[[organizationId]]">Petty
+          Cash</a>
+      </paper-tab>
+      <paper-tab link name="accounts-salary-manager">
+        <a tabindex="-1" href="#/accounts-salary-manager/organization:[[organizationId]]">Salary
+          Manager</a>
+      </paper-tab>
+      <paper-tab link name="accounts-income-manager">
+        <a tabindex="-1" href="#/accounts-income-manager/organization:[[organizationId]]">Income
+          Manager</a>
+      </paper-tab>
+      <paper-tab link name="accounts-expense-manager">
+        <a tabindex="-1" href="#/accounts-expense-manager/organization:[[organizationId]]">Expense
+          Manager</a>
+      </paper-tab>
+      <paper-tab link name="accounts-handover">
+        <a tabindex="-1" href="#/accounts-handover/organization:[[organizationId]]">Accounts Handover</a>
+      </paper-tab>
+      <paper-tab link name="third-party-payment-manager">
+        <a tabindex="-1" href="#/third-party-payment-manager/organization:[[organizationId]]">Third Party Payment Manager</a>
+      </paper-tab>
+      <paper-tab link name="top-sheet">
+        <a tabindex="-1" href="#/top-sheet/organization:[[organizationId]]">Top Sheet of Accounts</a>
+      </paper-tab>
+      <paper-tab link name="commission-category-manager">
+        <a tabindex="-1" href="#/commission-category-manager/organization:[[organizationId]]">Commission Category Manager</a>
+      </paper-tab>
+      <paper-tab link name="accounts-report">
+        <a tabindex="-1" href="#/accounts-report/organization:[[organizationId]]">Accounts Report</a>
+      </paper-tab>
+      <paper-tab link name="fund-manager">
+        <a tabindex="-1" href="#/fund-manager/organization:[[organizationId]]">Fund Manager</a>
+      </paper-tab>
+      <paper-tab link name="invoice-report">
+        <a tabindex="-1" href="#/invoice-report/organization:[[organizationId]]">Invoice Report</a>
+      </paper-tab>
+      <paper-tab link name="commission-report">
+        <a tabindex="-1" href="#/commission-report/organization:[[organizationId]]">Commission Report</a>
+      </paper-tab>
+      <paper-tab link name="fund-report">
+        <a tabindex="-1" href="#/fund-report/organization:[[organizationId]]">Fund Report</a>
+      </paper-tab>
+      <paper-tab link name="due-guarantor-report">
+        <a tabindex="-1" href="#/due-guarantor-report/organization:[[organizationId]]">Due Guarantor Report</a>
+      </paper-tab>
+      <paper-tab link name="discount-report">
+        <a tabindex="-1" href="#/discount-report/organization:[[organizationId]]">Discount Report</a>
+      </paper-tab>
+      <paper-tab link name="billing-report">
+        <a tabindex="-1" href="#/billing-report/organization:[[organizationId]]">Billing Report</a>
+      </paper-tab>
+    </paper-tabs>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'module-accounts-top-nav',
+      properties: {
+        organizationId: {
+          type: String,
+          value: ''
+        },
+        tabSelected: {
+          type: Number,
+          value: 0
+        },
+        pageName: {
+          type: String,
+          notify: true,
+          value: ''
+        }
+      },
+
+
+    })
+  </script>
+
+</dom-module>

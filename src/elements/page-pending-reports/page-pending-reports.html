@@ -1,0 +1,145 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-pending-reports">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+
+      .limiting-container {
+        margin-top: 10px;
+      }
+      .table{
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td {
+        color: #444;
+      }
+
+      .table td, .table th{
+        vertical-align: middle;
+        padding: 10px 20px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+       .table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .table.two-col th {
+        text-align: right;
+        background-color: white;
+        width: 50%;
+      }
+
+      .two-col .header th {
+        background-color: var(--paper-grey-50);
+        text-align: center;
+        padding: 20px 0;
+        text-trasnform: uppercase;
+      }
+
+      .block{display: block}
+
+      .filter-query {
+        --paper-input-container: {
+          width: 250px;
+          padding: 0;
+        }
+        --paper-input-container-label: {
+          font-size: 13px;
+        }
+        --paper-input-container-input: {
+          font-size: 13px;
+        }        
+      }
+      .search {
+        @apply(--layout-end-justified);
+      }
+
+      @media only screen and (min-width : 320px) and (max-width : 480px){
+        .table td, .table th{
+          vertical-align: top;
+          font-size: 14px;
+        }
+        .search {
+          margin-top: 10px;
+          @apply(--layout-start-justified);
+        }
+      }
+    </style>
+
+    <!-- local DOM -->
+    
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+        <paper-card heading="Pending Reports">
+          <table class="table">
+            <tr>
+              <th>Date</th>
+              <th>Report Type</th>
+              <th>Name of Doctor</th>
+              <th>Specialty</th>
+              <th>Institution/Hospital</th>
+              <th></th>
+            </tr>
+            <template is="dom-if" if="[[_isEmptyArray(matchingPendingReportsList)]]">
+              <tr>
+                <td colspan="5" class="text-center">
+                  [[$TRANSLATE('No Data added yet',LANG)]]...
+                </td>
+              </tr>
+            </template>
+
+            <template id="pending-reports-list-repeater" is="dom-repeat" items="[[matchingPendingReportsList]]" sort="_sortByDate" filter="{{computeVisitFilter(searchString)}}">
+              <tr>
+                <td><span class="text-muted">[[$mkDateTime(item.createdDatetimeStamp)]]</span></td>
+                <td>[[item.recordTypeName]]</td>
+
+                <td>[[item.doctorName]]</td>
+                <td>[[item.doctorSpeciality]]</td>
+                <td>[[item.hospitalName]]</td>
+                <td>
+                  <paper-icon-button icon="preview" on-click=""></paper-icon-button>
+                </td>
+                
+              </tr>
+            </template>
+          </table>
+        </paper-card>
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-pending-reports.coffee-compiled.js"></script>
+</dom-module>

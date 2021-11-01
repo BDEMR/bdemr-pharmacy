@@ -1,0 +1,216 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-store-vendor">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+
+      /* custom-input - start */
+      .custom-input ::content paper-input-container {
+        padding: 6px 4px;
+      }
+
+      .custom-input ::content .underline {
+        display: none;
+      }
+
+      .custom-input paper-input-container ::content .underline {
+        height: 0 !important;
+      }
+
+      .custom-input  {
+        --paper-input-container-label: {
+          font-size: 18px;
+          color: #576374 !important;
+          font-weigh: 500;
+        };
+      }
+
+      .custom-input ::content paper-input-container ::content input {
+        background-color: #dde2e8;
+        border-radius: 6px;
+        height: 36px;
+        margin-top: 4px;
+        font-weight : 500;
+        padding: 0 8px;
+        box-sizing: border-box;
+        min-width: 200px;
+      }
+
+      .combo-box ::content .toggle-button {
+        bottom: 2px;
+        right: 0px;
+      }
+
+      .combo-box ::content .clear-button {
+        bottom: 0 !important;
+        right: 28px !important;
+      }
+
+      .date-picker ::content div[sufix] {
+        bottom: 0px !important;
+        right: 0px !important;
+      } 
+
+      .combo-box ::content paper-input-container ::content input{
+        padding: 0 60px 0 8px;
+      }
+
+      .combo-box {
+        padding: 0;
+      }
+
+      #vendorEditor {
+        /* box-shadow: rgba(0,0,0, .54) 0 -10px 6px -10px inset; */
+        /* background-color: #fafafa; */
+
+      }
+
+      .action-area {
+        background-color: #dde2e8;
+        padding: 8px 0;
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+      }
+      #validateArea {
+        padding: 8px 16px;
+      }
+
+      .custom-input.no-padding {
+        padding: 0;
+      }
+
+      vaadin-grid {
+        border-radius: 6px;
+      }
+
+      /* custom-input - start */
+
+  
+    </style>
+    
+    <!-- local DOM - start -->
+    <paper-card class="m-top-8">
+      <!-- vendor editor - start -->
+      <div id="vendorEditor">
+        <div class="p-8">
+          <div class="p-4 horizontal layout center" on-tap="_toggleVendorEditor">
+            <div class="type title-2 primary flex">{{vendorDialogTitle}}</div>
+            <paper-icon-button icon="icons:arrow-drop-down"></paper-icon-button>
+          </div>
+          <div class="layout horizontal wrap" hidden$="{{toggleVendorEditor}}">
+      
+            <paper-input class="custom-input" always-float-label label="[[$TRANSLATE('Vendor Name', LANG)]]" value="{{vendor.data.name}}" required></paper-input>
+            <paper-input class="custom-input" always-float-label label="[[$TRANSLATE('Phone Number', LANG)]]" value="{{vendor.data.phoneNumber}}"></paper-input>
+            <paper-input class="custom-input" always-float-label label="[[$TRANSLATE('Email', LANG)]]" value="{{vendor.data.email}}"></paper-input>
+            <paper-input class="custom-input" always-float-label label="[[$TRANSLATE('Address', LANG)]]" value="{{vendor.data.address}}"></paper-input>
+  
+          </div>
+        </div>
+        
+        <div id="validateArea" hidden$="{{toggleVendorEditor}}">
+          <template is="dom-repeat" items="[[validates]]">
+            <div class$="type {{item.classType}}">{{item.message}}</div>
+          </template>
+        </div>
+        <div class="action-area horizontal layout" hidden$="{{toggleVendorEditor}}">
+          <paper-button hidden$="{{!EDIT_MODE}}" on-tap="_deleteVendor"><iron-icon icon="delete" class="m-right-8"></iron-icon> [[$TRANSLATE('Delete', LANG)]]</paper-button>
+          <div class="flex"></div>
+          <paper-button on-tap="_clearButtonPressed">[[$TRANSLATE('Clear', LANG)]]</paper-button>
+          <paper-button on-tap="_saveVendor">
+            <span hidden$="{{EDIT_MODE}}">[[$TRANSLATE('Add', LANG)]]</span>
+            <span hidden$="{{!EDIT_MODE}}">[[$TRANSLATE('Update', LANG)]]</span>  
+          </paper-button>
+        </div>
+        
+      </div>
+      <!-- vendor editor - end -->
+    </paper-card>
+
+    <paper-card class="m-top-8">
+      <!-- vendor list - start -->
+      <template is="dom-if" if="[[!vendors.length]]">
+        <h4 class="p-16 type center">[[$TRANSLATE('No Item Added Yet', LANG)]]...</h4>
+      </template>
+
+      <template is="dom-if" if="[[vendors.length]]">
+        <vaadin-grid items="[[vendors]]" id="vendors" active-item="{{activeItem}}">
+
+          <vaadin-grid-column width="15em" frozen>
+            <template class="header">
+              <vaadin-grid-sorter path="name" direction="desc">
+                <vaadin-grid-filter path="name" value="[[filterName]]">
+                  <paper-input class="custom-input no-padding" no-label-float placeholder="[[$TRANSLATE('Vendor Name', LANG)]]" value="{{filterName}}" required></paper-input>
+                </vaadin-grid-filter>
+              </vaadin-grid-sorter>
+            </template>
+            <template>
+              [[item.data.name]]
+            </template>
+          </vaadin-grid-column>
+          
+          <vaadin-grid-column resizable>
+            <template class="header">[[$TRANSLATE('Phone Number', LANG)]]</template>
+            <template>[[item.data.phoneNumber]]</template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">[[$TRANSLATE('Email', LANG)]]</template>
+            <template>[[item.data.email]]</template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">[[$TRANSLATE('Address', LANG)]]</template>
+            <template>[[item.data.address]]</template>
+          </vaadin-grid-column>
+      
+        </vaadin-grid>
+      </template>
+      <!-- vendor list - end -->
+    </paper-card>
+    <!-- local DOM - end -->
+    
+
+      
+
+  </template>
+  <script src="page-store-vendor.js"></script>
+</dom-module>

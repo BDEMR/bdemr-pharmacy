@@ -1,0 +1,231 @@
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../bdemr-qrcode-reader/bdemr-qrcode-reader.html">
+
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- Commong Styles -->
+<link rel="import" href="../../styles/common-style.html">
+
+
+<link rel="import" href="../bdemr-qrcode/bdemr-qrcode.html">
+
+<dom-module id='page-scan-user-for-invoices'>
+  <template>
+    <style is='custom-style' include='iron-flex iron-flex-alignment common-style'>
+      #loader {
+        background: rgba(255, 255, 255, 1);
+        /* position: absolute;
+        left: 0;
+        top: 0; */
+        border-radius: 16px;
+        z-index: 1;
+        height: 100%;
+        width: 100%;
+      }
+
+      .profile-image-area {
+        position: relative;
+        height: 128px;
+        width: 128px;
+      }
+
+      .user-avatar {
+        height: 64px;
+        width: 64px;
+        border-radius: 50%;
+      }
+
+      .user-avatar.small {
+        height: 36px;
+        width: 36px;
+      }
+
+      .user-avatar.medium {
+        height: inherit;
+        width: inherit;
+      }
+
+      .text-bold {
+        font-weight: bold !important;
+      }
+    </style>
+
+    <paper-card>
+      <div class="card-content">
+
+        <h2 style="text-align: center;">Scan Details</h2>
+        <template is="dom-if" if="[[invoiceList]]">
+
+          <vaadin-grid items="[[invoiceList]]">
+            <vaadin-grid-column width="180px" flex-grow="0">
+              <template class="header">
+                <vaadin-grid-sorter path="serial">Serial</vaadin-grid-sorter>
+              </template>
+              <template>
+                <template is="dom-if" if="[[!item.referenceNumber]]">
+                  <strong class="label">[[item.serial]]</strong>
+                </template>
+                <template is="dom-if" if="[[item.referenceNumber]]">
+                  <strong class="label">[[item.referenceNumber]]</strong>
+                </template>
+              </template>
+            </vaadin-grid-column>
+            <vaadin-grid-column resizable>
+              <template class="header">
+                <vaadin-grid-sorter path="createdDatetimeStamp" direction="desc">Date</vaadin-grid-sorter>
+              </template>
+              <template>
+                <div>[[$formatDate(item.createdDatetimeStamp)]]</div>
+              </template>
+            </vaadin-grid-column>
+            <vaadin-grid-column width="120px" flex-grow="0" resizable>
+              <template class="header">
+                <vaadin-grid-filter aria-label="Name" path="category" value="[[searchString]]" style="margin-top: 6px;">
+                  <paper-input label="Category" value="{{searchString}}" no-label-float></paper-input>
+                </vaadin-grid-filter>
+              </template>
+              <template>
+                <div class="type caption-2 bg-gray success">[[item.category]]</div>
+              </template>
+            </vaadin-grid-column>
+
+            <!-- patient name -->
+            <vaadin-grid-column resizable>
+              <template class="header">
+                <span>Name</span>
+              </template>
+              <template>
+                <div>[[$getFullName(item.patientName)]]</div>
+              </template>
+            </vaadin-grid-column>
+
+            <!-- patient phone -->
+            <vaadin-grid-column resizable>
+              <template class="header">
+                <span>Phone</span>
+              </template>
+              <template>
+                <div>[[item.patientPhone]]</div>
+              </template>
+            </vaadin-grid-column>
+
+            <!-- patient NID -->
+            <vaadin-grid-column resizable>
+              <template class="header">
+                <span>NID</span>
+              </template>
+              <template>
+                <div>[[item.patientNid]]</div>
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column resizable>
+              <template class="header">
+                <span>Referred Doctor</span>
+              </template>
+              <template>
+                <div>[[item.referralDoctor.name]]</div>
+              </template>
+            </vaadin-grid-column>
+            <vaadin-grid-column resizable>
+              <template class="header">
+                <span>Discount</span>
+              </template>
+              <template>
+                <div>
+                  <span>[[item.discount]]</span><br>
+                  <template is='dom-if' if='[[item.discountFromFund.serial]]'>
+                    <span class="type caption-2 secondary">
+                      [[item.discountFromFund.name]]: [[item.discountFromFund.amount]]
+                    </span>
+                  </template>
+                </div>
+              </template>
+            </vaadin-grid-column>
+            <vaadin-grid-column resizable>
+              <template class="header">
+                <span>Vat/Tax</span>
+              </template>
+              <template>
+                <div>[[item.vatOrTax]]</div>
+              </template>
+            </vaadin-grid-column>
+            <vaadin-grid-column resizable>
+              <template class="header">
+                <span>Billed</span>
+              </template>
+              <template>
+                <div>[[item.totalBilled]]
+                  <template is='dom-if' if='[[item.freePatient]]'>
+                    <span class="type bg-gray caption-2">FREE</span></template>
+                </div>
+              </template>
+              <template class="footer"><strong>[[$formatCurrency(totalInvoiceBilled)]]</strong></template>
+            </vaadin-grid-column>
+            <vaadin-grid-column resizable>
+              <template class="header">
+                <span>Received</span>
+              </template>
+              <template>
+                <div>[[item.totalAmountReceieved]]</div>
+              </template>
+              <template class="footer"><strong>[[$formatCurrency(totalInvoiceIncome)]]</strong></template>
+            </vaadin-grid-column>
+            <vaadin-grid-column resizable>
+              <template class="header">
+                <span>Due</span>
+              </template>
+              <template class="footer"><strong>[[$formatCurrency(totalDue)]]</strong></template>
+              <template>
+                <div>[[calculateDue(item.totalBilled, item.totalAmountReceieved)]]</div>
+              </template>
+            </vaadin-grid-column>
+          </vaadin-grid>
+        </template>
+
+
+        <template is="dom-if" if="[[!invoiceList]]">
+          <div class="horizontal layout center-justified center" style="height: inherit;">
+            <paper-button class="m-top-24" hidden$="{{isQrCodeActive}}" raised on-tap="_startScanning">Tap Here to Scan
+            </paper-button>
+          </div>
+        </template>
+
+
+        <!-- loader - start -->
+        <div id="loader" class="horizontal layout center center-justified" hidden$="{{!isLoading}}">
+          <div style="text-align: center;">
+            <paper-spinner active></paper-spinner>
+            <div class="type body secondary">Please wait...</div>
+          </div>
+        </div>
+        <!-- loader - end -->
+
+        <div class="horizontal layout center center-justified m-top-24">
+          <template is="dom-if" if="[[!invoiceList]]">
+            <bdemr-qrcode-reader id="qrCodeReader" active="{{isQrCodeActive}}" result="{{qrCode}}"
+              on-qrcode-change="_onQrCodeChanged"></bdemr-qrcode-reader>
+          </template>
+          <template is="dom-if" if="[[invoiceList]]">
+            <paper-button on-tap="_resetQrCode" class="colored">Reset</paper-button>
+          </template>
+        </div>
+
+      </div>
+    </paper-card>
+
+
+  </template>
+  <script src="page-scan-user-for-invoices.coffee-compiled.js"></script>
+</dom-module>

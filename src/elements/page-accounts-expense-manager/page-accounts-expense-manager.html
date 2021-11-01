@@ -1,0 +1,660 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/paper-material/paper-material.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<!-- <link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html"> -->
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-accounts-expense-manager">
+
+  <template>
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        width: 100%;
+        margin: 0;
+      }
+
+      .search {
+        background-color: #fff;
+        border: 1px solid #dadada;
+        padding: 8px;
+        margin: 4px 0;
+      }
+
+      #expenseList {
+        height: 520px;
+      }
+
+      paper-material {
+        background-color: #fff;
+      }
+
+      input {
+        background-color: #dde2e8;
+        border-radius: 6px;
+        height: 36px;
+        font-weight: 500;
+        padding: 0px 8px;
+        box-sizing: border-box;
+      }
+
+      /* styles related to print preview */
+      .print-button-style {
+        margin-top: 16px;
+        background: burlywood;
+      }
+
+      #printPreview {
+        display: none !important;
+      }
+
+      @media print {
+        .hideOnPrint {
+          display: none !important;
+        }
+
+        #printPreview {
+          display: block !important;
+          background-color: transparent;
+        }
+      }
+
+      /*  */
+      .print-document {
+        font-family: 'Times New Roman';
+        background: white;
+        width: 100%;
+      }
+
+      .print-header {
+        position: relative;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px
+      }
+
+      .print-document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .print-document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+      .print-table {
+        table-layout: fixed;
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .print-table tr {
+        margin-bottom: 15px;
+      }
+
+      .print-table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .print-table td {
+        color: #444;
+      }
+
+      .print-table td, .print-table th {
+        /* vertical-align: middle; */
+        padding-right: 5px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+      .print-table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      
+    </style>
+
+
+    <!-- <module-accounts-top-nav page-name="accounts-expense-manager" organization-id="[[organization.idOnServer]]"></module-accounts-top-nav> -->
+
+
+    <!-- INCOME SECTION -->
+    <div class="master-container">
+      <paper-progress class="progress" indeterminate hidden$="[[!loading]]"></paper-progress>
+
+      <div class="limiting-container custom-input-field">
+
+        <!-- Main Content -->
+        <div class="hideOnPrint">
+          <paper-material>
+            <div class="card-content">
+            <paper-progress indeterminate hidden$="[[!loading]]"></paper-progress>
+
+            <div class="search layout horizontal center wrap">
+              <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
+              <paper-toggle-button class="m-left-8" checked="{{searchParameters.includeErrors}}"><span class="type seondary caption">[[$TRANSLATE('Include Errors', LANG)]]</span></paper-toggle-button>
+              <div class="m-left-8">
+                <paper-button raised class="btn btn-success btn-large" on-tap="searchButtonClicked">[[$TRANSLATE('Search', LANG)]]</paper-button>
+                <template is="dom-if" if="[[_isEmptyArray(matchingExpenseList)]]">
+                  <paper-button raised class="print-button-style" on-tap="_printButtonPressed">[[$TRANSLATE('Print the Report', LANG)]]</paper-button>
+                </template>
+              </div>
+              <div class="flex"></div>
+              <paper-button class="btn btn-primary btn-sm" raised on-tap="addNewExpenseButtonClicked">
+                <iron-icon icon="add"></iron-icon>
+                [[$TRANSLATE('Add New Expense Item', LANG)]]
+              </paper-button>
+            </div>
+
+            <vaadin-grid id="expenseList" items="[[matchingExpenseList]]">
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <vaadin-grid-sorter path="createdDatetimeStamp" direction="desc">[[$TRANSLATE('Date', LANG)]]</vaadin-grid-sorter>
+                </template>
+                <template>
+                  <div class="">[[$formatDateTime(item.createdDatetimeStamp)]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>[[$TRANSLATE('Serial', LANG)]]</span>
+                </template>
+                <template>
+                  <div class=""><span class="type caption-2 bg-gray">[[formatExpenseSerial(item.serial)]]</span></div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>[[$TRANSLATE('Category', LANG)]]</span>
+                </template>
+                <template>
+                  <div class="">[[item.category]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <vaadin-grid-filter aria-label="Name" path="customerDetails.name" value="[[customerNameSearchString]]">
+                    <input placeholder="[[$TRANSLATE('Name', LANG)]]" is="iron-input" bind-value="{{customerNameSearchString}}" />
+                  </vaadin-grid-filter>
+                </template>
+                <template>
+                  <div class="">[[item.customerDetails.name]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <vaadin-grid-filter aria-label="Phone" path="customerDetails.phone" value="[[customerPhoneSearchString]]">
+                    <input placeholder="[[$TRANSLATE('Phone', LANG)]]" is="iron-input" bind-value="{{customerPhoneSearchString}}" />
+                  </vaadin-grid-filter>
+                </template>
+                <template>
+                  <div class="">[[item.customerDetails.phone]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>[[$TRANSLATE('Billed', LANG)]]</span>
+                </template>
+                <template>
+                  <div class="">[[item.totalBilled]]</div>
+                </template>
+                <template class="footer">
+                  <span class="type bold">[[$formatCurrency(totalBilled)]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>[[$TRANSLATE('Paid', LANG)]]</span>
+                </template>
+                <template>
+                  <div class="">[[item.totalAmountPaid]]</div>
+                </template>
+                <template class="footer">
+                  <span class="type bold">[[$formatCurrency(totalAmountPaid)]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>[[$TRANSLATE('Due', LANG)]]</span>
+                </template>
+                <template>
+                  <div class="">[[calculateDue(item.totalBilled, item.totalAmountPaid)]]</div>
+                </template>
+                <template class="footer">
+                  <span class="type bold">[[$formatCurrency(totalDue)]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>[[$TRANSLATE('Action', LANG)]]</span>
+                </template>
+                <template>
+                  <div hidden$="[[item.flags.flagAsError]]">
+                    <paper-icon-button icon="create" on-tap="editExpenseButtonClicked" hidden$="[[!_checkUserAccess('C027')]]"></paper-icon-button>
+                    <paper-icon-button icon="print" on-tap="printPreviewButtonClicked"></paper-icon-button>
+                    <paper-icon-button class="type danger" icon="report" on-tap="flagInvoiceAsErrorItemClicked" hidden$="[[!_checkUserAccess('C028')]]"></paper-icon-button>
+                  </div>
+                  <div hidden$="[[!item.flags.flagAsError]]">
+                    <span class="type danger">[[$TRANSLATE('Flagged As Error', LANG)]]</span>
+                  </div>
+                </template>
+              </vaadin-grid-column>
+
+            </vaadin-grid>
+            </div>
+  
+          </paper-material>
+        </div>
+
+        <!-- Print Preview -->
+        <div id="printPreview">
+          <div class="print-document">
+            <template is="dom-if" if="[[settings.printDecoration.headerLine]]">
+              <div class="print-header vertical layout center">[[settings.printDecoration.headerLine]]</div>
+            </template>
+
+            <div class="print-document-header horizontal layout center">
+
+              <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+                <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+              </template>
+
+              <div class="leftSide vertical layout">
+                <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+                <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+                <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+              </div>
+              <div class="flex"></div>
+              <div class="rightSide vertical layout end">
+                <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+                <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+                <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+              </div>
+            </div>
+
+            <div class="horiline"></div>
+            <div style="text-align: center">
+              <h1>[[$TRANSLATE('Expense Report', LANG)]]</h1>
+            </div>
+            <br>
+            <div style="text-align: center">
+              <h2>[[$TRANSLATE('Debit Vouchers', LANG)]]</h2>
+            </div>
+            <br>
+
+            <!-- Report Content -->
+            <div>
+              <table class="print-table">
+                <thead>
+                  <tr>
+                    <th>[[$TRANSLATE('Date', LANG)]]</th>
+                    <th>[[$TRANSLATE('Name', LANG)]]</th>
+                    <th>[[$TRANSLATE('Phone', LANG)]]</th>
+                    <th>[[$TRANSLATE('Billed', LANG)]]</th>
+                    <th>[[$TRANSLATE('Paid', LANG)]]</th>
+                    <th>[[$TRANSLATE('Due', LANG)]]</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template is="dom-repeat" items="[[matchingExpenseList]]" sort="_sortByDate">
+                    <tr>
+                      <td>[[$formatDate(item.createdDatetimeStamp)]]</td>
+                      <td>[[$getFullName(item.customerDetails.name)]]</td>
+                      <td>[[item.customerDetails.phone]]</td>
+                      <td>[[$formatCurrency(item.totalBilled)]]</td>
+                      <td>[[$formatCurrency(item.totalAmountPaid)]]</td>
+                      <td>[[_calculateDueAndFormatCurrency(item.totalBilled, item.totalAmountPaid)]]</td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+
+              <div class="layout vertical m-top-16 m-right-16" style="text-align: right; ">
+                <div class="m-bottom-8">
+                  <strong>[[$TRANSLATE('Total Billed', LANG)]]: [[$formatCurrency(totalBilled)]]</strong>
+                </div>
+                <div class="m-bottom-8">
+                  <strong>[[$TRANSLATE('Total Paid', LANG)]]: [[$formatCurrency(totalAmountPaid)]]</strong>
+                </div>
+                <div class="m-bottom-8">
+                  <strong>[[$TRANSLATE('Total Due', LANG)]]: [[$formatCurrency(totalDue)]]</strong>
+                </div>
+              </div>
+              
+            </div>
+
+            <br>
+            <template is="dom-if" if="[[settings.printDecoration.footerLine]]">
+              <div class="footer vertical layout">[[settings.printDecoration.footerLine]]</div>
+            </template>
+
+            <div style="text-align: center; margin-top: 16px">
+              <span class="type secondary">[[$TRANSLATE('Report Generation Date & Time', LANG)]] -
+                [[_getFormattedCurrentDateTime(currentDateTime)]]</span>
+            </div>
+
+            <div class="horizontal layout center center-justified p-horizontal-16">
+              <div class="type body italic"><strong>[[$TRANSLATE('Printed by', LANG)]]: </strong>[[user.name]]</div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'page-accounts-expense-manager',
+      behaviors: [
+        app.behaviors.translating,
+        app.behaviors.pageLike,
+        app.behaviors.dbUsing,
+        app.behaviors.apiCalling,
+        app.behaviors.commonComputes
+      ],
+
+      properties: {
+        user: {
+          type: Object,
+          notify: true,
+          value: null
+        },
+        organization: {
+          type: Object,
+          notify: true,
+          value: (app.db.find('organization'))[0]
+        },
+        settings: {
+          type: Object,
+          notify: true,
+          value: (app.db.find('settings'))[0]
+        },        
+        matchingExpenseList: {
+          type: Array,
+          value: []
+        },
+        searchParameters: {
+          type: Object,
+          value: function () {
+            return {
+              organizationId: '',
+              startDate: null,
+              endDate: null,
+              includeErrors: false
+            }
+          }
+        },
+        totalBilled: Number,
+        totalAmountPaid: Number,
+        totalDue: Number,
+      },
+
+      observers: [
+        'matchingExpenseListChanged(matchingExpenseList)'
+      ],
+
+      navigatedIn() {
+        const params = this.domHost.getPageParams()
+        this._loadUser();
+        if (params['organization']) {
+          this._loadOrganization(params['organization'], () => {
+            // this._loadExpenseReport(this.searchParameters)
+          });
+        } else {
+          this._notifyInvalidOrganization()
+        }
+      },
+
+      _isEmptyArray(array){
+        return array && array.length > 0;
+      },
+
+      filterByDateRangeFn(searchParameters) {
+        let { organizationIdentifier, startDate, endDate, includeErrors } = searchParameters;
+        return function (item) {
+          let { createdDatetimeStamp, organizationId, flags } = item;
+          return (startDate ? createdDatetimeStamp >= startDate.getTime() : true) && (endDate ? createdDatetimeStamp <= endDate.getTime() : true) && (organizationIdentifier ? organizationId === organizationIdentifier : false) && (includeErrors ? true : !item.flags.flagAsError)
+        }
+      },
+
+      _loadUser() {
+        const userList = app.db.find('user');
+        if (userList.length === 1) {
+          return this.user = userList[0];
+        }
+      },
+
+      _loadOrganization(idOnServer, cbfn) {
+        const data = {
+          apiKey: this.user.apiKey,
+          idList: [idOnServer]
+        };
+        this.loading = true;
+        this.callApi('/bdemr-organization-list-organizations-by-ids', data, (err, response) => {
+          this.loading = false;
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (!response.data.matchingOrganizationList.length) return this._notifyInvalidOrganization();
+          this.set('organization', response.data.matchingOrganizationList[0]);
+          this.searchParameters.organizationIdentifier = this.organization.idOnServer;
+          return cbfn();
+        });
+      },
+
+      _calculateDueAndFormatCurrency(billed, paid){
+        return this.$formatCurrency(this.calculateDue(billed, paid));
+      },
+
+      _notifyInvalidOrganization() {
+        return this.domHost.showModalDialog("Invalid Organization");
+      },
+
+      // _loadExpenseReport(searchParameters = {}) {
+      //   let list = app.db.find('organization-accounts-expense', this.filterByDateRangeFn(searchParameters))
+      //   this.set('matchingExpenseList', list);
+      //   console.log(this.matchingExpenseList)
+      // },
+
+      _loadExpenseReport(startDate, endDate) {
+        const query = {
+          apiKey: this.user.apiKey,
+          organizationId: this.organization.idOnServer,
+          searchParameters: {
+            dateCreatedFrom: startDate,
+            dateCreatedTo: endDate,
+          }
+        };
+        this.loading = true;
+        this.callApi('/bdemr--organization-accounts-expense', query, (err, response) => {
+          this.loading = false;
+          if (response.hasError) {
+            return this.domHost.showModalDialog(response.error.message);
+          }
+          else {
+            const expenseItems = response.data;
+            this.set('matchingExpenseList', expenseItems);
+            this.set('filteredMatchingExpenseList', expenseItems);
+            console.log('filtered list', this.filteredMatchingExpenseList);
+          }
+        });
+      },     
+
+      filterByDateClicked(e) {
+        const startDate = new Date(e.detail.startDate);
+        startDate.setHours(0, 0, 0, 0);
+        this.searchParameters.startDate = startDate;
+        const endDate = new Date(e.detail.endDate);
+        endDate.setHours(23, 59, 59, 999);
+        this.searchParameters.endDate = endDate;
+      },
+
+      filterByDateClearButtonClicked(e) {
+        this.searchParameters.startDate = null;
+        this.searchParameters.endDate = null;
+      },
+
+      searchButtonClicked(e) {
+        this._loadExpenseReport(this.searchParameters.startDate, this.searchParameters.endDate);
+      },
+
+      addNewExpenseButtonClicked(e) {
+        this.domHost.navigateToPage('#/accounts-expense-editor/organization:' + this.organization.idOnServer + '/expense:new')
+      },
+
+      editExpenseButtonClicked(e) {
+        let item = e.model.item;
+        this.domHost.navigateToPage('#/accounts-expense-editor/organization:' + this.organization.idOnServer + '/expense:' + item.serial);
+      },
+
+      printPreviewButtonClicked(e) {
+        let item = e.model.item;
+        this.domHost.navigateToPage('#/accounts-expense-print-preview/organization:' + this.organization.idOnServer + '/expense:' + item.serial);
+      },
+
+      formatSerial(serial) {
+        if (!serial) return;
+        let user = serial.charAt(2);
+        let inc = serial.split('AccI')[1]
+        return user + '-' + inc
+      },
+
+      calculateDue(billed, paid) {
+        let due = billed - paid
+        return due > 0 ? due : 0;
+      },
+
+      matchingExpenseListChanged() {
+        const matchingExpenseList = this.matchingExpenseList.filter(item => !item.flags.flagAsError);
+        this.totalBilled = matchingExpenseList.reduce((total, item) => {
+          return total += parseFloat(item.totalBilled);
+        }, 0)
+        this.totalAmountPaid = matchingExpenseList.reduce((total, item) => {
+          return total += parseFloat(item.totalAmountPaid);
+        }, 0)
+        this.totalDue = matchingExpenseList.reduce((total, item) => {
+          return total += this.calculateDue(item.totalBilled, item.totalAmountPaid)
+        }, 0)
+      },
+
+      formatExpenseSerial(serial) {
+        if (!serial) return;
+        let user = serial.charAt(2);
+        let inc = serial.split('AccEx')[1]
+        return user + '-exp-' + inc
+      },
+
+      flagInvoiceAsErrorItemClicked(e) {
+        const { item } = e.model;
+        this.domHost.showModalPrompt('Do you want to Mark this Invoice as Error?', (yes) => {
+          if (yes) {
+            item.flags.flagAsError = true;
+            item.lastModifiedDatetimeStamp = lib.datetime.now();
+            const data = {
+              apiKey: this.user.apiKey,
+              expense: item
+            };
+            this.callApi('/bdemr--clinic-add-expense-from-expense-manager', data, (err, response) => {
+              if (err) return this.domHost.showModalDialog(err.message);
+              if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+              return
+            });
+            this.searchButtonClicked()
+            // app.db.upsert('organization-accounts-expense', item, ({ serial }) => item.serial === serial);
+            // this._loadExpenseReport(this.searchParameters);
+          }
+        })
+      },
+
+      _checkUserAccess: function (accessId) {
+        var currentOrganization, i, len, privilege, privilegeList;
+        currentOrganization = this.getCurrentOrganization();
+        if (accessId === 'none') {
+          return true;
+        } else {
+          if (currentOrganization) {
+            if (currentOrganization.isCurrentUserAnAdmin) {
+              return true;
+            } else if (currentOrganization.isCurrentUserAMember) {
+              if (currentOrganization.userActiveRole) {
+                privilegeList = currentOrganization.userActiveRole.privilegeList;
+                if (privilegeList.length !== 0) {
+                  for (i = 0, len = privilegeList.length; i < len; i++) {
+                    privilege = privilegeList[i];
+                    if (privilege.serial === accessId) {
+                      return true;
+                    }
+                  }
+                }
+              } else {
+                return false;
+              }
+              return false;
+            } else {
+              return false;
+            }
+          } else {
+            return true;
+          }
+        }
+      },
+
+      // Print Preview
+      _sortByDate(a, b){
+        if(a.createdDatetimeStamp < b.createdDatetimeStamp) return 1
+        if(a.createdDatetimeStamp > b.createdDatetimeStamp) return -1
+        return 0
+      },
+
+      _getFormattedCurrentDateTime(currentTime){
+        return lib.datetime.format((new Date(currentTime)), 'mmm d, yyyy h:MMTT');
+      },
+      _printButtonPressed(){
+        this.currentDateTime = lib.datetime.now();
+        window.print();
+      }
+
+    });
+  </script>
+</dom-module>

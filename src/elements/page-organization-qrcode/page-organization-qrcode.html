@@ -1,0 +1,45 @@
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/iron-pages/iron-pages.html">
+
+
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- Commong Styles -->
+<link rel="import" href="../../styles/common-style.html">
+
+
+<link rel="import" href="../bdemr-qrcode/bdemr-qrcode.html">
+
+<dom-module id='page-organization-qrcode'>
+  <template>
+    <style is='custom-style' include='iron-flex iron-flex-alignment common-style'>
+    </style>
+
+    <div class="master-container">
+      <div class="limiting-container">
+        <paper-card>
+          <div class="card-content">
+            <template is="dom-if" if="{{code}}">
+                <div class="horizontal layout center center-justified">
+                  <div style="text-align: center;">
+                    <h2>{{organization.name}}</h2>
+                    <br>
+                    <bdemr-qrcode code="{{code}}"></bdemr-qrcode>
+                    <div>{{displayCounter}}</div>
+                  </div>
+                </div>
+              </template>
+          </div>
+        </paper-card>
+      </div>
+    </div>
+
+    
+  </template>
+  <script src="page-organization-qrcode.coffee-compiled.js"></script>
+</dom-module>

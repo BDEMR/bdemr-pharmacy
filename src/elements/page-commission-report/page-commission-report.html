@@ -1,0 +1,288 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-commission-report">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+        width: 90%;
+      }
+
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .header {
+        background-color: var(--paper-grey-100);
+        padding: 15px;
+      }
+
+      .label {
+        background-color: var(--paper-grey-100);
+        padding: 5px;
+      }
+
+      .border-bottom {
+        border-bottom: 1px solid rgb(235, 230, 230);
+      }
+
+      .search {
+        background-color: #fafafa;
+        border: 1px solid #dadada;
+        padding: 0px 8px 12px 8px;
+        margin: 4px;
+        margin-left: 0;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+    </style>
+
+    <!-- <module-accounts-top-nav page-name="commission-report" organization-id="[[organization.idOnServer]]">
+    </module-accounts-top-nav> -->
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <template is="dom-if" if="[[isLoading]]">
+          <div class="layout horizontal center type bold text-center">
+            <paper-progress indeterminate></paper-progress>
+          </div>
+          <h2 class="type center">[[$TRANSLATE('Please Wait, Loading', LANG)]]...</h2>
+        </template>
+
+        <!-- Card - Search - start -->
+        <paper-card heading="[[$TRANSLATE('Commission Report', LANG)]]">
+
+          <div class="card-content custom-input-field">
+
+            <div class="layout horizontal end wrap search">
+
+              <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
+
+              <paper-dropdown-menu label="[[$TRANSLATE('Commission Category', LANG)]]" class="m-left-16">
+                <paper-listbox class="dropdown-content" on-iron-activate="filterByCategoryNameChanged">
+                  <template is="dom-repeat" items="[[commissionCategoryList]]">
+                    <paper-item>[[item.name]]</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+
+              <paper-dropdown-menu label="[[$TRANSLATE('Commission Pay Status', LANG)]]" class="m-left-16">
+                <paper-listbox class="dropdown-content" on-iron-activate="filterByPayStatusChanged">
+                  <template is="dom-repeat" items="[[paidStatusList]]">
+                    <paper-item>[[item]]</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+
+              <paper-dropdown-menu label="[[$TRANSLATE('Select Super Visor', LANG)]]" class="m-left-16">
+                <paper-listbox class="dropdown-content" on-iron-activate="filterBySuperVisorNameChanged">
+                  <template is="dom-repeat" items="[[thirdPartySuperVisorList]]">
+                    <paper-item>[[item.superVisorName]]</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+
+              <paper-input class="m-right-16" type="search" class="filter-query" label="Filter By Supervisor ID"
+                value="{{searchStringSuperVisorId}}"></paper-input>
+                
+              <div class="flex"></div>
+
+              <paper-button class="btn btn-primary" raised on-tap="searchButtonClicked">[[$TRANSLATE('Search', LANG)]]</paper-button>
+              <paper-button raised on-tap="resetButtonClicked">[[$TRANSLATE('Reset', LANG)]]</paper-button>
+              <template is="dom-if" if="[[matchingCommissionList.length]]">
+                <paper-button raised class="btn btn-success" on-tap="_printButtonPressed">[[$TRANSLATE('Print the Report', LANG)]]</paper-button>
+              </template>
+
+              <!-- <div class="m-left-8 m-bottom-8 type secondary">
+                <span><strong>Press Search</strong> to Generate All The Reports</span>
+              </div> -->
+
+              <!-- <paper-button raised on-tap="_payButtonPressed" class="btn btn-success">Pay</paper-button> -->
+            </div>
+
+
+            <div class="">
+
+              <vaadin-grid items="[[matchingCommissionList]]">
+                <vaadin-grid-column>
+                  <template class="header" resizable>
+                    <vaadin-grid-sorter path="createdDatetimeStamp" direction="desc">
+                      <span>[[$TRANSLATE('Date', LANG)]]</span></vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div>[[$formatDateTime(item.createdDatetimeStamp)]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable width="150px">
+                  <template class="header">
+                    <span># [[$TRANSLATE('Invoice', LANG)]]</span>
+                  </template>
+                  <template>
+                    <template is="dom-if" if="[[!item.referenceNumber]]">
+                      <div> <strong class="label">[[item.serial]]</strong></div>
+                    </template>
+                    <template is="dom-if" if="[[item.referenceNumber]]">
+                      <div> <strong class="label">[[item.referenceNumber]]</strong></div>
+                    </template>
+                  </template>
+                  <template class="footer">
+                      <span>[[$TRANSLATE('Total Patients', LANG)]]: [[matchingCommissionList.length]]</span>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <!-- <span>[[Supervisor ID]]</span> -->
+                    <span>[[$TRANSLATE('Supervisor ID', LANG)]]</span>
+                  </template>
+                  <template>
+                    <div>[[item.commission.supervisorId]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <span>[[$TRANSLATE('Name', LANG)]]</span>
+                  </template>
+                  <template>
+                    <!-- <div>[[item.commission.0.name]]</div> -->
+                    <div>[[item.commission.name]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <vaadin-grid-filter aria-label="Phone" path="commission.phone" value="[[searchString]]" style="margin-top: 6px;">
+                      <paper-input label="[[$TRANSLATE('Phone', LANG)]]" value="{{searchString}}" no-label-float></paper-input>
+                    </vaadin-grid-filter>
+                  </template>
+                  <template>
+                    <!-- <div>[[item.commission.0.phone]]</div> -->
+                    <div>[[item.commission.phone]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column>
+                  <template class="header" resizable>
+                    <span>[[$TRANSLATE('Address', LANG)]]</span>
+                  </template>
+                  <template>
+                    <div>[[item.commission.address]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column>
+                  <template class="header" resizable>
+                    <span>[[$TRANSLATE('Category', LANG)]]</span>
+                  </template>
+                  <template>
+                    <!-- <div>[[item.category]]</div> -->
+                    [[item.commission.category]]
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column>
+                  <template class="header" resizable>
+                    <span>[[$TRANSLATE('Billed', LANG)]]</span>
+                  </template>
+                  <template>
+                    <!-- <div>[[$formatCurrency(item.commission.0.billed)]]</div> -->
+                    <div>[[$formatCurrency(item.commission.billed)]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable width="150px">
+                  <template class="header">
+                    <span>[[$TRANSLATE('Amount', LANG)]]</span>
+                  </template>
+                  <template>
+                    <!-- <div>[[$formatCurrency(item.commission.0.amount)]]</div> -->
+                    <div>[[$formatCurrency(item.commission.amount)]]</div>
+                    
+                  </template>
+                  <template class="footer">
+                    <span>[[$TRANSLATE('Total Amount', LANG)]]: [[$formatCurrency(totalCommission)]]</span>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column>
+                  <template class="header">
+                    <span>[[$TRANSLATE('Status', LANG)]]</span>
+                  </template>
+                  <template>
+                    <div class="layout horizontal center">
+                      <div hidden$="[[item.commission.isPaid]]">
+                        <!-- <paper-checkbox on-change="invoiceTicked" serial="[[item.serial]]"></paper-checkbox> -->
+                        <paper-button raised on-tap="_payButtonPressed" class="btn btn-success btn-sm">[[$TRANSLATE('Pay', LANG)]]</paper-button>
+                      </div>
+                      <div hidden$="[[!item.commission.isPaid]]" class="type caption-2 bg-gray success"><span>[[$TRANSLATE('Paid', LANG)]]</span></div>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column>
+                  <template class="header">
+                    <span>[[$TRANSLATE('View', LANG)]]</span>
+                  </template>
+                  <template>
+                    <div>
+                      <paper-icon-button icon="launch" on-tap="viewCommissionButtonPressed"></paper-icon-button>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+              </vaadin-grid>
+
+            </div>
+
+          </div>
+        </paper-card>
+      </div>
+
+    </div>
+
+
+
+  </template>
+  <script src="page-commission-report.js"></script>
+</dom-module>

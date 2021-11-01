@@ -1,0 +1,557 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<dom-module id="page-set-unit-price">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .item>* {
+        margin-right: 16px;
+      }
+
+      .item:nth-child(even) {
+        background-color: var(--paper-grey-100);
+      }
+
+      .text-mute {
+        color: var(--paper-grey-400);
+      }
+
+      .pharmacy-item {
+        border: 1px solid var(--paper-grey-200);
+        border-radius: 3px;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .custom-item {
+        margin-top: 4px !important;
+        margin-bottom: 4px !important;
+        background-color: #fff;
+        box-sizing: border-box;
+        padding: 4px;
+        border-top: 1px solid #eee;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+
+      .custom-item:first-child {
+        border-top: none !important;
+      }
+
+      #dialogCustomInvestigation {
+        width: 80%;
+        border-radius: 6px;
+      }
+
+      .custom-dialog-content {
+        height: 380px;
+        overflow-y: scroll;
+      }
+
+      .shift-to-right {
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
+      }
+
+      .custom-title {
+        font-size: 24px;
+        line-height: 32px;
+        padding: 24px 16px 0 24px;
+        font-weight: 300px;
+      }
+    </style>
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <paper-card heading="[[organization.name]]"></paper-card>
+
+        <paper-tabs selected="{{setPriceView}}">
+          <paper-tab>Investigation</paper-tab>
+          <paper-tab>Doctor Fees</paper-tab>
+          <paper-tab>Services</paper-tab>
+          <paper-tab>Supply</paper-tab>
+          <paper-tab>Ambulance</paper-tab>
+          <paper-tab>Packages</paper-tab>
+          <paper-tab>Others</paper-tab>
+        </paper-tabs>
+
+        <iron-pages selected="{{setPriceView}}">
+
+          <!--Section Price for Tests-->
+          <section id="test-price">
+
+      
+            <paper-card>
+              <div class="card-custom-header">
+                <div class="flex title">
+                  <span>Set Price for Investigation(s)</span><br>
+                  <span>Total: [[investigations.length]]</span>
+                </div>
+                <!-- <paper-button raised on-tap="addNewInvestigationButtonClicked">
+                  <iron-icon icon="add"></iron-icon>&nbsp; Add New Investigation</paper-button> -->
+                <!-- <paper-button class="custom-button colored" on-tap="newInvestigationBtnPressed" raised>Create a new investigation</paper-button> -->
+                <paper-menu-button class="p-0" vertical-align="top" horizontal-align="right">
+                  <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+                  <paper-menu class="dropdown-content">
+                    <paper-item on-tap="newInvestigationBtnPressed"><iron-icon class="m-right-8" icon="create"></iron-icon>Create New Investigation</paper-item>
+                    <paper-item on-tap="_showBulkImportDialog"><iron-icon class="m-right-8" icon="icons:cloud-upload"></iron-icon>Bulk Import</paper-item>
+                    <paper-item on-tap="_downloadDemoTemplateBtnPressed"><iron-icon class="m-right-8" icon="icons:file-download"></iron-icon>Download CSV Template (Demo)</paper-item>
+                  </paper-menu>
+                </paper-menu-button>
+              </div>
+              <div class="card-content">
+                <vaadin-grid items="[[investigations]]">
+                    <vaadin-grid-column width="80px" flex-grow="0">
+                        <template class="header">No.</template>
+                        <template>
+                          <div>[[_returnSerial(index)]]</div>
+                        </template>
+                      </vaadin-grid-column>
+                  <vaadin-grid-column width="100px" flex-grow="0">
+                    <template class="header">Actual Cost</template>
+                    <template>
+                      <input type="number" is="iron-input" bind-value="{{item.actualCost}}" placeholder="Actual Cost">
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column width="100px" flex-grow="0">
+                    <template class="header">Price</template>
+                    <template>
+                      <input type="number" is="iron-input" bind-value="{{item.price}}" placeholder="Price">
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column flex-grow="1">
+                    <template class="header">
+                      <vaadin-grid-filter aria-label="Name" path="name" value="[[searchString]]">
+                        <paper-input label="Search By Name" value="{{searchString}}" no-label-float></paper-input>
+                      </vaadin-grid-filter>
+                    </template>
+                    <template>[[item.name]]</template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column width="80px" flex-grow="0">
+                    <template class="header">Action</template>
+                    <template>
+                      <paper-icon-button icon="create" on-tap="editInvestigation"></paper-icon-button>
+                    </template>
+                  </vaadin-grid-column>
+                </vaadin-grid>
+
+              </div>
+            </paper-card>
+
+          </section>
+          <!--Price for Tests End-->
+
+          <!-- Price for Doctor Fees -->
+          <section>
+
+
+            <paper-card>
+              <div class="card-custom-header">
+                <div class="title flex">Set Price for Doctor Fees</div>
+                <paper-button raised on-tap="addDoctorVisitFeeButtonPressed">
+                  <iron-icon icon="add"></iron-icon>&nbsp;Add Doctor Visit Fees
+                </paper-button>
+              </div>
+              <div class="card-content">
+                <vaadin-grid items="[[doctorFeesPriceList.data]]">
+                  <vaadin-grid-column width="100px" flex-grow="0">
+                    <template class="header">Actual Cost</template>
+                    <template>
+                      <input is="iron-input" bind-value="{{item.actualCost}}" placeholder="Actual Cost">
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column width="100px" flex-grow="0">
+                    <template class="header">Price</template>
+                    <template>
+                      <input is="iron-input" bind-value="{{item.price}}" placeholder="Price">
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column flex-grow="1">
+                    <template class="header">
+                      <vaadin-grid-filter aria-label="Name" path="name" value="[[doctorNameSearchString]]">
+                        <paper-input label="Search By Doctor Name" value="{{doctorNameSearchString}}" no-label-float></paper-input>
+                      </vaadin-grid-filter>
+                    </template>
+                    <template>
+                      <div>[[item.name]] <span class="type secondary m-left-16">[[item.type]]</span></div>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column width="80px" flex-grow="0">
+                    <template class="header">Action</template>
+                    <template>
+                      <paper-icon-button icon="delete" on-tap="deleteDoctorFeesItem"></paper-icon-button>
+                    </template>
+                  </vaadin-grid-column>
+                </vaadin-grid>
+              </div>
+            </paper-card>
+          </section>
+          <!-- Price for Doctor Fees end-->
+
+          <!--Price for Service Starts-->
+          <section>
+            <paper-card>
+              <div class="card-custom-header">
+                <div class="title flex">Set Price for Service</div>
+                <paper-button raised on-tap="addCustomServiceButtonPressed">
+                  <iron-icon icon="add"></iron-icon>&nbsp;Add Custom Service</paper-button>
+              </div>
+              <div class="card-content">
+                <div class="header layout horizontal">
+                  <p class="type bold flex">Actual Cost</p>
+                  <p class="type bold flex">Price</p>
+                  <p class="type bold flex-2">Item Name</p>
+                  <p class="type bold">Action</p>
+                </div>
+                <template is="dom-repeat" items={{servicePriceList.data}} as="service">
+                  <paper-item class="layout horizontal center item">
+                    <paper-input label="Actual Cost" type="number" value="{{service.actualCost}}" no-label-float>
+                    </paper-input>
+                    <paper-input label="Price per Unit" type="number" value="{{service.price}}" no-label-float>
+                      <div suffix class="text-mute">BDT</div>
+                    </paper-input>
+                    <div class="flex">[[service.name]]</div>
+                    <div class="flex">[[service.type]]</div>
+                    <paper-icon-button icon="delete" on-tap="deleteServiceItem"></paper-icon-button>
+                  </paper-item>
+                </template>
+
+              </div>
+
+            </paper-card>
+          </section>
+          <!--Price for Service Ends-->
+
+
+          <!-- Supply Charges Starts-->
+          <section>
+            <paper-card>
+              <div class="card-custom-header">
+                <div class="title flex">Set Price for Supplies</div>
+                <paper-button raised on-tap="addcustomSupplyPriceButtonClicked">
+                  <iron-icon icon="add"></iron-icon>&nbsp;Add Custom Supply</paper-button>
+              </div>
+              <div class="card-content">
+                <div class="header layout horizontal">
+                  <p class="type bold flex">Actual Cost</p>
+                  <p class="type bold flex">Price</p>
+                  <p class="type bold flex-2">Item Name</p>
+                  <p class="type bold">Action</p>
+                </div>
+                <template is="dom-repeat" items={{supplyPriceList.data}} as="supply">
+                  <paper-item class="layout horizontal center item">
+                    <paper-input class="flex" label="Actual Cost" type="number" value="{{supply.actualCost}}" no-label-float></paper-input>
+                    <paper-input class="flex" label="Price per Unit" type="number" value="{{supply.price}}" no-label-float>
+                      <div suffix class="text-mute">BDT</div>
+                    </paper-input>
+                    <div class="flex-2">[[supply.name]]</div>
+                    <div class="">
+                      <paper-icon-button icon="delete" on-tap="deleteCustomSupplyPriceItem"></paper-icon-button>
+                    </div>
+                  </paper-item>
+                </template>
+              </div>
+            </paper-card>
+
+          </section>
+          <!-- Supply Charges Ends-->
+
+          <!--Ambulance Charges Starts-->
+          <section>
+
+            <paper-card>
+              <div class="card-custom-header">
+                <div class="title flex">Set Price for Ambulance Charge</div>
+                <paper-button raised on-tap="addCustomAmbulancePriceButtonClicked">
+                  <iron-icon icon="add"></iron-icon>&nbsp;Add Custom Ambulance Price</paper-button>
+              </div>
+              <div class="card-content">
+                <div class="header layout horizontal">
+                  <p class="type bold flex">Actual Cost</p>
+                  <p class="type bold flex">Price</p>
+                  <p class="type bold flex-2">Item Name</p>
+                  <p class="type bold">Action</p>
+                </div>
+                <template is="dom-repeat" items={{ambulancePriceList.data}} as="ambulance">
+                  <paper-item class="layout horizontal center item">
+                    <paper-input label="Actual Cost" type="number" value="{{ambulance.actualCost}}" no-label-float></paper-input>
+                    <paper-input label="Price per Unit" type="number" value="{{ambulance.price}}" no-label-float>
+                      <div suffix class="text-mute">BDT</div>
+                    </paper-input>
+                    <div class="flex">[[ambulance.name]]</div>
+                    <paper-icon-button icon="delete" on-tap="deleteCustomAmbulancePriceItem"></paper-icon-button>
+                  </paper-item>
+                </template>
+              </div>
+            </paper-card>
+
+
+          </section>
+          <!--Ambulance Charges Ends-->
+
+          <!--Package Charges Starts-->
+          <section>
+
+            <paper-card>
+              <div class="card-custom-header">
+                <div class="title flex">Set Price for Packages Charge</div>
+                <paper-button raised on-tap="addCustomPackagePriceButtonClicked">
+                  <iron-icon icon="add"></iron-icon>&nbsp;Create Package Price</paper-button>
+              </div>
+              <div class="card-content">
+                <div class="header layout horizontal">
+                  <p class="type bold flex">Actual Cost</p>
+                  <p class="type bold flex">Price</p>
+                  <p class="type bold flex-2">Item Name</p>
+                  <p class="type bold">Action</p>
+                </div>
+                <template is="dom-repeat" items={{packagePriceList.data}} as="package">
+                  <paper-item class="layout horizontal center item">
+                    <paper-input label="Actual Cost" type="number" value="{{package.actualCost}}" no-label-float></paper-input>
+                    <paper-input label="Price per Unit" type="number" value="{{package.price}}" no-label-float>
+                      <div suffix class="text-mute">BDT</div>
+                    </paper-input>
+                    <div class="flex">[[package.name]]</div>
+                    <paper-icon-button icon="delete" on-tap="deleteCustomPackagePriceItem"></paper-icon-button>
+                  </paper-item>
+                  </paper-item>
+                </template>
+              </div>
+
+            </paper-card>
+
+          </section>
+          <!--Package Charges Ends-->
+
+          <!--Other Charges Starts-->
+          <section>
+
+            <paper-card>
+              <div class="card-custom-header">
+                <div class="title flex">Other Charges</div>
+                <paper-button raised on-tap="addOtherPriceButtonClicked">
+                  <iron-icon icon="add"></iron-icon>&nbsp;Add Other Charges</paper-button>
+              </div>
+              <div class="card-content">
+                <div class="header layout horizontal">
+                  <p class="type bold flex">Actual Cost</p>
+                  <p class="type bold flex">Price</p>
+                  <p class="type bold flex-2">Item Name</p>
+                  <p class="type bold flex">Category</p>
+                  <p class="type bold">Action</p>
+                </div>
+                <template is="dom-repeat" items="{{otherPriceList.data}}" as="other">
+                  <paper-item class="layout horizontal center item">
+                    <paper-input class="flex" label="Actual Cost" type="number" value="{{other.actualCost}}" no-label-float></paper-input>
+                    <paper-input class="flex" label="Price per Unit" type="number" value="{{other.price}}" no-label-float>
+                      <div suffix class="text-mute">BDT</div>
+                    </paper-input>
+                    <div class="flex-2">[[other.name]]</div>
+                    <div class="type secondary flex">[[other.category]]</div>
+                    <paper-icon-button icon="delete" on-tap="deleteOtherPriceItem"></paper-icon-button>
+                  </paper-item>
+                </template>
+              </div>
+            </paper-card>
+
+          </section>
+          <!--Other Charges Ends-->
+
+        </iron-pages>
+
+      </div>
+
+      <!--Modal for Custom Unit and Price-->
+      <paper-dialog id="addInvestigationModal" on-iron-overlay-closed="modalClosedEvent" no-cancel-on-esc-key no-cancel-on-outside-click>
+        <h2>Add Custom Unit Price</h2>
+        <paper-dialog-scrollable>
+          <paper-item class="layout vertical">
+            <paper-autocomplete id="investigation" label="Search Investigation" text="{{customUnit.name}}" source="[[InvestigationNameSourceDataList]]"
+              min-length="2" required></paper-autocomplete>
+            <paper-input label="Actual Cost" type="number" value="{{customUnit.actualCost}}"></paper-input>
+            <paper-input label="Unit Price" type="number" value="{{customUnit.price}}"></paper-input>
+          </paper-item>
+        </paper-dialog-scrollable>
+        <div class="buttons">
+          <paper-button dialog-dismiss>Cancel</paper-button>
+          <paper-button raised dialog-confirm>Add</paper-button>
+        </div>
+      </paper-dialog>
+
+      <!--Modal for Add Custom Medicine Unit and Price-->
+      <paper-dialog id="addMedicineUnitModal" on-iron-overlay-closed="modalClosedEvent" no-cancel-on-esc-key no-cancel-on-outside-click>
+        <h2>Add Custom Unit Price</h2>
+        <paper-dialog-scrollable>
+          <paper-item class="layout vertical">
+            <paper-autocomplete id="brandName" label="Search Medicine" text="{{customUnit.name}}" source="[[brandNameSourceDataList]]"
+              min-length="2" required></paper-autocomplete>
+            <paper-input label="Unit Price" type="number" value="{{customUnit.price}}"></paper-input>
+          </paper-item>
+        </paper-dialog-scrollable>
+        <div class="buttons">
+          <paper-button dialog-dismiss>Cancel</paper-button>
+          <paper-button raised dialog-confirm>Add</paper-button>
+        </div>
+      </paper-dialog>
+
+      <paper-dialog id="doctorVisitModal" on-iron-overlay-closed="modalClosedEvent" no-cancel-on-esc-key no-cancel-on-outside-click>
+        <h2>Add Doctor Fees</h2>
+        <paper-dialog-scrollable>
+          <div class="layout vertical" style="padding: 10px 15px;">
+            <paper-input label="Doctor Name" value="{{customUnit.name}}"></paper-input>
+            <vaadin-combo-box label="Visit Type" items="[[visitTypeList]]" allow-custom-value value="{{customUnit.type}}" selected-item="{{customUnit.type}}"></vaadin-combo-box>
+            <paper-input label="Actual Fees" type="number" value="{{customUnit.actualCost}}"></paper-input>
+            <paper-input label="Visit Fees" type="number" value="{{customUnit.price}}"></paper-input>
+          </div>
+        </paper-dialog-scrollable>
+        <div class="buttons">
+          <paper-button dialog-dismiss>Cancel</paper-button>
+          <paper-button raised dialog-confirm>Add</paper-button>
+        </div>
+      </paper-dialog>
+
+
+      <!--Modal for Custom Unit and Price-->
+      <paper-dialog id="customUnitModal" on-iron-overlay-closed="modalClosedEvent" no-cancel-on-esc-key no-cancel-on-outside-click>
+        <h2>Add Custom Unit Price</h2>
+        <paper-dialog-scrollable>
+          <paper-item class="layout vertical">
+            <paper-input autofocus label="Unit Name" value="{{customUnit.name}}"></paper-input>
+            <paper-input label="Actual Cost" type="number" value="{{customUnit.actualCost}}"></paper-input>
+            <paper-input label="Unit Price" type="number" value="{{customUnit.price}}"></paper-input>
+            <template is="dom-if" if="[[customCategoryEnabled]]">
+              <vaadin-combo-box label="Category" items="[[customCategoryList.data]]" allow-custom-value value="{{customUnit.category}}" selected-item="{{customUnit.category}}"></vaadin-combo-box>
+            </template>
+          </paper-item>
+        </paper-dialog-scrollable>
+        <div class="buttons">
+          <paper-button dialog-dismiss>Cancel</paper-button>
+          <paper-button raised dialog-confirm>Add</paper-button>
+        </div>
+      </paper-dialog>
+
+
+    </div>
+
+    <!-- Dialog for - New Investigation - start -->
+    <paper-dialog id="dialogNewInvestigation" vertical-align='top'>
+        <h2 class="custom-title">New Investigation</h2>
+        <div class="custom-dialog-content">
+  
+          <paper-input label="Investigation Name" value="{{newInvestigation.name}}"></paper-input>
+          <paper-input type="number" label="Actual Cost" value="{{newInvestigation.actualCost}}"></paper-input>
+          <paper-input type="number" label="Price" value="{{newInvestigation.price}}"></paper-input>
+          <div class="shift-to-right">
+            <paper-button class="custom-button" on-tap="_addNewTest" raised> Add new test</paper-button>
+          </div>
+  
+          <div class="p-0">
+            <template is="dom-repeat" items="{{newInvestigation.investigationList}}">
+              <div class="custom-item">
+                <div class="type caption-2 m-right-8">[[_returnSerial(index)]].</div>
+                <div class="flex">
+                  <div class="horizontal layout wrap">
+                    <paper-input class="flex" label="Test Name" value="{{item.name}}"></paper-input>
+                    <paper-input label="Unit" value="{{item.unitList.0}}"></paper-input>
+                  </div>
+                  <paper-input label="Reference Range" value="{{item.referenceRange}}"></paper-input>
+                </div>
+  
+                <paper-icon-button icon="delete" on-tap="_deleteTest" hidden$={{item.isProtected}}></paper-icon-button>
+  
+              </div>
+            </template>
+          </div>
+  
+        </div>
+  
+        <div class="buttons">
+          <paper-button on-click="deleteInvestigationItem">Delete</paper-button>
+          <div class="flex"></div>
+          <paper-button dialog-dismiss>Cancel</paper-button>
+          <paper-button class="btn btn-success" on-click="_saveNewInvestigation" autofocus raised>Save</paper-button>
+        </div>
+      </paper-dialog>
+      <!-- Dialog for - New Investigation - end -->
+
+      <!-- Dialog for - Bulk Import - start -->
+      <paper-dialog id="dialogInvestigationBulkImport2" vertical-align='top' no-cancel-on-outside-click>
+        <h2 class="custom-title">Investigation Bulk Import</h2>
+        <div class="dialog-content" hidden$="{{isLoading}}">
+          <input id="inputCsvFile" type='file' on-change='openFile'>
+        </div>
+
+        <template is="dom-if" if="{{isLoading}}">
+          <div class="layout center p-16">
+            <paper-spinner active></paper-spinner>
+            <div class="type caption-2">Please Wait...</div>
+          </div>
+        </template>
+
+        <template is="dom-if" if="{{bulkImportLog}}" hidden$="{{isLoading}}">
+          <div class="custom-dialog-content">
+            <div class="type body"><span class="type text-success">Success: {{bulkImportLog.counter.success}}</span>, <span class="type text-success">Failed: {{bulkImportLog.counter.failed}}</span></div>
+            <template is="dom-repeat" items="{{bulkImportLog.stats}}">
+              <div class="type caption horizontal layout">
+                <div class="m-right-8">[[_returnSerial(index)]].</div>
+                <div class$="type text-{{item.status}}">[[item.name]] : [[item.comments]]</div>
+              </div>
+            </template>
+          </div>
+        </template>
+
+        <div class="buttons" hidden$="{{isLoading}}">
+          <paper-button dialog-dismiss>Cancel</paper-button>
+          <paper-button class="btn btn-success" on-click="_bulkImportButtonPressed" autofocus raised>Import</paper-button>
+        </div>
+      </paper-dialog>
+      <!-- Dialog for - Bulk Import - end -->
+  </template>
+  <script src="page-set-unit-price.coffee-compiled.js"></script>
+</dom-module>

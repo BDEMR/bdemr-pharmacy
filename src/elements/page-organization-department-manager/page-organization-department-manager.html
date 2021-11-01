@@ -1,0 +1,231 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-organization-department-manager">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .item {
+        border-bottom: 1px solid #f5f5f5;
+        border-top: 1px solid #f5f5f5;
+      }
+    </style>
+
+    <div class="master-container">
+      <div class="limiting-container">
+        <paper-progress class="progress" indeterminate hidden$="[[!loading]]"></paper-progress>
+
+        <paper-card>
+          <div class="card-content">
+            <paper-button on-tap="createNewDepartmentButtonPressed" class="btn btn-primary">Add New Department</paper-button>
+
+            <div class="m-top-8">
+              <template is='dom-if' if='[[!departmentList.length]]'>
+                <paper-item>
+                  <p class="text-center">No Departments</p>
+                </paper-item>
+              </template>
+              <template is='dom-repeat' items='[[departmentList]]'>
+                <paper-item class="item">
+                  <div class="flex">[[item.name]]</div>
+                  <div>
+                    <paper-button class="btn btn-default btn-sm" on-tap="editDepartmentButtonPressed">Edit</paper-button>
+                    <paper-button class="btn btn-danger btn-sm" on-tap="deleteDepartment">Delete</paper-button>
+                  </div>
+                </paper-item>
+              </template>
+            </div>
+
+          </div>
+        </paper-card>
+
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'page-organization-department-manager',
+      behaviors: [
+        app.behaviors.commonComputes,
+        app.behaviors.dbUsing,
+        app.behaviors.pageLike,
+        app.behaviors.apiCalling
+      ],
+      properties: {
+        user: Object,
+        organization: Object,
+        departmentList: {
+          type: Array,
+          value: []
+        },
+        loading: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      navigatedIn() {
+        const params = this.domHost.getPageParams()
+        this._loadUser();
+        if (params['organization']) {
+          this._loadOrganization(params['organization'], () => {
+            this._loadDepartmentList(this.organization.idOnServer)
+          })
+        } else {
+          return this.domHost.showModalDialog("Missing Organization params");
+        }
+      },
+
+      _loadUser(cbfn) {
+        const userList = app.db.find('user');
+        if (userList.length === 1) {
+          this.user = userList[0];
+        } else {
+          return this.domHost.showModalDialog('Invalid User');
+        }
+      },
+
+      _loadOrganization(idOnServer, cbfn) {
+        const data = {
+          apiKey: this.user.apiKey,
+          idList: [idOnServer]
+        };
+        return this.callApi('/bdemr-organization-list-organizations-by-ids', data, (err, response) => {
+          if (response.hasError) {
+            return this.domHost.showModalDialog(response.error.message);
+          } else {
+            if (response.data.matchingOrganizationList.length !== 1) {
+              this.domHost.showModalDialog("Invalid Organization");
+              return;
+            }
+            this.set('organization', response.data.matchingOrganizationList[0]);
+            cbfn()
+          }
+        });
+      },
+
+      _loadDepartmentList(organizationIdentifier) {
+        const query = {
+          apiKey: this.user.apiKey,
+          organizationId: organizationIdentifier
+        }
+        this.loading = true;
+        this.callApi('/bdemr--organizations-get-department-list', query, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (response.data.length) {
+            this.set('departmentList', response.data);
+            console.log(this.departmentList)
+          }
+          
+        })
+      },
+
+      _createNewDepartment(name) {
+        let newDepartment = {
+          createdDatetimeStamp: Date.now(),
+          lastModifiedDatetimeStamp: Date.now(),
+          createdByUserSerial: this.user.serial,
+          organizationId: this.organization.idOnServer,
+          name
+        }
+        let data = {
+          apiKey: this.user.apiKey,
+          departmentObject: newDepartment
+        }
+        this.loading = true;
+        this.callApi('/bdemr--organization-create-department', data, (err, response) => {
+          this.loading = false;
+          if (!response.hasError) {
+            this.domHost.showToast('Department Created')
+            this.push('departmentList', response.data)
+          } else {
+            this.domHost.showToast('Failed to Create Department. ' + response.error.message)
+          }
+        })
+      },
+
+      _updateDepartmentName(department) {
+        let data = {
+          apiKey: this.user.apiKey,
+          departmentObject: department
+        }
+        this.loading = true;
+        this.callApi('/bdemr--organization-update-department-name', data, (err, response) => {
+          this.loading = false;
+          if (!response.hasError) {
+            let index = this.departmentList.findIndex((item) => item._id === department._id);
+            this.splice('departmentList', index, response.data);
+            this.domHost.showToast('Department Updated')
+          } else {
+            this.domHost.showToast('Could not update Department Name. Please try again.')
+          }
+        })
+      },
+
+      _deleteDepartment(departmentId) {
+        let data = {
+          apiKey: this.user.apiKey,
+          id: departmentId
+        }
+        this.loading = true;
+        this.callApi('/bdemr--organization-delete-department', data, (err, response) => {
+          this.loading = false;
+          if (!response.hasError) {
+            this.domHost.showToast('Department Deleted')
+            let index = this.departmentList.findIndex((item) => item._id === departmentId);
+            this.splice('departmentList', index, 1);
+          } else {
+            this.domHost.showToast('Could not delete Department. Please try again.')
+          }
+        })
+      },
+
+      createNewDepartmentButtonPressed() {
+        this.domHost.showModalInput("Department Name", "", (departmentName) => {
+          if (departmentName) {
+            this._createNewDepartment(departmentName)
+          }
+        })
+      },
+
+      editDepartmentButtonPressed(e) {
+        let item = e.model.item
+        this.domHost.showModalInput("Department Name", item.name, (newDepartmentName) => {
+          if (newDepartmentName) {
+            item.name = newDepartmentName;
+            this._updateDepartmentName(item)
+          }
+        })
+      },
+
+      deleteDepartment(e) {
+        let item = e.model.item
+        this.domHost.showModalPrompt('Are you sure to delete this department', (yes) => {
+          if (yes) {
+            this._deleteDepartment(item._id)
+          }
+        })
+      }
+
+    })
+  </script>
+</dom-module>

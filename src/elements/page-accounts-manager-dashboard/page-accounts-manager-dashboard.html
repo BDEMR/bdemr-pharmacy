@@ -1,0 +1,549 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/paper-material/paper-material.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<!-- <link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html"> -->
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-accounts-manager-dashboard">
+
+  <template>
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        width: 98%;
+        margin: 0;
+      }
+
+      #printPreview {
+        display: none !important;
+      }
+
+      @media print {
+        .hideOnPrint {
+          display: none !important;
+        }
+
+        #printPreview {
+          display: block !important;
+          background-color: transparent;
+        }
+      }
+
+      .header {
+        position: relative;
+        text-align: center;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px;
+        font-weight: bolder;
+        font-size: 20px;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      .search {
+        background-color: #fff;
+        border: 1px solid #dadada;
+        padding: 8px;
+        margin: 4px 0;
+      }
+
+      .title {
+        padding: 10px;
+        margin: 0;
+      }
+
+      paper-material {
+        background-color: #fff;
+      }
+
+      .income {
+        background-color: var(--paper-blue-300);
+        color: white;
+      }
+
+      .expense {
+        background-color: var(--paper-orange-300);
+        color: white;
+      }
+
+      .balance {
+        background-color: var(--google-green-300);
+        color: white;
+      }
+
+      .balance.negative {
+        background-color: var(--paper-red-400);
+      }
+
+      /* paper-tab[link] a {
+        @apply--layout-horizontal;
+        @apply--layout-center-center;
+        color: #fff;
+        text-decoration: none;
+      } */
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td,
+      .table th {
+        vertical-align: left;
+        padding: 10px;
+        border: 1px solid var(--paper-grey-300);
+      }
+
+      .table td.special-td {
+        padding: 0px;
+        margin: 0px;
+        height: 100%;
+      }
+
+      .print-document {
+        font-family: 'Times New Roman';
+        background: white;
+        width: 100%;
+      }
+
+      /* .print-header {
+        position: relative;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px
+      } */
+/* 
+      .print-document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .print-document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      } */
+
+      .document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+      .print-table {
+        table-layout: fixed;
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .print-table tr {
+        margin-bottom: 15px;
+      }
+
+      .print-table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .print-table td {
+        color: #444;
+      }
+
+      .print-table td,
+      .print-table th {
+        /* vertical-align: middle; */
+        padding-right: 5px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+      .print-table tr:last-child td {
+        border-bottom: 0;
+      }
+    </style>
+
+
+    <!-- <module-accounts-top-nav page-name="accounts-manager-dashboard" organization-id="[[organization.idOnServer]]"></module-accounts-top-nav> -->
+
+    <div class="master-container">
+
+      <div class="limiting-container custom-input-field">
+
+        <template is="dom-if" if="[[loading]]">
+          <div class="layout horizontal center type bold text-center">
+            <span>Please wait...</span>
+            <paper-progress class="progress" indeterminate></paper-progress>
+          </div>
+        </template>
+        <!-- <paper-progress indeterminate hidden$="[[!loading]]"></paper-progress> -->
+
+        <div class="hideOnPrint">
+          <div class="p-8 layout horizontal center wrap">
+            <h2 class="type secondary">[[$TRANSLATE('Accounts Dashboard', LANG)]]</h2>
+            <div class="flex"></div>
+            <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked">
+            </custom-vital-search>
+            <paper-toggle-button class="m-left-8" checked="{{searchParameters.includeErrors}}"><span
+                class="type seondary caption">[[$TRANSLATE('Include Errors', LANG)]]</span></paper-toggle-button>
+            <div class="m-left-8">
+              <paper-button raised class="btn btn-success btn-large" on-tap="searchButtonClicked">[[$TRANSLATE('Search', LANG)]]</paper-button>
+            </div>
+            <div class="m-left-8">
+              <paper-button raised class="btn btn-success btn-large" on-tap="_printButtonPressed">[[$TRANSLATE('Print', LANG)]]</paper-button>
+            </div>
+
+          </div>
+
+
+          <div class="layout horizontal m-vertical-8">
+            <paper-material class="flex p-16">
+              <h4 class="type success">[[$TRANSLATE('Total Received', LANG)]]</h4>
+              <h3>[[$formatCurrency(totalReceieved)]]</h3>
+            </paper-material>
+            <paper-material class="flex p-16">
+              <h4 class="type secondary">[[$TRANSLATE('Total Collectibles(Dues)', LANG)]]</h4>
+              <h3>[[$formatCurrency(totalCollectibles)]]</h3>
+            </paper-material>
+            <paper-material class="flex m-right-8 p-16 income">
+              <h4 class="type secondary">[[$TRANSLATE('Possible Income', LANG)]]</h4>
+              <h2>[[$formatCurrency(netIncome)]]</h2>
+            </paper-material>
+            <paper-material class="flex p-16">
+              <h4 class="type primary">[[$TRANSLATE('Total Paid', LANG)]]</h4>
+              <h3>[[$formatCurrency(totalPaid)]]</h3>
+            </paper-material>
+            <paper-material class="flex p-16">
+              <h4 class="type secondary">[[$TRANSLATE('Total Outstanding(Dues)', LANG)]]</h4>
+              <h3>[[$formatCurrency(totalDue)]]</h3>
+            </paper-material>
+            <paper-material class="flex p-16 expense">
+              <h4 class="type secondary">[[$TRANSLATE('Probable Expense', LANG)]]</h4>
+              <h2>[[$formatCurrency(netExpense)]]</h2>
+            </paper-material>
+          </div>
+
+          <div class="layout horizontal m-vertical-8">
+            <paper-material class="flex p-16 balance" id="balance">
+              <h4 class="type secondary center">[[$TRANSLATE('Balance', LANG)]]</h4>
+              <h1 class="type center">[[$formatCurrency(netBalance)]]</h1>
+            </paper-material>
+          </div>
+
+          <div class="layout horizontal">
+
+            <!-- Income Section -->
+            <paper-material class="flex">
+              <div class="layout horizontal center justified p-8">
+                <h2 class="title">[[$TRANSLATE('Incomes', LANG)]]</h2>
+                <paper-button class="btn btn-success btn-sm" raised on-tap="addNewIncomeButtonClicked">
+                  <iron-icon icon="add"></iron-icon>
+                  [[$TRANSLATE('Add Income', LANG)]]
+                </paper-button>
+              </div>
+              <vaadin-grid id="" items="[[matchingIncomeList]]">
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <vaadin-grid-sorter path="createdDatetimeStamp" direction="desc">[[$TRANSLATE('Date', LANG)]]</vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="">[[$formatDateTime(item.createdDatetimeStamp)]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column flex-grow="0" width="100px" resizable>
+                  <template class="header">
+                    <span>[[$TRANSLATE('Serial', LANG)]]</span>
+                  </template>
+                  <template>
+                    <div class="">
+                      <span class="type caption-2 bg-gray">
+                        <template is='dom-if'
+                          if='[[!item.referenceNumber]]'>[[formatIncomeSerial(item.serial)]]</template>
+                        <template is='dom-if' if='[[item.referenceNumber]]'>[[item.referenceNumber]]</template>
+                      </span>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column width="120px" flex-grow="0" resizable>
+                  <template class="header">
+                    <vaadin-grid-filter aria-label="Name" path="category" value="[[searchString]]"
+                      style="margin-top: 6px;">
+                      <paper-input label="[[$TRANSLATE('Category', LANG)]]" value="{{searchString}}" no-label-float></paper-input>
+                    </vaadin-grid-filter>
+                  </template>
+                  <template>
+                    <div class="type caption-2 bg-gray success">[[item.category]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <span>[[$TRANSLATE('Billed', LANG)]]</span>
+                  </template>
+                  <template>
+                    <div class="">[[$toTwoDecimalPlace(item.totalBilled)]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <span>[[$TRANSLATE('Received', LANG)]]</span>
+                  </template>
+                  <template>
+                    <div class="">[[$toTwoDecimalPlace(item.totalAmountReceieved)]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column flex-grow="0" width="50px">
+                  <template>
+                    <div hidden$="[[item.flags.flagAsError]]">
+                      <paper-icon-button icon="print" on-tap="incomePrintPreviewButtonClicked"></paper-icon-button>
+                    </div>
+                    <div hidden$="[[!item.flags.flagAsError]]">
+                      <paper-icon-button icon="report-problem" disabled></paper-icon-button>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+              </vaadin-grid>
+            </paper-material>
+
+            <!-- Expense Section -->
+            <paper-material class="flex m-left-8">
+              <div class="layout horizontal center p-8">
+                <h2 class="title flex"> [[$TRANSLATE('Expenses', LANG)]]</h2>
+                <paper-button class="btn btn-primary btn-sm" raised on-tap="addNewExpenseButtonClicked">
+                  <iron-icon icon="add"></iron-icon>
+                  [[$TRANSLATE('Add Expense', LANG)]]
+                </paper-button>
+              </div>
+              <vaadin-grid id="" items="[[matchingExpenseList]]">
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <vaadin-grid-sorter path="createdDatetimeStamp" direction="desc">[[$TRANSLATE('Date', LANG)]]</vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="">[[$formatDateTime(item.createdDatetimeStamp)]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column flex-grow="0" width="80px">
+                  <template class="header">
+                    <span>[[$TRANSLATE('Serial', LANG)]]</span>
+                  </template>
+                  <template>
+                    <div class=""><span class="type caption-2 bg-gray">[[formatExpenseSerial(item.serial)]]</span></div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <span>[[$TRANSLATE('Billed', LANG)]]</span>
+                  </template>
+                  <template>
+                    <div class="">[[$toTwoDecimalPlace(item.totalBilled)]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <span>[[$TRANSLATE('Paid', LANG)]]</span>
+                  </template>
+                  <template>
+                    <div class="">[[$toTwoDecimalPlace(item.totalAmountPaid)]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column flex-grow="0" width="50px">
+                  <template>
+                    <div hidden$="[[item.flags.flagAsError]]">
+                      <paper-icon-button icon="print" on-tap="expensePrintPreviewButtonClicked"></paper-icon-button>
+                    </div>
+                    <div hidden$="[[!item.flags.flagAsError]]">
+                      <paper-icon-button icon="report-problem" disabled></paper-icon-button>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+
+              </vaadin-grid>
+
+            </paper-material>
+
+          </div>
+        </div>
+
+        <div id="printPreview">
+
+          <div class="print-document">
+
+            <template is="dom-if" if="[[organization.printSettings.headerLine]]">
+              <div class="header vertical layout center">[[organization.printSettings.headerLine]]</div>
+            </template>
+
+            <div class="document-header horizontal layout center">
+
+              <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+                <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+              </template>
+
+              <div class="leftSide vertical layout">
+                <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+                <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+                <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+              </div>
+              <div class="flex"></div>
+              <div class="rightSide vertical layout end">
+                <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+                <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+                <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+              </div>
+            </div>
+
+            <div class="horiline"></div>
+            <div style="text-align: center">
+              <h1>[[$TRANSLATE('Accounts Dashboard Report', LANG)]]</h1>
+            </div>
+            <br>
+
+
+            <div class="horizontal layout">
+
+              <table class="table flex-1 m-right-8" style="border: 1px solid #eee;">
+                <tr>
+                  <th colspan="3">[[$TRANSLATE('Credit', LANG)]]</th>
+                </tr>
+                <template is='dom-repeat' items='[[matchingIncomeList]]'>
+                  <tr>
+                    <td>[[$formatDate(item.createdDatetimeStamp)]]</td>
+                    <td>
+                      <template is="dom-if" if="[[!item.referenceNumber]]">
+                        <strong class="label">[[item.serial]]</strong>
+                      </template>
+                      <template is="dom-if" if="[[item.referenceNumber]]">
+                        <strong class="label">[[item.referenceNumber]]</strong>
+                      </template>
+                    </td>
+                    <td class="special-td">
+                      <template is="dom-repeat" items="[[item.data]]" as="invoiceItems">
+                        <paper-item>
+                          <div class="flex">[[invoiceItems.name]]</div>
+                          <div class="p-left-8">[[invoiceItems.unitPrice]] BDT</div>
+                        </paper-item>
+                      </template>
+                    </td>
+                  </tr>
+                </template>
+              </table>
+
+              <div class="vertiline"></div>
+
+              <table class="table m-left-8 flex-1" style="border: 1px solid #eee;">
+                <tr>
+                  <th colspan="3">[[$TRANSLATE('Debit', LANG)]]</th>
+                </tr>
+                <template is='dom-repeat' items='[[matchingExpenseList]]'>
+                  <tr>
+                    <td>[[$formatDate(item.createdDatetimeStamp)]]</td>
+                    <td>
+                      <template is="dom-if" if="[[!item.referenceNumber]]">
+                        <strong class="label">[[item.serial]]</strong>
+                      </template>
+                      <template is="dom-if" if="[[item.referenceNumber]]">
+                        <strong class="label">[[item.referenceNumber]]</strong>
+                      </template>
+                    </td>
+                    <td class="special-td">
+                      <template is="dom-repeat" items="[[item.data]]" as="invoiceItems">
+                        <paper-item>
+                          <div class="flex">[[invoiceItems.name]]</div>
+                          <div class="p-left-8">[[invoiceItems.unitPrice]] BDT</div>
+                        </paper-item>
+                      </template>
+                    </td>
+                  </tr>
+                </template>
+              </table>
+
+            </div>
+
+
+
+            <table class="table m-top-16">
+              <tr>
+                <th>[[$TRANSLATE('Total Received/Credit', LANG)]]</th>
+                <th width="150px">[[$formatCurrency(totalReceieved)]]</th>
+              </tr>
+            </table>
+
+            <table class="table m-top-16">
+              <tr>
+                <th>[[$TRANSLATE('Total Paid/Debit', LANG)]]</th>
+                <th width="150px">[[$formatCurrency(totalPaid)]]</th>
+              </tr>
+            </table>
+
+            <table class="table m-top-16">
+              <tr>
+                <th>[[$TRANSLATE('Balance', LANG)]]</th>
+                <th width="150px">[[$formatCurrency(netBalance)]]</th>
+              </tr>
+            </table>
+
+            <br>
+            <template is="dom-if" if="[[settings.printDecoration.footerLine]]">
+              <div class="footer vertical layout">[[settings.printDecoration.footerLine]]</div>
+            </template>
+
+            <div style="text-align: center; margin-top: 16px">
+              <span class="type secondary">[[$TRANSLATE('Report Generation Date & Time', LANG)]] - [[$formatDateTime(reportCreatedTime)]]</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </template>
+  <script src="page-accounts-manager-dashboard.js"></script>
+</dom-module>

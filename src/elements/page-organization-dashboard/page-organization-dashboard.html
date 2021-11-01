@@ -1,0 +1,356 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-organization-dashboard">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 8px;
+      }
+
+      paper-card {
+        background-color: #fff;
+      }
+
+      .new-fab {
+        position: fixed;
+        right: 20px;
+        bottom: 164px;
+      }
+
+      paper-button {
+        margin: 3px;
+      }
+
+      paper-button:last-child {
+        margin-right: 0px;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .modifier {
+        font-size: 11px;
+        background: #eee;
+        color: #ffffff;
+        margin: 0 4px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      .absolute {
+        position: absolute;
+        top: 8px;
+      }
+
+      .absolute.left {
+        left: 4px;
+      }
+
+      .absolute.right {
+        right: 4px;
+      }
+
+      .modifier.type1 {
+        background: #757575;
+      }
+
+
+      .organization-info-card-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .profile-pic {
+        text-align: center;
+        padding: 16px;
+        border-radius: 50%;
+        height: 40px;
+        width: 40px;
+        background: #eee;
+      }
+
+      .profile-pic.big {
+        height: 64px;
+        width: 64px;
+      }
+
+      iron-icon {
+        --iron-icon-height: 40px;
+        --iron-icon-width: 40px;
+      }
+
+      .hide-on-mobile {
+        display: block;
+      }
+
+      .type.display-regular {
+        line-height: 32px;
+        font-weight: bold;
+      }
+
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-teal-500);
+      }
+
+
+      @media screen and (max-width: 639px) {
+        .hide-on-mobile {
+          display: none;
+        }
+
+        .stats-item {
+          width: calc(50% - 26px);
+          @apply(--layout-horozontal);
+          @apply(--layout-center);
+          @apply(--layout-wrap);
+          padding: 4px;
+        }
+
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <paper-progress indeterminate hidden$="[[!loadingCounter]]"></paper-progress>
+
+        <template is="dom-if" if="{{loadingCounter}}">
+          <h2 class="type center">[[$TRANSLATE('Please Wait, Loading', LANG)]]...</h2>
+        </template>
+
+        <!-- Organization Details - start -->
+        <paper-card>
+
+          <div class="p-8" style="background-color: #fff;">
+            <div class="horizontal layout center center-justified wrap">
+              <div class="profile-pic big horizontal layout center center-justified m-right-16">
+                <iron-icon icon="icons:account-balance"></iron-icon>
+              </div>
+              <div class="flex">
+                <div class="type body secondary">#[[organization.serial]]</div>
+                <div class="type headline">[[organization.name]]</div>
+                <div class="type caption-2 secondary">[[organization.address]] ([[organization.effectiveRegion]])</div>
+                <div class="type caption-2 secondary horizontal layout m-top-8">
+                  <strong>[[$TRANSLATE('Facilities', LANG)]]</strong> (
+                  <template is="dom-repeat" items="[[organization.otherFacilitiesList]]">
+                    <template is="dom-if" if="[[item.isChecked]]">
+                      <div>&nbsp;• [[item.label]]</div>
+                    </template>
+                  </template>
+                  )
+                </div>
+              </div>
+
+              <div class="absolute right">
+                <paper-menu-button class="p-0" vertical-align="top" horizontal-align="right" close-on-activate>
+                  <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+                  <paper-menu class="dropdown-content">
+                    <paper-item on-tap="accountsManagerPressed">
+                      <iron-icon icon="icons:assessment" class="icon medium m-right-8"></iron-icon> [[$TRANSLATE('Accounts Manager', LANG)]]
+                    </paper-item>
+
+                    <paper-item on-tap="sendBulkSmsPressed">
+                      <iron-icon icon="icons:mail" class="icon medium m-right-8"></iron-icon>[[$TRANSLATE('Send Bulk SMS', LANG)]]
+                    </paper-item>
+                    
+                    <paper-item on-tap="orgWalledPressed">
+                      <iron-icon icon="icons:assessment" class="icon medium m-right-8"></iron-icon> [[$TRANSLATE('Wallet', LANG)]]
+                    </paper-item>
+
+                    <paper-item on-tap="salaryReportPressed">
+                      <iron-icon icon="icons:assessment" class="icon medium m-right-8"></iron-icon> [[$TRANSLATE('Salary Report', LANG)]]
+                    </paper-item>
+
+                    <paper-item on-tap="manageUnitPricePressed">
+                      <iron-icon icon="icons:shopping-basket" class="icon medium m-right-8"></iron-icon>[[$TRANSLATE('Manage Unit', LANG)]]
+                      Price
+                    </paper-item>
+                    <paper-item on-tap="dutyRosterPressed">
+                        <iron-icon icon="icons:shopping-basket" class="icon medium m-right-8"></iron-icon>[[$TRANSLATE('Duty Roster', LANG)]]
+                      </paper-item>
+                    <paper-item on-tap="managePharmacyPressed">
+                      <iron-icon icon="icons:label-outline" class="icon medium m-right-8"></iron-icon>[[$TRANSLATE('Pharmacy Manager', LANG)]]
+                    </paper-item>
+                    <paper-item on-tap="editOrganizationPressed">
+                      <iron-icon icon="create" class="icon medium m-right-8"></iron-icon>[[$TRANSLATE('Edit Organization', LANG)]]
+                    </paper-item>
+
+                    <paper-item on-tap="organizationEmployeeManagerPressed">
+                      <iron-icon icon="perm-identity" class="icon medium m-right-8"></iron-icon> [[$TRANSLATE('Employee Manager', LANG)]]
+                    </paper-item>
+
+                    <paper-item on-tap="editOrganizationSettingsPressed">
+                      <iron-icon icon="settings" class="icon medium m-right-8"></iron-icon>[[$TRANSLATE('Organization Settings', LANG)]]
+                    </paper-item>
+
+                    <paper-item on-tap="leaveOrganizationPressed" class="type warning">
+                      <iron-icon icon="icons:exit-to-app" class="icon medium m-right-8"></iron-icon>[[$TRANSLATE('Leave Organization', LANG)]]
+                    </paper-item>
+                    <paper-item on-tap="removeOrganizationPressed" class="type danger">
+                      <iron-icon icon="delete" class="icon medium m-right-8"></iron-icon>[[$TRANSLATE('Delete Organization', LANG)]]
+                    </paper-item>
+                  </paper-menu>
+                  </paper-icon-button>
+                </paper-menu-button>
+
+              </div>
+
+            </div>
+          </div>
+        </paper-card>
+        <!-- Organization Details - end -->
+
+        <!-- Child Organization list - start -->
+        <template is="dom-if" if="[[childOrganizationList.length]]">
+          <paper-card class="feature-item">
+
+            <div class="horizontal layout center p-horizontal-8">
+              <iron-icon class="icon medium m-right-8" icon="icons:label-outline"></iron-icon>
+              <div class="type title-2">[[$TRANSLATE('Child Organizations', LANG)]]</div>
+            </div>
+
+            <div class="layout horizontal wrap">
+              <template is="dom-repeat" items="[[childOrganizationList]]" as="childOrg">
+                <div class="stats-item" on-tap="_goToOrganizationDashboard">
+                  <div class="type caption-2 secondary">#[[childOrg.serial]]</div>
+                  <div class="type body capitalize">[[childOrg.name]]</div>
+                  <div class="type caption secondary">[[childOrg.address]] ([[childOrg.effectiveRegion]])</div>
+                  <paper-ripple></paper-ripple>
+                </div>
+              </template>
+            </div>
+          </paper-card>
+        </template>
+        <!-- Child Organization list - end -->
+
+        <!-- Organization specific Records - start -->
+        <template is="dom-repeat" items="[[recordStatsList]]" as="feature">
+          <div hidden$="[[feature.isHidden]]">
+            <paper-card class="feature-item" on-tap="goToSelectedOrganizationSpecificRecordsPage">
+
+              <div class="horizontal layout center p-horizontal-8">
+                <iron-icon class="icon medium m-right-8" icon="[[feature.iconUrl]]"></iron-icon>
+                <div class="type title-2">[[feature.name]]</div>
+              </div>
+
+              <div class="layout horizontal wrap">
+                <template is="dom-if" if="[[_isEmptyArray(feature.statsList.length)]]">
+                  <div class="card-content horizontal layout center center-justified">
+                    <div class="body type secondary">-- [[$TRANSLATE('no data available', LANG)]] --</div>
+                  </div>
+                </template>
+                <template is="dom-repeat" items="[[feature.statsList]]">
+                  <div class="stats-item">
+                    <div class="type body-lead">[[item.title]]</div>
+                    <div class="horizontal layout center center-justified">
+                      <div class="stats-sub-item">
+                        <div class="type display-regular">[[item.recordCount]]</div>
+                        <div class="type caption-2">[[$TRANSLATE('Records', LANG)]]</div>
+                      </div>
+                      <div class="stats-sub-item">
+                        <div class="type display-regular">[[item.patientCount]]</div>
+                        <div class="type caption-2">[[$TRANSLATE('Patients', LANG)]]</div>
+                      </div>
+                    </div>
+
+
+                  </div>
+                </template>
+              </div>
+
+              <paper-ripple></paper-ripple>
+            </paper-card>
+          </div>
+        </template>
+        <!-- Organization specific Records - end -->
+
+
+        <!-- Feature list - start -->
+        <template is="dom-repeat" items="[[featureStatsList]]" as="feature">
+          <paper-card class="feature-item" on-tap="goToSelectedFeaturePage">
+
+
+
+            <div class="horizontal layout center p-horizontal-8">
+              <iron-icon class="icon medium m-right-8" icon="[[feature.iconUrl]]"></iron-icon>
+              <div class="type title-2">[[feature.name]]</div>
+            </div>
+
+            <template is="dom-if" if="[[_isEmptyArray(feature.stats.length)]]">
+              <div class="card-content horizontal layout center center-justified">
+                <div class="body type secondary">-- [[$TRANSLATE('no data available', LANG)]] --</div>
+              </div>
+            </template>
+
+            <div class="layout horizontal wrap">
+              <template is="dom-repeat" items="[[feature.stats]]">
+                <template is="dom-if" if="[[!$equals(feature.type, 'manage-users')]]">
+                  <div class="stats-item">
+                    <div class="type caption-2">[[item.name]]</div>
+                    <div class="type headline">[[item.count]]</div>
+                  </div>
+                </template>
+                <template is="dom-if" if="[[$equals(feature.type, 'manage-users')]]">
+                  <div class="stats-item">
+                    <div class="type caption-2">[[item.type]]</div>
+                    <div class="type headline">[[item.userList.length]]</div>
+                  </div>
+                </template>
+              </template>
+            </div>
+
+            <paper-ripple></paper-ripple>
+          </paper-card>
+        </template>
+        <!-- Feature list - end -->
+
+      </div>
+
+    </div>
+
+
+
+  </template>
+  <script src="page-organization-dashboard.coffee-compiled.js"></script>
+</dom-module>

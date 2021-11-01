@@ -1,0 +1,168 @@
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-organization-manage-waitlist">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .waitlist-item {
+        border-bottom: 1px solid #ccc;
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container custom-input-field">
+
+        <paper-progress class="progress" indeterminate hidden$="[[!loading]]"></paper-progress>
+
+        <paper-card>
+          <div class="card-content">
+            <div class="layout vertical">
+              <div><span class="type caption bg-gray">[[organization.idOnServer]]</span></div>
+              <div class="p-vertical-8"><span class="type bold">[[organization.name]]</span></div>
+              <div><span class="type secondary">[[organization.address]]</span></div>
+              <div><span class="type secondary">[[organization.phone]]</span></div>
+            </div>
+          </div>
+        </paper-card>
+
+        <paper-card class="m-top-8">
+          <div class="card-content">
+            <div>
+              <paper-input id="waitListInput" label="[[$TRANSLATE('Add New Waitlist', LANG)]]" on-keyup="newWaitListAdded">
+                <div suffix>
+                  <paper-button class="btn btn-sm" raised on-tap="addWaitListButtonClicked">[[$TRANSLATE('Add', LANG)]]</paper-button>
+                </div>
+              </paper-input>
+            </div>
+
+            <!-- <paper-listbox class="m-top-16" style="border: 1px solid #ccc">
+              <template is='dom-repeat' items='[[waitLists]]'>
+                <paper-item class="waitlist-item">
+                  <div><span class="type caption-2 bg-gray">[[item.patientList.length]]</span></div>
+                  <div class="flex m-left-8">[[item.name]]</div>
+                  <div>[[item.count]]</div>
+                  <div>
+                    <paper-button class="btn btn-primary btn-sm" on-tap="viewWaitListButtonPressed">View</paper-button>
+                    <paper-icon-button icon="delete" on-tap="deleteWaitListClicked" class="type danger"></paper-icon-button>
+                  </div>
+                </paper-item>
+              </template>
+            </paper-listbox> -->
+
+            <vaadin-grid items="[[waitLists]]">
+              <vaadin-grid-column flex-grow="0" width="160px" resizable>
+                <template class="header">
+                  <div>[[$TRANSLATE('Patients', LANG)]]</div>
+                </template>
+                <template>
+                  <div class="type bold">[[item.patientList.length]]</div>
+                </template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <vaadin-grid-filter aria-label="Name" path="name" value="[[userNameSearchString]]">
+                    <input class="custom-input" placeholder="[[$TRANSLATE('Name', LANG)]]" is="iron-input" bind-value="{{userNameSearchString}}" />
+                  </vaadin-grid-filter>
+                </template>
+                <template>
+                  <div>[[item.name]]</div>
+                </template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column flex-grow="0" width="180px" resizable>
+                <template class="header">
+                  <div>[[$TRANSLATE('Actions', LANG)]]</div>
+                </template>
+                <template>
+                  <div>
+                    <paper-button class="btn btn-primary btn-sm" on-tap="viewWaitListButtonPressed">[[$TRANSLATE('View', LANG)]]</paper-button>
+                    <paper-icon-button icon="delete" on-tap="deleteWaitListClicked" class="type danger"></paper-icon-button>
+                    <paper-icon-button hidden$="[[!item.waitlistPrivacyPublic]]" icon="language" on-tap="makeWaitlistPublic" class="type success"></paper-icon-button>
+                    <paper-icon-button hidden$="[[item.waitlistPrivacyPublic]]" icon="language" on-tap="makeWaitlistPublic" class="type danger"></paper-icon-button>
+                  </div>
+                </template>
+              </vaadin-grid-column>
+            </vaadin-grid>
+
+          </div>
+        </paper-card>
+
+        <paper-card>
+          <h2 class="card-content">Public Waitlists</h2>
+          <div class="card-content">
+            <vaadin-grid items="[[publicWaitList]]">
+              <vaadin-grid-column flex-grow="0" width="160px" resizable>
+                <template class="header">
+                  <div>[[$TRANSLATE('Patients', LANG)]]</div>
+                </template>
+                <template>
+                  <div class="type bold">[[item.patientList.length]]</div>
+                </template>
+              </vaadin-grid-column>
+            
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <vaadin-grid-filter aria-label="Name" path="name" value="[[userNameSearchString]]">
+                    <input class="custom-input" placeholder="[[$TRANSLATE('Name', LANG)]]" is="iron-input"
+                      bind-value="{{userNameSearchString}}" />
+                  </vaadin-grid-filter>
+                </template>
+                <template>
+                  <div>[[item.name]]</div>
+                </template>
+              </vaadin-grid-column>
+            
+              <vaadin-grid-column flex-grow="0" width="180px" resizable>
+                <template class="header">
+                  <div>[[$TRANSLATE('Actions', LANG)]]</div>
+                </template>
+                <template>
+                  <div>
+                    <paper-button class="btn btn-primary btn-sm" on-tap="viewWaitListButtonPressed">[[$TRANSLATE('View', LANG)]]
+                    </paper-button>
+                    <paper-icon-button icon="delete" on-tap="deleteWaitListClicked" class="type danger"></paper-icon-button>
+                    <paper-icon-button hidden$="[[!item.waitlistPrivacyPublic]]" icon="language" on-tap="makeWaitlistPublic"
+                      class="type success"></paper-icon-button>
+                    <paper-icon-button hidden$="[[item.waitlistPrivacyPublic]]" icon="language" on-tap="makeWaitlistPublic"
+                      class="type danger"></paper-icon-button>
+                  </div>
+                </template>
+              </vaadin-grid-column>
+            </vaadin-grid>
+          </div>
+        </paper-card>
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-organization-manage-waitlist.js"></script>
+</dom-module>

@@ -1,0 +1,317 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-join-organization">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .organization-info-card-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .organization-info-cards {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+
+      .organization-info-cards .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+
+      .organization-info-cards .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+
+      .organization-info-cards .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+
+      .organization-info-cards .row .modifier.online {
+        background: #757575;
+      }
+
+      .organization-info-cards .row .modifier.local-only {
+        background: #039BE5;
+      }
+
+      .organization-info-cards .row .modifier.locally-updated {
+        background: #009688;
+      }
+
+      .organization-info-cards .row .modifier.imported {
+        background: #4CAF50;
+      }
+
+      .info-row {
+        margin-top: 10px;
+      }
+
+      .top-info-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      .address1 {
+        margin-right: 10px;
+      }
+
+      .break-on-tablet {
+        @apply(--layout-horizontal);
+      }
+
+      @media screen and (max-width: 740px) {
+        .break-on-tablet {
+          display: block;
+        }
+      }
+
+      .val {
+        text-decoration: underline;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      paper-button.already-member{
+        background-color: rgb(126, 204, 126);
+        color: black;
+      }
+
+      paper-button.pending-request{
+        background-color: rgb(221, 169, 120);
+        color: black;
+      }
+
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container custom-input-field">
+
+        <!-- join organization -->
+        <paper-card class="m-top-8" heading="Join Organization">
+          <div class="card-content">
+            <div class="info-row horizontal layout center">
+              <paper-input class="flex m-right-8" value="{{organizationSearchString}}" label="Name/Region/Address of the organization"></paper-input>
+              <paper-button class="add-btn colored" raised on-tap="searchOrganizationTapped">Search</paper-button>
+            </div>
+          </div>
+          <template is="dom-if" if="[[organizationSearchResultList.length]]">
+            <div class="p-0">
+              <paper-listbox>
+
+                <template id="organization-list-repeater" is="dom-repeat" items="[[organizationSearchResultList]]" as="org">
+                  <paper-item class="custom layout horizontal center">
+
+                    <div class="flex m-left-8">
+                      <div class="type body capitalize">[[org.name]]</div>
+                      <div class="type caption secondary">
+                          Serial: [[org.serial]]
+                          <!-- [[org.idOnServer]] -->
+                        </div>
+                    </div>
+
+                    <div class="layout horizontal m-horizontal-4 wrap">
+                      <div class="type caption">[[org.address]]&nbsp;</div>
+                      <div class="type caption">([[org.effectiveRegion]])</div>
+                    </div>
+
+                    <!-- already member -->
+                    <template is="dom-if" if="[[org.isCurrentUserAMember]]">
+                      <div>
+                        <paper-button class="already-member m-left-15" raised disabled>Already a member</paper-button>
+                      </div>
+                    </template>
+
+                    <template is="dom-if" if="[[!org.isCurrentUserAMember]]">
+                      <template is="dom-if" if="[[org.isJoiningRequestPending]]">
+                        <div>
+                          <paper-button class="pending-request m-left-15" raised disabled>Pending Request</paper-button>
+                        </div>
+                      </template>
+                      <template is="dom-if" if="[[!org.isJoiningRequestPending]]">
+                        <div>
+                          <paper-button class="m-left-15" raised on-tap="joinOrganizationTapped">Join Organization</paper-button>
+                        </div>
+                      </template>
+                    </template>
+
+                  </paper-item>
+                </template>
+
+              </paper-listbox>
+
+            </div>
+          </template>
+          </paper-card>
+
+        <!-- editing organization - start -->
+        <!-- <template is="dom-if" if="{{isOrganizationValid}}">
+
+          <iron-pages class="m-top-8" selected="{{selectedPage}}">
+
+            <section>
+              <paper-card>
+                <div class="card-custom-header">
+                  <template is="dom-if" if="[[organization.idOnServer]]">
+                    <div class="title">[[organization.name]]</div>
+                    <div class="type caption-2 secondary">Id: [[organization.idOnServer]]</div>
+                    <div class="type caption-2 secondary">Serial: [[organization.serial]]</div>
+                  </template>
+
+                  <template is="dom-if" if="[[!organization.idOnServer]]">
+
+                    <div class="title">Add New Organization</div>
+
+                  </template>
+                </div>
+                <div class="card-content">
+
+                  <div class="info-row">
+                    <paper-input value="{{organization.name}}" label="Name of the organization"></paper-input>
+                  </div>
+                  <div class="info-row">
+                    <paper-input value="{{organization.serial}}" label="Serial"></paper-input>
+
+                    <div class="type caption secondary">Serial must 4 chars long.</div>
+                  </div>
+                  <div class="info-row">
+                    <paper-input value="{{organization.effectiveRegion}}" label="Effective Region for the Organization"></paper-input>
+                  </div>
+
+                  <paper-textarea rows="2" value="{{organization.address}}" label="Full Address"></paper-textarea>
+
+                  <div>
+                    District, Thana,
+                  </div>
+
+                  <paper-input value="{{organization.phone}}" label="Phone Numbers" type="number"></paper-input>
+
+                  <div class="m-top-8">
+                    <paper-toggle-button checked="{{moreOptionList}}">
+                      <span style="color: teal"><strong>More Options +</strong></span>
+                    </paper-toggle-button>
+                  </div>
+                  <div hidden="[[!moreOptionList]]" class="card-content">
+                    <paper-input value="{{organization.emergencyPhone}}" label="Emergency Phone Numbers" type="number"></paper-input>
+
+                    <paper-input value="{{organization.faxNumber}}" label="Fax Numbers" type="number"></paper-input>
+
+                    <paper-input value="{{organization.email}}" label="Email"></paper-input>
+
+                    <paper-input value="{{organization.numberOfMBBSDoctorsOnStaff}}" label="Number of MBBS Doctors On Staff" type="number"></paper-input>
+                    <paper-input value="{{organization.numberOfRegisteredNurseOnStaff}}" label="Number of Registered Nurse On Staff" type="number"></paper-input>
+                    <paper-input value="{{organization.numberOfRegisteredMidWifeOnStaff}}" label="Number of Registered Mid-Wife On Staff" type="number"></paper-input>
+
+                    <div class="vertical layout wrap">
+                      <h3 style="color: teal">Add facilities</h3>
+                      <template is="dom-repeat" items="[[organization.otherFacilitiesList]]">
+                        <paper-checkbox checked="{{item.isChecked}}">[[item.label]]</paper-checkbox>
+                      </template>
+                      <paper-input value="{{facilities}}" label="Add other facilities" style="m-top-16" on-keyup="addOtherFacilities"></paper-input>
+                    </div>
+                  </div>
+
+                  <div class="horizontal layout wrap">
+                    <template is="dom-if" if="[[organization.logoDataUri]]">
+                      <img style="max-height: 100px; width: auto;" class="logo-preview" src$="[[organization.logoDataUri]]" />
+                    </template>
+                    <paper-input class="logo-input flex" type="file" accept="image/*" on-change="logoInputChanged"></paper-input>
+                  </div>
+
+                  <div class="m-top-16">
+                    <paper-checkbox checked="{{organization.markAsPccOrganization}}"> Mark As PCC Organization</paper-checkbox>
+                    <span style="margin-left:8px; color: rgb(160, 160, 160);">( IGNORE If you don't know what is a PCC Organization )</span>
+                  </div>
+                  <div class="m-top-16">
+                    <paper-checkbox checked="{{organization.markAsNwdrOrganization}}"> Mark As NWDR Organization</paper-checkbox>
+                    <span style="margin-left:8px; color: rgb(160, 160, 160);">( IGNORE If you don't know what is a NWDR Organization )</span>
+                  </div>
+                  
+                </div>
+              </paper-card>
+            </section>
+
+        </template> -->
+        <!-- editing organization - end -->
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-join-organization.coffee-compiled.js"></script>
+</dom-module>

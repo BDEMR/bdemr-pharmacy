@@ -1,0 +1,78 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../../bower-assets/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower-assets/paper-tooltip/paper-tooltip.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+
+
+<dom-module id="page-patients-queue">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      vaadin-grid {
+        height: inherit;
+        font-family: Roboto, sans-serif;
+        --divider-color: rgba(0, 0, 0, var(--dark-divider-opacity));
+
+        --vaadin-grid-cell: {
+          padding: 16px;
+          font-size: 32px;
+        };
+
+        --vaadin-grid-header-cell: {
+          font-size: 32px;
+        };
+      }
+    </style>
+
+    <div class="container">
+    
+      <vaadin-grid items="{{availableQueue}}">
+  
+        <vaadin-grid-column>
+          <template>
+            <div class="horizontal layout center">
+              <div class='type secondary m-right-16'>[[$returnSerial(index)]]. </div> <div class="flex">[[item.patientName]]</div>
+            </div>
+          </template>
+        </vaadin-grid-column>
+
+
+      </vaadin-grid>
+    </div>
+
+  </template>
+
+  <script src="page-patients-queue.coffee-compiled.js"></script>
+</dom-module>

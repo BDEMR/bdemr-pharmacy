@@ -1,0 +1,110 @@
+service: "clinic"
+runtime: python27
+api_version: 1
+threadsafe: yes
+default_expiration: "1m"
+skip_files:
+  - node_modules/
+  - build-debug/
+  - polymer-build/
+  - polymer-build-onsite/
+  - .git/
+
+handlers:
+  - url: /assets
+    static_dir: app/assets
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+
+  - url: /behaviors
+    static_dir: app/behaviors
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+
+  - url: /bower-assets
+    static_dir: app/bower-assets
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+
+  - url: /elements
+    static_dir: app/elements
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+
+  - url: /images
+    static_dir: app/images
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+
+  - url: /vendor-assets
+    static_dir: app/vendor-assets
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+
+  - url: /static-data
+    static_dir: app/static-data
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+
+  - url: /styles
+    static_dir: app/styles
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+
+  - url: /all.js
+    static_files: app/all.js
+    upload: app/all.js
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+      Content-Type: text/javascript
+
+  - url: /manifest.json
+    static_files: app/manifest.json
+    upload: app/manifest.json
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+
+  - url: /service-worker.js
+    static_files: app/service-worker.js
+    upload: app/service-worker.js
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+      Content-Type: text/javascript
+
+  - url: /favicon.png
+    static_files: app/favicon.png
+    upload: app/favicon.png
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+
+  - url: /.*
+    static_files: app/index.html
+    upload: app/index.html
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private

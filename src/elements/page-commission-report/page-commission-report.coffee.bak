@@ -1,0 +1,243 @@
+
+Polymer {
+  
+  is: 'page-commission-report'
+
+  behaviors: [ 
+    app.behaviors.translating
+    app.behaviors.pageLike
+    app.behaviors.apiCalling
+    app.behaviors.commonComputes
+    app.behaviors.dbUsing
+  ]
+
+  properties:
+
+    user:
+      type: Object
+      value: {}
+    
+    organization:
+      type: Object
+      value: {}
+
+    commissionList:
+      type: Array
+      notify: true
+      value: []
+    
+    filterDate:
+      type: Object
+      value: {}
+
+    matchingCommissionList:
+      type: Array
+      notify: true
+      value: []
+
+    paidInvoicesList:
+      type: Array
+      notify: true
+      value: []
+
+    paidStatusList:
+      type: Array
+      notify: true
+      value: [
+        'All',
+        'Paid',
+        'Unpaid',
+      ]
+      
+    isLoading:
+      type: Boolean
+      value: false
+
+    totalCommission:
+      type: Number
+      value: 0
+
+    commissionCategoryList:
+      type: Array
+      value: -> []
+  
+
+  _sortByDate: (a, b)->
+    if a.createdDatetimeStamp < b.createdDatetimeStamp
+      return 1
+    if a.createdDatetimeStamp > b.createdDatetimeStamp
+      return -1
+  
+  _formatDateTime: (dateTime)->
+    lib.datetime.format( dateTime, 'mmm d, yyyy')
+  
+  $isAdmin: (userId, userList)->
+    for user in userList
+      if userId is user.id
+        return user.isAdmin
+        break
+    return false
+
+  _getTotalPaid: (paid = 0, lastPaid = 0)->
+    return (parseInt paid) + (parseInt lastPaid)
+  
+  navigatedIn: ->
+    @isLoading = true
+    # @domHost._syncOnlyPatientInvoice ()=>
+    @_loadUser()
+    @_loadOrganization (organizationIdentifier)=>    
+      # @_loadCommission organizationIdentifier
+      @_loadCommissionCategoryList @organization.idOnServer
+      @isLoading = false
+
+  _loadUser:()->
+    userList = app.db.find 'user'
+    if userList.length is 1
+      @user = userList[0]
+  
+  
+  
+  _loadOrganization: (cbfn)->
+    organizationId = @getCurrentOrganization().idOnServer
+    unless organizationId
+      @_notifyInvalidOrganization()
+      return
+    data = { 
+      apiKey: @user.apiKey
+      idList: [ organizationId ]
+    }
+    @callApi '/bdemr-organization-list-organizations-by-ids', data, (err, response)=>
+      if response.hasError
+        @domHost.showModalDialog response.error.message
+      else
+        unless response.data.matchingOrganizationList.length is 1
+          @domHost.showModalDialog "Invalid Organization"
+          return
+        @set 'organization', response.data.matchingOrganizationList[0]
+        cbfn @organization.idOnServer
+    
+  _loadCommissionCategoryList: ()->
+    @commissionCategoryList = app.db.find 'commission-category-list', ({ organizationId }) => organizationId is @organization.idOnServer
+    console.log {@commissionCategoryList}
+
+  _notifyInvalidOrganization: ->
+    @domHost.showModalDialog 'No Organization is Present. Please Select an Organization first.'
+
+
+  filterByDateClicked: (e)->
+    startDate = new Date e.detail.startDate
+    startDate.setHours(0,0,0,0)
+    endDate = new Date e.detail.endDate
+    endDate.setHours(23,59,59,999)
+    @set 'dateCreatedFrom', (startDate.getTime())
+    @set 'dateCreatedTo', (endDate.getTime())
+
+  filterByDateClearButtonClicked: ->
+    @dateCreatedFrom = 0
+    @dateCreatedTo = 0
+
+
+  searchButtonClicked: ()->
+    query = {
+      apiKey: @user.apiKey
+      organizationIdList: [@organization.idOnServer]
+      searchParameters: {
+        dateCreatedFrom: @dateCreatedFrom?=""
+        dateCreatedTo: @dateCreatedTo?=""
+        searchString: @searchString
+        commissionCategorySerial: @selectedCategorySerial
+        paidStatus: @paidStatus
+      }
+    }
+    @isLoading = true
+    @callApi '/bdemr--clinic-commission-report', query, (err, response)=>
+      @isLoading = false
+      if response.hasError
+        @domHost.showModalDialog response.error.message
+      else
+        invoiceItems = response.data
+        @set 'matchingCommissionList', invoiceItems
+        console.log @matchingCommissionList
+        @_calculateTotalCommission @matchingCommissionList
+
+
+  filterByCategoryNameChanged: (e)->
+    index = e.detail.selected
+    category = @commissionCategoryList[index]
+    @selectedCategorySerial = category.serial
+
+  filterByPayStatusChanged: (e)->
+    index = e.detail.selected
+    if index is 0
+      @paidStatus = "all"
+    if index is 1
+      @paidStatus = "paid"
+    if index is 2
+      @paidStatus = "unPaid"    
+
+
+  _calculateTotalCommission: (list)->
+    totalCommission = 0
+    for item in list
+      totalCommission += parseInt item.commission.amount?=0
+    @set 'totalCommission', totalCommission
+
+  invoiceTicked: (e)->
+    item = e.model.item
+    console.log item
+    checked = e.target.checked
+    value = e.target.serial
+    if checked
+      @push 'paidInvoicesList', value
+      console.log {@paidInvoicesList}
+    else
+      index = @paidInvoicesList.indexOf(value)
+      if index > -1
+        @splice 'paidInvoicesList', index, 1
+
+  _payButtonPressed: (e)->
+    unless @paidInvoicesList.length
+      return @domHost.showModalDialog "You haven't selected any invoice"
+
+    return console.log @paidInvoicesList
+    data = {
+      apiKey: @user.apiKey
+      serialList: @paidInvoicesList
+    }
+    
+    @callApi '/bdemr--clinic-update-commission-paid-status', data, (err, response)=>
+      if response.hasError
+        @domHost.showModalDialog response.error.message
+      else
+        @paidInvoicesList = []
+        window.location.reload()
+
+  _makeExpenseInvoice: (invoice)->
+
+  
+  _payButtonPressed: (e)->
+    {item} = e.model
+
+    data = {
+      apiKey: @user.apiKey
+      serialList: [item.serial]
+    }
+    
+    @callApi '/bdemr--clinic-update-commission-paid-status', data, (err, response)=>
+      if err
+        return @domHost.showModalDialog err.message
+      if response.hasError
+        return @domHost.showModalDialog response.error.message
+      else
+        @_makeExpenseInvoice item
+        return @domHost.showModalDialog 'Updated Successfully'
+
+
+  viewCommissionButtonPressed: (e)->
+    item = e.model.item
+    @domHost.navigateToPage '#/print-invoice/invoice:' + item.serial + '/patient:' + item.patientSerial
+
+  resetButtonClicked: (e)->
+    window.location.reload()    
+    
+}

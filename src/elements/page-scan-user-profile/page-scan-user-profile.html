@@ -1,0 +1,160 @@
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+
+<link rel="import" href="../bdemr-qrcode-reader/bdemr-qrcode-reader.html">
+
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+
+<!-- Commong Styles -->
+<link rel="import" href="../../styles/common-style.html">
+
+
+<link rel="import" href="../bdemr-qrcode/bdemr-qrcode.html">
+
+<dom-module id='page-scan-user-profile'>
+  <template>
+    <style is='custom-style' include='iron-flex iron-flex-alignment common-style'>
+      #loader {
+        background: rgba(255, 255, 255, 1);
+        /* position: absolute;
+        left: 0;
+        top: 0; */
+        border-radius: 16px;
+        z-index: 1;
+        height: 100%;
+        width: 100%;
+      }
+
+      .profile-image-area {
+        position: relative;
+        height: 128px;
+        width: 128px;
+      }
+
+      .user-avatar {
+        height: 64px;
+        width: 64px;
+        border-radius: 50%;
+      }
+
+      .user-avatar.small {
+        height: 36px;
+        width: 36px;
+      }
+
+      .user-avatar.medium {
+        height: inherit;
+        width: inherit;
+      }
+
+      .text-bold {
+        font-weight: bold !important;
+      }
+    </style>
+
+    <paper-card>
+      <div class="card-content">
+
+        <h2 style="text-align: center;">[[$TRANSLATE('Scan Details', LANG)]]</h2>
+        <template is="dom-if" if="{{scannedUser}}">
+          <div class="card-item p-8">
+  
+            <div class="horizontal layout center-justified center m-right-16">
+              <div class="profile-image-area">
+                <iron-image class="user-avatar medium" src$="[[$getProfileImage(scannedUser.profileImage)]]" preload sizing="cover"></iron-image>
+              </div>
+            </div>
+  
+            <div class="m-top-24">
+              <div class="type body-lead capitalize"><strong>{{$getFullName(scannedUser.name)}}</strong></div>
+              <div class="type body">
+                <div>
+                  <span class="text-bold">[[$TRANSLATE('Gender', LANG)]]: </span>
+                  <span>{{scannedUser.gender}}</span>
+                </div>
+                <div>
+                  <span class="text-bold">[[$TRANSLATE('DOB', LANG)]]: </span>
+                  <span>[[scannedUser.dateOfBirth]] </span>
+                </div>
+                <div>
+                  <span class="text-bold">[[$TRANSLATE('Blood Group', LANG)]]: </span>
+                  <span> [[scannedUser.bloodGroup]]</span>
+                </div>
+  
+                <div>
+                  <span class="text-bold">[[$TRANSLATE('Phone', LANG)]]: </span>
+                  <span> [[scannedUser.phone]]</span>
+                </div>
+                <div>
+                  <span class="text-bold">[[$TRANSLATE('Email', LANG)]]: </span>
+                  <span> [[scannedUser.email]]</span>
+                </div>
+  
+                <div>
+                  <div class="text-bold">[[$TRANSLATE('Belong Organization(s)', LANG)]]: </div>
+                  <ul>
+                    <template is="dom-repeat" items="[[scannedUser.belongOrganizationNames]]">
+                      <li>{{item}}</li>
+                    </template>
+                  </ul>
+                  
+                </div>
+  
+                <div class="horizontal layout wrap">
+                  <vaadin-combo-box class="paper-custom-input m-right-16" allow-custom-value label="Category" items="{{categoryList}}" value="{{scannedUser.category}}"></vaadin-combo-box>
+                  <vaadin-combo-box class="paper-custom-input flex" allow-custom-value label="Type Scan Reason Here" items="{{reasonList}}" value="{{scannedUser.reason}}"></vaadin-combo-box>
+                </div>
+  
+                <!-- <paper-input label="Type Scan Reason Here" value="{{scannedUser.reason}}"></paper-input> -->
+  
+                <div class="horizontal layout end-justified m-top-24">
+                  
+                  <paper-button raised on-tap="_onSaveBtnPressed">Save</paper-button>
+                  
+                </div>
+  
+              </div>
+            </div>
+          </div>
+          
+        </template>
+
+        <template is="dom-if" if="{{!scannedUser}}">
+          <div class="horizontal layout center-justified center" style="height: inherit;">
+            <paper-button class="m-top-24" hidden$="{{isQrCodeActive}}" raised on-tap="_startScanning">[[$TRANSLATE('Tap Here to Scan', LANG)]]</paper-button>
+          </div>
+        </template>
+        
+
+        <!-- loader - start -->
+        <div id="loader" class="horizontal layout center center-justified" hidden$="{{!isLoading}}">
+          <div style="text-align: center;">
+            <paper-spinner active></paper-spinner>
+            <div class="type body secondary">[[$TRANSLATE('please wait', LANG)]]...</div>
+          </div>
+        </div>
+        <!-- loader - end -->
+        
+        <div class="horizontal layout center center-justified m-top-24">
+          <template is="dom-if" if="{{!scannedUser}}">
+            <bdemr-qrcode-reader id="qrCodeReader" active="{{isQrCodeActive}}" result="{{qrCode}}" on-qrcode-change="_onQrCodeChanged"></bdemr-qrcode-reader>
+          </template>
+          <template is="dom-if" if="{{scannedUser}}">
+            <paper-button on-tap="_resetQrCode" class="colored">[[$TRANSLATE('Reset', LANG)]]</paper-button>
+          </template>
+        </div>
+        
+      </div>
+    </paper-card>
+
+    
+  </template>
+  <script src="page-scan-user-profile.coffee-compiled.js"></script>
+</dom-module>

@@ -1,0 +1,267 @@
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower-assets/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower-assets/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower-assets/iron-list/iron-list.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+
+<link rel="import" href="../../bower-assets/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+
+
+
+<!-- 3rd party elements -->
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html">
+
+
+<!-- custom-elements -->
+<link rel="import" href="../html-block/html-block.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-advised-test-editor">
+  <template>
+
+    <style is="custom-style" include="common-style">
+
+      .patient-details {
+        background-color: #5c4575;
+        color: #fff;
+      }
+
+      .print-content {
+        border-top: 1px solid #eee;
+        @apply(--layout-horizontal);
+      }
+
+      .print-content .left {
+        width: 34%;
+        border-right: 1px solid #eee;
+      }
+
+      .print-content .right {
+        width: 66%;
+      }
+
+      ol.order-list {
+        margin: 4px 0;
+        padding-left: 16px;
+        list-style-type: lower-alpha;
+      }
+
+      ul.unorderd-list-custom {
+        margin: 4px 0;
+        padding-left: 16px;
+      }
+
+      ol.order-list li {
+        margin: 4px 0;
+      }
+
+      .print-sub-header {
+        font-size: bold;
+        background-color: #fafafa;
+        margin-bottom: 8px;
+      }
+
+      /* patient - card - start */
+
+      .profile-image {
+        height: 78px;
+        width: 78px;
+        border-radius: 50%;
+        border: 2px solid #f7f7f7;
+      }
+
+       /* patient - card - start */
+
+      #dialogCustomInvestigation{
+        width: 80% !important; 
+
+      }
+      .dialog-content{
+        height: 180px;
+        overflow-y: auto;
+      }
+
+      .pull-add-button-down {
+        position: relative;
+        top: 8px;
+        right: 5px;
+      }
+
+      .space-after {
+        margin-right: 10px;
+      }
+
+    </style>
+
+    <div class="master-container">
+      <div class="limiting-container">
+
+        <!-- Card - patient info - start -->
+        <paper-card>
+          <div class="card-content">
+  
+  
+            <div class="horizontal layout wrap center">
+              <iron-image class="profile-image m-right-8" src$="[[$getProfileImage(patient.profileImage)]]" preload sizing="cover"></iron-image>
+  
+              <div class="flex">
+                <div class="m-horizontal-4 horizontal layout">
+                  <div class="type body-lead capitalize">{{$getFullName(patient.name)}}</div>
+                  <div class="m-left-8 type caption bg-gray">{{patient.serial}}</div>
+                </div>
+  
+                <div class="horizontal layout wrap type caption-2 secondary">
+                  <template is="dom-if" if="[[orgSpecificPatientId]]">
+                    <div class="m-horizontal-4">
+                      <strong>[[$TRANSLATE('Patient Id', LANG)]]: </strong>
+                      <span>[[orgSpecificPatientId]]</span>
+                    </div>
+                  </template>
+                  <div class="m-horizontal-4">
+                    <strong>[[$TRANSLATE('Registerd Phone Number', LANG)]]: </strong>
+                    <span>{{patient.phone}}</span>
+                  </div>
+                </div>
+                
+                <div class="horizontal layout wrap type caption-2 secondary">
+  
+                  <template is="dom-if" if="[[!patient.isForOrganizationOnly]]">
+  
+                    <div class="m-horizontal-4">
+                      <strong>[[$TRANSLATE('Sex', LANG)]]: </strong>
+                      <span>{{patient.gender}}</span>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <strong>[[$TRANSLATE('Age', LANG)]]: </strong>
+                      <span>[[$computeAge(patient.dateOfBirth)]] </span>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <strong>[[$TRANSLATE('Blood Group', LANG)]]: </strong>
+                      <span> [[patient.bloodGroup]]</span>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <strong>[[$TRANSLATE('Allergy', LANG)]]: </strong>
+                      <span>[[patient.allergy]] </span>
+                    </div>
+                  </template>
+  
+                  <template is="dom-if" if="[[patient.isForOrganizationOnly]]">
+                    <div class="m-horizontal-4">
+                      <strong>[[$TRANSLATE('Patient Name', LANG)]]: </strong>
+                      <i>[[$TRANSLATE('REDACTED FOR CONFIDENTIALITY', LANG)]]</i>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <strong>[[$TRANSLATE('Age', LANG)]]: </strong>
+                      <i>[[$TRANSLATE('REDACTED FOR CONFIDENTIALITY', LANG)]]</i>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <strong>[[$TRANSLATE('Blood Group', LANG)]]: </strong>
+                      <span>[[patient.bloodGroup]]</span>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <strong>[[$TRANSLATE('Allergy', LANG)]]: </strong>
+                      <span>[[patient.allergy]]</span>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+  
+            <!-- <paper-button raised class="fixed-btn btn-add colored" on-tap="editPatientBtnPressed">Edit Patient</paper-button> -->
+          </div>
+        </paper-card>
+        <!-- Card - patient info - end -->
+
+        <!-- Card - Test Advised - start -->
+        <paper-card class="m-top-8">
+          <bdemr-investigation user="{{user}}" organization="{{currentOrganization}}" selected-investigation={{selectedInvestigation}}></bdemr-investigation>
+          <template is="dom-if" if="[[!$isEmptyArray(addedInvestigationList.length)]]">
+            <div class="p-0 b-radius">
+              <paper-listbox>
+                <template id="added-advised-test-list-repeater" is="dom-repeat" items="[[addedInvestigationList]]">
+                  <paper-item class="custom layout horizontal center">
+
+                    <div class="type caption secondary">[[$returnSerial(index)]]</div>
+                    <div class="flex type body m-left-8 vertical layout">
+                      <div class="type body-lead">{{item.investigationName}}</div>
+                      <div class="horizontal layout wrap">
+
+                        <!-- <template is="dom-if" if="[[$compareFn(item.testList.length, '==', 1)]]">
+                          <div class="type body">{{item.testList.0.name}}</div>
+                        </template> -->
+
+                        <template is="dom-if" if="[[$compareFn(item.testList.length, '>', 1)]]">
+                          <template is="dom-repeat" items="[[item.testList]]">
+                            <div class="horizontal layout center" class="m-horizontal-4">
+                              <paper-icon-button icon="icons:remove-circle-outline" class="m-right-4" on-tap="removeInvestigationMember"></paper-icon-button>
+                              <div class="type body">{{item.name}}</div>
+                            </div>
+                          </template>
+                        </template>
+
+                      </div>
+                      <paper-input label="[[$TRANSLATE('Suggested Institution', LANG)]]" value="{{item.suggestedInstitutionName}}"></paper-input>
+                      <!-- <div class="type caption-2 secondary">
+                        <strong>Suggested Institution: </strong>
+                        <span class="flex">{{item.suggestedInstitutionName}}</span>
+                      </div> -->
+
+                    </div>
+                    <paper-menu-button class="p-0" vertical-align="bottom" horizontal-align="right">
+                      <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+                      <paper-menu class="dropdown-content">
+                        <paper-item on-tap="_markAsFavorite"><iron-icon class="m-right-8" icon="icons:add-circle"></iron-icon>[[$TRANSLATE('Mark as favorite', LANG)]]</paper-item>
+                        <paper-item on-tap="showInevestigationMemberDialog"><iron-icon class="m-right-8" icon="icons:add-circle"></iron-icon>[[$TRANSLATE('Add Test', LANG)]]</paper-item>
+                        <!-- <paper-item on-tap="showEditInvestigationDialog"><iron-icon class="m-right-8" icon="create"></iron-icon>Edit</paper-item> -->
+                        <paper-item on-tap="_deleteTest"><iron-icon class="m-right-8" icon="delete"></iron-icon>[[$TRANSLATE('Delete', LANG)]]</paper-item>
+                      </paper-menu>
+                    </paper-menu-button>
+
+                  </paper-item>
+                </template>
+              </paper-listbox>
+            </div>
+          </template>
+        </paper-card>
+        <!-- Card - Test Advised - end -->
+
+      </div>
+    </div>
+
+    <!-- local DOM -->
+  </template>
+  <script src="page-advised-test-editor.coffee-compiled.js "></script>
+</dom-module>

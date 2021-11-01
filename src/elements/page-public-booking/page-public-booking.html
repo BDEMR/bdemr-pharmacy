@@ -1,0 +1,552 @@
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower-assets/iron-selector/iron-selector.html">
+
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+
+<link rel="import" href="../../bower-assets/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower-assets/paper-radio-button/paper-radio-button.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<!--Theme-->
+<link rel="import" href="../../styles/common-style.html">
+
+<dom-module id="page-public-booking">
+  <template>
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      paper-dropdown-menu {
+        width: 100%;
+      }
+
+      .chamber {
+        border: 2px solid black;
+      }
+
+      .chamber-info {
+        margin-top: 10px;
+      }
+
+      .layout1 {
+        @apply(--layout-horizontal);
+      }
+
+      .already-have-a-booking-message {
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+        padding: 20px;
+        font-size: 20px;
+        color: var(--paper-green-500);
+      }
+
+      .search-results-style {
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+        padding: 20px;
+        font-size: 30px;
+        color: green;
+      }
+
+      .no-result-style {
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+        padding: 20px;
+        font-size: 30px;
+        color: red;
+      }
+
+      .my-booking-style {
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+        padding: 20px;
+        font-size: 30px;
+        color: teal;
+      }
+
+      .status.awaiting {
+        color: orange;
+      }
+
+
+      /* Card Custom Header Start */
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      /* Card Custom Header End */
+
+      .specialization-style {
+        background: #37474F;
+        color: #ffffff;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+
+      .align-left {
+        float: left;
+        width: 50%;
+      }
+
+      .align-right {
+        float: right;
+        width: 50%;
+      }
+
+      /* Local Custom Input Field Style -- Start --*/
+      .local-custom-input ::content paper-input-container {
+        padding: 6px 4px;
+      }
+
+      .local-custom-input ::content .underline {
+        display: none;
+      }
+
+      .local-custom-input paper-input-container ::content .underline {
+        height: 0 !important;
+      }
+
+      .local-custom-input {
+        --paper-input-container-label: {
+          font-size: 22px;
+          color: #576374 !important;
+          font-weight: 800 !important;
+          z-index: var(--custom-input-z-index) !important;
+          padding-top: 15px !important;
+          padding-left: 10px !important;
+        }
+
+        --paper-input-container-label-focus: {
+          color: var(--brand-primary-color);
+        }
+
+      }
+
+      .local-custom-input ::content paper-input-container ::content input {
+        background-color: var(--custom-input-box-color);
+        color: var(--custom-input-text-color);
+        border-radius: 6px;
+        height: 45px;
+        margin-top: 4px;
+        font-weight: 800;
+        font-size: 22px;
+        padding: 0 8px;
+        box-sizing: border-box;
+      }
+
+      .local-custom-input.no-padding {
+        padding: 0;
+      }
+
+      paper-autocomplete.local-custom-input ::content #clear {
+        position: absolute;
+        right: 10px;
+        top: 40px;
+      }
+
+      paper-autocomplete.local-custom-input ::content #autocompleteInput ::content paper-input-container #input {
+        padding-right: 35px;
+      }
+
+      /* Local Custom Input Field Style -- End --*/
+
+      #title-label {
+        text-align: center;
+        font-size: 25px;
+      }
+
+      #dialogSignupForm {
+        padding: 5px 10px;
+      }
+
+      #bookingCompleteAndDisclaimer {
+        padding: 5px 10px;
+      }
+
+      .login-button-style {
+        position: relative;
+        left: 40%;
+      }
+
+      .booking-label-style {
+        position: relative;
+        left: 47%;
+      }
+
+      .booking-available {
+        color: green;
+        font-size: large;
+      }
+
+      .booking-slot {
+        background: #fcdbdb;
+        text-align: center;
+      }
+
+      @media only screen and (min-width: 320px) and (max-width: 800px) {
+
+        .table td,
+        .table th {
+          vertical-align: top;
+        }
+
+        .search {
+          margin-top: 10px;
+          @apply(--layout-start-justified);
+        }
+
+        .align-left {
+          float: left;
+          width: 100%;
+        }
+
+        .align-right {
+          float: right;
+          width: 100%;
+        }
+
+      }
+    </style>
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <template is="dom-if" if="[[isValidOrganization]]">
+          <!-- <div class="login-button-style">
+            <paper-button class="btn" style="font-size: 18px; background-color: #4286f4; color: #ffffff;" raised on-tap="loginTapped">Login to Patient App</paper-button>
+          </div>
+          <div class="booking-label-style"><h2>Booking</h2></div> -->
+
+          <div class="layout vertical center">
+            <div class="flex m-bottom-40">
+              <paper-button class="btn" style="font-size: 18px; background-color: #4286f4; color: #ffffff;" raised
+                on-tap="loginTapped">Login</paper-button>
+            </div>
+            <div class="flex" style="color: var(--brand-primary-color); font-size: 35px;"><strong>Booking</strong></div>
+          </div>
+
+          <hr>
+
+          <paper-card class="m-top-8">
+            <div class="layout vertical center m-left-16 m-right-8">
+              <div>
+                <strong style="font-size: 20px; color:red;">↓ **বুকিং সংক্রান্ত সতর্কতা** ↓</strong>
+              </div>
+              <div>
+                <p>BDEMR এর Public Appointment Booking দিয়ে যে কোনো বুকিং সমপন্ন করলেই বিডিইএমআর পেশেন্ট এপ (BDEMR
+                  Patient App) এ আপনার একটি একাউন্ট তৈরি হবে। একাউন্ট একসেস করার তথ্যসমূহ বুকিং সম্পন্ন করলেই পাওয়া যাবে।
+                </p>
+              </div>
+            </div>
+          </paper-card>
+
+
+          <paper-card class="m-top-8">
+            <div class="card-custom-header">
+              <div class="layout vertical center">
+                <div id="title-label" class="title flex m-bottom-16">[[$TRANSLATE(organizationProps.organizationName, LANG)]]</div>
+                <div id="title-label" class="title flex">[[$TRANSLATE('Search and Book A Doctor',LANG)]]</div>
+              </div>
+            </div>
+
+            <div class="card-content">
+              
+              <!-- search by specialization -->
+              <vaadin-combo-box always-float-label id="specializationSearch" class="local-custom-input flex"
+                label="[[$TRANSLATE('Select Department',LANG)]]" allow-custom-value="false"
+                value="{{filterBySpecialization}}" items="[[filteredSpecializationList]]"
+                on-selected-item-changed="specializationSelected">
+                <template>
+                  <div><strong>[[$TRANSLATE(item,LANG)]]</strong></div>
+                </template>
+              </vaadin-combo-box>
+              <br>
+
+              <!-- search by doctor -->
+              <vaadin-combo-box always-float-label id="doctorSearch" class="local-custom-input flex"
+                label="[[$TRANSLATE('Name of Doctor',LANG)]]" allow-custom-value="false" item-label-path="name"
+                value="{{filterByDoctorName}}" items="[[filteredDoctorList]]" on-selected-item-changed="doctorSelected">
+                <template>
+                  <div><strong>[[item.name]]</strong></div>
+                </template>
+              </vaadin-combo-box>
+              <!-- <paper-input always-float-label class="local-custom-input" label="[[$TRANSLATE('Name of Doctor',LANG)]]"
+                  value="{{filterByName}}">
+              </paper-input> -->
+
+              <paper-input always-float-label class="local-custom-input" type="date"
+                label="[[$TRANSLATE('Select a Booking Date',LANG)]]" value="{{dateString}}">
+              </paper-input>
+
+
+              <div class="m-top-16 m-left-8">
+                <paper-toggle-button checked="{{showDetailedForm}}">Show Advanced</paper-toggle-button>
+              </div>
+
+              <template is="dom-if" if="{{showDetailedForm}}">
+                <div class="vertical layout">
+                  <div>
+                    <paper-input always-float-label class="local-custom-input"
+                      label="[[$TRANSLATE('Short Code of Doctor (If Known)',LANG)]]" value="{{filterByShortCode}}">
+                    </paper-input>
+                  </div>
+
+                  <div class="layout horizontal wrap">
+                    <div class="align-left">
+                      <paper-autocomplete always-float-label class="local-custom-input"
+                        label="[[$TRANSLATE('Degree',LANG)]]" text="{{filterByDegree}}" source="[[degreeList]]" required>
+                      </paper-autocomplete>
+                    </div>
+
+                    <div class="align-right">
+                      <paper-input always-float-label class="local-custom-input"
+                        label="[[$TRANSLATE('Location/Address',LANG)]]" value="{{filterByChamberAddress}}">
+                      </paper-input>
+                    </div>
+                  </div>
+                </div>
+              </template>
+
+            </div>
+            <!-- <paper-input label="[[$TRANSLATE('Experience',LANG)]]" value="{{filterByExperience}}"></paper-input> -->
+            <div class="card-actions">
+              <paper-button class="btn btn-success" raised on-tap="searchBookingTapped">[[$TRANSLATE('Search',LANG)]]
+              </paper-button>
+            </div>
+          </paper-card>
+
+          <div>
+            <div class="vertical layout">
+              <template is="dom-if" if="[[chamberList.length]]">
+                <h2 class="search-results-style">[[$TRANSLATE('Search Results', LANG)]] ([[chamberList.length]])</h2>
+              </template>
+
+              <template is="dom-if" if="[[!chamberList.length]]">
+                <h2 class="no-result-style">[[$TRANSLATE('No results', LANG)]]</h2>
+              </template>
+
+              <template is="dom-repeat" items="[[chamberList]]" as="chamber" index-as="chamberIndex" id="search-result-card-repeater">
+                <paper-card style="margin-top:10px" heading="[[chamber.name]]">
+                  <div class="card-content">
+                    <div class="chamber-info">
+                      <div>
+                        <span class="text-muted">[[$TRANSLATE('Organization Name',LANG)]]:
+                        </span>[[chamber.organizationName]]
+                      </div>
+                      <div>
+                        <span class="text-muted">[[$TRANSLATE('Address',LANG)]]: </span>[[chamber.address]]
+                      </div>
+                      <div>
+                        <span class="text-muted">[[$TRANSLATE('City',LANG)]]: </span>[[chamber.city]]
+                      </div>
+                      <div class="chamber-info">
+                        <div>
+                          <span class="text-muted">[[$TRANSLATE('Name of Doctor',LANG)]]:
+                          </span>[[chamber.doctorPublicInfo.name]]
+                        </div>
+                        <div>
+                          <span class="text-muted">[[$TRANSLATE('Specializations',LANG)]]:
+                          </span>[[chamber.doctorPublicInfo.specializationList]]
+
+                        </div>
+                        <div>
+                          <span class="text-muted">[[$TRANSLATE('Degrees',LANG)]]:
+                          </span>[[chamber.doctorPublicInfo.degreeList]]
+                        </div>
+                      </div>
+                      <div class="chamber-info">
+                        <div>
+                          <span class="text-muted">[[$TRANSLATE('New Patient Fee',LANG)]]:
+                          </span>[[chamber.newPatientVisitFee]] Taka
+                        </div>
+                        <div>
+                          <span class="text-muted">[[$TRANSLATE('Old Patient Fee',LANG)]]:
+                          </span>[[chamber.oldPatientVisitFee]] Taka
+                        </div>
+                      </div>
+
+                      <!-- booking slot -->
+                      <paper-card heading="[[$TRANSLATE('Select Booking Date and Slot', LANG)]]" class="booking-slot">
+                        <iron-pages selected="{{chamber.selectedSchedulePage}}" on-iron-select="_scheduleSelected">
+                          <template is="dom-repeat" items="[[chamber.scheduleList]]" as="schedule" index-as="scheduleIndex">
+                            <section>
+                              <div class="horizontal layout center">
+                                <paper-icon-button icon="chevron-left" on-click="prevSchedule"></paper-icon-button>
+                                <div class="flex"></div>
+                                <div>[[schedule.dateString]]</div>
+                                <div class="flex"></div>
+                                <paper-icon-button icon="chevron-right" on-tap="nextSchedule"></paper-icon-button>
+                              </div>
+    
+                              <paper-radio-group selected="{{chamber._selectedTimeSlotIndex}}">
+                                <template is="dom-repeat" items="[[schedule.timeSlotList]]" as="slot" index-as="slotIndex">
+                                  <paper-radio-button disabled="{{$compareFn(slot.availableCount, '<=', 0)}}"
+                                    name="[[slotIndex]]">[[slot.timeSlot]] <span class="booking-available">(Available
+                                      [[slot.availableCount]])</span></paper-radio-button>
+                                </template>
+                              </paper-radio-group>
+    
+                            </section>
+                          </template>
+                        </iron-pages>
+                      </paper-card>
+                      
+
+                      <!-- <div class="chamber-info">
+                        <paper-dropdown-menu-light label="[[$TRANSLATE('Select Date Slot',LANG)]]" style="width: 300px;">
+                          <paper-listbox class="dropdown-content" selected="{{chamber._selectedDateStringIndex}}"
+                            on-iron-select="_scheduleSelected">
+                            <template is="dom-repeat" items="[[chamber.scheduleList]]" as="schedule" index-as="scheduleIndex">
+                              <paper-item data-value="[[schedule.dateString]]">[[schedule.dateString]]</paper-item>
+                            </template>
+                          </paper-listbox>
+                        </paper-dropdown-menu-light>
+                      </div>
+
+                      <div class="chamber-info" hidden$="{{!_isTimeSlotSelected(chamberIndex)}}">
+                        <paper-dropdown-menu-light label="[[$TRANSLATE('Select Time Slot',LANG)]]" style="width: 300px;">
+                          <paper-listbox class="dropdown-content" selected="{{chamber._selectedTimeSlotIndex}}">
+                            <template is="dom-repeat" items="[[selectedScheduleTimeSlot.list]]" as="slot"
+                              index-as="slotIndex">
+                              <paper-item data-value="[[slot.timeSlot]]">[[slot.timeSlot]] (Available
+                                [[slot.availableCount]])
+                              </paper-item>
+                            </template>
+                          </paper-listbox>
+                        </paper-dropdown-menu-light>
+                      </div> -->
+
+                      <!-- <div class="chamber-info">
+                        <vaadin-combo-box always-float-label id="scheduleListId" items = [[chamber.scheduleList]]
+                          class="flex" label="[[$TRANSLATE('Date',LANG)]]"
+                          on-selected-item-changed="_scheduleSelected" allow-custom-value value="{{selectedDateString}}">
+                          <template>
+                            <div><strong>{{item.dateString}}</strong></div>
+                          </template>
+                        </vaadin-combo-box>
+                      </div> -->
+
+                    </div>
+                  </div>
+
+                  <div hidden>[[chamber]]</div>
+                  <div class="card-actions">
+                    <paper-button class="btn btn-success" raised on-tap="bookThisDoctorPressed">[[$TRANSLATE('Book This Doctor',LANG)]]</paper-button>
+                  </div>
+                </paper-card>
+
+              </template>
+            </div>
+          </div>
+
+          <!-- Dialog for - Add new member - start -->
+          <paper-dialog id="dialogSignupForm">
+            <div class="type body-lead" style="color: var(--brand-primary-color); text-align: center">
+              [[$TRANSLATE('Please Provide Your Booking Information', LANG)]]</div>
+            <hr>
+            <paper-dialog-scrollable style="position:relative;top:-20px;">
+              <paper-input class="custom-input" label="[[$TRANSLATE('Your Name',LANG)]]" required value="{{newMember.name}}" auto-validate
+                error-message="[[$TRANSLATE('Member Name is Required!',LANG)]]"></paper-input>
+
+              <vaadin-date-picker class="custom-input" required auto-validate error-message="[[$TRANSLATE('Date of Birth is Required!',LANG)]]"
+                type="date" value="{{newMember.dateOfBirth}}" label="[[$TRANSLATE('Date of Birth (mm/dd/yyyy)',LANG)]]"></vaadin-date-picker>
+
+              <div class="type body m-top-16" style="position:relative;left:5px;">[[$TRANSLATE('Gender',LANG)]]</div>
+              <paper-radio-group selected="{{newMember.gender}}">
+                <paper-radio-button name="male">[[$TRANSLATE('Male',LANG)]]</paper-radio-button>
+                <paper-radio-button name="female">[[$TRANSLATE('Female',LANG)]]</paper-radio-button>
+                <paper-radio-button name="other">[[$TRANSLATE('Other',LANG)]]</paper-radio-button>
+              </paper-radio-group>
+
+              <paper-input class="custom-input paper-custom full" class="p-horizontal-8"
+                value="{{newMember.emailOrPhone}}" label="[[$TRANSLATE('Your Phone Number',LANG)]]" pattern="^[0-9]{11,11}(-[0-9]*){0,1}$"
+                required auto-validate error-message="[[$TRANSLATE('Phone Number Required. i.e.: 01712345678 or 01712345678-12',LANG)]]"
+                char-counter minlength="11" maxlength="14">
+                <div prefix>+88</div>
+              </paper-input>
+
+            </paper-dialog-scrollable>
+            <div class="buttons m-top-16">
+              <paper-button dialog-dismiss>[[$TRANSLATE('Cancel',LANG)]]</paper-button>
+              <paper-button class="btn btn-success colored" on-click="signupAndBookThePatient" autofocus raised>[[$TRANSLATE('Done',LANG)]]
+              </paper-button>
+            </div>
+
+          </paper-dialog>
+
+
+          <paper-dialog id="bookingCompleteAndDisclaimer">
+            <div class="type body-lead" style="color: rgb(0, 114, 0); text-align: center;">
+              <h3>Booking Completed!</h3>
+              <hr>
+            </div>
+            <paper-dialog-scrollable>
+              <div class="card-content">
+                <div>
+                  <h3>Please Read The Following ↓ নিচে দেওয়া তথ্য গুলো পড়ুন</h3>
+                  <p>১। BDEMR এর Public Appointment Booking দিয়ে যে কোনো বুকিং সমপন্ন করলেই বিডিইএমআর পেশেন্ট এপ(BDEMR
+                    Patient App) এ আপনার একটি একাউন্ট তৈরি হবে।</p>
+                  <p>২। আপনার পেশেন্ট এপ একাউন্টটিতে আপনি আপনার বুকিং এ দেওয়া মোবাইল নম্বর অথবা ইমেল আইডি এবং বিডিইএমআর
+                    কতৃক দেওয়া <strong>ডিফল্ট পাসওয়ার্ড 123456</strong> দিয়ে প্রবেশ করতে পারবেন</p>
+                  <p>৩। আপনি চাইলেই এই পাসওয়ার্ড আপনার পেশেন্ট এপ এর My Profile থেকে পরিবর্তন করে নিতে পারবেন</p>
+                  <p>৪। পেশেন্ট এপটিতে গিয়ে আপনি আপনার বুকিংসমূহ সহ আরো বিভিন্ন তথ্যাদি, যেমন My Medication, My Visit
+                    &Report, My Next Visit, Doctor-Patient Notes পাবেন।</p>
+                  <p>৫। একবার পাবলিক বুকিং এ বুকিং সমপন্ন করলেই আপনি পরের বার থেকে পেশেন্ট এপ এ লগইন করেই যে কোন ডাক্তারের
+                    বুকিং দিতে পারবেন। তাতে করে আপনার আর কোনো ধরনের তথ্য পূরণ করা লাগছে না</p>
+                  <p>৬। Playstore এই BDEMR Patient App টি পাওয়া যাবে, অথবা আপনি ওয়েবসাইটেও লগ ইন করতে পারবেন এই ঠিকানায় <a
+                      href="https://patient.bdemr.com/#/login" target="_blank">Patient App Website Link</a> </p>
+                </div>
+              </div>
+            </paper-dialog-scrollable>
+            <div class="card-actions">
+              <paper-button class="btn btn-success" raised on-click="bookingInfoAndDisclaimerOkayClicked">Okay
+              </paper-button>
+            </div>
+          </paper-dialog>
+
+        </template>
+
+      </div>
+    </div>
+  </template>
+
+  <script src='page-public-booking.coffee-compiled.js'></script>
+</dom-module>

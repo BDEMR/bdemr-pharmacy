@@ -1,0 +1,756 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+
+<dom-module id="page-pcc-reports">
+  <template>
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        background-color: #fff;
+        font-size: 14px;
+      }
+
+      td,
+      th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        width: auto;
+        padding: 4px 8px;
+        min-width: 160px;
+      }
+
+      tr:nth-child(even) {
+        background-color: #dddddd;
+      }
+
+      .limiting-container {
+        width: 90%;
+        margin: 0 auto;
+        margin-top: 10px;
+      }
+
+      paper-button {
+        background: white;
+      }
+
+      .invoice-card {
+        background: white;
+      }
+
+      paper-card {
+        margin: 4px;
+      }
+
+      .search {
+        background-color: #fafafa;
+        border: 1px solid #dadada;
+        padding: 8px 12px;
+        margin: 4px;
+        margin-left: 0;
+      }
+
+      .results {
+        margin-top: 20px;
+      }
+
+      .results span {
+        color: #333;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      ul {
+        padding: 0;
+        margin: 0;
+      }
+
+      ul>ol {
+        margin: 0;
+        padding: 5px;
+        list-style-type: decimal;
+      }
+
+      .organization-dropdown {
+        width: 210px;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .fixed-controller {
+        /*position: fixed;*/
+        background: #fff;
+        /*border-bottom: 1px solid #eee;*/
+        padding: 16px;
+        /*padding-left: 24px;*/
+      }
+
+      #orgGroup {
+        width: 256px;
+      }
+    </style>
+
+
+    <paper-tabs class="basic-tabs" id="tabs" selected="{{selectedPageIndex}}" scrollable noink='true' on-iron-select="onPageChange">
+      <paper-tab>[[$TRANSLATE('Patients with PCC Records',LANG)]]</paper-tab>
+      <paper-tab>[[$TRANSLATE('All Registered Patients',LANG)]]</paper-tab>
+    </paper-tabs>
+
+
+    <div>
+      <div class="fixed-controller">
+
+        <div class="search layout horizontal wrap">
+
+          <div id="orgGroup">
+            <vaadin-combo-box class="organization-dropdown m-right-8" label="Organization" items="[[childOrganizationList]]" on-value-changed="organizationSelected"
+              loading="[[organizationLoading]]" disabled="[[!childOrganizationList.length]]"></vaadin-combo-box>
+
+            <div class="type caption-2 secondary">
+              Total: {{childOrganizationCounter}} organization
+            </div>
+          </div>
+
+          <!-- <paper-dropdown-menu label="Filter by Gender" class="m-right-8">
+            <paper-listbox class="dropdown-content" on-iron-activate="genderSelected" selected="0">
+              <paper-item>All</paper-item>
+              <paper-item>Male</paper-item>
+              <paper-item>Female</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu> -->
+
+          <template is="dom-if" if="{{$compareFn(selectedPageIndex, '==', 0)}}">
+            <paper-dropdown-menu label="Filter by Visit type" class="m-right-8">
+              <paper-listbox class="dropdown-content" on-iron-activate="visitTypeSelected" selected="0">
+                <template is="dom-repeat" items="[[visitReasonList]]">
+                  <paper-item>[[item]]</paper-item>
+                </template>
+              </paper-listbox>
+            </paper-dropdown-menu>
+
+
+            <paper-dropdown-menu label="Filter by Age Group" class="m-right-8">
+              <paper-listbox class="dropdown-content" on-iron-activate="ageGroupSelected" selected="0">
+                <template is="dom-repeat" items="[[ageGroupList]]">
+                  <paper-item>[[item]]</paper-item>
+                </template>
+              </paper-listbox>
+            </paper-dropdown-menu>
+
+            <paper-dropdown-menu label="Filter by Salary Range" class="m-right-8">
+              <paper-listbox class="dropdown-content" on-iron-activate="salaryRangeSelected" selected="0">
+                <template is="dom-repeat" items="[[salaryRangeList]]">
+                  <paper-item>[[item]]</paper-item>
+                </template>
+              </paper-listbox>
+            </paper-dropdown-menu>
+
+            <paper-input label="Search by Name" class="m-right-8" value="{{searchString}}"></paper-input>
+          </template>
+
+          <custom-vital-search style="width:210px" on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
+        </div>
+        <div class="layout horizontal end-justified center m-horizontal-4 m-top-16">
+          <paper-button class="btn btn-default" on-tap="resetButtonClicked">Reset</paper-button>
+          <paper-button raised class="btn btn-primary" style="margin: 0" on-tap="searchButtonClicked">Search</paper-button>
+          <paper-button raised on-tap="exportButtonClicked">Export</paper-button>
+        </div>
+      </div>
+      <paper-progress indeterminate hidden="[[!loading]]"></paper-progress>
+    </div>
+
+    <iron-pages selected="{{selectedPageIndex}}">
+
+      <!-- Patients with PCC Records - start -->
+      <section>
+        <template is="dom-if" if="[[!isEmptyArray(reportResults)]]">
+          <table>
+
+            <tr>
+              <th>Action</th>
+              <th>No.</th>
+              <th>Record ID</th>
+              <th>Created Date</th>
+              <th>Organization</th>
+              <th>Visit Type</th>
+              <th>Patient ID No.</th>
+              <th>Name</th>
+              <th>Email Address</th>
+              <th>Contact Number</th>
+              <th>Additional Contact Number</th>
+              <th>Date of Birth (mm/dd/yyyy)</th>
+              <th>Age</th>
+              <th>Spouse Name</th>
+              <th>Father's Name</th>
+              <th>Mother's Name</th>
+              <th>Expenditure</th>
+              <th>Profession</th>
+              <th>National ID</th>
+              <th>Division</th>
+              <th>District</th>
+              <th>Area</th>
+              <th>Marital Status</th>
+              <th>Marital Age</th>
+              <th>Number of Family Member</th>
+              <th>Number of children</th>
+              <th>How did you find out about this project?</th>
+              <th>Blood Group</th>
+              <th>Have Allergy?</th>
+
+
+              <th>Tetanus</th>
+              <th>MMR</th>
+              <th>Varicella</th>
+              <th>Hepatitis</th>
+              <th>Others</th>
+
+              <th>Previous Preconception Care</th>
+              <th>Have Family Planning</th>
+
+              <th>Cigarette Smoking</th>
+              <th>Tobacco leaf</th>
+              <th>Betel leaf</th>
+              <th>Alcohol</th>
+              <th>Others</th>
+
+              <th>Physical Activity</th>
+              <th>Watching TV (min)</th>
+              <th>Sleeping (hrs)</th>
+
+              <th>Rice (daily)</th>
+              <th>Rice (weekly)</th>
+              <th>Rice (monthly)</th>
+
+              <th>Ruti/Chapati (daily)</th>
+              <th>Ruti/Chapati (weekly)</th>
+              <th>Ruti/Chapati (monthly)</th>
+
+              <th>Fish (daily)</th>
+              <th>Fish (weekly)</th>
+              <th>Fish (monthly)</th>
+
+              <th>Meat (daily)</th>
+              <th>Meat (weekly)</th>
+              <th>Meat (monthly)</th>
+
+              <th>Green Vegetable (daily)</th>
+              <th>Green Vegetable (weekly)</th>
+              <th>Green Vegetable (monthly)</th>
+
+              <th>Fruits (daily)</th>
+              <th>Fruits (weekly)</th>
+              <th>Fruits (monthly)</th>
+
+              <th>Soft drinks (daily)</th>
+              <th>Soft drinks (weekly)</th>
+              <th>Soft drinks (monthly)</th>
+
+              <th>Table Salt (daily)</th>
+              <th>Table Salt (weekly)</th>
+              <th>Table Salt (monthly)</th>
+
+              <th>Sweets (daily)</th>
+              <th>Sweets (weekly)</th>
+              <th>Sweets (monthly)</th>
+
+              <th>Fast Foods (daily)</th>
+              <th>Fast Foods (weekly)</th>
+              <th>Fast Foods (monthly)</th>
+
+              <th>Ghee/butter (daily)</th>
+              <th>Ghee/butter (weekly)</th>
+              <th>Ghee/butter (monthly)</th>
+
+              <th>Hotel Food (daily)</th>
+              <th>Hotel Food (weekly)</th>
+              <th>Hotel Food (monthly)</th>
+
+              <th>Soyebean oil (litr)</th>
+              <th>Mustard oil (litr)</th>
+              <th>Palm oil (litr)</th>
+              <th>Olive oil (litr)</th>
+              <th>Rice bran oil (litr)</th>
+
+              <th>Diabetes</th>
+              <th>Pregnancy diabetes</th>
+              <th>Hypertension</th>
+              <th>Heart disease</th>
+              <th>Asthma</th>
+              <th>Tuberculosis</th>
+              <th>Mental disorder</th>
+              <th>Preeclampsia</th>
+              <th>Eclampsia</th>
+              <th>Still-Birth</th>
+              <th>Pre-term ( less than 37 weeks )</th>
+              <th>Macrosomia (Large Baby >4kg)</th>
+              <th>LBW (Small Baby bellow 2.5kg)</th>
+              <th>Pre-term ( less than 37 weeks )</th>
+              <th>IUD</th>
+
+              <!-- History of Medication -->
+              <th>On Insulin</th>
+              <th>OADs</th>
+              <th>Anti HTN</th>
+              <th>Anti lipids</th>
+              <th>Cardiac Medication</th>
+
+
+              <!-- Family History -->
+              <th>Diabetes</th>
+              <th>Hypertension</th>
+              <th>Heart disease</th>
+              <th>Stroke</th>
+
+
+              <th>(Mother) Birth Weight</th>
+              <th>(Mother) Height</th>
+              <th>(Mother) Weight</th>
+              <th>BMI</th>
+              <th>BMI Status</th>
+              <th>(Mother) Ideal Weight</th>
+              <th>(Mother) Calorie</th>
+              <th>(Mother) Food Chart</th>
+              <th>(Mother) Waist</th>
+              <th>(Mother) Hip</th>
+              <th>(Mother) Waist-Hip Ratio</th>
+              <th>(Mother) Waist-Hip Status</th>
+              <th>(Mother) SBP</th>
+              <th>(Mother) DBP</th>
+              <th>(Mother) Hypertension Type</th>
+              <th>(Mother) Comment</th>
+              <th>Diabetic FPG</th>
+              <th>Diabetic Post Meal</th>
+              <th>Diabetic Status</th>
+              <th>Non-Diabetic FPG</th>
+              <th>Non-Diabetic 2hPG</th>
+              <th>Non-Diabetic Status</th>
+              <th>Hb</th>
+              <th>Hb Status</th>
+              <th>Blood Group</th>
+              <th>Urine Albumin</th>
+              <th>Urine Albumin status</th>
+              <th>Urine Pus cell</th>
+              <th>Urine Pus cell Status</th>
+
+
+              <template is="dom-repeat" items="[[questionList]]">
+                <th>[[item.question.bd]]
+                  <i>[[item.question.en]]</i>
+                </th>
+              </template>
+
+              <th>Lifestyle</th>
+              <th>Oral anti-diabetics (OADs)</th>
+              <th>Insulin</th>
+              <th>Anti HTN</th>
+              <th>Anti HTN Dosage</th>
+              <th>Anti lipids</th>
+              <th>Anti lipids Dosage</th>
+              <th>Aspirin</th>
+              <th>Aspirin Dosage</th>
+              <th>Anti-obesity</th>
+              <th>Anti-obesity Dosage</th>
+
+
+            </tr>
+
+            <template is="dom-repeat" items="[[reportResults]]" as="record">
+              <tr>
+                <td>
+                  <paper-icon-button icon="delete" on-tap="onItemDeleteBtnPressed"></paper-icon-button>
+                </td>
+                <td>[[$getItemCounter(index)]]</td>
+                <td>[[record.pcc.serial]]</td>
+                <td>[[$formatDateTime(record.pcc.createdDatetimeStamp)]]</td>
+                <td>[[record.pcc.centerInfo.centerName]]</td>
+                <td>[[record.pcc.visitReason.type]]</td>
+                <td>[[record.patientInfo.serial]]</td>
+                <td>[[record.patientInfo.name]]</td>
+                <td>[[record.patientInfo.email]]</td>
+                <td>[[record.patientInfo.phone]]</td>
+                <td>[[record.patientInfo.additionalPhoneNumber]]</td>
+                <td>[[record.patientInfo.dateOfBirth]]</td>
+                <td>[[record.patientInfo.age]]</td>
+                <td>[[record.patientInfo.patientSpouseName]]</td>
+                <td>[[record.patientInfo.patientFatherName]]</td>
+                <td>[[record.patientInfo.patientMotherName]]</td>
+                <td>[[record.patientInfo.expenditure]]</td>
+                <td>[[record.patientInfo.profession]]</td>
+                <td>[[record.patientInfo.nationalIdCardNumber]]</td>
+                <td>[[record.patientInfo.addressDivision]]</td>
+                <td>[[record.patientInfo.addressDistrict]]</td>
+                <td>[[record.patientInfo.addressAreaName]]</td>
+                <td>[[record.patientInfo.maritalStatus]]</td>
+                <td>[[record.patientInfo.maritalAge]]</td>
+                <td>[[record.patientInfo.numberOfFamilyMember]]</td>
+                <td>[[record.patientInfo.numberOfChildren]]</td>
+                <td>[[record.pcc.pccOthers.survey.0.answer]]</td>
+                <td>[[record.pcc.clinical.labReportsList.3.value]]</td>
+                <td>[[record.patientInfo.allergy]]</td>
+
+                <td>[[record.pcc.medicalInfo.vaccinationList.0.value]]</td>
+                <td>[[record.pcc.medicalInfo.vaccinationList.1.value]]</td>
+                <td>[[record.pcc.medicalInfo.vaccinationList.2.value]]</td>
+                <td>[[record.pcc.medicalInfo.vaccinationList.3.value]]</td>
+                <td>[[record.pcc.medicalInfo.vaccinationList.4.value]]</td>
+
+                <td>[[record.pcc.medicalInfo.didPreviousPreconceptionCare]]</td>
+
+                <td>[[record.pcc.medicalInfo.familyPlanning.haveFamilyPlanning]] [[record.pcc.medicalInfo.familyPlanning.methodsOfFamilyPlanning]]</td>
+
+                <td>[[record.pcc.medicalInfo.drugAddictionList.0.isYes]] [[record.pcc.medicalInfo.drugAddictionList.0.amount]]</td>
+                <td>[[record.pcc.medicalInfo.drugAddictionList.1.isYes]] [[record.pcc.medicalInfo.drugAddictionList.1.amount]]</td>
+                <td>[[record.pcc.medicalInfo.drugAddictionList.2.isYes]] [[record.pcc.medicalInfo.drugAddictionList.2.amount]]</td>
+                <td>[[record.pcc.medicalInfo.drugAddictionList.3.isYes]] [[record.pcc.medicalInfo.drugAddictionList.3.amount]]</td>
+                <td>[[record.pcc.medicalInfo.drugAddictionList.4.isYes]] [[record.pcc.medicalInfo.drugAddictionList.4.amount]]</td>
+
+                <!-- Physical Activity -->
+                <td>
+                  <template is="dom-repeat" items="[[record.pcc.physicalActivityList]]">
+                    <span>[[item.name]]: [[item.duration]] [[item.unit]], </span>
+                  </template>
+                </td>
+
+                <!-- Watching TV -->
+                <td>
+                  [[record.pcc.medicalInfo.otherActivityList.0.duration]] [[record.pcc.medicalInfo.otherActivityList.0.unit]]
+                </td>
+                <!-- Sleeping -->
+                <td>
+                  [[record.pcc.medicalInfo.otherActivityList.1.duration]] [[record.pcc.medicalInfo.otherActivityList.1.unit]]
+                </td>
+
+
+                <!-- Dietary History -->
+
+
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.0.consumeAmount.0.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.0.consumeAmount.1.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.0.consumeAmount.2.value]]</td>
+
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.1.consumeAmount.0.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.1.consumeAmount.1.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.1.consumeAmount.2.value]]</td>
+
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.2.consumeAmount.0.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.2.consumeAmount.1.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.2.consumeAmount.2.value]]</td>
+
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.3.consumeAmount.0.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.3.consumeAmount.1.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.3.consumeAmount.2.value]]</td>
+
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.4.consumeAmount.0.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.4.consumeAmount.1.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.4.consumeAmount.2.value]]</td>
+
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.5.consumeAmount.0.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.5.consumeAmount.1.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.5.consumeAmount.2.value]]</td>
+
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.6.consumeAmount.0.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.6.consumeAmount.1.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.6.consumeAmount.2.value]]</td>
+
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.7.consumeAmount.0.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.7.consumeAmount.1.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.7.consumeAmount.2.value]]</td>
+
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.8.consumeAmount.0.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.8.consumeAmount.1.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.8.consumeAmount.2.value]]</td>
+
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.9.consumeAmount.0.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.9.consumeAmount.1.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.9.consumeAmount.2.value]]</td>
+
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.10.consumeAmount.0.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.10.consumeAmount.1.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.10.consumeAmount.2.value]]</td>
+
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.11.consumeAmount.0.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.11.consumeAmount.1.value]]</td>
+                <td>[[record.pcc.medicalInfo.dietaryHistoryList.11.consumeAmount.2.value]]</td>
+
+                <td>[[record.pcc.medicalInfo.typeOfCookingOilList.0.isYes]]
+                  <template is="dom-if" if="[[$equals(record.pcc.medicalInfo.typeOfCookingOilList.0.isYes, true)]]">
+                    <span>([[record.pcc.medicalInfo.typeOfCookingOilList.0.amount]])</span>
+                  </template>
+                </td>
+                <td>[[record.pcc.medicalInfo.typeOfCookingOilList.1.isYes]]
+                  <template is="dom-if" if="[[$equals(record.pcc.medicalInfo.typeOfCookingOilList.1.isYes, 'yes')]]">
+                    <span>([[record.pcc.medicalInfo.typeOfCookingOilList.1.amount]])</span></td>
+                </template>
+                <td>[[record.pcc.medicalInfo.typeOfCookingOilList.2.isYes]]
+                  <template is="dom-if" if="[[$equals(record.pcc.medicalInfo.typeOfCookingOilList.2.isYes, 'yes')]]">
+                    <span>([[record.pcc.medicalInfo.typeOfCookingOilList.2.amount]])</span>
+                  </template>
+                </td>
+                <td>[[record.pcc.medicalInfo.typeOfCookingOilList.3.isYes]]
+                  <template is="dom-if" if="[[$equals(record.pcc.medicalInfo.typeOfCookingOilList.3.isYes, 'yes')]]">
+                    <span>([[record.pcc.medicalInfo.typeOfCookingOilList.3.amount]])</span>
+                  </template>
+                </td>
+                <td>[[record.pcc.medicalInfo.typeOfCookingOilList.4.isYes]]
+                  <template is="dom-if" if="[[$equals(record.pcc.medicalInfo.typeOfCookingOilList.4.isYes, 'yes')]]">
+                    <span>([[record.pcc.medicalInfo.typeOfCookingOilList.4.amount]])</span>
+                  </template>
+                </td>
+
+                <td>[[record.pcc.medicalInfo.historyOfDeseaseList.0.value]]</td>
+                <td>[[record.pcc.medicalInfo.historyOfDeseaseList.1.value]]</td>
+                <td>[[record.pcc.medicalInfo.historyOfDeseaseList.2.value]]</td>
+                <td>[[record.pcc.medicalInfo.historyOfDeseaseList.3.value]]</td>
+                <td>[[record.pcc.medicalInfo.historyOfDeseaseList.4.value]]</td>
+                <td>[[record.pcc.medicalInfo.historyOfDeseaseList.5.value]]</td>
+                <td>[[record.pcc.medicalInfo.historyOfDeseaseList.6.value]]</td>
+                <td>[[record.pcc.medicalInfo.historyOfDeseaseList.7.value]]</td>
+                <td>[[record.pcc.medicalInfo.historyOfDeseaseList.8.value]]</td>
+                <td>[[record.pcc.medicalInfo.historyOfDeseaseList.9.value]]</td>
+                <td>[[record.pcc.medicalInfo.historyOfDeseaseList.10.value]]</td>
+                <td>[[record.pcc.medicalInfo.historyOfDeseaseList.11.value]]</td>
+                <td>[[record.pcc.medicalInfo.historyOfDeseaseList.12.value]]</td>
+                <td>[[record.pcc.medicalInfo.historyOfDeseaseList.13.value]]</td>
+                <td>[[record.pcc.medicalInfo.historyOfDeseaseList.14.value]]</td>
+
+                <!-- History of Medication -->
+                <!-- On Insulin -->
+                <td>[[record.pcc.medicalInfo.historyOfMedicationList.0.value]] [[record.pcc.medicalInfo.historyOfMedicationList.0.type]]
+                  [[record.pcc.medicalInfo.historyOfMedicationList.0.typeOfDevice]]</td>
+
+                <!-- OADs -->
+                <td>[[record.pcc.medicalInfo.historyOfMedicationList.1.type]] [[record.pcc.medicalInfo.historyOfMedicationList.1.value]]</td>
+
+                <!-- Anti HTN -->
+                <td>[[record.pcc.medicalInfo.historyOfMedicationList.2.value]]</td>
+
+                <!-- Anti lipids -->
+                <td>[[record.pcc.medicalInfo.historyOfMedicationList.3.type]] [[record.pcc.medicalInfo.historyOfMedicationList.3.value]]</td>
+
+                <!-- Cardiac Medication -->
+                <td>[[record.pcc.medicalInfo.historyOfMedicationList.4.value]]</td>
+
+
+                <!-- Family History -->
+                <td>[[record.pcc.medicalInfo.familyHistoryList.0.value]]</td>
+                <td>[[record.pcc.medicalInfo.familyHistoryList.1.value]]</td>
+                <td>[[record.pcc.medicalInfo.familyHistoryList.2.value]]</td>
+                <td>[[record.pcc.medicalInfo.familyHistoryList.3.value]]</td>
+
+
+                <td>[[record.pcc.clinical.clinicalExaminationList.0.value]]</td>
+                <td>[[record.pcc.clinical.clinicalExaminationList.1.value]]</td>
+                <td>[[record.pcc.clinical.clinicalExaminationList.2.value]]</td>
+                <td>[[$toTwoDecimalPlace(record.pcc.computedData.bmi.results)]]</td>
+                <td>[[record.pcc.computedData.bmi.comment]]</td>
+                <td>[[record.pcc.computedData.idealWeight]]</td>
+                <td>[[record.pcc.computedData.estimateCaloriesIntake]]</td>
+                <td>[[record.pcc.computedData.foodChartName]]</td>
+                <td>[[record.pcc.clinical.clinicalExaminationList.3.value]]</td>
+                <td>[[record.pcc.clinical.clinicalExaminationList.4.value]]</td>
+                <td>[[record.pcc.computedData.waistHipRatio.value]]</td>
+                <td>[[record.pcc.computedData.waistHipRatio.comment]]</td>
+                <td>[[record.pcc.clinical.clinicalExaminationList.5.value]]</td>
+                <td>[[record.pcc.clinical.clinicalExaminationList.6.value]]</td>
+                <td>[[record.pcc.computedData.hypertension.type]]</td>
+                <td>[[record.pcc.computedData.hypertension.comment]]</td>
+
+
+                <td>
+                  <span hidden$="{{!_checkIfDiabetic(record.pcc.clinical.diabeticStatus)}}">[[record.pcc.clinical.labReportsList.0.value]]</span>
+                </td>
+                <td>
+                  <span hidden$="{{!_checkIfDiabetic(record.pcc.clinical.diabeticStatus)}}">[[record.pcc.clinical.labReportsList.1.value]]</span>
+                </td>
+                <td>
+                  <span hidden$="{{!_checkIfDiabetic(record.pcc.clinical.diabeticStatus)}}">[[record.pcc.computedData.glycemiaType.additionalMsg]]</span>
+                </td>
+
+                <td>
+                  <span hidden$="{{_checkIfDiabetic(record.pcc.clinical.diabeticStatus)}}">[[record.pcc.clinical.labReportsList.0.value]]</span>
+                </td>
+                <td>
+                  <span hidden$="{{_checkIfDiabetic(record.pcc.clinical.diabeticStatus)}}">[[record.pcc.clinical.labReportsList.1.value]]</span>
+                </td>
+                <td>
+                  <span hidden$="{{_checkIfDiabetic(record.pcc.clinical.diabeticStatus)}}">[[record.pcc.computedData.glycemiaType.value]]</span>
+                </td>
+
+                <td>[[record.pcc.clinical.labReportsList.2.value]]</td>
+                <td>
+                  <i>[[record.pcc.computedData.hbStatus]]</i>
+                </td>
+                <td>
+                  <i>[[record.pcc.clinical.labReportsList.3.value]]</i>
+                </td>
+                <td>[[record.pcc.clinical.labReportsList.4.value]]</td>
+                <td>[[record.pcc.computedData.albuminType]]</td>
+                <td>[[record.pcc.clinical.labReportsList.5.value]]</td>
+                <td>[[record.pcc.computedData.urinePusCellStatus]]</td>
+
+
+                <td>[[record.pcc.pccOthers.questionList.0.value]]</td>
+                <td>[[record.pcc.pccOthers.questionList.1.value]]</td>
+                <td>[[record.pcc.pccOthers.questionList.2.value]]</td>
+                <td>[[record.pcc.pccOthers.questionList.3.value]]</td>
+                <td>[[record.pcc.pccOthers.questionList.4.value]]</td>
+                <td>[[record.pcc.pccOthers.questionList.5.value]]</td>
+                <td>[[record.pcc.pccOthers.questionList.6.value]]</td>
+                <td>[[record.pcc.pccOthers.questionList.7.value]]</td>
+                <td>[[record.pcc.pccOthers.questionList.8.value]]</td>
+                <td>[[record.pcc.pccOthers.questionList.9.value]]</td>
+
+                <th>[[record.pcc.medicalManagement.lifeStyleType]]</th>
+
+                <th>[[record.pcc.medicalManagement.medicationList.0.list.0.value]]</th>
+                <th>[[record.pcc.medicalManagement.medicationList.1.list.0.value]] [[record.pcc.medicalManagement.medicationList.1.list.0.typeOfDevice]]</th>
+
+                <th>[[record.pcc.medicalManagement.medicationList.2.list.0.isYes]]</th>
+                <th>
+                  <template is="dom-repeat" items="[[record.pcc.medicalManagement.medicationList.2.list.0.medicineList]]">
+                    <span>[[item.name]] [[item.dose]] </span>
+                  </template>
+                </th>
+                <th>[[record.pcc.medicalManagement.medicationList.2.list.1.isYes]]</th>
+                <th>
+                  <template is="dom-repeat" items="[[record.pcc.medicalManagement.medicationList.2.list.1.medicineList]]">
+                    <span>[[item.name]] [[item.dose]] </span>
+                  </template>
+                </th>
+                <th>[[record.pcc.medicalManagement.medicationList.2.list.2.isYes]]</th>
+                <th>
+                  <template is="dom-repeat" items="[[record.pcc.medicalManagement.medicationList.2.list.2.medicineList]]">
+                    <span>[[item.name]] [[item.dose]] </span>
+                  </template>
+
+                </th>
+                <th>[[record.pcc.medicalManagement.medicationList.2.list.3.isYes]]</th>
+                <th>
+                  <template is="dom-repeat" items="[[record.pcc.medicalManagement.medicationList.2.list.3.medicineList]]">
+                    <span>[[item.name]] [[item.dose]] </span>
+                  </template>
+                </th>
+
+              </tr>
+            </template>
+          </table>
+        </template>
+      </section>
+      <!-- Patients with PCC Records - end -->
+
+      <!-- All Registered Patients - start -->
+      <section>
+        <template is="dom-if" if="[[!isEmptyArray(matchingPatientList)]]">
+          <table>
+
+            <tr>
+              <th>No.</th>
+              <th>Organization</th>
+              <th>Serial</th>
+              <th>Patient ID</th>
+              <th>Created Date & Time</th>
+              <th>Name</th>
+              <th>Email Address</th>
+              <th>Contact Number</th>
+              <th>Additional Contact Number</th>
+              <th>Date of Birth (mm/dd/yyyy)</th>
+              <th>Age</th>
+              <th>Spouse Name</th>
+              <th>Father's Name</th>
+              <th>Mother's Name</th>
+              <th>Expenditure</th>
+              <th>Profession</th>
+              <th>National ID</th>
+              <th>Division</th>
+              <th>District</th>
+              <th>Area</th>
+              <th>Marital Status</th>
+              <th>Marital Age</th>
+              <th>Number of Family Member</th>
+              <th>Number of children</th>
+              <th>Blood Group</th>
+              <th>Have Allergy?</th>
+            </tr>
+
+            <template is="dom-repeat" items="[[matchingPatientList]]" as="patient">
+
+              <tr>
+                <td>[[$getItemCounter(index)]]</td>
+                <td>[[patient.orgName]]</td>
+                <td>[[patient.serial]]</td>
+                <td>[[patient.pccPatientId]]</td>
+                <td>[[$formatDateTime(patient.cratedDatetimeStamp)]]</td>
+                <td>[[patient.name]]</td>
+                <td>[[patient.email]]</td>
+                <td>[[patient.phone]]</td>
+                <td>[[patient.additionalPhoneNumber]]</td>
+                <td>[[patient.dateOfBirth]]</td>
+                <td>[[$computeAge(patient.dateOfBirth)]]</td>
+                <td>[[patient.patientSpouseName]]</td>
+                <td>[[patient.patientFatherName]]</td>
+                <td>[[patient.patientMotherName]]</td>
+                <td>[[patient.expenditure]]</td>
+                <td>[[patient.profession]]</td>
+                <td>[[patient.nationalIdCardNumber]]</td>
+                <td>[[patient.addressDivision]]</td>
+                <td>[[patient.addressDistrict]]</td>
+                <td>[[patient.addressArea]]</td>
+                <td>[[patient.maritalStatus]]</td>
+                <td>[[patient.maritalAge]]</td>
+                <td>[[patient.numberOfFamilyMember]]</td>
+                <td>[[patient.numberOfChildren]]</td>
+                <td>[[patient.bloodGroup]]</td>
+                <td>[[patient.allergy]]</td>
+
+              </tr>
+            </template>
+
+          </table>
+        </template>
+      </section>
+      <!-- All Registered Patients - end -->
+    </iron-pages>
+
+  </template>
+  <script type="text/javascript" src="page-pcc-reports.js"></script>
+</dom-module>

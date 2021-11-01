@@ -1,0 +1,235 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-analyze-online-exam">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 30px;
+        width: 90%;
+      }
+
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .header {
+        background-color: var(--paper-grey-100);
+        padding: 15px;
+      }
+
+      .label {
+        background-color: var(--paper-grey-100);
+        padding: 5px;
+      }
+
+      .border-bottom {
+        border-bottom: 1px solid rgb(235, 230, 230);
+      }
+
+      .search {
+        background-color: #fafafa;
+        border: 1px solid #dadada;
+        padding: 0px 8px 12px 8px;
+        margin: 4px;
+        margin-left: 0;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      paper-dialog {
+        width: 600px;
+      }
+
+      vaadin-grid.custom-vaadin-grid {
+        height: inherit;
+        font-family: Roboto, sans-serif;
+        --divider-color: rgba(0, 0, 0, var(--dark-divider-opacity));
+
+        --vaadin-grid-header-cell: {
+          height: 48px;
+          font-size: 16px;
+        }
+
+        --vaadin-grid-body-cell: {
+          /* height: 48px; */
+          color: rgba(0, 0, 0, var(--dark-primary-opacity));
+          font-size: 16px;
+        }
+
+        --vaadin-grid-body-row-hover-cell: {
+          background-color: var(--paper-grey-200);
+        }
+
+        --vaadin-grid-body-row-selected-cell: {
+          background-color: var(--paper-grey-100);
+        }
+
+        --vaadin-grid-focused-cell: {
+          box-shadow: none;
+          font-weight: bold;
+        }
+
+      }
+
+      .index-number {
+        border: 1px solid #008f3b;
+        border-radius: 10px;
+        padding: 3px;
+      }
+    </style>
+
+
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <template is="dom-if" if="[[isLoading]]">
+          <div class="layout horizontal center type bold text-center">
+            <paper-progress indeterminate></paper-progress>
+          </div>
+          <h2 class="type center">[[$TRANSLATE('Please Wait, Loading', LANG)]]...</h2>
+        </template>
+
+        <!-- Card - Search - start -->
+        <paper-card heading="[[$TRANSLATE('Exam Report', LANG)]]">
+          <div class="m-left-16 m-top-8 type body-lead">Total Particiants: [[examList.participentList.length]]</div>
+          <div class="card-actions">
+            <vaadin-grid class="custom-vaadin-grid m-top-8" items="[[examList.participentList]]">
+              <vaadin-grid-column resizable width="150px">
+                <template class="header">
+                  <span><strong>Student name</strong></span>
+                </template>
+                <template>
+                  <div>[[$getFullName(item.name)]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column>
+                <template class="header" resizable>
+                  <span><strong>Was Present</strong></span>
+                </template>
+                <template>
+                  <div>[[item.isPresent]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column>
+                <template class="header" resizable>
+                  <span><strong>Achieved Marks</strong></span>
+                </template>
+                <template>
+                  <div>[[item.totalMarks]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column>
+                <template class="header">
+                  <span><strong>Actions</strong></span>
+                </template>
+                <template>
+                  <div class="layout horizontal center">
+                    <paper-button raised on-tap="viewAnswerBtnPrsd" class="btn btn-success btn-sm">View Answers
+                    </paper-button>
+                  </div>
+                </template>
+              </vaadin-grid-column>
+            </vaadin-grid>
+          </div>
+        </paper-card>
+
+        <paper-dialog id="dialogViewAnswerSheet">
+          <paper-dialog-scrollable>
+            <div class="card-content">
+              <div class="type body-lead" style="color: green; margin-left: 15px; font-weight: bold">
+                Answer Sheet
+              </div>
+              <hr>
+              <br>
+              <template is="dom-repeat" items="[[selectedParticipantsAnswerDetails]]">
+                <paper-item>
+                  <div class="card-content">
+                    <div class="flex m-bottom-8"><strong>Question: </strong>[[item.question]] &nbsp;(Marks: [[item.marks]])</div>
+                    
+                    <template is="dom-if" if="[[$equals(item.type, 'checkbox')]]">
+                      <div class="flex"><strong>Right Answer:</strong>
+                        [[_getRightAnswer(item.id)]]
+                      </div>
+                      <div class="flex"><strong>Student's Answer:</strong>
+                        [[_getStudentAnswer(item)]]
+                      </div>
+                    </template>
+
+                    <template is="dom-if" if="[[$equals(item.type, 'textarea')]]">
+                      <div class="flex m-bottom-8"><strong>Answers: </strong>[[item.value]]</div>
+                      <paper-input label="Give Marks" value="{{item.givenMark}}" type="number"></paper-input>
+                    </template>
+                    <br>
+                  </div>
+                </paper-item>
+              </template>
+            </div>
+          </paper-dialog-scrollable>
+          <div class="buttons">
+            <template is="dom-if" if="[[ShowSubmitButton]]">
+              <paper-button raised class="btn btn-success" on-tap="setTextAnswerMarksOfParticipent">Submit Marks</paper-button>
+            </template>
+            <template is="dom-if" if="[[!ShowSubmitButton]]">
+              <paper-button class="colored" raised dialog-dismiss>Ok</paper-button>
+            </template>
+          </div>
+        </paper-dialog>
+
+      </div>
+
+    </div>
+
+
+
+  </template>
+  <script src="page-analyze-online-exam.coffee-compiled.js"></script>
+</dom-module>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!--Basic Page Needs-->
+  <meta charset="utf-8">
+  <title>BDEMR - Video Gallery</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <!--Mobile Specific Metas-->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--FONT-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,600" rel="stylesheet" type="text/css">
+  <!--CSS-->
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/main.css">
+  <!--Favicon-->
+  <link rel="icon" type="image/ico" href="images/favicon.ico">
+  <link rel="stylesheet" href="js/fancyapps-fancybox/source/jquery.fancybox.css" type="text/css" media="screen">
+  <link rel="stylesheet" href="js/clanceyp-youtube-video-gallery/youtube-video-gallery.css" type="text/css" media="screen">
+</head>
+
+<body>
+  <div class="toolbar size-normal">
+    <div class="top-bar">
+      <a href="https://bdemr.com" class="logo">
+        <img src="images/logo-clinic-app.png" alt="BDEMR">
+      </a>
+      <div class="topbar-action">
+        <a href="/help" class="btn transparent toggleTopBarBtn">help</a>
+        <a href="/faq" class="btn transparent toggleTopBarBtn">faq</a>
+        <a href="/video-gallery" class="btn transparent toggleTopBarBtn">video</a>
+        <a href="/doctor-finder" class="btn transparent toggleTopBarBtn">doctor finder</a>
+        <a href="/agent" class="btn transparent toggleTopBarBtn">agent</a>
+        <a href="/signup" class="btn transparent toggleTopBarBtn">signup</a>
+        <a href="https://clinic.bdemr.com/app/" class="btn shadow danger">login</a>
+      </div>
+      <button id="toggleMenuBar" onclick="toggleMenu()">☰</button>
+      <ul id="toggleMenu">
+        <li class="toogleMenuItem">
+          <a href="/doctor-finder">Doctor Finder</a>
+        </li>
+        <li class="toogleMenuItem">
+          <a href="/agent">Find Agent</a>
+        </li>
+        <li class="toogleMenuItem">
+          <a href="/signup">signup</a>
+        </li>
+        <li class="toogleMenuItem">
+          <a href="/faq">faq</a>
+        </li>
+        <li class="toogleMenuItem">
+          <a href="/help">Help</a>
+        </li>
+        <li class="toogleMenuItem">
+          <a href="/video-gallery">Video Gallery</a>
+        </li>
+        <li>
+          <a href="#" onclick="dialogValidateVoucher()">Validate Voucher</a>
+        </li>
+        <li>
+          <a href="#" onclick="dialogPurchaseVoucher()">Purchase Voucher</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div id="faq" class="section">
+    <div class="container">
+      <h1 class="m-bottom-16">Video Gallery</h1>
+      <ul class="bdemr-youtube-gallery inline-list">
+        <li>
+          <a href="https://www.youtube.com/watch?v=i_s6IEpf1Gg">Quick Doctor App Tutorial</a>
+        </li>
+        <li>
+          <a href="https://www.youtube.com/watch?v=_l5mfZNsD-k"> Quick Patient App Tutorial</a>
+        </li>
+        <li>
+          <a href="https://www.youtube.com/watch?v=l8CjpthfSbU&amp;t=67s">BDEMR Patient App Ad1</a>
+        </li>
+        <li>
+          <a href="https://www.youtube.com/watch?v=NFUGR-_E428">BDEMR advertisement 2</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <script type="text/javascript" src="js/jquery.js"></script>
+  <script type="text/javascript" src="js/clanceyp-youtube-video-gallery/jquery.youtubevideogallery.js"></script>
+  <script type="text/javascript" src="js/fancyapps-fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="js/fancyapps-fancybox/source/helpers/jquery.fancybox-media.js"></script>
+  <script type="text/javascript" src="js/toolbar.js"></script>
+  <script type="text/javascript" src="js/video-gallery.js"></script>
+</body>
+
+</html>

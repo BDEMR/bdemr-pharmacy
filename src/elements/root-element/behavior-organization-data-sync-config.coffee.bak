@@ -1,0 +1,121 @@
+unless app.behaviors.local['root-element']
+  app.behaviors.local['root-element'] = {}
+app.behaviors.local['root-element'].organizationDataSyncConfig =
+
+  syncInvestigationPriceList:
+    collectionName: 'investigation-price-list'
+    deletedCollectionName: 'investigation-price-list--deleted'
+    headerApi: '/bdemr-clinic-app--sync--investigation-price-list--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--investigation-price-list--exchange-data'
+
+  syncDoctorFeesPriceList:
+    collectionName: 'doctor-fees-price-list'
+    deletedCollectionName: 'doctor-fees-price-list--deleted'
+    headerApi: '/bdemr-clinic-app--sync--doctor-fees-price-list--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--doctor-fees-price-list--exchange-data'
+  
+  syncServicesPriceList:
+    collectionName: 'service-price-list'
+    deletedCollectionName: 'service-price-list--deleted'
+    headerApi: '/bdemr-clinic-app--sync--service-price-list--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--service-price-list--exchange-data'
+
+  syncPharmacyPriceList:
+    collectionName: 'pharmacy-price-list'
+    deletedCollectionName: 'pharmacy-price-list--deleted'
+    headerApi: '/bdemr-clinic-app--sync--pharmacy-price-list--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--pharmacy-price-list--exchange-data'
+
+  syncSupplyPriceList:
+    collectionName: 'supply-price-list'
+    deletedCollectionName: 'supply-price-list--deleted'
+    headerApi: '/bdemr-clinic-app--sync--supply-price-list--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--supply-price-list--exchange-data'
+
+  syncAmbulancePriceList:
+    collectionName: 'ambulance-price-list'
+    deletedCollectionName: 'ambulance-price-list--deleted'
+    headerApi: '/bdemr-clinic-app--sync--ambulance-price-list--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--ambulance-price-list--exchange-data'
+
+  syncPackageList:
+    collectionName: 'package-price-list'
+    deletedCollectionName: 'package-price-list--deleted'
+    headerApi: '/bdemr-clinic-app--sync--package-price-list--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--package-price-list--exchange-data'
+
+  syncOtherPriceList:
+    collectionName: 'other-price-list'
+    deletedCollectionName: 'other-price-list--deleted'
+    headerApi: '/bdemr-clinic-app--sync--other-price-list--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--other-price-list--exchange-data'
+
+  syncInventoryList:
+    collectionName: 'organization-inventory'
+    deletedCollectionName: 'organization-inventory--deleted'
+    headerApi: '/bdemr-clinic-app--sync--organization-inventory--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--organization-inventory--exchange-data'
+
+  syncSettings:
+    collectionName: 'settings'
+    deletedCollectionName: 'settings--deleted'
+    headerApi: '/bdemr-clinic-app--sync--settings--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--settings--exchange-data'
+
+  # Sync Account Manager Related Data
+  syncOtherIncomeList:
+    collectionName: 'organization-other-income'
+    deletedCollectionName: 'organization-other-income--deleted'
+    headerApi: '/bdemr-clinic-app--sync--organization-other-income--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--organization-other-income--exchange-data'
+
+  syncOtherExpenseList:
+    collectionName: 'organization-other-expense'
+    deletedCollectionName: 'organization-other-expense--deleted'
+    headerApi: '/bdemr-clinic-app--sync--organization-other-expense--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--organization-other-expense--exchange-data'
+
+  syncSalaryExpenseList:
+    collectionName: 'organization-salary-expense'
+    deletedCollectionName: 'organization-salary-expense--deleted'
+    headerApi: '/bdemr-clinic-app--sync--organization-salary-expense--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--organization-salary-expense--exchange-data'
+
+  syncUtilityExpenseList:
+    collectionName: 'organization-utility-expense'
+    deletedCollectionName: 'organization-utility-expense--deleted'
+    headerApi: '/bdemr-clinic-app--sync--organization-utility-expense--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--organization-utility-expense--exchange-data'
+
+  syncThirdPartyUserList:
+    collectionName: 'third-party-user-list'
+    deletedCollectionName: 'third-party-user-list--deleted'
+    headerApi: '/bdemr-clinic-app--sync--third-party-user-list--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--third-party-user-list--exchange-data'
+
+  syncUserNotificationGroupList:
+    collectionName: 'user-defined-notification-group'
+    deletedCollectionName: 'user-defined-notification-group--deleted'
+    headerApi: '/bdemr-clinic-app--sync--user-defined-notification-group--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--user-defined-notification-group--exchange-data'
+
+  syncVisitedPatientLogConfig:
+    collectionName: 'visited-patient-log'
+    deletedCollectionName: 'visited-patient-log--deleted'
+    headerApi: '/bdemr-clinic-app--sync--visited-patient-log--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--visited-patient-log--exchange-data'
+
+  syncInvoiceCategoryList:
+    collectionName: 'invoice-category-list'
+    deletedCollectionName: 'invoice-category-list--deleted'
+    headerApi: '/bdemr-clinic-app--sync--invoice-category-list--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--invoice-category-list--exchange-data'
+
+  syncCustomInvestigationConfig:
+    collectionName: 'custom-investigation-list'
+    deletedCollectionName: 'custom-investigation-list--deleted'
+    headerApi: '/bdemr-doctor-app--sync--custom-investigation-list--exchange-headers'
+    dataApi: '/bdemr-doctor-app--sync--custom-investigation-list--exchange-data'
+
+
+  

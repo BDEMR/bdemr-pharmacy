@@ -1,0 +1,191 @@
+
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-assistant-manager">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+    
+      paper-tabs {
+        background-color: var(--brand-primary-color);
+        color: #fff;
+        --paper-tabs-selection-bar-color: #fff;
+
+      }
+
+
+      .limiting-container {
+        margin-top: 10px;
+      }
+      
+      
+      .more-optons {
+        color: #777777;
+      }
+      
+      
+      .new-patient-fab {
+        position: fixed;
+        right: 20px;
+        bottom: 164px;
+      }
+      
+      
+      paper-button {
+        margin: 3px;
+      }
+
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin: 0 4px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: 400;
+      }
+      
+      .modifier.online {
+        background: #757575;
+      }
+      
+      .modifier.local-only {
+        background: #039BE5;
+      }
+      
+      .modifier.locally-updated {
+        background: #009688;
+      }
+      
+      .modifier.imported {
+        background: #4CAF50;
+      }
+
+
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+        
+        <!-- Card - Search - start -->
+        <paper-card>
+          <div class="card-content">
+
+            <paper-input class="flex" value="{{searchFieldMainInput}}" label="Search with Assistant Name, phone, Email, NID"></paper-input>
+          </div>
+          <div class="card-actions">
+            <paper-button raised on-tap="searchAllAssistantButtonPressed">MY ALL ASSISTANT</paper-button>
+            <paper-button class="colored" raised on-tap="searchOnlineButtonPressed">SEARCH</paper-button>
+          </div>
+        </paper-card>
+        <!-- Card - Search - end -->
+
+        <!-- Card - Search Results - start -->
+        <paper-card class="m-top-8">
+  
+          <div class="card-custom-header">
+            <div class="layout horizontal center">
+              <template is="dom-if" if="[[hasSearchBeenPressed]]">
+                <div class="title flex">Results: [[matchingAssistantList.length]] Assistant(s) found</div>
+              </template>              
+              <paper-icon-button icon="clear" on-tap="clearSearchResultsClicked"></paper-icon-button>
+            </div>
+          </div>
+
+          <template is="dom-if" if="[[hasSearchBeenPressed]]">
+            <div class="p-0">
+              <paper-listbox>
+                
+                <template id="assistant-list-repeater" is="dom-repeat" items="[[matchingAssistantList]]" as="assistant">
+                  <paper-item class="custom layout horizontal center">
+                    <div class="type caption secondary">[[assistant.serial]]</div>
+                    
+                    <div class="flex m-left-8">
+                      <div class="type body capitalize">[[assistant.name]]</div>
+                      <div class="type caption">[[assistant.email]]</div>
+                      <div class="type caption">[[assistant.phone]]</div>
+                      <!-- <div class="type caption">[[$mkDate(patient.createdDatetimeStamp)]]</div> -->
+<!--                       <template is="dom-if" if="[[patient.doctorsPrivateNote]]">
+                        <div class="type caption">([[$truncate(patient.doctorsPrivateNote, 20)]])</div>
+                      </template> -->
+                    </div>
+                    <div class="layout horizontal m-horizontal-4 wrap">
+                      <template is="dom-if" if="[[assistant.flags.isDoctorsAssistant]]">
+                        <div class="modifier imported">my assistant</div>
+                      </template>
+                    </div>
+          
+                    <paper-menu-button horizontal-align="right" no-animations>
+                      <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                      <paper-menu class="dropdown-content">
+                        <!-- export/import start -->
+                        <template is="dom-if" if="[[!assistant.flags.isDoctorsAssistant]]">
+                          <paper-item on-tap="addAsMyAssistantPressed">Add as my Assistant</paper-item>
+                        </template>
+                        <template is="dom-if" if="[[assistant.flags.isDoctorsAssistant]]">
+                          <paper-item on-tap="removeFromMyAssistantPressed">Remove from my Assistant</paper-item>
+                        </template>
+                      </paper-menu>
+                    </paper-menu-button>
+                  </paper-item>
+                </template>
+
+              </paper-listbox>
+              
+            </div>
+          </template>
+     
+        </paper-card>
+        <!-- Card - Search Results - end -->
+            
+
+        
+        <!-- <paper-fab class="new-patient-fab" icon="add" on-tap="newPatientFabPressed"></paper-fab> -->
+
+      </div>
+
+    </div>
+
+    
+
+  </template>
+  <script src="page-assistant-manager.coffee-compiled.js"></script>
+</dom-module>

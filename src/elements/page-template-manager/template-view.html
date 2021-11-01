@@ -1,0 +1,110 @@
+<dom-module id="template-view">
+  <template>
+
+    <style is="custom-style" include="common-style">
+
+    </style>
+
+    <paper-dropdown-menu-light label="Subcat of {{templateMap.name}}" class="flex">
+      <paper-listbox class="dropdown-content" selected="[[selectedIndex]]" on-iron-select="childSelected">
+        <template is="dom-repeat" items="{{templateMap.childList}}" as="child">
+          <paper-item data-key$="{{child.name}}" data-index$="[[index]]">{{child.name}}</paper-item>
+        </template>
+        <paper-item data-key="--add-new">([[$TRANSLATE('Add New', LANG)]])</paper-item>
+      </paper-listbox>
+    </paper-dropdown-menu-light>
+
+    <!-- <template is="dom-if" if="[[selectedChild]]">
+      <template-view template-map="{{selectedChild}}"></template-view>
+    </template> -->
+
+    <span id="template-cont">
+      <!-- <template-view template-map="{{selectedChild}}"></template-view> -->
+    </span>
+
+
+  </template>
+  <script type="text/javascript">
+    Polymer({
+      is: 'template-view',
+      behaviors: [
+        // app.behaviors.translating,
+        // app.behaviors.pageLike,
+        // app.behaviors.apiCalling,
+        // app.behaviors.commonComputes,
+        // app.behaviors.dbUsing
+      ],
+      properties: {
+        templateMap: {
+          type: Object,
+          value() { return null }
+        },
+        selectedIndex: {
+          type: Number,
+          value: -1
+        },
+        selectedChild: {
+          type: Object,
+          value: null
+        }
+      },
+
+      childSelected(e) {
+        try {
+          // if (!this.firstIgnored) {
+          //   if (!name) this.selectedIndex = -1;
+          //   this.firstIgnored = true;
+          //   return;
+          // }
+          console.log('template childlist', this.templateMap.childList);
+          let key = e.detail.item.getAttribute('data-key');
+          if (key === '--add-new') {
+            let name = prompt("Name the new category");
+            // this.selectedIndex = null;
+            if (!name) return;
+            this.push('templateMap.childList', {
+              name,
+              childList: []
+            });
+            this.selectedChild = this.templateMap.childList[this.selectedIndex];
+            this.setChildNode()
+            this.invokeOfChildren()
+          } else {
+            let index = parseInt(e.detail.item.getAttribute('data-index'));
+            this.selectedChild = this.templateMap.childList[index];
+            this.setChildNode()
+            this.invokeOfChildren()
+          }
+        } catch (ex) {
+          console.error(ex);
+        }
+      },
+
+      setChildNode() {
+        let master = this.$$('#template-cont');
+        while (master.firstChild) {
+          master.removeChild(master.firstChild);
+        }
+        let el = document.createElement('template-view');
+        el.templateMap = this.selectedChild;
+        master.appendChild(el);
+      },
+
+      invokeOfChildren() {
+        if (this.selectedChild) {
+          window.setTimeout(() => {
+            this.$$('template-view').invokeOfChildren();
+          }, 500)
+        } else {
+          this.reportValue('');
+        }
+      },
+
+      reportValue(append) {
+        this.domHost.reportValue(this.templateMap.name + '/' + append);
+      }
+
+    });
+
+  </script>
+</dom-module>

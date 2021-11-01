@@ -1,0 +1,302 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-settings">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .external-card-title {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .info-card {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+
+      .info-card .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+
+      .info-card .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+
+      .info-card .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+
+      .info-card .row .modifier.online {
+        background: #757575;
+      }
+
+      .info-card .row .modifier.local-only {
+        background: #039BE5;
+      }
+
+      .info-card .row .modifier.locally-updated {
+        background: #009688;
+      }
+
+      .info-card .row .modifier.imported {
+        background: #4CAF50;
+      }
+
+      .info-row {
+        margin-top: 10px;
+      }
+
+      .top-info-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+        display: inline-block;
+        font-size: 14px;
+      }
+
+      .address1 {
+        margin-right: 10px;
+      }
+
+      .name {
+        margin-left: 5px;
+        font-size: 24px;
+      }
+
+      .email {
+        margin-left: 5px;
+        font-size: 14px;
+      }
+
+      .phone {
+        margin-left: 5px;
+      }
+
+      .val {
+        text-decoration: underline;
+      }
+
+      .account-box {
+        --iron-icon-width: 96px;
+        --iron-icon-height: 96px;
+      }
+
+      /* - */
+
+      .limiting-container {
+        max-width: 720px
+      }
+
+      .language-strip {
+        /*margin: 10px;*/
+        @apply(--layout-horizontal);
+        /*@apply(--layout-center);*/
+        /*@apply(--layout-end-justified);*/
+      }
+
+      .logo-input {
+        margin-left: 4px;
+      }
+
+      .logo-preview {
+        width: 256px;
+        max-height: 128px;
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container custom-input-field">
+
+        <template is="dom-if" if="[[settings]]">
+
+          <paper-card class="info-card" headline="[[$TRANSLATE('General',LANG)]]">
+            <div class="card-content">
+
+              <div class="language-strip">
+                <paper-dropdown-menu label="Language / [[$TRANSLATE('Language',LANG)]]" class="flex">
+                  <paper-listbox class="dropdown-content" selected="{{languageSelectedIndex}}">
+                    <paper-item>English (US)</paper-item>
+                    <paper-item>Bengali / বাংলা</paper-item>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+              </div>
+
+              <paper-input always-float-label label="[[$TRANSLATE('Monetary Unit', LANG)]]" value="{{settings.monetaryUnit}}"></paper-input>
+
+            </div>
+          </paper-card>
+
+
+          <paper-card heading="[[$TRANSLATE('Change Password', LANG)]]" class="info-card">
+            <div class="card-content">
+              <paper-input required type="password" label="[[$TRANSLATE('Current Password', LANG)]]" value="{{changePassword.oldPassword}}"
+                error-message="{{validationError.oldPassword.0}}"></paper-input>
+
+
+              <paper-input type="password" label="[[$TRANSLATE('New Password', LANG)]]" value="{{changePassword.newPassword}}" error-message="{{validationError.newPassword.0}}"
+                required></paper-input>
+              <paper-input type="password" label="[[$TRANSLATE('Retype Password', LANG)]]" value="{{changePassword.newRetypePassword}}"
+                error-message="{{validationError.newRetypePassword.0}}" required></paper-input>
+            </div>
+            <div class="card-actions">
+              <paper-button class="btn colored" raised on-tap="changePasswordBtnPressed">[[$TRANSLATE('Change password', LANG)]]</paper-button>
+            </div>
+
+          </paper-card>
+
+          <div class="layout horizontal m-top-16 m-left-8">
+            <paper-button raised on-tap="hidePrintSectionForTestRslt" class="btn btn-warning btn-sm">Hide Print Section Test Result</paper-button>
+            <paper-button raised on-tap="showPrintSectionForTestRslt" class="btn btn-success btn-sm">Show Print Section Test Result</paper-button>
+          </div>
+
+          <paper-card class="info-card" heading="[[$TRANSLATE('Printing (Headline)', LANG)]]">
+            <div class="card-content">
+              <paper-input always-float-label label="[[$TRANSLATE('Headline', LANG)]]" value="{{settings.printDecoration.headerLine}}"></paper-input>
+            </div>
+          </paper-card>
+
+          <paper-card class="info-card" heading="[[$TRANSLATE('Printing (Header - Left)', LANG)]]">
+            <div class="card-content">
+
+              <paper-input always-float-label label="[[$TRANSLATE('1st line', LANG)]]" value="{{settings.printDecoration.leftSideLine1}}"></paper-input>
+              <paper-input always-float-label label="[[$TRANSLATE('2nd line', LANG)]]" value="{{settings.printDecoration.leftSideLine2}}"></paper-input>
+              <paper-input always-float-label label="[[$TRANSLATE('3rd line', LANG)]]" value="{{settings.printDecoration.leftSideLine3}}"></paper-input>
+
+            </div>
+          </paper-card>
+
+          <paper-card class="info-card" heading="[[$TRANSLATE('Printing (Header - Right)', LANG)]]">
+            <div class="card-content">
+
+              <paper-input always-float-label label="[[$TRANSLATE('1st line', LANG)]]" value="{{settings.printDecoration.rightSideLine1}}"></paper-input>
+              <paper-input always-float-label label="[[$TRANSLATE('2nd line', LANG)]]" value="{{settings.printDecoration.rightSideLine2}}"></paper-input>
+              <paper-input always-float-label label="[[$TRANSLATE('3rd line', LANG)]]" value="{{settings.printDecoration.rightSideLine3}}"></paper-input>
+
+            </div>
+          </paper-card>
+
+          <paper-card class="info-card" heading="[[$TRANSLATE('Printing (Misc)', LANG)]]">
+            <div class="card-content">
+
+              <paper-input always-float-label label="[[$TRANSLATE('Full Visit Headline', LANG)]]" value="{{settings.printDecoration.fullVisitHeadline}}"></paper-input>
+
+              <paper-input always-float-label label="[[$TRANSLATE('Footer', LANG)]]" value="{{settings.printDecoration.footerLine}}"></paper-input>
+              <div class="vertical layout">
+                <paper-checkbox class="m-8" checked="{{settings.flags.showFooterLine}}" on-change="showFooterLine">[[$TRANSLATE('Show Footer', LANG)]]</paper-checkbox>
+                <paper-checkbox class="m-8" checked="{{settings.flags.showUserNameOnPrintPreview}}" on-change="showFooterLine">Show
+                  "Prepared by {{user.name}}" on Print preview</paper-checkbox>
+              </div>
+
+
+              <!-- <div class="horizontal layout wrap">
+                <template is="dom-if" if="[[settings.printDecoration.logoDataUri]]">
+                  <img class="logo-preview" src$="[[settings.printDecoration.logoDataUri]]" />
+                </template>
+                <paper-input class="logo-input flex" type="file" accept="image/*" on-change="fileInputChanged"></paper-input>
+              </div> -->
+
+            </div>
+          </paper-card>
+
+
+          <!-- Signature - start -->
+          <paper-card class="info-card" heading="[[$TRANSLATE('Signature Image', LANG)]]">
+            <div class="card-content">
+
+              <div class="horizontal layout wrap">
+                <template is="dom-if" if="[[settings.printDecoration.signatureDataUri]]">
+                  <img class="logo-preview" src$="[[settings.printDecoration.signatureDataUri]]" />
+                </template>
+                <paper-input class="logo-input flex" type="file" accept="image/*" on-change="fileInputChanged2"></paper-input>
+              </div>
+
+            </div>
+          </paper-card>
+          <!-- Signature - end -->
+
+          <paper-card class="info-card" heading="[[$TRANSLATE('NSQIP and Billing', LANG)]]">
+            <div class="card-content">
+
+              <paper-input placeholder="john@example.com" always-float-label label="[[$TRANSLATE('NSQIP Recipient\'s Email Address', LANG)]]"
+                value="{{settings.nsqipTargetEmailAddress}}"></paper-input>
+              <paper-input placeholder="john@example.com" always-float-label label="[[$TRANSLATE('Billing Recipient\'s Email Address', LANG)]]"
+                value="{{settings.billingTargetEmailAddress}}"></paper-input>
+
+            </div>
+          </paper-card>
+
+          <div class="p-16">
+            <paper-button raised class="btn btn-danger btn-sm" on-tap="deleteLocalDataPressed">[[$TRANSLATE('Delete Local Data', LANG)]]</paper-button>
+            <paper-button raised class="btn btn-sm btn-default" on-tap="sendLocalDateToDevPressed">[[$TRANSLATE('Send Local Data to Dev', LANG)]]</paper-button>
+          </div>
+
+        </template>
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-settings.coffee-compiled.js"></script>
+</dom-module>

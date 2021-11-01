@@ -1,0 +1,227 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/page-like.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-print-consent-form">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        width: 100%;
+        background-color: #fff;
+      }
+
+      .item-value {
+        font-weight: bold;
+      }
+
+      .signature,
+      .logo {
+        max-height: 100px;
+        width: auto;
+      }
+
+      .header {
+        border: 1px solid #eee;
+        text-align: center;
+      }
+
+      .document-title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+    </style>
+
+    <div class="master-container">
+      <div class="limiting-container">
+
+        <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+          <div class="layout horizonal center">
+            <div class="layout vertical center">
+              <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+            </div>
+          </div>
+        </template>
+
+        <div class="layout horizontal">
+          <div class="leftSide vertical layout">
+            <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+            <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+            <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+          </div>
+          <div class="flex"></div>
+          <div class="rightSide vertical layout end">
+            <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+            <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+            <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+          </div>
+        </div>
+
+        <div class="horiline"></div>
+
+        <h2 class="header">Consent Form</h2>
+
+        <div class="layout horizontal justified">
+          <div>
+            <div>Name of the Patient: <span class="item-value">[[consentForm.data.patientName]]</span></div>
+            <div>Age: <span class="item-value">[[$computeAge(consentForm.data.patientDateOfBirth)]]</span></div>
+            <div>Cabin/Ward No.: <span class="item-value">[[consentForm.data.location]]</span></div>
+          </div>
+
+          <div>
+            <div>Operation Name: <span class="item-value">[[consentForm.data.operationName]]</span></div>
+            <div>Doctor's Name: <span class="item-value">[[consentForm.data.doctorName]]</span></div>
+            <div>Assistant's Name: <span class="item-value">[[consentForm.data.assistantName]]</span></div>
+            <div>Anaesthesist's Name: <span class="item-value">[[consentForm.data.anaesthesistName]]</div>
+          </div>
+        </div>
+
+        <hr>
+        <p class="p-vertical-24">
+          [[consentForm.data.details]]
+        </p>
+
+        <br>
+        <br>
+        <br>
+
+        <p>
+          স্বীকার উক্তি : আমি ...................................  রাজবাড়ী চক্ষু ক্লিনিক ও স্পেশালাইজড হাসপাতাল এর সকল নিয়ম কানুন জানিয়া, বুঝিয়া ও মানিয়া লইয়া স্বেচ্ছায় ও সজ্ঞানে নিজে / আমার আত্মীয় ................................... 
+          কে হাসপাতালে ভর্তি করিবার জন্য আবেদন করিলাম। ভর্তি কালীন ও তৎপরবর্তী সকল কর্মকান্ডের জন্য হাসপাতালের প্রচলিত নিয়ম অনুযায়ী সকল প্রাপ্য টাকা আমি চাহিবা মাত্র প্রদান করিতে বাধ্য থাকিব। 
+          আমার / আমার আত্মীয়র চিকিৎসার্থে  হাসপাতাল কর্তৃপক্ষের নেয়া সকল সিদ্ধান্ত আমি মানিয়া লইব। হাসপাতালের চিকিৎসকগণকে প্রয়োজনে আমাকে / আমার আত্মীয়কে অবশ বা অজ্ঞান করিয়া অস্ত্রোপচার করার ক্ষমতা প্রদান করিলাম। 
+          ইহাতে কোনো প্রকার অসুবিধা হইলে ডাক্তারগণ ও হাসপাতাল কর্তৃপক্ষ দায়ী থাকিবে না। 
+        </p>
+
+
+        <!-- <p>I hereby give my willful
+          consent in
+          performance of the above mentioned operation by the Surgeon mentioned hereby
+          and his nominated assistants.</p>
+
+        <p>I also do have full confidence in such action of the surgeon that he may take considering any unexpected
+          development and complicacy that might occur or reveal in course of the operation.</p>
+
+        <p>It has explained to me full the purpose nature and alternative methods and that whatever risk and operation
+          would be favourable.</p>
+
+        <p>I further agree to entrust the responsiblity for anaesthesia by mentioned hereby
+          who may take such measures that he/she may think fit in this connection.</p>
+
+        <p>I solemnly affirm that after having read carefully the Consent Form of the operation and understood fully
+          the relevant matter thereof explained to me. I hereby put my signature duly filling up the form.</p> -->
+
+        <div class="layout horizontal justified">
+          <div>
+            <div>
+              <template is="dom-if" if="[[consentForm.data.representativeSignatureDataUri]]">
+                <img class="signature" src="[[consentForm.data.representativeSignatureDataUri]]" alt="Signature of Signatoury"><br></template>
+              <template is="dom-if" if="[[!consentForm.data.representativeSignatureDataUri]]">
+                <div style="height: 70px;"></div>
+              </template>
+              <span>Signature of Signatoury:</span>
+            </div>
+            <div>Name of Signatoury: <strong>[[consentForm.data.representativeName]]</strong></div>
+            <div>Relation: <strong>[[consentForm.data.representativeRelation]]</strong></div>
+            <div>Address: <strong>[[consentForm.data.representativeAddress]]</strong></div>
+            <div>Date: <strong>[[$formatDate(consentForm.createdDatetimeStamp)]]</strong></div>
+
+          </div>
+          <div>
+            <div>
+              <template is="dom-if" if="[[consentForm.data.witnessSignatureDataUri]]">
+                <img class="signature" src="[[consentForm.data.witnessSignatureDataUri]]" alt="Signature of Signatoury"><br></template>
+              <template is="dom-if" if="[[!consentForm.data.witnessSignatureDataUri]]">
+                <div style="height: 70px;"></div>
+              </template>
+              <span>Signature of Witness:</span>
+            </div>
+            <div>Name of Witness: <strong>[[consentForm.data.witnessName]]</strong></div>
+            <div>Address: <strong>[[consentForm.data.witnessAddress]]</strong></div>
+            <div>Date: <strong>[[$formatDate(consentForm.createdDatetimeStamp)]]</strong></div>
+
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'page-print-consent-form',
+      behaviors: [
+        app.behaviors.commonComputes,
+        app.behaviors.dbUsing,
+        app.behaviors.pageLike
+      ],
+      properties: {
+        consentForm: Object,
+        organization: {
+          type: Object,
+          notify: true,
+          value: (app.db.find('organization'))[0]
+        },
+        settings: {
+          type: Object,
+          notify: true,
+          value: (app.db.find('settings'))[0]
+        }        
+      },
+
+      navigatedIn() {
+        const params = this.domHost.getPageParams()
+        let formSerial = params['serial'];
+        this._loadConsentForm(formSerial);
+      },
+
+      arrowBackButtonPressed() {
+        this.domHost.navigateToPreviousPage()
+      },
+
+      _loadConsentForm(formSerial) {
+        let list = app.db.find('patient-consent-form', ({ serial }) => serial == formSerial);
+        if (list.length) {
+          this.set('consentForm', list[0]);
+        } else {
+          this.domHost.showModalDialog('No Consent Form Found');
+        }
+      }
+
+    });
+  </script>
+</dom-module>

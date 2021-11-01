@@ -1,0 +1,377 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<dom-module id="page-organization-reports">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      app-header-layout ::content #contentContainer {
+        overflow: hidden !important;
+      }
+
+      :host {
+        height: 100%;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 56px;
+      }
+
+      .container {
+        width: 100%;
+        height: inherit;
+        position: relative;
+        /* background-color: #fff; */
+      }
+
+      vaadin-grid.custom-vaadin-grid {
+        height: auto;
+        font-family: Roboto, sans-serif;
+        --divider-color: rgba(0, 0, 0, .40);
+
+        /* --vaadin-grid-cell: {
+          padding: 0;
+        }; */
+
+        --vaadin-grid-header-cell: {
+          height: 40px;
+          /* color: rgba(0, 0, 0, var(--dark-secondary-opacity)); */
+          font-size: 16px;
+          border-right: 1px solid rgba(0, 0, 0, .40) !important;
+          border-bottom: 1px solid rgba(0, 0, 0, .40) !important;
+        };
+
+        --vaadin-grid-body-cell: {
+          /* height: 48px; */
+          color: rgba(0, 0, 0, var(--dark-primary-opacity));
+          font-size: 16px;
+          border-right: 1px solid rgba(0, 0, 0, .40) !important;
+          border-bottom: 1px solid rgba(0, 0, 0, .40) !important;
+        };
+
+        --vaadin-grid-body-row-hover-cell: {
+          background-color: var(--paper-grey-200);
+        };
+
+        --vaadin-grid-body-row-selected-cell: {
+          background-color: var(--paper-grey-100);
+        };
+
+        --vaadin-grid-focused-cell: {
+          box-shadow: none;
+          font-weight: bold;
+        };
+      }
+
+      .top-container {
+        /* background-color: #f3f5f7; */
+        box-shadow:rgba(0, 0, 0, .54) 0 -10px 6px -10px inset;
+        height: 310px;
+      }
+
+      .filter {
+        background-color: #f3f5f7;
+        position: relative;
+        box-shadow: inset 0px 3px 3px rgba(0,0,0, .26);
+        padding: 0 6px 12px 6px;
+      }
+
+      #editor {
+        background-color: #fff;
+        /* border: 1px solid rgba(0, 0, 0, var(--dark-divider-opacity)); */
+        position: relative;
+        height: 100%;
+        box-shadow: -3px -3px 2px rgba(0,0,0, 0.16);
+        
+      }
+
+      .editor-content {
+        margin-top: 64px;
+        padding: 16px;
+        width: calc(100%-32px);
+        height: calc(100% - 161px);
+        overflow-y: auto;
+      }
+
+      .editor-buttons {
+        background-color: #eee;
+        padding: 12px 16px;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+
+      .custom-input {
+        padding-top: 6px;
+        padding-bottom: 6px;
+      }
+
+      .custom-button {
+        padding: 0.4em 1em;
+        font-size: 16px;
+        line-height: 24px;
+        background-color: #fff;
+      }
+
+      .custom-flat-button {
+        font-weight: bold;
+        font-size: 14px;
+        text-transform: uppercase;
+      }
+
+      #importResult {
+        overflow-y: scroll;
+        height: 200px;
+        background: white;
+        padding: 12px;
+        margin-top: 16px;
+      }
+
+      .type.capton-2 {
+        line-height: 25px;
+      }
+
+      .custom-paper-input {
+        width: 100%;
+      }
+
+      .custom-paper-input ::content .underline {
+        display: none;
+      }
+
+      .custom-paper-input ::content paper-input-container {
+        padding-bottom: 0;
+      }
+      .custom-paper-input ::content input {
+        font-weight: bold !important;
+        background-color: #f7f7f7 !important;
+        padding: 4px 6px;
+        box-sizing: border-box !important;
+        border-radius: 6px !important;
+      }
+
+      .custom-paper-input ::content input::placeholder {
+        color: rgba(0, 0, 0, .87) !important;
+      }
+
+      @media screen and (max-width: 859px) {
+        .left, .right {
+          width: 100%;
+        }
+
+        #editor {
+          width: 100% !important;
+        }
+      }
+
+      @media screen and (max-width: 479px) {
+        .filter-input {
+          width: 100%;
+        }
+
+        #btnFilter {
+          margin-top: 8px;
+          margin-bottom: 8px;
+        }
+      }
+
+      .container {
+        width: 100%;
+        height: 100%;
+        /* background-color: #fff; */
+      }
+
+      #editor {
+        position: fixed;
+        right: 0;
+        top: 56px;
+        bottom: 0;
+        z-index: 1;
+        width: 50%;
+        height: calc(100% - 156px);
+        border-left: 1px solid #eee;
+      }
+
+      .fixed-title {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 12px 8px 11px 12px;
+        border-bottom: 1px solid #eee;
+        z-index: 1;
+        background-color: #fafafa;
+        width: calc( 100% - 21px);
+      }
+
+      .m-top-20 {
+        margin-top: 20px;
+      }
+
+      .hide-on-mobile {
+        display: block;
+      }
+
+      @media screen and (max-width: 640px) {
+        .paper-custom-input {
+          width: 100% !important;
+        }
+      }
+
+      @media screen and (max-width: 959px) {
+        .hide-on-mobile {
+          display: none !important;
+        }
+      }
+
+      #dialogBulkImport {
+        width: 80%;
+      }
+
+      #inputCsvFile {
+        background-color: #fafafa;
+        width: calc(100% - 48px);
+      }
+      
+
+    </style>
+
+    <!-- <div class="tabs-container horizontal layout">
+      <paper-tabs class="flex main-tabs" selected="{{selectedSubViewIndex}}" scrollable noink='true'>
+        <paper-tab><iron-icon class="m-right-8" icon="icons:sort"></iron-icon>Filter Product</iron-icon></paper-tab>
+
+        <paper-tab><iron-icon class="m-right-8" icon="icons:cloud-upload"></iron-icon>Add Multiple Product</iron-icon></paper-tab>
+
+        <paper-tab><iron-icon class="m-right-8" icon="icons:file-download"></iron-icon>Download Template</paper-tab>
+      </paper-tabs>
+    </div> -->
+
+    <div class="container">
+
+      <!-- filter - start -->
+      <div id="filter" class="filter">
+        <div class="horizontal layout center wrap flex center">
+          <vaadin-combo-box class="paper-custom-input m-horizontal-4" id="filterByType" label="Organization type" items="[[organizationType]]" value="{{filterBy.type}}" item-label-path='name' item-value-path='name' allow-custom-value></vaadin-combo-box>
+          <vaadin-combo-box class="paper-custom-input m-horizontal-4" id="filterByAddress" label="Location" items="" value="{{filterBy.address}}" item-label-path='address' item-value-path='address' allow-custom-value></vaadin-combo-box>
+          <vaadin-date-picker class="paper-custom-input m-horizontal-4" type="date" max="" value="{{filterBy.fromDate}}" label="From"></vaadin-date-picker>
+          <vaadin-date-picker class="paper-custom-input m-horizontal-4" type="date" max="" value="{{filterBy.toDate}}" label="To"></vaadin-date-picker>   
+        </div>
+        <div class="horizontal layout wrap center m-top-16">
+          <div class="flex"></div>
+          <paper-button id="btnFilter" on-tap="onFilterTapped" class="custom-button colored" raised><iron-icon class="m-right-8" icon="icons:sort"></iron-icon>Filter</paper-button>
+          <paper-button on-tap="onClearFilterTapped" class="custom-button hide-on-mobile"><iron-icon class="m-right-8" icon="icons:clear"></iron-icon>Clear</paper-button> 
+        </div>
+      </div>
+      
+      <!-- filter - end -->
+
+      <!-- reports - start -->
+      <vaadin-grid class="custom-vaadin-grid" items="{{reports}}" id="list" active-item="{{activeItem}}" selected="{{ARBITARY_PRODUCT_INDEX}}">
+
+        <!-- <vaadin-grid-column width=".3em" frozen>
+          <template class="header">No.</template>
+          <template>[[$returnSerial(index)]]</template>
+        </vaadin-grid-column> -->
+
+        <vaadin-grid-column width="12em" frozen>
+          <template class="header">
+            <vaadin-grid-sorter path="name" direction="asc">
+              <div class="horizontal layout center">
+                <vaadin-grid-filter class="flex" aria-label="Name" path="name" value="[[searchString]]">
+                  <paper-input class="custom-paper-input" placeholder="Name" value="{{searchString}}" no-label-float></paper-input>
+                </vaadin-grid-filter>
+              </div>
+            </vaadin-grid-sorter>
+          </template>
+          <template>
+            <div class="horizontal layout center">
+              <div>[[item.name]]</div>
+            </div>
+          </template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column width="6em">
+          <template class="header">
+            Type
+          </template>
+          <template>
+            <span class="total">[[item.type]]</span>
+          </template>
+        </vaadin-grid-column>
+  
+        <vaadin-grid-column width="6em">
+          <template class="header">
+            Address
+          </template>
+          <template>
+            <span class="total">[[item.address]]</span>
+          </template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column width="6em">
+          <template class="header">
+            Creation Date
+          </template>
+          <template>
+            <span class="total">[[item.createdDatetime]]</span>
+          </template>
+        </vaadin-grid-column>
+  
+        <vaadin-grid-column width="8em">
+          <template class="header">
+            Expiry Date
+          </template>
+          <template>
+            <span style="text-transform: capitalize;"></span>[[item.accountExpiresOnDate]]</span>
+          </template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column width="12em">
+          <template class="header">
+            Balance
+          </template>
+          <template>
+            <span style="text-transform: capitalize;"></span>[[item.balance]]</span>
+          </template>
+        </vaadin-grid-column>
+  
+      </vaadin-grid>
+      <!-- reports - end -->
+      
+    </div>
+
+  </template>
+
+  <script src="page-organization-reports.coffee-compiled.js"></script>
+</dom-module>

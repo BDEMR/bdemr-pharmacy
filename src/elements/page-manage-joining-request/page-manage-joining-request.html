@@ -1,0 +1,181 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-tooltip/paper-tooltip.html">
+
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+
+
+<link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-manage-joining-request">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+        width: 90%;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      input {
+        background-color: #dde2e8;
+        border-radius: 6px;
+        height: 36px;
+        font-weight: 500;
+        padding: 0px 8px;
+        box-sizing: border-box;
+      }
+
+      .search {
+        background-color: #fff;
+        border: 1px solid #dadada;
+        padding: 0px 8px 12px 8px;
+        margin: 4px;
+        margin-left: 0;
+      }
+
+      .btn-small {
+        padding: 5px;
+        font-size: medium;
+      }
+
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <!-- Card - Search - start -->
+        <paper-card id="hideOnPrint" heading="[[$TRANSLATE('Manage Joining Request', LANG)]]">
+
+          <paper-progress indeterminate hidden$="[[!getBoolean(loadingCounter)]]"></paper-progress>
+
+          <div class="card-content custom-input-field">
+
+            <div class="search layout horizontal end wrap">
+
+              <vaadin-combo-box id="summaryOrganizationSelector" class="organization-dropdown m-right-8" items="[[childOrganizationList]]"
+                on-value-changed="organizationSelected" loading="[[loading]]" disabled="[[!childOrganizationList.length]]"></vaadin-combo-box>
+          
+              <div class="m-left-8"></div>
+
+              <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
+
+              <div class="flex"></div>
+
+              <paper-button raised class="btn btn-success btn-large" on-tap="fetchPendingJoiningRequest">[[$TRANSLATE('Filter', LANG)]]</paper-button>
+              <paper-button raised on-tap="resetButtonClicked">[[$TRANSLATE('Reset', LANG)]]</paper-button>
+
+            </div>
+
+            <vaadin-grid items="[[pendingRequestList]]">
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <vaadin-grid-sorter path="requestingDateTime" direction="desc">[[$TRANSLATE('Date Applied', LANG)]]</vaadin-grid-sorter>
+                </template>
+                <template>
+                  <div>[[$formatDate(item.requestingDateTime)]]</div>
+                </template>
+                <template class="footer"><strong>[[$TRANSLATE('Total Requests', LANG)]] : [[pendingRequestList.length]]</strong></template>
+              </vaadin-grid-column>
+
+              <!-- user name -->
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <vaadin-grid-filter aria-label="Name" path="requestingUserInfo.name" value="[[userNameSearchString]]">
+                    <input placeholder="[[$TRANSLATE('Name', LANG)]]" is="iron-input" bind-value="{{userNameSearchString}}" />
+                  </vaadin-grid-filter>
+                </template>
+                <template>
+                  <div>[[$getFullName(item.requestingUserInfo.name)]]</div>
+                  <div>
+                    <template is="dom-if" if="[[item.requestingUserInfo.isProfileVerified]]">
+                      <span class="type caption-2 bg-gray success">[[$TRANSLATE('Verified Profile', LANG)]]</span>
+                    </template>
+                    <template is="dom-if" if="[[!item.requestingUserInfo.isProfileVerified]]">
+                      <span class="type caption-2 bg-gray danger">[[$TRANSLATE('Unverified Profile', LANG)]]</span>
+                    </template>
+                  </div>
+                </template>
+              </vaadin-grid-column>
+
+              <!-- user phone -->
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <vaadin-grid-filter aria-label="Phone" path="requestingUserInfo.phone" value="[[userPhoneSearchString]]">
+                    <input placeholder="[[$TRANSLATE('Phone', LANG)]]" is="iron-input" bind-value="{{userPhoneSearchString}}" />
+                  </vaadin-grid-filter>
+                </template>
+                <template>
+                  <div>[[item.requestingUserInfo.phone]]</div>
+                </template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column resizable>
+                <template class="header">[[$TRANSLATE('Action', LANG)]]
+                </template>
+                <template>
+                  <div>
+                    <paper-button raised class="btn btn-success btn-small" on-tap="acceptRequestButtonPressed">[[$TRANSLATE('Accept', LANG)]]</paper-button>
+                    <paper-button raised class="btn btn-danger btn-small" on-tap="rejectRequestButtonPressed">[[$TRANSLATE('Reject', LANG)]]</paper-button>
+                    <paper-button raised class="btn btn-small" icon="launch" on-tap="viewRequestDetailsButtonPressed">[[$TRANSLATE('View', LANG)]]</paper-button>
+                    </div>
+                </template>
+              </vaadin-grid-column>
+              
+              <!-- <vaadin-grid-column resizable>
+                <template class="header">View
+                </template>
+                <template>
+                  <div>
+                    <paper-icon-button icon="launch" on-tap="viewRequestDetailsButtonPressed"></paper-icon-button>
+                  </div>
+                </template>
+              </vaadin-grid-column> -->
+
+            </vaadin-grid>
+
+          </div>
+        </paper-card>
+
+      </div>
+
+    </div>
+
+
+
+  </template>
+  <script src="page-manage-joining-request.coffee-compiled.js"></script>
+</dom-module>

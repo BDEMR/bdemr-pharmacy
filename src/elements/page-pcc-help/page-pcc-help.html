@@ -1,0 +1,875 @@
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+
+
+<!-- Commong Styles -->
+<link rel="import" href="../../styles/common-style.html">
+
+<dom-module id='page-pcc-help'>
+  <template>
+    <style is='custom-style' include='iron-flex iron-flex-alignment common-style'>
+      .card-content {
+        padding: 15px 80px;
+      }
+
+      .card-content h1,
+      .card-content h2 {
+        font-weight: normal;
+      }
+
+      .card-content h1 {
+        text-align: center;
+        border-bottom: 1px solid #ccc;
+      }
+
+      .card-content h2 {
+        margin-bottom: 0;
+      }
+
+      .img-size-70 {
+        height: 70%;
+        width: 70%;
+      }
+
+      .img-size-50 {
+        height: 50%;
+        width: 50%;
+      }
+
+      .img-size-40 {
+        height: 40%;
+        width: 40%;
+      }
+
+      .img-size-30 {
+        height: 30%;
+        width: 30%;
+      }
+
+      .img-size-15 {
+        height: 15% width: 15
+      }
+
+      @media only screen and (min-width: 320px) and (max-width: 480px) {
+        .card-content {
+          padding: 15px;
+        }
+      }
+    </style>
+
+    <!--local dom-->
+    <paper-card>
+      <div class="card-content">
+        <h2>PCC Record</h2>
+
+        <h2>
+          <strong>Preconception Visit.</strong>
+        </h2>
+        <p>When you are going to create a new
+          <strong>PCC Record </strong>for a new PCC Patient you will see 7 options:
+        </p>
+        <p>(Shown Below)</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/pccRecord.png" class="img-size-70">
+        </div>
+        <br>
+        <br>
+
+        <h2>
+          <strong>General</strong>
+        </h2>
+        <p>In
+          <strong>"General"</strong> all basic information of patients can be added.
+        </p>
+
+        <p>
+          <strong>Center Name: </strong>(Center Name will be selected automatically because of your selected Organization)
+        </p>
+
+        <p>
+          <strong>Visit Reason:</strong>
+        </p>
+        <p>Choose
+          <strong>Preconception</strong> from the dropdown menu of visit reason.
+        </p>
+        <p>(figure 1)</p>
+
+        <p>
+          <strong>Patients Name:</strong>
+        </p>
+        <p>
+          <strong>"First Name"</strong> is mandatory. Until the mandatory field is inserted the (field will show red)</p>
+        <p>
+          <strong>"Email Address"</strong> (provide both email and phone number if you have)</p>
+        <p>
+          <strong>"Phone Number"</strong> (Mandatory)
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/basicInformation.png" class="img-size-70">
+        </div>
+        <p>(figure 1)</p>
+
+        <p>
+          <strong>Additional Phone Number: </strong>Add additional number if possible (this is not Mandatory)
+        </p>
+
+        <p>
+          <strong>Date of Birth :</strong>
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/dobAgeRegion.png" class="img-size-70">
+        </div>
+        <p>&nbsp;&nbsp;Click on field
+          <br>&nbsp;&nbsp;If someone date of birth is known then enter it manually.
+          <br>&nbsp;&nbsp;Date, Month & Year may be Typed or Selected from the calendar.
+          <br>&nbsp;&nbsp;Age will be added automatically.
+          <br>
+          <br>&nbsp;&nbsp;If patients date of birth is unknown
+          <br>&nbsp;&nbsp;type age or
+          <br>&nbsp;&nbsp;click on that up/down to add the year
+          <br>&nbsp;&nbsp;press
+          <strong>Enter</strong> then date of birth will be added automatically.
+          <br>&nbsp;&nbsp;(Currently if date of birth is not known then date created automatically)
+        </p>
+
+        <p>
+          <strong>Effective Region:</strong>
+        </p>
+        <p>&nbsp;Effective Region is "Bangladesh" by default.
+          <br>&nbsp;Please do not change</p>
+
+        <p>
+          <strong>Password </strong>and
+          <strong>Doctor Access Pin Code:</strong>
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/passwordAndPin.png" class="img-size-30">
+        </div>
+        <p>
+          <strong>"Password"</strong>
+        </p>
+        <p>A default “Password: 123456”. Please do not change till further notice.</p>
+        <p>
+          <strong>"Doctor access pin code"</strong>
+        </p>
+        <p>Default “Doctor Access Pin Code: 0000” Please do not change till further notice.</p>
+        <p>This pincode will be needed when you will import the patient from cloud or anywhere when user needs to check that
+          patient ID.</p>
+
+        <p>
+          <strong>How do you find out about this Project?: </strong>
+        </p>
+        <p>You can select one of the following answers</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/howDoYouKnowAboutThisProject.png" class="img-size-50">
+        </div>
+
+        <br>
+        <h2>
+          <strong>Additional</strong>
+        </h2>
+        <p>Here you will find three options.</p>
+        <p>
+          <strong>&nbsp;&nbsp;Personal</strong>
+        </p>
+        <p>
+          <strong>&nbsp;&nbsp;Physical Address</strong>
+        </p>
+        <p>
+          <strong>&nbsp;&nbsp;Marital Status</strong>
+        </p>
+        <br>
+        <p>
+          <strong>Personal:</strong>
+        </p>
+        <p>Blood Group: select the blood group by clicking on that down arrow</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/bloodGroup.png" class="img-size-30">
+        </div>
+        <p>
+          <strong>Have Allergy: </strong>If patient has allergy then Click “Yes” on that
+          <strong>"Have Allergy?" </strong>box and then you can type the name of allergy from
+          <strong>Type Allergy(s) Names" </strong>box.
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/haveAllergy.png" class="img-size-50">
+        </div>
+        <p>If patient dont have Allergy then select "No" from the box</p>
+        <p>
+          <strong>"Husband" </strong>or
+          <strong>"Father" </strong>name:
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/husbandAndFatherName.png" class="img-size-70">
+        </div>
+
+        <p>
+          <strong>Expenditure:</strong>
+        </p>
+        <p>Patient’s expenditure per month, select one that is applicable</p>
+        <p>&nbsp;&nbsp;Select one from the dropdown (Range is provided. Please select a range from the drop-down menu).</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/expenditure.png" class="img-size-40">
+        </div>
+
+        <p>
+          <strong>Profession:</strong>
+        </p>
+        <p>Add patient’s profession from the drop-down box.</p>
+        <p>To select options</p>
+        <p>
+          <strong>&nbsp;&nbsp;click</strong> on that down arrow and</p>
+        <p>
+          <strong>&nbsp;&nbsp;select</strong> the desired profession from the dropdown menu
+        </p>
+        <p>&nbsp;&nbsp;you can also
+          <strong>type</strong> the profession, if that profession is not in the list.</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/profession.png" class="img-size-30">
+        </div>
+        <p>You can add patients
+          <strong>"National ID"</strong> number</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/nationalId.png" class="img-size-70">
+        </div>
+
+        <p>
+          <strong>Physical Address:</strong>
+        </p>
+        <p>In this section user can add patients Physical Address.</p>
+        <p>Put the address in &ldquo;
+          <strong>Address Line 1 &amp; Address Line 2&rdquo;</strong>
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/addressLines.png" class="img-size-30">
+        </div>
+        <p>User can Select the
+          <strong>"Division"</strong> by</p>
+        <p>
+          <strong>&nbsp;&nbsp;clicking</strong> on that down arrow</p>
+        <p>&nbsp;&nbsp;which will show a dropdown menu and</p>
+        <p>&nbsp;&nbsp;you can
+          <strong>select</strong> the desired Division from the list.</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/Division.png" class="img-size-30">
+        </div>
+        <p>
+          <strong>Thana/Sub District </strong>and
+          <strong>Area </strong>can be added also.</p>
+        <p>&nbsp;&nbsp;Type the
+          <strong>Thana/ Sub District &amp; Area </strong>name.
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/thanaOrSubDistrict.png" class="img-size-30">
+        </div>
+        <p>Please ignore “More Address Option” until further notice</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/moreOptionToggleButton.png" class="img-size-30">
+        </div>
+        <p>Please do not press on More Address Options until further notice.</p>
+        <p>
+          <strong>Country </strong>name will be given by default
+          <strong>"Bangladesh". </strong>But if needed you can change it by typing the name.</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/country.png" class="img-size-15">
+        </div>
+
+        <p>
+          <strong>Marital Status:</strong>
+        </p>
+        <p>User can add patients
+          <strong>Marital Status</strong> Information. In this section you’ll find three options.</p>
+        <p>
+          <strong>&nbsp;&nbsp;Marital Age</strong>
+        </p>
+        <p>
+          <strong>&nbsp;&nbsp;Number of Family Member </strong>
+        </p>
+        <p>
+          <strong>&nbsp;&nbsp;Number of Children.</strong>
+        </p>
+        <p>
+          <strong>Marital Age </strong>
+        </p>
+        <p>User can add patients
+          <strong>“Marital Age”</strong> by selecting from the drop-down menu that appears when the box is selected. There are options
+          available.
+        </p>
+        <p>&nbsp;&nbsp;Just
+          <strong>click</strong> on the
+          <strong>down arrow</strong> and</p>
+        <p>&nbsp;&nbsp;scroll through the
+          <strong>dropdown menu</strong> to choose from the
+          <strong>options</strong>.</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/martialAge.png" class="img-size-30">
+        </div>
+        <p>
+          <strong>Number of family Member:</strong>
+        </p>
+        <p>To put the number of family member</p>
+        <p>&nbsp;&nbsp;Type the number
+          <strong>manually</strong> or
+          <br>
+          <strong>&nbsp;&nbsp;click</strong> “up/down” arrow from the box.
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/numberOfFamilyMember.png" class="img-size-30">
+        </div>
+
+        <p>
+          <strong>Number of Children:</strong>
+        </p>
+        <p>If you need to put the &ldquo;
+          <strong>Number of Children</strong>&rdquo; just go to the box</p>
+        <p>&nbsp;&nbsp;Type the number manually Or
+          <br>&nbsp;&nbsp;
+          <strong>click</strong> “up/down” arrow and put the number
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/numberChildren.png" class="img-size-30">
+        </div>
+
+        <h2>
+          <strong>Medical</strong>
+        </h2>
+        <p>In medical you will have to put the &ldquo;
+          <strong>Medical</strong>&rdquo; history of patient and you will find some options here which is given below</p>
+        <p>
+          <strong>Vaccination</strong>
+        </p>
+        <p>
+          <strong>Others</strong>
+        </p>
+        <p>
+          <strong>Addiction </strong>
+        </p>
+        <p>
+          <strong>Physical Activity </strong>
+        </p>
+        <p>
+          <strong>Other Activity </strong>
+        </p>
+        <p>
+          <strong>Dietary History </strong>
+        </p>
+        <p>
+          <strong>Type of Cooking Oil</strong>
+        </p>
+        <p>
+          <strong>History Of Disease(s)</strong>
+        </p>
+        <p>
+          <strong>History of Medication</strong>
+        </p>
+        <p>
+          <strong>Family History </strong>
+        </p>
+        <p>If patient was vaccinated by any of those vaccination then select &ldquo;
+          <strong>yes</strong>&rdquo;, if no then select &ldquo;
+          <strong>no</strong>&rdquo; if it is unknown then just select &ldquo;
+          <strong>unknown</strong>&rdquo;. If the vaccination is not on the list please select &ldquo;
+          <strong>Other</strong>&rdquo;
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/vaccination.png" class="img-size-70">
+        </div>
+
+        <p>
+          <strong>Previous Preconception Care</strong>
+        </p>
+        <p>If patient has received preconception previously then select &ldquo;
+          <strong>yes</strong>&rdquo; If patient has not received preconception care previously then select &ldquo;
+          <strong>no</strong>&rdquo;
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/others.png" class="img-size-50">
+        </div>
+
+        <p>
+          <strong>Have Family Planning? </strong>
+        </p>
+        <p>If patient has any family planning then Select &ldquo;yes&rdquo;.</p>
+        <p>Selecting &ldquo;
+          <strong>Yes</strong>&rdquo; in &ldquo;
+          <strong>Have Family Planning</strong>&rdquo; will ask you for the methods of family planning.
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/familyPlanning.png" class="img-size-30">
+        </div>
+        <p>Here you can Select/Type the methods of family planning.</p>
+        <p>To select &ldquo;
+          <strong>Methods Of Family Planning&rdquo; </strong>
+        </p>
+        <p>
+          <strong>click</strong> on the
+          <strong>down arrow</strong> and you will see the options</p>
+        <p>
+          <strong>&nbsp;&nbsp;Pills</strong>
+        </p>
+        <p>
+          <strong>&nbsp;&nbsp;Condom</strong>
+        </p>
+        <p>
+          <strong>&nbsp;&nbsp;IUCD</strong>
+        </p>
+        <p>
+          <strong>Select</strong> any of them.</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/methodsOfFamilyPlanning.png" class="img-size-30">
+        </div>
+        <p>If the method is not on that dropdown menu you can
+          <strong>type</strong> it by your own.
+        </p>
+
+        <p>
+          <strong>Addiction:</strong>
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/addiction1.png" class="img-size-70">
+        </div>
+        <p>If patient have any of these addiction from above options then select &ldquo;
+          <strong>Yes&rdquo;.</strong>
+        </p>
+        <p>Selecting &ldquo;yes&rdquo; will allow you to add the amount</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/addictions2.png" class="img-size-70">
+        </div>
+        <p>Put the
+          <strong>Amount </strong>in that box if needed.</p>
+        <p>If you select &ldquo;
+          <strong>No</strong>&rdquo; then nothing will appear..
+        </p>
+
+        <br>
+        <p>
+          <strong>Physical Activity:</strong>
+        </p>
+        <p>You can
+          <strong>Type/select Physical activity</strong> from the box by</p>
+        <p>
+          <strong>Clicking</strong> on that down arrow which will open a dropdown menu where you will find some
+          <strong>options</strong>.
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/physicalActivity.png" class="img-size-30">
+        </div>
+        <p>To see all the options
+          <strong>scroll down</strong> through the dropdown menu.
+          <br>If you don’t find your desired option then you can
+          <strong>type</strong> the name.
+        </p>
+        <p>You can set the physical activity &ldquo;Duration&rdquo;
+          <strong>minutes/day</strong>
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/duration.png" class="img-size-30">
+        </div>
+        <p>To set the time</p>
+        <p>Type the number manually</p>
+        <p>Or
+          <strong>Click</strong> on that up/down arrow to show the number.</p>
+        <p>If the patient has more than one type of Physical Activity then click
+          <br>
+          <strong>“+ADD”</strong> to see the activity you have selected
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/walking.png" class="img-size-30">
+        </div>
+        <p>You can
+          <strong>remove</strong> it by clicking on that
+          <strong>trash icon</strong> button.</p>
+        <p>
+          <strong>Other Activity</strong>
+        </p>
+        <p>You can select other daily activities from here.</p>
+        <p>
+          <strong>&nbsp;&nbsp;Watching TV </strong>hours/day</p>
+        <p>
+          <strong>&nbsp;&nbsp;Sleeping </strong>hours/day
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/otherActivity.png" class="img-size-50">
+        </div>
+        <p>To set the hour</p>
+        <p>
+          <strong>&nbsp;&nbsp;Click </strong>on that
+          <strong>up/down</strong> arrow Or
+        </p>
+        <p>&nbsp;&nbsp;Also you can type the
+          <strong>number</strong> if you want
+        </p>
+
+        <p>
+          <strong>Dietary History</strong>
+        </p>
+        <p>
+          Under Dietary History, 12 items will appear.
+          <br>The amount for daily, weekly and monthly diet amounts can be manually entered.
+          <br>If any amount for daily is added then Monthly and Weekly will be calculated automatically.
+          <br>If there is no daily amount then manually enter Weekly Amount. Monthly amount is automatically calculated.
+          <br>If there is no daily or monthly amount then manually enter Monthly amount.
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/dietaryHistory.png" class="img-size-50">
+        </div>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/dietary.png" class="img-size-50">
+        </div>
+        <p>For example if you</p>
+        <p>
+          <strong>Select</strong> &ldquo;Ruti/Chapati&rdquo; and put the number on daily that you need to eat, your weekly and monthly
+          diet will be shown
+          <strong>automatically</strong>
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/rutiChapati.png" class="img-size-70">
+        </div>
+
+        <p>
+          <strong>Type of cooking Oil</strong>
+        </p>
+        <p>Select cooking oil from the list to know about patients dietary.</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/typeOfCookingOil.png" class="img-size-70">
+        </div>
+        <p>Selecting any of those cooking oil and</p>
+        <p>clicking on yes will allow you to put the amount of cooking oil needed in one month.</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/riceBranOil.png" class="img-size-30">
+        </div>
+        <p>Clicking &ldquo;No&rdquo; will make no changes.</p>
+
+        <p>
+          <strong>History of disease(s)</strong>
+        </p>
+        <p>Here you’ll find and can select if patient had diseases from past. You will find some options here</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/historyOfDisease.png" class="img-size-50">
+        </div>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/preeclampsiaToIud.png" class="img-size-50">
+        </div>
+        <p>If patient have any of those
+          <strong>History of Disease(s)</strong> click &ldquo;
+          <strong>Yes</strong>&rdquo;, If no then click &ldquo;
+          <strong>No</strong>&rdquo; and if its &ldquo;
+          <strong>Unknown</strong>&rdquo; then click unknown.
+        </p>
+
+        <p>
+          <strong>History of Medication</strong>
+        </p>
+        <p>Here you can select from options provided (as shown). If the patient takes any medication please select the appropriate
+          option
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/historyMedication.png" class="img-size-70">
+        </div>
+        <p>Selecting yes in</p>
+        <p>
+          <strong>
+            &nbsp;&nbsp;1. On Insulin
+            <br>&nbsp;&nbsp;2. OADs
+            <br>&nbsp;&nbsp;3. Anti HTN and
+            <br>&nbsp;&nbsp;4. Anti lipids
+          </strong>
+        </p>
+        <p>will show the drop-down menu as shown in Page 17, Page 18 & Page 19 of this user manual.</p>
+
+        <p>
+          <strong>1. On Insulin</strong>
+        </p>
+        <p>Selecting yes &ldquo;
+          <strong>On Insulin</strong>&rdquo; will show two options
+        </p>
+        <p>
+          <strong>Type of Insulin </strong>
+        </p>
+        <p>Where you will find some options after clicking on that down arrow.</p>
+        <p>You can scroll down on that drop down menu too see all available options.</p>
+        <p>Or you can type the name.</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/onInsulinYes2.png" class="img-size-15">
+        </div>
+        <p>
+          <strong>Type of device</strong>
+        </p>
+        <p>Here you will find the device types. To see the types of device</p>
+        <p>
+          <strong>Click </strong>on that down arrow to see the options.</p>
+        <p>Also you can
+          <strong>type</strong> the name.</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/typeOfdevice.png" class="img-size-15">
+        </div>
+        <p>Selecting &ldquo;
+          <strong>No</strong>&rdquo; will make no changes.
+        </p>
+
+        <p>
+          <strong>2. OADs</strong>
+        </p>
+        <p>Selecting &ldquo;Yes&rdquo; on
+          <strong>OADs </strong>you will be able to add type of OAD by clicking on that down arrow.</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/oads.png" class="img-size-15">
+        </div>
+        <p>To see all the options you will need to scroll through the dropdown menu.</p>
+        <p>Selecting &ldquo;
+          <strong>No</strong>&rdquo; will make no changes.
+        </p>
+
+        <p>
+          <strong>3. Anti HTN </strong>
+        </p>
+        <p>If you select &ldquo;yes&rdquo;you will be able to add the type of
+          <strong>Anti HTN. </strong>Just click on that
+          <strong>down arrow </strong>to see the options.</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/antiHTN2.png" class="img-size-30">
+        </div>
+        <p>To see all the options you will need to scroll through the dropdown menu.</p>
+        <p>Selecting &ldquo;
+          <strong>No</strong>&rdquo; will make no changes.
+        </p>
+
+        <p>
+          <strong>4. Anti Lipids </strong>
+        </p>
+        <p>If you select &ldquo;yes&rdquo;you will be able to add the type of
+          <strong>Anti Lipids </strong>
+        </p>
+        <p>Just click on that
+          <strong>down arrow </strong>to see the options.
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/antiLipids2.png" class="img-size-15">
+        </div>
+        <p>To see all the options you will need to scroll through the dropdown menu.</p>
+        <p>Selecting &ldquo;
+          <strong>No</strong>&rdquo; will make no changes.
+        </p>
+
+        <p>
+          <strong>5. Cardiac Medication</strong>
+        </p>
+        <p>Select
+          <strong>“Yes”</strong> or
+          <strong>“No”</strong> options provided under Cardiac Medication.</p>
+
+        <br>
+        <p>
+          <strong>Family History</strong>
+        </p>
+        <p>You can select Family history of diseases given below.</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/familyHistory.png" class="img-size-50">
+        </div>
+        <p>If patients family had any of those disease(s) from above then click &ldquo;
+          <strong>Yes</strong>&rdquo;, if no family history is found then select &ldquo;
+          <strong>No</strong>&rdquo; and if it is unknown then select &ldquo;
+          <strong>Unknown</strong>&rdquo;.
+        </p>
+
+        <h2>
+          <strong>Clinical</strong>
+        </h2>
+        <p>You need to select glycemic status first. To chose glycemic status</p>
+        <p>Click down arrow
+          <br>Select from the dropdown menu
+        </p>
+        <P>
+          <strong>
+            &nbsp;&nbsp;Unknown
+            <br>&nbsp;&nbsp;Normal At visit
+            <br>&nbsp;&nbsp;IFG
+            <br>&nbsp;&nbsp;IGT
+            <br>&nbsp;&nbsp;Known Diabetes
+            <br>&nbsp;&nbsp;GDM
+          </strong>
+        </P>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/glycemicStatus.png" class="img-size-15">
+        </div>
+
+        <p>
+          <strong>Clinical examination (Mother)</strong>
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/clinicalExaminationMother.png" class="img-size-50">
+        </div>
+        <p>Fill all the contents to check patient's health. Which will be calculated automatically</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/clinicalExaminationMother2.png" class="img-size-50">
+        </div>
+
+        <p>
+          <strong>Laboratory Reports</strong>
+        </p>
+        <p>In this part you can add the laboratory reports (as shown below).</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/laboratoryReports1.png" class="img-size-50">
+        </div>
+        <p>After adding all the laboratory reports, result will be shown automatically</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/laboratoryReports2.png" class="img-size-50">
+        </div>
+
+        <h2>
+          <strong>Questionnaire</strong>
+        </h2>
+        <p>Here you will find some questions about preconception which you can answer by selecting</p>
+        <p>
+          <strong>Agree, Disagree </strong>or
+          <strong>Not sure. </strong>For example a screenshot of a question is added below.</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/questioniarre.png" class="img-size-50">
+        </div>
+
+        <br>
+        <h2>
+          <strong>Medication Information</strong>
+        </h2>
+        <p>After completing
+          <strong>Clinical </strong>by selecting
+          <strong>Visit reason </strong>and then selecting &ldquo;
+          <strong>Next&rdquo; </strong>
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/nextSign.png" class="img-size-15">
+        </div>
+        <p>Will open
+          <strong>Medication Information </strong>where you can select Medical Management and find two options
+        </p>
+
+        <h3>
+          <strong>LIFESTYLE</strong>
+        </h3>
+        <p>Selecting &ldquo;
+          <strong>Lifestyle</strong>&rdquo; will show no options it&rsquo;s just a simple choice that will be shown on the print
+          preview.
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/medicalManagementLifestyle.png" class="img-size-70">
+        </div>
+
+        <h3>
+          <strong>MEDICATION</strong>
+        </h3>
+        <p>Selecting
+          <strong>Medication </strong>will open three options
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/medicalManagementMedication.png" class="img-size-30">
+        </div>
+
+        <p>
+          <strong>Oral anti-diabetics</strong>
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/oadImage.png" class="img-size-30">
+        </div>
+        <p>Selecting yes in
+          <strong>OADs </strong>you can add the type of OAD by the drop down menu.
+        </p>
+
+        <p>
+          <strong>Insulin</strong>
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/onInsulin1.png" class="img-size-30">
+        </div>
+        <p>Selecting yes on
+          <strong>Insulin </strong>user can add &ldquo;Type of Insulin&rdquo; and &ldquo;Type of Device&rdquo;
+        </p>
+
+        <p>
+          <strong>Other Medications </strong>
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/otherMedications.png" class="img-size-50">
+        </div>
+        <p>In
+          <strong>&ldquo;Other Medications&rdquo; </strong>user can add
+          <br>
+          <strong>&nbsp;&nbsp;Anti HTN</strong>
+          <br>
+          <strong>&nbsp;&nbsp;Anti lipids </strong>
+          <br>
+          <strong>&nbsp;&nbsp;Aspirin</strong>
+          <br>
+          <strong>&nbsp;&nbsp;Anti-obesity</strong>
+        </p>
+        <p>Selecting yes on</p>
+        <p>&ldquo;
+          <strong>Anti HTN&rdquo; </strong>will show a dropdown menu where you will find Types of Anti HTN.</p>
+        <p>scroll through the dropdown menu to check available options.</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/antiHtn.png" class="img-size-30">
+        </div>
+        <p>
+          <strong>&ldquo;Anti Lipids&rdquo; </strong>user can also add type of anti lipids, to select the type</p>
+        <p>Click on down arrow</p>
+        <p>Scroll through the dropdown to see the options.</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/antiLipidsYes.png" class="img-size-30">
+        </div>
+
+        <br>
+        <h2>
+          <strong>Complete</strong>
+        </h2>
+        <p>In this section you will see the complete result. User will find:</p>
+        <p>
+          <strong>1. Health results </strong>
+        </p>
+        <p>All the calculated health result will show here.</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/healtResults.png" class="img-size-50">
+        </div>
+        <p>
+          <strong>2. Medication History</strong>
+        </p>
+        <p>Medication history will be show here.</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/medicationHistory.png" class="img-size-50">
+        </div>
+        <p>
+          <strong>3. Referred to</strong>
+        </p>
+        <p>Here you will find the referred options.</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/referredTo.png" class="img-size-30">
+        </div>
+        <p>Select any options from the list for patient.</p>
+        <p>After completing all the parts click on that Submit button. Where you will find two options</p>
+
+        <p>
+          <strong>Submit (offline)</strong>
+        </p>
+        <p>Press this button if there is no internet in the Centre. Selecting
+          <strong>Submit (offline)</strong> will save Patient File into the Tablet PC. Won’t sync to the cloud server
+        </p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/submitOffline.png" class="img-size-15">
+        </div>
+        <p>
+          <strong>Submit (online) </strong>
+        </p>
+        <p>Select Submit (online) when there is internet connection in the Centre. Patient data will be saved to cloud and central
+          server. If you click
+          <strong>"Submit (online)"</strong> it will sync to the cloud server</p>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/submitOnline.png" class="img-size-15">
+        </div>
+        <br>
+        <div>
+          <img src="../../assets/img/pccHelpFileImg/flowchart.jpg" class="img-size-50">
+        </div>
+      </div>
+    </paper-card>
+  </template>
+  <script src="page-pcc-help.coffee-compiled.js"></script>
+</dom-module>

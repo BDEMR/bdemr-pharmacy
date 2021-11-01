@@ -1,0 +1,401 @@
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-salary-report-print-preview">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .master-container {
+        /*background: #fff;*/
+      }
+
+      .break-on-tablet {
+        @apply(--layout-horizontal);
+      }
+
+      @media screen and (max-width: 740px) {
+        .break-on-tablet {
+          display: block;
+        }
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      paper-button {
+        background: white;
+      }
+
+      .header {
+        position: relative;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px
+      }
+
+      .header .title {
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: #5c4575;
+      }
+
+      .limiting-container {
+        margin-top: 10px;
+        max-width: 410mm;
+      }
+
+      .document {
+        font-family: 'Times New Roman';
+        background: white;
+        width: 100%;
+      }
+
+      .document-title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      @media print {
+        .limiting-container {
+          /*margin-top: -60px;*/
+          /*border: 1px solid black;*/
+          width: 100%;
+        }
+
+        .hideOnPrint {
+          display: none !important;
+        }
+
+        /*.print-container {
+          width: 100%;
+        }*/
+      }
+
+      .document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+      .item {
+        padding: 10px;
+        border: 1px solid grey;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td,
+      .table th {
+        vertical-align: left;
+        padding: 10px;
+        border: 1px solid var(--paper-grey-300);
+      }
+
+      .table td.special-td {
+        padding: 0px;
+        margin: 0px;
+        height: 100%;
+      }
+    </style>
+
+    <!-- local DOM -->
+
+
+
+    <div class="master-container">
+      <div class="limiting-container">
+
+        <!-- document - start -->
+        <div class="document">
+
+          <template is="dom-if" if="[[settings.printDecoration.headerLine]]">
+            <div class="header vertical layout">[[settings.printDecoration.headerLine]]</div>
+          </template>
+
+          <div class="document-header horizontal layout center">
+
+            <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+              <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+            </template>
+
+            <div class="leftSide vertical layout">
+              <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+              <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+              <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+            </div>
+            <div class="flex"></div>
+            <div class="rightSide vertical layout end">
+              <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+              <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+              <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+            </div>
+          </div>
+
+          <div class="horiline"></div>
+          <div style="text-align: center">
+            <h1>Salary Report</h1>
+          </div>
+
+          <template is='dom-if' if='[[salaryList]]'>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Employee Name</th>
+                  <th>Total Basic Salary</th>
+                  <th>Total Overtime</th>
+                  <th>Total Bonus</th>
+                  <th>Advance Taken</th>
+                  <th>Tax Deduction</th>
+                  <th>Total Deductibles</th>
+                  <th>Net Salary</th>
+                  <th>Paid</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template is="dom-repeat" items="[[salaryList]]" sort="_sortByDate">
+                  <tr>
+                    <td>[[item.employeeName]]</td>
+                    <td>[[getTotal(item.salaryUnitPrice, item.salaryUnit)]]</td>
+                    <td>[[getTotal(item.overtimeUnitPrice, item.overtimeUnit)]]</td>
+                    <td>[[getTotal(item.festivalBonusUnitPrice, item.festivalBonusUnit)]]</td>
+                    <td>[[item.advances]]</td>
+                    <td>[[item.taxDeduction]]</td>
+                    <td>[[item.totalDeductibles]]</td>
+                    <td>[[item.netSalary]]</td>
+                    <td>[[item.paid]]</td>
+                  </tr>
+                </template>
+
+              </tbody>
+
+
+            </table>
+            <!-- footer div -->
+            <div class="m-top-16 m-bottom-16 layout vertical">
+              <div>
+                <!-- left -->
+                <div style="position: relative; float: left; margin-left:4px;">
+                  <span><strong>
+                      Salary Count: [[salaryList.length]]
+                    </strong></span>
+                </div>
+
+                <!-- right -->
+                <div class="layout vertical" style="position: relative; float: right; margin-right:4px;">
+                  <div class="m-bottom-8">
+                    <span><strong>
+                        Total Salary Expense: [[$formatCurrency(totalSalaryExpense)]]
+                      </strong></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+
+          <br>
+          <template is="dom-if" if="[[settings.printDecoration.footerLine]]">
+            <div class="footer vertical layout">[[settings.printDecoration.footerLine]]</div>
+          </template>
+
+          <div style="text-align: center; margin-top: 16px">
+            <span class="type secondary">Report Generation Date & Time - [[$formatDateTime(reportCreatedTime)]]</span>
+          </div>
+        </div>
+        <!-- document - end -->
+
+      </div>
+    </div>
+
+    <div class="horizontal layout center center-justified p-horizontal-16">
+      <div class="type body italic"><strong>Printed by: </strong>[[user.name]]</div>
+    </div>
+
+
+  </template>
+  <script>
+    Polymer({
+
+      is: 'page-salary-report-print-preview',
+
+      behaviors: [
+        app.behaviors.commonComputes,
+        app.behaviors.dbUsing,
+        app.behaviors.translating,
+        app.behaviors.pageLike,
+        app.behaviors.apiCalling
+      ],
+
+      properties: {
+
+        user: {
+          type: Object,
+          notify: true,
+          value: null
+        },
+
+        settings: {
+          type: Object,
+          notify: true,
+          value: {}
+        },
+
+        organization: {
+          type: Object,
+          value: {}
+        },
+
+        salaryList: {
+          type: Array,
+          value: []
+        },
+
+        totalSalaryExpense: {
+          type: Number,
+          value: 0
+        },
+      },
+
+
+      _getSettings() {
+        const list = app.db.find('settings', ({ serial }) => serial === this.getSerialForSettings());
+        if (list.length > 0) {
+          this.settings = list[0];
+          if ((typeof this.settings.settingsModifiedBy === 'undefined') || (this.settings.settingsModifiedBy === 'organization')) {
+            if (this.organization.printSettings) {
+              this.settings.printDecoration = this.organization.printSettings;
+            }
+          }
+        }
+      },
+
+      _sortByDate: function (a, b) {
+        if (a.createdDatetimeStamp < b.createdDatetimeStamp) {
+          return 1;
+        }
+        if (a.createdDatetimeStamp > b.createdDatetimeStamp) {
+          return -1;
+        }
+      },
+      
+      navigatedIn: function () {
+        this._loadUser();
+        this._getSettings();
+        this._loadSalaryReportFromLocalStorage();
+      },
+
+      navigatedOut: function () {
+      },
+
+      getTotal(unitPrice = 0, unit = 1) {
+        return parseInt(unitPrice) * parseInt(unit);
+      },
+
+      _calculateTotalSalaryExpense(salaryList) {
+        return salaryList.reduce((total, salary) => {
+          return parseFloat(salary.paid ? salary.paid : 0) + total;
+        }, 0);
+      },
+
+      _loadUser: function () {
+        var userList;
+        userList = app.db.find('user');
+        if (userList.length === 1) {
+          return this.user = userList[0];
+        }
+      },
+
+      arrowBackButtonPressed() {
+        return this.domHost.navigateToPreviousPage();
+      },
+
+      _loadSalaryReportFromLocalStorage() {
+        report = JSON.parse(localStorage.getItem("previewSalaryReportObject"));
+        console.log("salary report", report)
+        if (report) {
+          this.set('salaryList', report);
+          this.set('totalSalaryExpense', this._calculateTotalSalaryExpense(this.salaryList));
+          console.log('salary expense', this.totalSalaryExpense);
+          this.reportCreatedTime = lib.datetime.now();
+          localStorage.removeItem("previewSalaryReportObject");
+        }
+        else {
+          this.domHost.showToast("Invalid Report");
+        }
+        
+      },
+
+      printButtonPressed(e) {
+        return window.print();
+      },
+    });
+
+  </script>
+</dom-module>

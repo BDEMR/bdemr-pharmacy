@@ -1,0 +1,130 @@
+<!-- Iron elements -->
+<link rel="import" href="../../bower-assets/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+
+<!--Paper Elements-->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+
+<link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<!-- custom-elements -->
+<link rel="import" href="../../elements/html-block/html-block.html">
+
+<!-- element -->
+<dom-module id="page-commission-category-manager">
+  <template>
+    <style is="custom-style" include="common-style">
+      paper-dialog {
+        min-width: 450px;
+      }
+
+      .top-margin {
+        margin-top: 10px
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td,
+      .table th {
+        vertical-align: left;
+        padding: 10px;
+        border: 1px solid var(--paper-grey-300);
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+      }
+    </style>
+
+    <!-- <module-accounts-top-nav page-name="commission-category-manager" organization-id="[[organization.idOnServer]]">
+    </module-accounts-top-nav> -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <template is="dom-if" if="[[loadingCounter]]">
+          <div class="layout horizontal center type bold text-center">
+            <paper-progress indeterminate></paper-progress>
+          </div>
+        </template>
+
+        <paper-card heading="[[$TRANSLATE('Commission Category Manager', LANG)]]">
+          <div class="card-actions">
+            <paper-button class="btn btn-success" raised on-tap="addNewCategoryBtnPressed">+ [[$TRANSLATE('Add a New Category', LANG)]]</paper-button>
+          </div>
+          <div class="card-content">
+            <template is="dom-if" if="[[!commissionCategoryList.length]]">
+              <h3 class="type center">[[$TRANSLATE('NO DATA YET', LANG)]]</h3>
+            </template>
+            <table class="table">
+              <tr>
+                <th>[[$TRANSLATE('Name', LANG)]]</th>
+                <th width="250px">[[$TRANSLATE('Actions', LANG)]]</th>
+              </tr>
+              <template is="dom-if" if="[[!commissionCategoryList.length]]">
+                <h3 class="type center">[[$TRANSLATE('NO DATA YET', LANG)]]</h3>
+              </template>
+              <template is="dom-repeat" items="[[commissionCategoryList]]">
+                <tr>
+                  <td>[[item.name]]</td>
+                  <td>
+                    <paper-button class="btn btn-danger top-margin" raised on-tap="_deleteCategoryButtonClicked">[[$TRANSLATE('Delete Category', LANG)]]</paper-button>
+                  </td>
+                </tr>
+              </template>
+            </table>
+          </div>
+
+        </paper-card>
+
+        <!-- Dialog for - Add New Fund(s) - start -->
+        <paper-dialog class="custom-input-field" id="dialogAddNewCategory">
+          <div class="type body-lead" style="color: green;">
+            <iron-icon src="../../images/icons/ico_add_funds_b.png" class="m-right-8"></iron-icon>[[$TRANSLATE('New Category', LANG)]]
+          </div>
+          <paper-textarea label="[[$TRANSLATE('Name of the Category', LANG)]]" value="{{commissionCategory.name}}"></paper-textarea>
+          <div class="buttons">
+            <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+            <paper-button class="colored" on-click="_addNewCategory" autofocus raised>[[$TRANSLATE('Add', LANG)]]</paper-button>
+          </div>
+        </paper-dialog>
+        <!-- Dialog for - Add New Funds - end -->
+
+      </div>
+    </div>
+  </template>
+  <script src="page-commission-category-manager.js"></script>
+</dom-module>

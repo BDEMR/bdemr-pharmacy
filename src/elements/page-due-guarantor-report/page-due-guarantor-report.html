@@ -1,0 +1,380 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+
+<link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<dom-module id="page-due-guarantor-report">
+  <template>
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+        width: 90%;
+      }
+
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .header {
+        background-color: var(--paper-grey-100);
+        padding: 15px;
+      }
+
+      .label {
+        background-color: var(--paper-grey-100);
+        padding: 5px;
+      }
+
+      .border-bottom {
+        border-bottom: 1px solid rgb(235, 230, 230);
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td,
+      .table th {
+        vertical-align: left;
+        padding: 10px;
+        border: 1px solid var(--paper-grey-300);
+      }
+
+      .table td.special-td {
+        padding: 0px;
+        margin: 0px;
+        height: 100%;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      /* styles related to print preview */
+      .print-button-style {
+        margin-top: 16px;
+        background: burlywood;
+      }
+
+      #printPreview {
+        display: none !important;
+      }
+
+      @media print {
+
+        .hideOnPrint {
+          display: none !important;
+        }
+
+        #printPreview {
+          display: block !important;
+          background-color: transparent;
+        }
+      }
+
+      /*  */
+      .print-document {
+        font-family: 'Times New Roman';
+        background: white;
+        width: 100%;
+      }
+
+      .print-header {
+        position: relative;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px
+      }
+
+      .print-document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .print-document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+      .print-table {
+        table-layout: fixed;
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .print-table tr {
+        margin-bottom: 15px;
+      }
+
+      .print-table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .print-table td {
+        color: #444;
+      }
+
+      .print-table td,
+      .print-table th {
+        /* vertical-align: middle; */
+        padding-right: 5px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+      .print-table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .pull-div-up {
+        position: relative;
+        top: -10px;
+      }
+    </style>
+
+    <!-- <module-accounts-top-nav page-name="due-guarantor-report" organization-id="[[organization.idOnServer]]"  class="hideOnPrint">
+    </module-accounts-top-nav> -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <!-- Main Content -->
+        <div class="hideOnPrint">
+          <template is="dom-if" if="[[loadingCounter]]">
+            <div class="layout horizontal center type bold text-center">
+              <paper-progress indeterminate></paper-progress>
+            </div>
+            <h2 class="type center">[[$TRANSLATE('Please Wait, Loading', LANG)]]...</h2>
+          </template>
+
+          <paper-card>
+
+            <div class="card-custom-header">
+              <div class="layout horizontal center">
+                <div class="title flex">[[$TRANSLATE('Due Guarantor Report', LANG)]]</div>
+              </div>
+            </div>
+
+            <div class="card-content">
+              <div class="layout horizontal end wrap">
+                <paper-input type="search" class="filter-query m-right-8" label="[[$TRANSLATE('Filter By Mobile', LANG)]]" no-label-float
+                  value="{{searchString}}"></paper-input>
+
+                <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked">
+                </custom-vital-search>
+
+                <paper-button class="btn btn-success" raised on-tap="searchButtonClicked">[[$TRANSLATE('Search', LANG)]]</paper-button>
+                <paper-button raised on-tap="resetButtonClicked">[[$TRANSLATE('Reset', LANG)]]</paper-button>
+                <template is="dom-if" if="[[_isEmptyArray(matchingGuarantorList)]]">
+                  <paper-button raised class="print-button-style" on-tap="_printButtonPressed">[[$TRANSLATE('Print the Report', LANG)]]
+                  </paper-button>
+                </template>
+
+                <div style="color: rgb(182, 182, 182)" class="m-left-8 m-bottom-8">
+                  [[$TRANSLATE('Press Search to Generate All The Reports', LANG)]]</div>
+              </div>
+            </div>
+
+            <div class="card-content">
+
+              <table class="table">
+                <tr>
+                  <th>[[$TRANSLATE('Date', LANG)]]</th>
+                  <th>[[$TRANSLATE('Patient Name', LANG)]]</th>
+                  <th>[[$TRANSLATE('Patient Phone', LANG)]]</th>
+                  <th>[[$TRANSLATE('Guarantor Name', LANG)]]</th>
+                  <th>[[$TRANSLATE('Guarantor Phone', LANG)]]</th>
+                  <th>[[$TRANSLATE('Role', LANG)]]</th>
+                  <th>[[$TRANSLATE('Total Billed', LANG)]]</th>
+                  <th>[[$TRANSLATE('Due Taken by Guarantor', LANG)]]</th>
+                  <th>[[$TRANSLATE('View', LANG)]]</th>
+                </tr>
+
+                <template is="dom-if" if="[[!matchingGuarantorList.length]]">
+                  <div class="layout horizontal center center-justified">[[$TRANSLATE('Empty', LANG)]]</div>
+                </template>
+
+                <template is="dom-repeat" items="[[matchingGuarantorList]]" sort="_sortByDate">
+                  <tr>
+                    <td>[[$formatDate(item.createdDatetimeStamp)]]</td>
+                    <td>[[$getFullName(item.patientName)]]</td>
+                    <td>[[item.patientPhone]]</td>
+                    <td>[[item.dueGuarantor.name]]</td>
+                    <td>[[item.dueGuarantor.phone]]</td>
+                    <td>[[item.dueGuarantor.role]]</td>
+                    <td>[[$formatCurrency(item.totalBilled)]]</td>
+                    <td>[[_calculateDueAndFormatCurrency(item.totalBilled, item.totalAmountReceieved)]]</td>
+                    <td>
+                      <paper-icon-button icon="launch" on-tap="viewInvoiceButtonPressed"></paper-icon-button>
+                    </td>
+                  </tr>
+                </template>
+
+              </table>
+            </div>
+            <div class="card-actions">
+              <div class="layout horizontal">
+                <div class="flex"></div>
+                <div><strong> [[$TRANSLATE('Total Due Taken by Guarantor(s)', LANG)]]: [[$formatCurrency(totalDueTakenByGuarantor)]]</strong>
+                </div>
+              </div>
+
+            </div>
+
+          </paper-card>
+        </div>
+
+        <!-- Print Preview -->
+        <div id="printPreview">
+          <div class="print-document">
+            <template is="dom-if" if="[[settings.printDecoration.headerLine]]">
+              <div class="print-header vertical layout center">[[settings.printDecoration.headerLine]]</div>
+            </template>
+
+            <div class="print-document-header horizontal layout center">
+
+              <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+                <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+              </template>
+
+              <div class="leftSide vertical layout">
+                <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+                <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+                <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+              </div>
+              <div class="flex"></div>
+              <div class="rightSide vertical layout end">
+                <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+                <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+                <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+              </div>
+            </div>
+
+            <div class="horiline"></div>
+            <div style="text-align: center">
+              <h1>[[$TRANSLATE('Due Guarantor Report', LANG)]]</h1>
+            </div>
+
+            <!-- Report Content -->
+            <div>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>[[$TRANSLATE('Date', LANG)]]</th>
+                    <th>[[$TRANSLATE('Patient Name', LANG)]]</th>
+                    <th>[[$TRANSLATE('Patient Phone', LANG)]]</th>
+                    <th>[[$TRANSLATE('Guarantor Name', LANG)]]</th>
+                    <th>[[$TRANSLATE('Guarantor Phone', LANG)]]</th>
+                    <th>[[$TRANSLATE('Role', LANG)]]</th>
+                    <th>[[$TRANSLATE('Total Billed', LANG)]]</th>
+                    <th>[[$TRANSLATE('Due Taken by Guarantor', LANG)]]</th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  <template is="dom-repeat" items="[[matchingGuarantorList]]" sort="_sortByDate">
+                    <tr>
+                      <td>[[$formatDate(item.createdDatetimeStamp)]]</td>
+                      <td>[[$getFullName(item.patientName)]]</td>
+                      <td>[[item.patientPhone]]</td>
+                      <td>[[item.dueGuarantor.name]]</td>
+                      <td>[[item.dueGuarantor.phone]]</td>
+                      <td>[[item.dueGuarantor.role]]</td>
+                      <td>[[$formatCurrency(item.totalBilled)]]</td>
+                      <td>[[_calculateDueAndFormatCurrency(item.totalBilled, item.totalAmountReceieved)]]</td>
+
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+
+              <div class="m-top-16">
+                <span style="position: relative; float: right;">
+                  <strong>[[$TRANSLATE('Total Due Taken by Guarantor(s)', LANG)]]: [[$formatCurrency(totalDueTakenByGuarantor)]]</strong>
+                </span>
+              </div>
+
+            </div>
+
+            <br>
+            <template is="dom-if" if="[[settings.printDecoration.footerLine]]">
+              <div class="footer vertical layout">[[settings.printDecoration.footerLine]]</div>
+            </template>
+
+            <div style="text-align: center; margin-top: 16px">
+              <span class="type secondary">[[$TRANSLATE('Report Generation Date & Time', LANG)]] -
+                [[_getFormattedCurrentDateTime(currentDateTime)]]</span>
+            </div>
+
+            <div class="horizontal layout center center-justified p-horizontal-16">
+              <div class="type body italic"><strong>[[$TRANSLATE('Printed by', LANG)]]: </strong>[[user.name]]</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+  </template>
+  <script src="page-due-guarantor-report.coffee-compiled.js"></script>
+</dom-module>

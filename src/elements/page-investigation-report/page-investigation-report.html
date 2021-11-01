@@ -1,0 +1,228 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- element -->
+<dom-module id="page-investigation-report">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        width: 90%;
+        margin: 0 auto;
+        margin-top: 10px;
+      }
+
+      paper-button {
+        background: white;
+      }
+
+      paper-card {
+        margin: 4px;
+      }
+
+      .search {
+        background-color: #fafafa;
+        border: 1px solid #dadada;
+        padding: 0px 8px 12px 8px;
+        margin: 4px;
+        margin-left: 0;
+      }
+
+      .results {
+        margin-top: 20px;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      .pull-div-up {
+        position: relative;
+        top: 12px;
+      }
+
+
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container vertical layout">
+
+
+        <paper-card heading="Investigation Report">
+
+          <div class="card-content custom-input-field">
+            <div class="layout horizontal end">
+              
+              <!-- <paper-input type="search" class="filter-query m-right-8" label="Filter By User Name" no-label-float
+                value="{{searchString}}"></paper-input> -->
+
+              <paper-dropdown-menu label="Test Result Status" class="m-left-16">
+                <paper-listbox class="dropdown-content" on-iron-activate="filterByTestResultStatus">
+                  <template is="dom-repeat" items="[[testResultStatusList]]">
+                    <paper-item>[[item]]</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+
+              <paper-dropdown-menu label="Test Result Delivery Status" class="m-left-16 m-right-16">
+                <paper-listbox class="dropdown-content" on-iron-activate="filterByTestResultDeliveryStatus">
+                  <template is="dom-repeat" items="[[testResultDeliveryStatusList]]">
+                    <paper-item>[[item]]</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+
+              <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
+
+              <div class="pull-div-up">
+                <paper-button class="btn btn-success" raised on-tap="searchButtonClicked">Search</paper-button>
+                <paper-button raised on-tap="resetButtonClicked">Reset</paper-button>
+                <div style="color: rgb(182, 182, 182)" class="m-left-8 p-top-8">
+                  <span><strong>Press Search</strong> to Generate All The Reports</span>
+                </div>
+              </div>
+              
+
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="results">
+              <paper-progress indeterminate hidden="[[!loading]]"></paper-progress>
+              <vaadin-grid items="[[reportResults]]">
+                <vaadin-grid-column resizable>
+                  <template class="header layout horizontal">
+                    <span>Date</span>
+                  </template>
+                  <template>
+                    <div>[[$formatDateTime(item.createdDatetimeStamp)]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header layout horizontal">
+                    <span>Test Name</span>
+                  </template>
+                  <template>
+                    <div>[[item.investigationName]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <vaadin-grid-sorter path="createdByUserInfo.name" direction="asc">
+                      <vaadin-grid-filter aria-label="Name" path="createdByUserInfo.name" value="[[searchString]]">
+                        <paper-input label="Search By Name" value="{{searchString}}" no-label-float></paper-input>
+                      </vaadin-grid-filter>
+                    </vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div>[[$getFullName(item.createdByUserInfo.name)]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <span>Patient's Name</span>
+                  </template>
+                  <template>
+                    <div>[[$getFullName(item.patientInfo.name)]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <span>Patient's Mobile</span>
+                  </template>
+                  <template>
+                    <div>[[item.patientInfo.phoneNumberList.0.phoneNumber]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column width="170px" flex-grow="0" resizable>
+                  <template class="header">
+                    <span>Test Result Status</span>
+                  </template>
+                  <template>
+                    <div>
+                      <span hidden$="[[!item.status.hasTestResults]]" class="type caption-2 bg-gray success">COMPLETE</span>
+                      <span hidden$="[[item.status.hasTestResults]]" class="type caption-2 bg-gray danger">NOT COMPLETE</span>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column width="170px" flex-grow="0" resizable>
+                  <template class="header">
+                    <span>Test Result Delivery Status</span>
+                  </template>
+                  <template>
+                    <div>
+                      <span hidden$="[[!item.status.isDelivered]]" class="type caption-2 bg-gray success">DELIVERED</span>
+                      <span hidden$="[[item.status.isDelivered]]" class="type caption-2 bg-gray danger">NOT DELIVERED</span>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column width="190px" flex-grow="0" resizable>
+                  <template class="header">
+                    <span>Delivery Time and Date</span>
+                  </template>
+                  <template>
+                    <div>[[$formatDateTime(item.status.deliveryDateTime)]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column width="190px" flex-grow="0" resizable>
+                  <template class="header">
+                    <span>Action</span>
+                  </template>
+                  <template>
+                    <div hidden$="[[!item.status.hasTestResults]]">
+                      <div hidden$="[[item.status.isDelivered]]">
+                        <paper-button raised class="btn btn-default" on-tap="deliveredButtonClicked">Deliver Report</paper-button>
+                      </div>
+                    </div>
+                    <div hidden$="[[!item.status.isDelivered]]">
+                      <span>Delivered by <strong>[[$getFullName(item.status.deliveredByName)]]</strong></span>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+              </vaadin-grid>
+
+            </div>
+          </div>
+
+
+        </paper-card>
+
+      </div>
+      <!--Limiting Container Ends-->
+
+    </div>
+    <!--Master Container Ends-->
+
+  </template>
+  <script src="page-investigation-report.coffee-compiled.js"></script>
+</dom-module>

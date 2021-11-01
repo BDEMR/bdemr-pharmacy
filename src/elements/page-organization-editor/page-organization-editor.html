@@ -1,0 +1,435 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-organization-editor">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .organization-info-card-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .organization-info-cards {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+
+      .organization-info-cards .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+
+      .organization-info-cards .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+
+      .organization-info-cards .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+
+      .organization-info-cards .row .modifier.online {
+        background: #757575;
+      }
+
+      .organization-info-cards .row .modifier.local-only {
+        background: #039BE5;
+      }
+
+      .organization-info-cards .row .modifier.locally-updated {
+        background: #009688;
+      }
+
+      .organization-info-cards .row .modifier.imported {
+        background: #4CAF50;
+      }
+
+      .info-row {
+        margin-top: 10px;
+      }
+
+      .top-info-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      .address1 {
+        margin-right: 10px;
+      }
+
+      .break-on-tablet {
+        @apply(--layout-horizontal);
+      }
+
+      @media screen and (max-width: 740px) {
+        .break-on-tablet {
+          display: block;
+        }
+      }
+
+      .val {
+        text-decoration: underline;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .logo-input {
+        margin-left: 4px;
+      }
+
+      .logo-preview {
+        width: 256px;
+        max-height: 128px;
+      }      
+    </style>
+
+    <!-- local DOM -->
+
+    <div id="tabContainer" class="tabs-container">
+      <paper-tabs class="tabs-container" id="tabs" selected="{{selectedPage}}" scrollable noink='true'>
+        <paper-tab>[[$TRANSLATE('General', LANG)]]</paper-tab>
+        <paper-tab>[[$TRANSLATE('Parent Organization', LANG)]]</paper-tab>
+        <paper-tab>[[$TRANSLATE('Print Setting', LANG)]] </paper-tab>
+      </paper-tabs>
+    </div>
+
+    <div class="master-container">
+
+      <div class="limiting-container custom-input-field">
+
+        <template is="dom-if" if="{{!isOrganizationValid}}">
+          [[$TRANSLATE('Organization invalid', LANG)]]
+        </template>
+
+        <!-- editing organization - start -->
+        <template is="dom-if" if="{{isOrganizationValid}}">
+
+          <iron-pages class="m-top-8" selected="{{selectedPage}}">
+            <!-- General - start -->
+            <section>
+              <paper-card>
+                <div class="card-custom-header">
+                  <template is="dom-if" if="[[organization.idOnServer]]">
+                    <div class="title">[[organization.name]]</div>
+                    <div class="type caption-2 secondary">[[$TRANSLATE('Id', LANG)]]: [[organization.idOnServer]]</div>
+                    <div class="type caption-2 secondary">[[$TRANSLATE('Serial', LANG)]]: [[organization.serial]]</div>
+                  </template>
+
+                  <template is="dom-if" if="[[!organization.idOnServer]]">
+
+                    <div class="title">[[$TRANSLATE('Add New Organization', LANG)]]</div>
+
+                  </template>
+                </div>
+                <div class="card-content">
+
+                  <div class="info-row">
+                    <paper-input value="{{organization.name}}" label="[[$TRANSLATE('Name of the organization', LANG)]]"></paper-input>
+                  </div>
+                  <div class="info-row">
+                    <vaadin-combo-box
+                      id="inputType"
+                      label="Select Organization Type"
+                      items="[[organizationType]]"
+                      value="{{organization.type}}"
+                    ></vaadin-combo-box>
+                  </div>
+                  <div class="info-row">
+                    <paper-input value="{{organization.serial}}" label="[[$TRANSLATE('Serial', LANG)]]"></paper-input>
+
+                    <div class="type caption secondary">[[$TRANSLATE('Serial must 4 chars long', LANG)]].</div>
+                  </div>
+
+                  <div class="info-row">
+                    <div class="layout horizontal">
+                      <vaadin-combo-box class="m-right-16 flex" id="orgCountryId" label="Select Country" items="[[countryWithCitiesList]]" 
+                        item-label-path="name" item-value-path="name" on-selected-item-changed="_countrySelected" value="{{organization.country}}">
+                      </vaadin-combo-box>
+                      <vaadin-combo-box class="flex" id="orgCityId" label="Select City" allow-custom-value items="[[selectedCountryCitiesList]]" value="{{organization.city}}">
+                      </vaadin-combo-box>
+                    </div>
+                  </div>
+
+
+                  <div class="info-row">
+                    <paper-input value="{{organization.effectiveRegion}}" label="[[$TRANSLATE('Effective Region for the Organization', LANG)]]"></paper-input>
+                  </div>
+
+                  <paper-textarea rows="2" value="{{organization.address}}" label="[[$TRANSLATE('Full Address', LANG)]]"></paper-textarea>
+
+                  <!-- <div>
+                    District, Thana,
+                  </div> -->
+
+                  <paper-input value="{{organization.phone}}" label="[[$TRANSLATE('Phone Numbers', LANG)]]" type="number"></paper-input>
+
+                  <paper-input value="{{organization.ambulanceServicePhoneNumber}}" label="[[$TRANSLATE('Ambulance Service Number', LANG)]]" type="number"></paper-input>
+
+                  <div class="m-top-8">
+                    <paper-toggle-button checked="{{moreOptionList}}">
+                      <span style="color: teal"><strong>[[$TRANSLATE('More Options', LANG)]] +</strong></span>
+                    </paper-toggle-button>
+                  </div>
+                  <div hidden="[[!moreOptionList]]" class="card-content">
+                    <paper-input value="{{organization.emergencyPhone}}" label="[[$TRANSLATE('Emergency Phone Numbers', LANG)]]" type="number"></paper-input>
+
+                    <paper-input value="{{organization.faxNumber}}" label="[[$TRANSLATE('Fax Numbers', LANG)]]" type="number"></paper-input>
+
+                    <paper-input value="{{organization.email}}" label="[[$TRANSLATE('Email', LANG)]]"></paper-input>
+
+                    <paper-input value="{{organization.numberOfMBBSDoctorsOnStaff}}" label="[[$TRANSLATE('Number of MBBS Doctors On Staff', LANG)]]" type="number"></paper-input>
+                    <paper-input value="{{organization.numberOfRegisteredNurseOnStaff}}" label="[[$TRANSLATE('Number of Registered Nurse On Staff', LANG)]]" type="number"></paper-input>
+                    <paper-input value="{{organization.numberOfRegisteredMidWifeOnStaff}}" label="[[$TRANSLATE('Number of Registered Mid-Wife On Staff', LANG)]]" type="number"></paper-input>
+
+                    <div class="vertical layout wrap">
+                      <h3 style="color: teal">[[$TRANSLATE('Add facilities', LANG)]]</h3>
+                      <template is="dom-repeat" items="[[organization.otherFacilitiesList]]">
+                        <paper-checkbox checked="{{item.isChecked}}" class="m-4">[[item.label]]</paper-checkbox>
+                      </template>
+                      <paper-input value="{{facilities}}" label="[[$TRANSLATE('Add other facilities', LANG)]]" class="m-top-16" on-keyup="addOtherFacilities"></paper-input>
+                    </div>
+                  </div>
+
+                  <div class="horizontal layout wrap">
+                    <template is="dom-if" if="[[organization.logoDataUri]]">
+                      <img style="max-height: 100px; width: auto;" class="logo-preview" src$="[[organization.logoDataUri]]" />
+                    </template>
+                    <paper-input class="logo-input flex" type="file" accept="image/*" on-change="logoInputChanged"></paper-input>
+                  </div>
+
+                  <div class="m-top-16">
+                    <paper-checkbox checked="{{organization.markAsPccOrganization}}"> [[$TRANSLATE('Mark As PCC Organization', LANG)]]</paper-checkbox>
+                    <span style="margin-left:8px; color: rgb(160, 160, 160);">( [[$TRANSLATE('IGNORE If you don\'t know what is a PCC Organization', LANG)]] )</span>
+                  </div>
+                  <div class="m-top-16">
+                    <paper-checkbox checked="{{organization.markAsNwdrOrganization}}"> [[$TRANSLATE('Mark As NWDR Organization', LANG)]]</paper-checkbox>
+                    <span style="margin-left:8px; color: rgb(160, 160, 160);">( [[$TRANSLATE('IGNORE If you don\'t know what is a NWDR Organization', LANG)]] )</span>
+                  </div>
+                  
+                </div>
+              </paper-card>
+            </section>
+            <!-- General - start -->
+
+            <!-- Parent Organizations - start -->
+            <section>
+                <paper-card class="m-top-8" heading="Parent Organizations">
+                  <div class="card-content">
+                    <div class="type body-lead">Currently there are [[parentList.length]] parent organizations.</div>
+                  </div>
+      
+                  <template is="dom-if" if="[[parentList.length]]">
+                    <div class="p-0">
+                      <paper-listbox>
+      
+                        <template id="assistant-list-repeater" is="dom-repeat" items="[[parentList]]" as="parent">
+                          <paper-item class="custom layout horizontal center">
+      
+                            <div class="flex m-left-8">
+                              <div class="type body capitalize">[[parent.name]]</div>
+                              <div class="type caption secondary">[[parent.idOnServer]]</div>
+                            </div>
+      
+                            <div class="layout horizontal m-horizontal-4 wrap">
+                              <div class="type caption">[[parent.address]]&nbsp;</div>
+                              <div class="type caption">([[parent.effectiveRegion]])</div>
+                            </div>
+      
+                            <paper-menu-button horizontal-align="right" no-animations>
+                              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                              <paper-menu class="dropdown-content">
+                                <div hidden>[[parent]]</div>
+                                <paper-item on-tap="removeParentTapped">[[$TRANSLATE('Remove as a parent', LANG)]]</paper-item>
+                              </paper-menu>
+                            </paper-menu-button>
+      
+                          </paper-item>
+                        </template>
+      
+                      </paper-listbox>
+      
+                    </div>
+                  </template>
+                </paper-card>
+      
+                <paper-card class="m-top-8" heading="Add A Parent Organization">
+                  <div class="card-content">
+                    <div class="info-row horizontal layout center">
+                      <paper-input class="flex m-right-8" value="{{parentOrganizationSearchString}}" label="[[$TRANSLATE('Name/Region/Address of the organization', LANG)]]"></paper-input>
+                      <paper-button class="add-btn colored" raised on-tap="searchParentOrganizationTapped">[[$TRANSLATE('Search', LANG)]]</paper-button>
+                    </div>
+                  </div>
+                  <template is="dom-if" if="[[parentSearchResultList.length]]">
+                    <div class="p-0">
+                      <paper-listbox>
+      
+                        <template id="assistant-list-repeater" is="dom-repeat" items="[[parentSearchResultList]]" as="parent">
+                          <paper-item class="custom layout horizontal center">
+      
+                            <div class="flex m-left-8">
+                              <div class="type body capitalize">[[parent.name]]</div>
+                              <div class="type caption secondary">[[parent.idOnServer]]</div>
+                            </div>
+      
+                            <div class="layout horizontal m-horizontal-4 wrap">
+                              <div class="type caption">[[parent.address]]&nbsp;</div>
+                              <div class="type caption">([[parent.effectiveRegion]])</div>
+                            </div>
+      
+                            <paper-menu-button horizontal-align="right" no-animations>
+                              <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                              <paper-menu class="dropdown-content">
+      
+                                <template is="dom-if" if="[[!$in(parent.idOnServer, organization.parentOrganizationIdList)]]">
+                                  <div hidden>[[parent]]</div>
+                                  <paper-item on-tap="addParentTapped">[[$TRANSLATE('Add as a parent', LANG)]]</paper-item>
+                                </template>
+                              </paper-menu>
+                            </paper-menu-button>
+      
+                          </paper-item>
+                        </template>
+      
+                      </paper-listbox>
+      
+                    </div>
+                  </template>
+                </paper-card>
+            </section>
+            <!-- Parent Organizations - end -->
+
+            <!-- Print printSettings. - start -->
+            <section>
+      
+              <paper-card heading="[[$TRANSLATE('Printing (Headline)', LANG)]]">
+                <div class="card-content">
+                  <paper-input always-float-label label="[[$TRANSLATE('Headline', LANG)]]" value="{{organization.printSettings.headerLine}}"></paper-input>
+
+                  <div class="horizontal layout wrap">
+                    <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+                      <img class="logo-preview" src$="[[organization.printSettings.headerLogoDataUri]]" />
+                    </template>
+                    <paper-input label="Organization logo" class="logo-input flex" type="file" accept="image/*" on-change="headerFileInputChanged"></paper-input>
+                  </div>
+                  <paper-button raised class="btn btn-sm btn-default" on-tap="removeHeaderImageBtnPrsd">Remove Image</paper-button>
+                </div>
+              </paper-card>
+      
+              <paper-card class=" m-top-8" heading="[[$TRANSLATE('Printing (Header - Left)', LANG)]]">
+                <div class="card-content">
+    
+                  <paper-input always-float-label label="[[$TRANSLATE('1st line', LANG)]]" value="{{organization.printSettings.leftSideLine1}}"></paper-input>
+                  <paper-input always-float-label label="[[$TRANSLATE('2nd line', LANG)]]" value="{{organization.printSettings.leftSideLine2}}"></paper-input>
+                  <paper-input always-float-label label="[[$TRANSLATE('3rd line', LANG)]]" value="{{organization.printSettings.leftSideLine3}}"></paper-input>
+    
+                </div>
+              </paper-card>
+      
+              <paper-card class="m-top-8" heading="[[$TRANSLATE('Printing (Header - Right)', LANG)]]">
+                <div class="card-content">
+    
+                  <paper-input always-float-label label="[[$TRANSLATE('1st line', LANG)]]" value="{{organization.printSettings.rightSideLine1}}"></paper-input>
+                  <paper-input always-float-label label="[[$TRANSLATE('2nd line', LANG)]]" value="{{organization.printSettings.rightSideLine2}}"></paper-input>
+                  <paper-input always-float-label label="[[$TRANSLATE('3rd line', LANG)]]" value="{{organization.printSettings.rightSideLine3}}"></paper-input>
+    
+                </div>
+              </paper-card>
+      
+              <paper-card class="m-top-8" heading="[[$TRANSLATE('Printing (Footer)', LANG)]]">
+                <div class="card-content">
+                  <paper-textarea rows="2" always-float-label label="[[$TRANSLATE('Footer', LANG)]]" value="{{organization.printSettings.footerLine}}"></paper-textarea>
+
+                  <div class="horizontal layout wrap">
+                    <template is="dom-if" if="[[organization.printSettings.footerLogoDataUri]]">
+                      <img class="logo-preview" src$="[[organization.printSettings.footerLogoDataUri]]" />
+                    </template>
+                    <paper-input label="Footer Image" class="logo-input flex" type="file" accept="image/*"
+                      on-change="footerFileInputChanged"></paper-input>
+                  </div>
+                  <paper-button raised class="btn btn-sm btn-default" on-tap="removeFooterImageBtnPrsd">Remove Image</paper-button>
+                </div>
+              </paper-card>
+            </section>
+            <!-- Print printSettings. - end -->
+            
+        </template>
+        <!-- editing organization - end -->
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-organization-editor.coffee-compiled.js"></script>
+</dom-module>

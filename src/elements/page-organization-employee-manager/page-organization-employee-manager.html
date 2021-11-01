@@ -1,0 +1,371 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-organization-employee-manager">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        width: 90%;
+      }
+
+      paper-dialog {
+        min-width: 450px;
+      }
+
+      .log-box {
+        margin-top: 10px;
+        margin-left: 26px;
+        border-bottom: solid 1px #eee;        
+      }            
+    </style>
+
+    <div class="master-container">
+      <div class="limiting-container">
+
+        <paper-card>
+          <div class="card-custom-header">
+            <div class="layout horizontal center wrap">
+              <div class="title flex">Manage Employee</div>
+              <paper-button raised class="btn btn-default" on-tap="manageDepartmentButtonPressed">
+                <iron-icon class="type primary" icon="store"></iron-icon>&nbsp; Manage Department
+              </paper-button>
+              <paper-button raised class="btn btn-default" on-tap="manageDesignationButtonPressed">
+                <iron-icon class="type primary" icon="assignment-ind"></iron-icon>&nbsp; Manage Designation
+              </paper-button>
+              <paper-button raised class="btn btn-primary" on-tap="createNewEmployeeButtonPressed">
+                <iron-icon icon="add"></iron-icon>
+                Create New Employee
+              </paper-button>
+            </div>
+          </div>
+          <paper-progress class="progress" indeterminate hidden="[[!loading]]"></paper-progress>
+          <div class="card-content">
+            <vaadin-grid items="[[employeeList]]">
+              <vaadin-grid-column>
+                <template class="header">
+                  <vaadin-grid-filter aria-label="Name" path="data.employeeId" value="[[employeeIdSearchString]]">
+                    <input placeholder="Search By Id" is="iron-input" bind-value="{{employeeIdSearchString}}" class="custom-input" />
+                  </vaadin-grid-filter>
+                </template>
+                <template>
+                  <span>[[item.data.employeeId]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column>
+                <template class="header">
+                  <vaadin-grid-filter aria-label="Name" path="data.name" value="[[employeeNameSearchString]]">
+                    <input placeholder="Search By Name" is="iron-input" bind-value="{{employeeNameSearchString}}" class="custom-input" />
+                  </vaadin-grid-filter>
+                </template>
+                <template>
+                  <span>[[item.data.name]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column>
+                <template class="header">
+                  <vaadin-grid-filter aria-label="Name" path="data.mobile" value="[[employeeMobileSearchString]]">
+                    <input placeholder="Search By Mobile" is="iron-input" bind-value="{{employeeMobileSearchString}}"
+                      class="custom-input" />
+                  </vaadin-grid-filter>
+                </template>
+                <template>
+                  <span>[[item.data.mobile]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column>
+                <template class="header">
+                  <vaadin-grid-filter aria-label="Name" path="data.designationName" value="[[employeeDesignationSearchString]]">
+                    <input placeholder="Search By Designation" is="iron-input" bind-value="{{employeeDesignationSearchString}}"
+                      class="custom-input" />
+                  </vaadin-grid-filter>
+                </template>
+                <template>
+                  <span>[[item.data.designationName]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column>
+                <template class="header">
+                  <vaadin-grid-filter aria-label="Name" path="data.departmentName" value="[[employeeDepartmentSearchString]]">
+                    <input placeholder="Search By Department" is="iron-input" bind-value="{{employeeDepartmentSearchString}}"
+                      class="custom-input" />
+                  </vaadin-grid-filter>
+                </template>
+                <template>
+                  <span>[[item.data.departmentName]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column flex-grow="0" width="300px">
+                <template class="header">Action</template>
+                <template>
+                  <div class="layout horizontal center wrap">
+                    <paper-button class="btn btn-default btn-sm" raised on-tap="editEmployeeButtonPressed">Edit Details</paper-button>
+                    <paper-button class="btn btn-default btn-sm" raised on-tap="editSalaryButtonPressed">Edit Salary</paper-button>
+                    <paper-button class="btn btn-default btn-sm" raised on-tap="providentFundButtonPressed">PF Details</paper-button>
+                    <paper-icon-button class="type danger" on-tap="deleteEmployeeButtonPressed" icon="delete"></paper-icon-button>
+                    <!-- <paper-button class="btn btn-default" on-tap="editEmployeeButtonPressed">Manage Leave</paper-button> -->
+                  </div>
+                </template>
+              </vaadin-grid-column>
+            </vaadin-grid>
+          </div>
+        </paper-card>
+        <!-- Provident Fund Details Dialog starts -->
+        <paper-dialog class="custom-input-field" id="dialogProvidentFund">
+          <div class="type body-lead" style="color: green;">
+            <strong>Provident Fund Deatils</strong>
+            <hr>
+          </div>
+          <paper-dialog-scrollable>
+            <div class="card-content">
+              <template is="dom-repeat" items="[[providentFundDetailsArr]]" as="providentFund">
+                <template is="dom-repeat" items="[[providentFund.data]]">
+                  <div class="log-box">
+                    <div class="horizontal layout m-top-8">
+                      <span class$="type caption"><strong>Amount Deducted: [[item.providentFundAmount]] BDT &nbsp;&nbsp;</strong></span>
+                      <span class="type secondary">Date: [[$formatDate(providentFund.createdDatetimeStamp)]]</span>
+                    </div>
+                    <br>
+                  </div>
+                </template>
+              </template>
+              <br>
+              <div class="log-box">Total Amount: <strong>[[calculateTotalProvidentFundAmount(providentFundDetailsArr)]]</strong></div>
+            </div>
+          </paper-dialog-scrollable>
+          <div class="buttons">
+            <paper-button class="btn btn-danger" dialog-dismiss>Dismiss</paper-button>
+          </div>
+        </paper-dialog>
+        <!-- Provident Fund Details Dialog ends -->
+      </div>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'page-organization-employee-manager',
+      behaviors: [
+        app.behaviors.commonComputes,
+        app.behaviors.dbUsing,
+        app.behaviors.pageLike,
+        app.behaviors.apiCalling
+      ],
+      properties: {
+        user: Object,
+        organization: Object,
+        employeeList: Array,
+        departmentList: Array,
+        designationList: Array,
+        providentFundDetailsArr: Array,
+        loading: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      navigatedIn() {
+        const params = this.domHost.getPageParams()
+        this._loadUser();
+        if (params['organization']) {
+          this._loadOrganization(params['organization'], () => {
+            this._loadDepartmentList(this.organization.idOnServer)
+            this._loadDesignationList(this.organization.idOnServer)
+            this._loadEmployeeList(this.organization.idOnServer)
+          })
+        } else {
+          return this.domHost.showModalDialog("Missing Organization params");
+        }
+      },
+
+      _loadUser(cbfn) {
+        const userList = app.db.find('user');
+        if (userList.length === 1) {
+          this.user = userList[0];
+        } else {
+          return this.domHost.showModalDialog('Invalid User');
+        }
+      },
+
+      _loadOrganization(idOnServer, cbfn) {
+        const data = {
+          apiKey: this.user.apiKey,
+          idList: [idOnServer]
+        };
+        return this.callApi('/bdemr-organization-list-organizations-by-ids', data, (err, response) => {
+          if (response.hasError) {
+            return this.domHost.showModalDialog(response.error.message);
+          } else {
+            if (response.data.matchingOrganizationList.length !== 1) {
+              this.domHost.showModalDialog("Invalid Organization");
+              return;
+            }
+            this.set('organization', response.data.matchingOrganizationList[0]);
+            cbfn()
+          }
+        });
+      },
+
+      _loadEmployeeList(organizationIdentifier) {
+        const query = {
+          apiKey: this.user.apiKey,
+          organizationId: organizationIdentifier
+        }
+        this.loading = true;
+        this.callApi('/bdemr-organization-get-employee-list', query, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (response.data.length) {
+            let employeeList = response.data.map((employee) => {
+              employee.data.designationName = this.getDesignation(employee.data.designationId);
+              employee.data.departmentName = this.getDepartment(employee.data.departmentId);
+              return employee
+            })
+            console.log(employeeList)
+            this.set('employeeList', employeeList);
+          }
+        })
+      },
+
+      _loadDepartmentList(organizationIdentifier) {
+        const query = {
+          apiKey: this.user.apiKey,
+          organizationId: organizationIdentifier
+        }
+        this.loading = true;
+        this.callApi('/bdemr--organizations-get-department-list', query, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (response.data.length) {
+            this.set('departmentList', response.data);
+          }
+        })
+      },
+
+      _loadDesignationList(organizationIdentifier) {
+        const query = {
+          apiKey: this.user.apiKey,
+          organizationId: organizationIdentifier
+        }
+        this.loading = true;
+        this.callApi('/bdemr--organizations-get-designation-list', query, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (response.data.length) {
+            this.set('designationList', response.data);
+          }
+        })
+      },
+
+      getDepartment(departmentId) {
+        let department = this.departmentList.find(item => item._id === departmentId)
+        return department ? department.name : ''
+      },
+
+      getDesignation(designationId) {
+        let designation = this.designationList.find(item => item._id === designationId)
+        return designation ? designation.name : ''
+      },
+
+      createNewEmployeeButtonPressed() {
+        this.domHost.navigateToPage('#/organization-employee-editor/organization:' + this.organization.idOnServer + '/employee:new')
+      },
+
+      editEmployeeButtonPressed(e) {
+        let item = e.model.item
+        this.domHost.navigateToPage('#/organization-employee-editor/organization:' + this.organization.idOnServer + '/employee:' + item.serial)
+      },
+
+      deleteEmployeeButtonPressed(e) {
+        let { item, index } = e.model;
+        this.domHost.showModalPrompt('Are you sure?', (yes) => {
+          if (yes) {
+            let data = {
+              serial: item.serial,
+              apiKey: this.user.apiKey
+            }
+            this.callApi('/bdemr-organization-delete-employee', data, (err, response) => {
+              if (err) return this.domHost.showModalDialog(err.message);
+              if (response.hasError) return this.domHost.showModalDialog;
+              if (response.data) {
+                this.splice('employeeList', index, 1);
+              }
+            })
+          }
+        })
+      },
+
+      manageDepartmentButtonPressed(e) {
+        this.domHost.navigateToPage('#/organization-department-manager/organization:' + this.organization.idOnServer)
+      },
+
+      manageDesignationButtonPressed(e) {
+        this.domHost.navigateToPage('#/organization-designation-manager/organization:' + this.organization.idOnServer)
+      },
+
+      editSalaryButtonPressed(e) {
+        let item = e.model.item
+        this.domHost.navigateToPage('#/organization-employee-salary-editor/organization:' + this.organization.idOnServer + '/employee:' + item.serial)
+      },
+
+      providentFundButtonPressed(e) {
+        let item = e.model.item
+        this.loading = true
+        let query = {
+          employeeSerial: item.serial,
+          apiKey: this.user.apiKey
+        }
+        this.callApi('/bdemr--organization-get-employee-provident-fund-details', query, (err, response) => {
+          this.loading = false;
+          if (err) {
+            return this.domHost.showModalDialog(err.message);
+          }
+          if (response.hasError) {
+            this._makeNewSalary(employeeSerial)
+            return this.domHost.showModalDialog(response.error.message);
+          } else {
+            let data = response.data
+            if (!data.length) return this.domHost.showModalDialog("No Details Found for this Employee")
+            console.log(data)
+            this.set('providentFundDetailsArr', data)
+            this.$$('#dialogProvidentFund').toggle() 
+          }
+        })
+               
+      },
+
+      calculateTotalProvidentFundAmount(providentFund) {
+        let total = 0
+        for(let itemList of providentFund) {
+          for (let item of itemList.data) {
+            total = total + item.providentFundAmount
+          }
+        }
+        return total
+      },
+
+
+    })
+  </script>
+
+</dom-module>

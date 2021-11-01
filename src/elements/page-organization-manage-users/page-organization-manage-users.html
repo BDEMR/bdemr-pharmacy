@@ -1,0 +1,501 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower-assets/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower-assets/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-organization-manage-users">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .organization-info-card-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .organization-info-cards {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+
+      .organization-info-cards .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+
+      .organization-info-cards .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+
+      .organization-info-cards .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+
+      .organization-info-cards .row .modifier.online {
+        background: #757575;
+      }
+
+      .organization-info-cards .row .modifier.local-only {
+        background: #039BE5;
+      }
+
+      .organization-info-cards .row .modifier.locally-updated {
+        background: #009688;
+      }
+
+      .organization-info-cards .row .modifier.imported {
+        background: #4CAF50;
+      }
+
+      .info-row {
+        margin-top: 10px;
+      }
+
+      .top-info-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      .address1 {
+        margin-right: 10px;
+      }
+
+      .break-on-tablet {
+        @apply(--layout-horizontal);
+      }
+
+      @media screen and (max-width: 740px) {
+        .break-on-tablet {
+          display: block;
+        }
+      }
+
+      .val {
+        text-decoration: underline;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .padding-for-rolewise-userslist {
+        padding-left: 35px;
+      }
+
+      .roleName-style-for-roleWise-userlist {
+        background: rgb(50, 114, 109);
+        color: #ffffff;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container custom-input-field">
+
+        <template is="dom-if" if="{{!isOrganizationValid}}">
+          [[$TRANSLATE('Organization invalid', LANG)]]
+        </template>
+
+        <!-- editing organization - start -->
+        <template is="dom-if" if="{{isOrganizationValid}}">
+
+          <div class="organization-info-card-counter">
+            <div>[[$TRANSLATE('Basic Information', LANG)]]</div>
+          </div>
+
+          <paper-card class="organization-info-cards">
+            <div class="card-content">
+              <div class="horizontal layout center top-info-row">
+                <div>[[$TRANSLATE('ID', LANG)]]: </div>
+                <div class="serial-number">[[organization.idOnServer]]</div>
+                <div class="flex"></div>
+              </div>
+              <div class="info-row">
+                <div>[[$TRANSLATE('Name', LANG)]]: [[organization.name]]</div>
+              </div>
+              <div class="info-row">
+                <div>[[$TRANSLATE('Region', LANG)]]: [[organization.effectiveRegion]]</div>
+              </div>
+              <div class="info-row">
+                <div>[[$TRANSLATE('Address', LANG)]]: [[organization.address]]</div>
+              </div>
+            </div>
+          </paper-card>
+
+          <div class="organization-info-card-counter">
+            <div>[[$TRANSLATE('Member Organizations', LANG)]]</div>
+          </div>
+
+          <paper-card class="organization-info-cards">
+
+            <div class="card-custom-header">
+              <div class="layout horizontal center">
+                <div class="title flex">Currently there are [[memberList.length]] members in this organization.</div>
+              </div>
+            </div>
+
+            <template is="dom-if" if="[[memberList.length]]">
+              <div class="p-0">
+                <paper-listbox>
+
+                  <template id="assistant-list-repeater" is="dom-repeat" items="[[memberList]]" as="member">
+                    <paper-item class="custom layout horizontal center">
+
+                      <div class="flex m-left-8">
+
+                        <div class="type body capitalize">[[member.name]]
+                          <template is="dom-if" if="[[$equals(member.idOnServer, user.idOnServer)]]">
+                            (You)
+                          </template>
+                          <template is="dom-if" if="[[member.isProfileVerified]]">
+                            <span class="type caption-2 bg-gray success">[[$TRANSLATE('Profile verified by', LANG)]] : [[member.profileVerifiedByUser.name]]</span>
+                          </template>
+                          <template is="dom-if" if="[[!member.isProfileVerified]]">
+                            <span class="type caption-2 bg-gray danger">[[$TRANSLATE('Unverified Profile', LANG)]]</span>
+                          </template>
+
+                        </div>
+
+                        <div class="type caption secondary">
+                          <template is="dom-if" if="[[$isAdmin(member.idOnServer, organization.userList)]]">
+                            Admin
+                          </template>
+                          <!-- <template is="dom-if" if="[[!$isAdmin(member.idOnServer, organization.userList)]]">
+                            Regular User
+                          </template> -->
+                        </div>
+                        <div class="type caption secondary">
+                          <strong>[[$TRANSLATE('Role', LANG)]]:</strong> {{_getRoleTitleForUser(member.idOnServer)}}
+                        </div>
+
+
+                      </div>
+
+                      <div class="layout horizontal m-horizontal-4 wrap">
+                        <div class="type caption">[[member.email]]&nbsp;</div>
+                        <div class="type caption">([[member.phone]])</div>
+                      </div>
+
+                      <paper-menu-button horizontal-align="right" no-animations>
+                        <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                        <paper-menu class="dropdown-content">
+                          <template is="dom-if" if="[[!$equals(member.idOnServer, user.idOnServer)]]">
+                            <div hidden>[[member]]</div>
+                            <paper-item on-tap="removeMemberTapped">[[$TRANSLATE('Remove as a member', LANG)]]</paper-item>
+                          </template>
+
+                          <template is="dom-if" if="[[!$isAdmin(member.idOnServer, organization.userList)]]">
+                            <div hidden>[[member]]</div>
+                            <paper-item on-tap="makeAdminTapped">[[$TRANSLATE('Make Admin', LANG)]]</paper-item>
+                          </template>
+
+                          <template is="dom-if" if="[[$isAdmin(member.idOnServer, organization.userList)]]">
+                            <template is="dom-if" if="[[!$equals(member.idOnServer, user.idOnServer)]]">
+                              <div hidden>[[member]]</div>
+                              <paper-item on-tap="makeRegularUserTapped">[[$TRANSLATE('Convert to Regular User', LANG)]]</paper-item>
+                            </template>
+                          </template>
+
+                          <template is="dom-if" if="[[$isAdmin(user.idOnServer, organization.userList)]]">
+                            <template is="dom-if" if="[[!$equals(member.idOnServer, user.idOnServer)]]">
+                              <div hidden>[[member]]</div>
+                              <paper-item hidden$="[[member.isProfileVerified]]" on-tap="verifyUserProfilePressed">[[$TRANSLATE('Verify Profile', LANG)]]</paper-item>
+                            </template>
+                          </template>
+
+                          <paper-item on-tap="showDialogForSetRole">[[$TRANSLATE('Set Role', LANG)]]</paper-item>
+
+                        </paper-menu>
+                      </paper-menu-button>
+
+                    </paper-item>
+                  </template>
+
+                </paper-listbox>
+
+              </div>
+            </template>
+          </paper-card>
+
+          <paper-card class="organization-info-cards" heading="[[$TRANSLATE('Add A Member', LANG)]]">
+            <div class="card-content">
+              <div class="info-row horizontal layout center">
+                <paper-input class="flex" always-float-label value="{{memberOrganizationSearchString}}" label="[[$TRANSLATE('Name/Region/Address of the organization', LANG)]]"></paper-input>
+                <paper-button raised on-tap="searchMemberOrganizationTapped">[[$TRANSLATE('Search', LANG)]]</paper-button>
+              </div>
+            </div>
+            <template is="dom-if" if="[[memberSearchResultList.length]]">
+              <div class="p-0">
+                <paper-listbox>
+
+                  <template id="assistant-list-repeater" is="dom-repeat" items="[[memberSearchResultList]]" as="member">
+                    <paper-item class="custom layout horizontal center">
+
+                      <div class="flex m-left-8">
+                        <div class="type body capitalize">[[member.name]]</div>
+                        <!-- <div class="type caption secondary">[[member.idOnServer]]</div> -->
+                      </div>
+
+                      <div class="layout horizontal m-horizontal-4 wrap">
+                        <div class="type caption">[[member.email]]&nbsp;</div>
+                        <div class="type caption">([[member.phone]])</div>
+                      </div>
+
+                      <paper-menu-button horizontal-align="right" no-animations>
+                        <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                        <paper-menu class="dropdown-content">
+                          <div hidden>[[member]]</div>
+                          <paper-item on-tap="addMemberTapped">[[$TRANSLATE('Add as a member', LANG)]]</paper-item>
+                        </paper-menu>
+                      </paper-menu-button>
+
+                    </paper-item>
+                  </template>
+
+                </paper-listbox>
+
+              </div>
+            </template>
+            <div class="card-actions">
+              <paper-button raised class="colored" on-tap="showAddNewMemberDialog">[[$TRANSLATE('Add new member', LANG)]]</paper-button> 
+            </div>
+          </paper-card>
+
+          <!-- Add Role - start -->
+          <paper-card heading="Add Role(s)" class="organization-info-cards">
+            <paper-listbox>
+              <template id="role-list-repeater" is="dom-repeat" items="[[roleList]]" as="role">
+                <paper-item class="custom layout horizontal center">
+                  <div class="flex">
+                    <div class="type body" style="text-transform: capitalize;">{{role.title}}</div>
+                    <template is="dom-repeat" items="[[role.privilegeList]]">
+
+                      <span class="type caption secondary">{{item.name}}, </span>
+                    </template>
+                  </div>
+                  <paper-icon-button icon="create" on-tap="showEditRoleDialog"></paper-icon-button>
+                  <paper-icon-button style="color: red;" icon="delete" on-tap="removeRole"></paper-icon-button>
+                </paper-item>
+
+              </template>
+            </paper-listbox>
+
+            <div class="card-actions">
+              <paper-button class="colored" raised on-tap="showAddRoleDialog">[[$TRANSLATE('Add New Role', LANG)]]</paper-button>
+            </div>
+
+          </paper-card>
+          <!-- Add Role - end -->
+
+          <!-- Role-wise userlist - Start -->
+          <paper-card heading="Role-wise userlist" class="organization-info-cards">
+            <template is="dom-if" if="[[!memberListByRole.length]]">
+              <div class="layout horizontal center center-justified m-top-16">
+                <h3>[[$TRANSLATE('No Role(s) Added Yet', LANG)]]!</h3>
+              </div>
+            </template>
+            <template is="dom-repeat" items="[[memberListByRole]]" as="role">
+              <paper-listbox>
+                <paper-item class="custom layout horizontal center">
+                  <div class="roleName-style-for-roleWise-userlist">
+                    <strong>[[role.title]]</strong> ([[role.userList.length]])
+                  </div>
+                  <div class="flex"></div>
+                  <paper-button raised class="btn btn-success" on-tap="toggleCollapseClicked">[[$TRANSLATE('View', LANG)]]</paper-button>
+                </paper-item>
+
+                <iron-collapse id="[[convertRoleNameToId(role.type)]]">
+                  <template is="dom-repeat" items="[[role.userList]]" as="user" index-as="entryIndex">
+                    <div class="p-bottom-8">
+                      <div class="p-left-16">
+                        <strong>[[_returnSerial(entryIndex)]].[[user.name]]</strong></div>
+                      <div class="padding-for-rolewise-userslist">[[$TRANSLATE('Email', LANG)]]: [[user.email]]</div>
+                      <div class="padding-for-rolewise-userslist">[[$TRANSLATE('Phone', LANG)]]: [[user.phone]]</div>
+                    </div>
+                  </template>
+                </iron-collapse>
+              </paper-listbox>
+            </template>
+          </paper-card>
+          <!-- Role-wise userlist - End -->
+          
+          <!-- Dialog for - Add/Update Role - start -->
+          <paper-dialog id="dialogAddRole">
+            <div class="type body-lead" style="color: #5c4575;">
+              <iron-icon icon="icons:check-circle" class="m-right-8 "></iron-icon>[[$TRANSLATE('Add/Edit Role', LANG)]]
+            </div>
+
+            <div>
+              <paper-input label="[[$TRANSLATE('Role Title', LANG)]]" value={{role.title}}></paper-input>
+            </div>
+
+            
+
+            <div class="type body-lead" style="color: #5c4575;">[[$TRANSLATE('Privileged features', LANG)]]:</div>
+
+            <!-- <div class="type body">Pre Listed Roles:</div> -->
+
+            <div class="horizontal layout wrap">
+              <template is="dom-repeat" items="[[preListedRoles]]">
+                <paper-button class="btn default" style="background-color: fafafa;" raised on-tap="_onPreListedRoleTap">{{item.title}}</paper-button>
+              </template>
+            </div>
+
+            
+            <paper-dialog-scrollable>
+              
+              <div class="horizontal layout wrap">
+                <template is="dom-repeat" items="{{privilegeList}}">
+                  <paper-checkbox id="{{item.serial}}" class="m-4" style="background-color: #E0F2F1; padding: 8px; border-radius: 4px; " checked="{{item.isSelected}}">{{item.name}}</paper-checkbox>
+                </template>
+              </div>
+
+            </paper-dialog-scrollable>
+
+            <div class="buttons m-top-16">
+              <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+              <template is="dom-if" if="[[!ROLE_EDIT_MODE]]">
+                <paper-button class="colored" on-tap="addRole" autofocus raised>[[$TRANSLATE('Add', LANG)]]</paper-button>
+              </template>
+              <template is="dom-if" if="[[ROLE_EDIT_MODE]]">
+                <paper-button class="colored" on-click="editRole" autofocus raised>[[$TRANSLATE('Save', LANG)]]</paper-button>
+              </template>
+            </div>
+          </paper-dialog>
+          <!-- Dialog for - Add/Update Role - end -->
+
+          <!-- Dialog for - Set Role For User- start -->
+          <paper-dialog id="dialogSetRoleForUser">
+            <div class="type body-lead" style="color: #009688;">[[$TRANSLATE('Select Role', LANG)]]</div>
+
+            <div>
+              <paper-radio-group selected="{{selectedRoleTypeForUser}}">
+                <template is="dom-repeat" items="[[roleList]]">
+                  <paper-radio-button name="{{item.type}}">{{item.title}}</paper-radio-button>
+                </template>
+              </paper-radio-group>
+            </div>
+
+
+            <div class="buttons m-top-16">
+              <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+              <paper-button class="colored" on-click="setRoleForUser" autofocus raised>[[$TRANSLATE('Set', LANG)]]</paper-button>
+            </div>
+          </paper-dialog>
+          <!-- Dialog for - Set Role For User - end -->
+
+          <!-- Dialog for - Add new member - start -->
+          <paper-dialog id="dialogAddMember">
+            <div class="type body-lead" style="color: #009688;">[[$TRANSLATE('Add new member', LANG)]]</div>
+
+            <paper-dialog-scrollable>
+              <paper-input required value="{{newMember.name}}" label="[[$TRANSLATE('Full Name', LANG)]]" auto-validate error-message="Member Name is Required!"></paper-input>
+
+              <vaadin-date-picker required auto-validate error-message="Date of Birth is Required!" type="date" value="{{newMember.dateOfBirth}}" label="[[$TRANSLATE('Date of Birth', LANG)]]"></vaadin-date-picker>
+
+              <div class="type body secondary">[[$TRANSLATE('Gender', LANG)]]</div>
+              <paper-radio-group selected="{{newMember.gender}}">
+                <paper-radio-button name="male">Male</paper-radio-button>
+                <paper-radio-button name="female">Female</paper-radio-button>
+                <paper-radio-button name="other">Other</paper-radio-button>
+              </paper-radio-group>
+            
+              <paper-input class="custom-input paper-custom full" class="p-horizontal-8" value="{{newMember.phone}}" label="[[$TRANSLATE('Phone Number', LANG)]]" pattern="^[0-9]{11,11}(-[0-9]*){0,1}$" required auto-validate error-message="Phone Number Required. i.e.: 01712345678 or 01712345678-12'" char-counter minlength="11" maxlength="14">
+                <div prefix>+88</div>
+              </paper-input>
+
+            </paper-dialog-scrollable>
+            <div class="buttons m-top-16">
+              <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+              <paper-button class="colored" on-click="addNewMember" autofocus raised>[[$TRANSLATE('Add', LANG)]]</paper-button>
+            </div>
+          </paper-dialog>
+          <!-- Dialog for - Set Role For User - end -->
+
+        </template>
+        <!-- editing organization - end -->
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-organization-manage-users.coffee-compiled.js"></script>
+</dom-module>

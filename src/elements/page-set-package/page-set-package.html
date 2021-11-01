@@ -1,0 +1,359 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-list/iron-list.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<dom-module id="page-set-package">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      paper-card {
+        --paper-: {
+          padding: 0;
+          margin-left: 20px;
+        }
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .item {
+        padding: 10px;
+      }
+
+      .item:nth-child(even) {
+        background-color: var(--paper-grey-100);
+      }
+
+      .text-mute {
+        color: var(--paper-grey-400);
+      }
+
+      .choice-list,
+      .package-list {
+        width: 100%;
+        margin-top: 10px;
+      }
+
+      .choice-list {
+        height: 100vh;
+        overflow: auto;
+      }
+
+      .package-list {
+        margin-left: 10px;
+        height: 100vh;
+        overflow: auto;
+      }
+
+      .package-list .package-item {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+      }
+
+      .package-item :first-child {
+        padding-right: 15px;
+      }
+
+      .add {
+        color: var(--paper-green-500);
+      }
+
+      .page-package {
+        width: 100%;
+        @apply(--layout-horizontal);
+      }
+
+      iron-list {
+        max-height: 400px;
+      }
+
+      @media only screen and (max-width: 1024px) {
+        .page-package {
+          @apply(--layout-vertical);
+        }
+
+        .choice-list,
+        .package-list {
+          height: 100%;
+        }
+
+        .package-list {
+          margin-left: 0;
+        }
+      }
+    </style>
+
+    <div class="master-container">
+
+      <div class="page-package">
+
+        <section class="choice-list">
+
+          <paper-card>
+            <div class="card-custom-header" on-tap="toggleInvestigation">
+              <div class="layout horizontal justified center">
+                <div class="title flex">
+                  <iron-icon icon="expand-more"></iron-icon> Investigation
+                </div>
+              </div>
+            </div>
+            <div class="">
+              <iron-collapse id="investigation">
+                <div class="collapse-content">
+                  <!-- <iron-list items="[[investigationPriceList]]">
+                    <template>
+                      <div class="item layout horizontal center">
+                        <paper-icon-button class="add" icon="add-circle" on-tap="addInvestigationToListButtonClicked"></paper-icon-button>
+                        <div>[[item.name]]</div>
+                      </div>
+                    </template>
+                  </iron-list> -->
+                  <template is="dom-if" if="[[isEmpty(investigationPriceList)]]">
+                    <template is="dom-repeat" items="[[investigationPriceList]]">
+                      <div class="item layout horizontal center">
+                        <paper-icon-button class="add" icon="add-circle" on-tap="addToListButtonClicked">
+                        </paper-icon-button>
+                        <div>[[item.name]]</div>
+                      </div>
+                    </template>
+                  </template>
+                </div>
+              </iron-collapse>
+            </div>
+          </paper-card>
+
+          <paper-card>
+            <div class="card-custom-header" on-tap="toggleServcie">
+              <div class="layout horizontal justified center">
+                <div class="title flex">
+                  <iron-icon icon="expand-more"></iron-icon> Service
+                </div>
+              </div>
+            </div>
+            <div class="">
+              <iron-collapse id="service">
+                <div class="collapse-content">
+                  <div hidden$="{{isEmpty(servicePriceList.data)}}" class="layout vertical center item">No Data...</div>
+                  <iron-list items="[[servicePriceList.data]]">
+                    <template>
+                      <div class="item layout horizontal center">
+                        <paper-icon-button class="add" icon="add-circle" on-tap="addToListButtonClicked">
+                        </paper-icon-button>
+                        <div>[[item.name]]</div>
+                      </div>
+                    </template>
+                  </iron-list>
+                </div>
+              </iron-collapse>
+            </div>
+          </paper-card>
+
+          <paper-card>
+            <div class="card-custom-header" on-tap="toggleDoctorFees">
+              <div class="layout horizontal justified center">
+                <div class="title flex">
+                  <iron-icon icon="expand-more"></iron-icon> Doctor Fees
+                </div>
+              </div>
+            </div>
+            <div class="">
+              <iron-collapse id="doctorFees">
+                <div class="collapse-content">
+                  <div hidden$="{{isEmpty(doctorFeesPriceList.data)}}" class="layout vertical center item">No Data...
+                  </div>
+                  <iron-list items="[[doctorFeesPriceList.data]]">
+                    <template>
+                      <div class="item layout horizontal center">
+                        <paper-icon-button class="add" icon="add-circle" on-tap="addToListButtonClicked">
+                        </paper-icon-button>
+                        <div class="flex">[[item.name]]</div>
+                      </div>
+                    </template>
+                  </iron-list>
+                </div>
+              </iron-collapse>
+            </div>
+          </paper-card>
+
+          <paper-card>
+            <div class="card-custom-header" on-tap="togglePharmacy">
+              <div class="layout horizontal justified center">
+                <div class="title flex">
+                  <iron-icon icon="expand-more"></iron-icon> Pharmacy
+                </div>
+              </div>
+            </div>
+            <div class="">
+              <iron-collapse id="pharmacy">
+                <div class="collapse-content">
+                  <div hidden$="{{isEmpty(medicineInventory)}}" class="layout vertical center item">No Data...</div>
+                  <iron-list items="[[medicineInventory]]">
+                    <template>
+                      <div class="item layout horizontal center">
+                        <paper-icon-button class="add" icon="add-circle" on-tap="addInventoryItemToListButtonClicked">
+                        </paper-icon-button>
+                        <div class="flex-2">[[item.data.name]]</div>
+                      </div>
+                    </template>
+                  </iron-list>
+                </div>
+              </iron-collapse>
+            </div>
+          </paper-card>
+
+          <paper-card>
+            <div class="card-custom-header" on-tap="toggleSupply">
+              <div class="layout horizontal justified center">
+                <div class="title flex">
+                  <iron-icon icon="expand-more"></iron-icon> Supply
+                </div>
+              </div>
+            </div>
+            <div class="">
+              <iron-collapse id="supply">
+                <div class="collapse-content">
+                  <div hidden$="{{isEmpty(supplyPriceList.data)}}" class="layout vertical center item">No Data...</div>
+                  <iron-list items="[[supplyPriceList.data]]">
+                    <template>
+                      <div class="item layout horizontal center">
+                        <paper-icon-button class="add" icon="add-circle" on-tap="addToListButtonClicked">
+                        </paper-icon-button>
+                        <div>[[item.name]]</div>
+                      </div>
+                    </template>
+                  </iron-list>
+                </div>
+              </iron-collapse>
+            </div>
+          </paper-card>
+
+          <paper-card>
+            <div class="card-custom-header" on-tap="toggleAmbulance">
+              <div class="layout horizontal justified center">
+                <div class="title flex">
+                  <iron-icon icon="expand-more"></iron-icon> Ambulance
+                </div>
+              </div>
+            </div>
+            <div class="">
+              <iron-collapse id="ambulance">
+                <div class="collapse-content">
+                  <div hidden$="{{isEmpty(ambulancePriceList.data)}}" class="layout vertical center item">No Data...
+                  </div>
+                  <iron-list items="[[ambulancePriceList.data]]">
+                    <template>
+                      <div class="item layout horizontal center">
+                        <paper-icon-button class="add" icon="add-circle" on-tap="addToListButtonClicked">
+                        </paper-icon-button>
+                        <div>[[item.name]]</div>
+                      </div>
+                    </template>
+                  </iron-list>
+                </div>
+              </iron-collapse>
+            </div>
+          </paper-card>
+
+          <paper-card>
+            <div class="card-custom-header" on-tap="toggleOther">
+              <div class="layout horizontal justified center">
+                <div class="title flex">
+                  <iron-icon icon="expand-more"></iron-icon> Other
+                </div>
+              </div>
+            </div>
+            <div class="">
+              <iron-collapse id="other">
+                <div class="collapse-content">
+                  <div hidden$="{{isEmpty(otherPriceList.data)}}" class="layout vertical center item">No Data...</div>
+                  <iron-list items="[[otherPriceList.data]]">
+                    <template>
+                      <div class="item layout horizontal start">
+                        <paper-icon-button class="add" icon="add-circle" on-tap="addToListButtonClicked">
+                        </paper-icon-button>
+                        <div>[[item.name]]</div>
+                      </div>
+                    </template>
+                  </iron-list>
+                </div>
+              </iron-collapse>
+            </div>
+          </paper-card>
+
+        </section>
+
+        <section class="package-list">
+          <paper-card heading="Package">
+            <div class="card-content">
+              <div class="layout horizontal start package-item">
+                <div class="flex-3">
+                  <strong>Add Price</strong>
+                </div>
+                <div class="flex-1">
+                  <strong>Qty</strong>
+                </div>
+                <div class="flex-8">
+                  <strong>Items</strong>
+                </div>
+              </div>
+              <template is="dom-repeat" items="[[package.itemList]]">
+                <div class="layout horizontal center package-item">
+                  <paper-checkbox class="flex-3" on-change="packageItemPriceSelected">[[item.price]]
+                    <span class="text-mute">BDT</span> -</paper-checkbox>
+                  <paper-input class="flex-1" label="Qty" type="number" on-input="qtyInput" no-label-float>
+                  </paper-input>
+                  <div class="flex-7">[[item.name]]</div>
+                  <paper-icon-button class="flex-1" icon="delete" on-tap="deletePackageItem"></paper-icon-button>
+                </div>
+              </template>
+
+            </div>
+            <div class="card-actions">
+              <div class="layout horizontal center">
+                <paper-input id="packageCost" label="Enter Cost Price" type="number" value="{{package.actualCost}}"
+                  required error-message="Input Package Cost Price" on-input="validate"></paper-input>
+                <paper-input id="packagePrice" label="Enter Total Price" type="number" value="{{package.price}}"
+                  required error-message="Input Package Price" on-input="validate" class="m-left-8"></paper-input>
+                <paper-input id="packageName" class="flex m-left-8" label="Enter Package Name" value="{{package.name}}"
+                  required error-message="Input a Package Name" on-input="validate"></paper-input>
+              </div>
+              <paper-button class="btn btn-success" on-tap="createPackageButtonClicked">Create Package</paper-button>
+            </div>
+          </paper-card>
+        </section>
+
+
+      </div>
+    </div>
+
+  </template>
+  <script src="page-set-package.coffee-compiled.js"></script>
+</dom-module>

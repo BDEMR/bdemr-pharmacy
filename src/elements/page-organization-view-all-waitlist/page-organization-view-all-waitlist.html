@@ -1,0 +1,169 @@
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-organization-view-all-waitlist">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <paper-progress class="progress" indeterminate hidden$="[[!loading]]"></paper-progress>
+
+        <paper-card>
+          <div class="card-content">
+            <div class="layout vertical">
+              <div><span class="type caption bg-gray">[[organization.idOnServer]]</span></div>
+              <div class="p-vertical-8"><span class="type bold">[[organization.name]]</span></div>
+              <div><span class="type secondary">[[organization.address]]</span></div>
+              <div><span class="type secondary">[[organization.phone]]</span></div>
+            </div>
+          </div>
+        </paper-card>
+
+        <template is='dom-if' if='[[patient]]'>
+          <paper-card class="m-top-8" heading="[[$TRANSLATE('Patient Info', LANG)]]">
+            <div class="card-content">
+              <div class="layout vertical">
+                <div class="p-vertical-8"><span class="type bold">[[$getFullName(patient.name)]]</span></div>
+                <div><span class="type secondary">[[patient.email]]</span></div>
+                <div><span class="type secondary">[[patient.phone]]</span></div>
+              </div>
+            </div>
+          </paper-card>
+        </template>
+
+        <paper-card class="m-top-8">
+          <div class="card-content">
+            <paper-listbox>
+              <template is='dom-repeat' items='[[waitLists]]'>
+                <paper-item>
+                  <div><span class="type caption-2 bg-gray">[[item.patientList.length]]</span></div>
+                  <div class="flex m-left-8">[[item.name]]</div>
+                  <div>
+                    <paper-button class="btn btn-primary btn-sm" on-tap="viewWaitListButtonPressed">[[$TRANSLATE('View', LANG)]]</paper-button>
+                  </div>
+                </paper-item>
+              </template>
+            </paper-listbox>
+          </div>
+        </paper-card>
+
+      </div>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'page-organization-view-all-waitlist',
+      behaviors: [
+        app.behaviors.translating,
+        app.behaviors.pageLike,
+        app.behaviors.dbUsing,
+        app.behaviors.apiCalling,
+        app.behaviors.commonComputes
+      ],
+
+      properties: {
+        user: {
+          type: Object,
+          value: null
+        },
+        organization: {
+          type: Object,
+          value: {}
+        },
+        waitLists: {
+          type: Array,
+          value: []
+        }
+
+      },
+
+      navigatedIn() {
+        const params = this.domHost.getPageParams()
+        const organizationId = params['organization'];
+        this._loadUser();
+        if (organizationId) {
+          this._loadOrganization(organizationId, () => {
+            this._loadWaitLists(organizationId, _ => null);
+          });
+        } else {
+          this._notifyInvalidOrganization()
+        }
+      },
+
+      _loadUser() {
+        const userList = app.db.find('user');
+        if (userList.length === 1) {
+          return this.user = userList[0];
+        }
+      },
+
+      _loadOrganization(idOnServer, cbfn) {
+        const data = {
+          apiKey: this.user.apiKey,
+          idList: [idOnServer]
+        };
+        this.loading = true;
+        this.callApi('/bdemr-organization-list-organizations-by-ids', data, (err, response) => {
+          this.loading = false;
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (!response.data.matchingOrganizationList.length) return this._notifyInvalidOrganization();
+          this.set('organization', response.data.matchingOrganizationList[0]);
+          return cbfn();
+        });
+      },
+
+      _notifyInvalidOrganization() {
+        return this.domHost.showModalDialog("Invalid Organization");
+      },
+
+
+      _loadWaitLists(organizationId, cbfn) {
+        const data = {
+          apiKey: this.user.apiKey,
+          organizationId
+        };
+        this.loading = true;
+        this.callApi('/bdemr-organization-get-all-waitlist', data, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          this.set('waitLists', response.data);
+          if (cbfn) cbfn();
+        });
+      },
+
+      viewWaitListButtonPressed(e) {
+        let { item } = e.model;
+        this.domHost.navigateToPage(`#/view-single-waitlist/organization:${this.organization.idOnServer}/waitlist:${item._id}`);
+      }
+
+
+    })
+  </script>
+</dom-module>

@@ -1,0 +1,176 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+
+<link rel="import" href="../../bower-assets/polymer-quill/polymer-quill-html-render.html" />
+
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<!-- custom-elements -->
+<link rel="import" href="../../elements/html-block/html-block.html">
+
+<!-- element -->
+<dom-module id="page-online-exam-admin-panel">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 60px;
+        width: 70%;
+      }
+
+      @media screen and (max-width: 740px) {
+        .row.one .card-group:first-child {
+          margin-right: 10px;
+        }
+      }
+
+      @media screen and (max-width: 480px) {
+        .row.one .card-group {
+          display: block;
+        }
+      }
+
+      .card-content.single-block .number {
+        font-size: 72px;
+      }
+
+      .card-content.single-block .subtitle {
+        text-transform: uppercase;
+      }
+
+      .top-margin {
+        margin-top: 10px
+      }
+
+      paper-dialog {
+        width: 400px;
+      }
+    </style>
+
+    <!-- local DOM -->
+
+
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <div class="horizontal layout end wrap m-bottom-8">
+          <div class="flex-2"></div>
+          <!-- <paper-button class="btn btn-success top-margin" raised
+            on-tap="viewExamsAllParticipantsStat">View Exam Stat</paper-button> -->
+          <paper-button class="btn btn-primary" raised on-tap="addOrUpdateExamButtonClicked">ADD/Update Exam
+          </paper-button>
+        </div>
+
+        <paper-card heading="Current Exams Running On Patient App">
+          <div class="card-content">
+
+            <template is="dom-repeat" items="[[examList]]" as="exam">
+              <div hidden$="[[!exam.isActive]]">
+                <paper-item>
+                  <div class="flex top-margin">[[exam.name]]</div>
+                  <template is="dom-if" if="[[exam.isActive]]">
+                    <div class="flex top-margin"><i>Running</i></div>
+                  </template>
+                  <paper-button class="btn btn-sm btn-success top-margin" raised on-tap="viewExamButtonClicked">View
+                    Exam
+                  </paper-button>
+                  <paper-button class="btn btn-sm btn-warning top-margin" raised on-tap="updateExamButtonClicked">Update
+                    Exam
+                  </paper-button>
+                  <paper-button class="btn btn-sm btn-default top-margin" raised on-tap="analyzeExamButtonClicked">
+                    analyze Exam
+                  </paper-button>
+                </paper-item>
+              </div>
+            </template>
+          </div>
+        </paper-card>
+        <br>
+
+        <!--Exams that are not running Start-->
+        <paper-card heading="Online Exams History">
+          <div class="card-content">
+            <template is="dom-repeat" items="[[examList]]" as="exam">
+              <div hidden$="[[exam.isActive]]">
+                <paper-item>
+                  <div class="flex top-margin">[[exam.name]]</div>
+                  <template is="dom-if" if="[[!exam.isActive]]">
+                    <div class="flex top-margin">Exam Not Running</div>
+                  </template>
+                  <paper-button class="btn btn-sm btn-success top-margin" raised on-tap="viewExamButtonClicked">View
+                    Exam
+                  </paper-button>
+                  <paper-button class="btn btn-sm btn-warning top-margin" raised on-tap="updateExamButtonClicked">Update
+                    Exam
+                  </paper-button>
+                  <paper-button class="btn btn-sm btn-default top-margin" raised on-tap="analyzeExamButtonClicked">
+                    analyze Exam
+                  </paper-button>
+                </paper-item>
+              </div>
+            </template>
+          </div>
+        </paper-card>
+        <!--Exams that are not running End-->
+
+        <!-- View Exams start -->
+        <paper-dialog id="dialogViewForExams" no-cancel-on-outside-click no-cancel-on-esc-key>
+          <paper-dialog-scrollable>
+            <div class="card-content">
+              <div class="type body-lead center" style="color: green; margin-left: 15px; font-weight: bold;">
+                Exam Details
+              </div>
+              <hr>
+              <template is="dom-repeat" items="[[currentlySelectedExam.data]]">
+                <paper-item>
+                  <div class="card-content">
+                    <div class="flex top-margin"><strong>Question: </strong></div>
+                    <polymer-quill-html-render id="demo1" content=[[item.question]]>
+                    </polymer-quill-html-render>
+                    <template is="dom-if" if="[[$equals(item.type, 'checkbox')]]">
+                      <div class="flex top-margin"><strong>Answers: </strong>
+                        <template is="dom-repeat" items="[[item.choices]]">[[item.value]], </template>
+                        <div class="flex top-margin"><strong>Right Answer:</strong>
+                          <template is="dom-repeat" items="[[_getRightAnswer(item.choices)]]">[[item]]&nbsp;</template>
+                        </div>
+                      </div>
+                    </template>
+                    <div class="flex top-margin"><strong>Mark: </strong>[[item.marks]]</div>
+                    <br>
+                  </div>
+                </paper-item>
+              </template>
+            </div>
+          </paper-dialog-scrollable>
+          <div class="card-actions">
+            <template is="dom-if" if="[[!examCodeSentToStudent]]">
+              <paper-button class="btn btn-success top-margin" raised on-tap="sendExamCodeClicked">Send Exam Codes to
+                Students
+              </paper-button>
+            </template>
+            <paper-button class="colored" raised on-tap="viewExamOkBtnPrsd" dialog-dismiss>Dismiss</paper-button>
+          </div>
+        </paper-dialog>
+        <!-- View Exams end -->
+
+      </div>
+    </div>
+
+  </template>
+  <script src="page-online-exam-admin-panel.coffee-compiled.js"></script>
+</dom-module>

@@ -1,0 +1,295 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-organization-designation-manager">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .item {
+        border-bottom: 1px solid #f5f5f5;
+        border-top: 1px solid #f5f5f5;
+      }
+    </style>
+
+    <div class="master-container">
+      <div class="limiting-container">
+        <paper-progress class="progress" indeterminate hidden$="[[!loading]]"></paper-progress>
+
+        <paper-card>
+          <div class="card-content">
+            <paper-button on-tap="createNewDesignationButtonPressed" class="btn btn-primary">Add New Designation</paper-button>
+
+            <div class="m-top-8">
+              <template is='dom-if' if='[[!designationList.length]]'>
+                <paper-item>
+                  <p class="text-center">No Designations</p>
+                </paper-item>
+              </template>
+              <template is='dom-repeat' items='[[designationList]]'>
+                <paper-item class="item">
+                  <div class="flex-2">[[item.name]]</div>
+                  <div class="flex"><span class="type secondary">[[getDepartmentName(item.departmentId)]]</span></div>
+                  <div>
+                    <paper-button class="btn btn-default btn-sm" on-tap="editDesignationButtonPressed">Edit</paper-button>
+                    <paper-button class="btn btn-danger btn-sm" on-tap="deleteDesignation">Delete</paper-button>
+                  </div>
+                </paper-item>
+              </template>
+            </div>
+          </div>
+        </paper-card>
+
+      </div>
+    </div>
+
+    <!-- Create New Designation Modal -->
+    <paper-dialog id="designationEditorDialog">
+      <div>
+        <paper-dropdown-menu label="Select Department">
+          <paper-listbox class="dropdown-content" attr-for-selected="value" selected="{{designationObject.departmentId}}">
+            <template is="dom-repeat" items="[[departmentList]]">
+              <paper-item value="[[item._id]]">[[item.name]]</paper-item>
+            </template>
+          </paper-listbox>
+        </paper-dropdown-menu>
+        <paper-input label="Designation" value="{{designationObject.name}}"></paper-input>
+      </div>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button class="btn btn-success" on-click="designationConfirmedButtonPressed" autofocus raised>Add</paper-button>
+      </div>
+    </paper-dialog>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'page-organization-designation-manager',
+      behaviors: [
+        app.behaviors.commonComputes,
+        app.behaviors.dbUsing,
+        app.behaviors.pageLike,
+        app.behaviors.apiCalling
+      ],
+      properties: {
+        user: Object,
+        organization: Object,
+        departmentList: Array,
+        designationObject: {
+          type: Object,
+          value: {}
+        },
+        designationList: {
+          type: Array,
+          value: []
+        },
+        loading: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      navigatedIn() {
+        const params = this.domHost.getPageParams()
+        this._loadUser();
+        if (params['organization']) {
+          this._loadOrganization(params['organization'], () => {
+            this._loadDepartmentList(this.organization.idOnServer)
+            this._loadDesignationList(this.organization.idOnServer)
+          })
+        } else {
+          return this.domHost.showModalDialog("Missing Organization params");
+        }
+      },
+
+      _loadUser(cbfn) {
+        const userList = app.db.find('user');
+        if (userList.length === 1) {
+          this.user = userList[0];
+        } else {
+          return this.domHost.showModalDialog('Invalid User');
+        }
+      },
+
+      _loadOrganization(idOnServer, cbfn) {
+        const data = {
+          apiKey: this.user.apiKey,
+          idList: [idOnServer]
+        };
+        return this.callApi('/bdemr-organization-list-organizations-by-ids', data, (err, response) => {
+          if (response.hasError) {
+            return this.domHost.showModalDialog(response.error.message);
+          } else {
+            if (response.data.matchingOrganizationList.length !== 1) {
+              this.domHost.showModalDialog("Invalid Organization");
+              return;
+            }
+            this.set('organization', response.data.matchingOrganizationList[0]);
+            cbfn()
+          }
+        });
+      },
+
+      _loadDepartmentList(organizationIdentifier) {
+        const query = {
+          apiKey: this.user.apiKey,
+          organizationId: organizationIdentifier
+        }
+        this.loading = true;
+        this.callApi('/bdemr--organizations-get-department-list', query, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (response.data.length) {
+            this.set('departmentList', response.data);
+          }
+        })
+      },
+
+      _loadDesignationList(organizationIdentifier) {
+        const query = {
+          apiKey: this.user.apiKey,
+          organizationId: organizationIdentifier
+        }
+        this.loading = true;
+        this.callApi('/bdemr--organizations-get-designation-list', query, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (response.data.length) {
+            this.set('designationList', response.data);
+          }
+        })
+      },
+
+      getDepartmentName(departmentId) {
+        let department = this.departmentList.find((item) => item._id === departmentId);
+        return department.name;
+      },
+
+      _createNewDesignationObject() {
+        let newDesignation = {
+          createdDatetimeStamp: null,
+          lastModifiedDatetimeStamp: null,
+          createdByUserSerial: this.user.serial,
+          organizationId: this.organization.idOnServer,
+          departmentId: '',
+          name: ''
+        }
+        this.set('designationObject', newDesignation)
+      },
+
+      _createNewDesignation(newDesignation) {
+        let data = {
+          apiKey: this.user.apiKey,
+          designationObject: newDesignation
+        }
+        this.loading = true;
+        this.callApi('/bdemr--organization-create-designation', data, (err, response) => {
+          this.loading = false;
+          if (!response.hasError) {
+            this.domHost.showToast('Designation Created')
+            this.push('designationList', response.data)
+            this._createNewDesignationObject()
+          } else {
+            this.domHost.showToast('Could not create Designation. Please try again.')
+          }
+        })
+      },
+
+      _updateDesignation(designation) {
+        let data = {
+          apiKey: this.user.apiKey,
+          designationObject: designation
+        }
+        this.loading = true;
+        this.callApi('/bdemr--organization-update-designation-name', data, (err, response) => {
+          this.loading = false;
+          if (!response.hasError) {
+            const designation = response.data
+            let index = this.designationList.findIndex((item) => item._id === designation._id);
+            this.splice('designationList', index, 1, designation);
+            this.domHost.showToast('Designation Updated')
+          } else {
+            this.domHost.showToast('Could not update Designation Name. Please try again.')
+          }
+        })
+      },
+
+      _deleteDesignation(designationId) {
+        let data = {
+          apiKey: this.user.apiKey,
+          id: designationId
+        }
+        this.loading = true;
+        this.callApi('/bdemr--organization-delete-designation', data, (err, response) => {
+          this.loading = false;
+          if (!response.hasError) {
+            let index = this.designationList.findIndex((item) => item._id === designationId);
+            this.splice('designationList', index, 1);
+            this.domHost.showToast('Designation Deleted')
+          } else {
+            this.domHost.showToast('Could not delete Designation. Please try again.')
+          }
+        })
+      },
+
+      createNewDesignationButtonPressed() {
+        this._createNewDesignationObject()
+        this.$.designationEditorDialog.toggle();
+      },
+
+      designationConfirmedButtonPressed() {
+        if (!this.designationObject.departmentId && this.designationObject.designationName) {
+          return this.domHost.showToast('Please correct input value');
+        }
+        this.$.designationEditorDialog.close();
+
+        const now = Date.now()
+        this.designationObject.lastModifiedDatetimeStamp = now;
+        if (this.designationObject._id) {
+          this._updateDesignation(this.designationObject)
+        } else {
+          this.designationObject.createdDatetimeStamp = now;
+          this._createNewDesignation(this.designationObject);
+        }
+      },
+
+      editDesignationButtonPressed(e) {
+        let item = e.model.item;
+        this.set('designationObject', {})
+        this.set('designationObject', item)
+        this.$.designationEditorDialog.toggle();
+      },
+
+      deleteDesignation(e) {
+        let item = e.model.item
+        this.domHost.showModalPrompt('Are you sure to delete this designation', (yes) => {
+          if (yes) {
+            this._deleteDesignation(item._id)
+          }
+        })
+      }
+
+    })
+  </script>
+</dom-module>

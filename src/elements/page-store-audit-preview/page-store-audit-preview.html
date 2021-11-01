@@ -1,0 +1,441 @@
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-store-audit-preview">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      paper-card {
+        background: #fff;
+      }
+
+      .master-container {
+        /*background: #fff;*/
+      }
+      
+      .patient-info-card-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+      
+      .patient-info-cards {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+      
+      .patient-info-cards .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+      
+      .patient-info-cards .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+      
+      .patient-info-cards .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+      
+      .patient-info-cards .row .modifier.online {
+        background: #757575;
+      }
+      
+      .patient-info-cards .row .modifier.local-only {
+        background: #039BE5;
+      }
+      
+      .patient-info-cards .row .modifier.locally-updated {
+        background: #009688;
+      }
+      
+      .patient-info-cards .row .modifier.imported {
+        background: #4CAF50;
+      }
+      
+      .info-row {
+        margin-top: 10px;
+      }
+      
+      .top-info-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+      
+      .address1 {
+        margin-right: 10px;
+      }
+      
+      .break-on-tablet {
+        @apply(--layout-horizontal);
+      }
+      
+      @media screen and (max-width: 740px) {
+        .break-on-tablet {
+          display: block;
+        }
+      }
+      
+      .val {
+        text-decoration: underline;
+      }
+      
+      .search-result-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+      
+      .search-results {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+      
+      .search-results .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+      
+      .search-results .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+      
+      .search-results .row .name {
+        font-size: 18px;
+        margin-left: 10px;
+      }
+      
+      .search-results .row .email {
+        font-size: 14px;
+        color: #777777;
+        margin-left: 10px;
+      }
+      
+      .search-results .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+      
+      .search-results .row .modifier.online {
+        background: #757575;
+      }
+      
+      .search-results .row .modifier.local-only {
+        background: #039BE5;
+      }
+      
+      .search-results .row .modifier.locally-updated {
+        background: #009688;
+      }
+      
+      .search-results .row .modifier.imported {
+        background: #4CAF50;
+      }
+      
+      .new-patient-fab {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+      }
+      
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+      
+      paper-button {
+        background: white;
+      }
+
+      .comment-history-item.right {
+        @apply(--layout-end-justified);
+      }
+
+      .header {
+        position: relative;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px
+      }
+      .header .title {
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: #5c4575;
+      }
+
+      custom-vital-search {
+        margin-left: 30px;
+      }
+
+      .limiting-container {
+        margin-top: 10px;
+      }
+      
+      .limiting-container {
+        max-width: 210mm;
+        /*min-height: 230mm;*/
+        /*min-height: 297mm;*/
+      }
+      
+      .document {
+        font-family: 'Times New Roman';
+        background: white;
+        width: 100%;
+      }
+      
+      .document-title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+      
+      @media print {
+        .limiting-container {
+          /*margin-top: -60px;*/
+          /*border: 1px solid black;*/
+          width: 100%;
+        }
+
+        .hideOnPrint {
+          display: none !important;
+        }
+
+        /*.print-container {
+          width: 100%;
+        }*/
+      }
+      
+      .collection {
+        color: red;
+        background: grey;
+      }
+      
+      .document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+      
+      .document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+      
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+      
+      .leftSide {
+        margin-left: 6px;
+      }
+      
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+      
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+      .item{
+        padding: 10px;
+        border: 1px solid grey;
+      }
+
+      .table {
+        border: 1px solid black;
+      }
+
+      vaadin-grid {
+        height: auto;
+      }
+
+    </style>
+
+    <!-- local DOM -->
+
+    <template is="dom-if" if="{{isAuditValid}}">
+
+      <div class="master-container">
+        <div class="limiting-container">
+
+          <!-- document - start -->
+          <div class="document">
+            <div class="document-header horizontal layout center">
+
+              <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+                <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+              </template>
+
+              <div class="leftSide vertical layout">
+                <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+                <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+                <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+              </div>
+              <div class="flex"></div>
+              <div class="rightSide vertical layout end">
+                <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+                <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+                <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+              </div>
+            </div>
+
+            <div class="horiline"></div>
+            <div style="text-align: center">
+              <h1>{{audit.storeName}}</h1>
+              <h4 class="type secondary">Audit Report</h4>
+            </div>
+            
+
+            <div class="type body horizontal layout" style="background-color: #eee; padding: 3px 8px; margin: 16px 0;">
+              <div class="m-horizontal-8"><div class="type caption-2"><strong>Audit Id:</strong></div>[[audit._id]]</div>
+              <div class="m-horizontal-8"><div class="type caption-2"><strong>Started on:</strong></div>[[_formatDateTime(audit.createdDatetimeStamp)]]</div>
+              <div class="m-horizontal-8"><div class="type caption-2"><strong>Ended at:</strong></div>[[_formatDateTime(audit.endAuditDatetimeStamp)]]</div>
+              <div class="m-horizontal-8"><div class="type caption-2"><strong>Audited by:</strong></div>[[audit.createdByUserName]]</div>
+            </div>
+
+            <div style="text-align: center">
+                <h4 class="">Products Flagged</h4>
+            </div>
+
+            <div class="m-top-8">
+              <!-- product list - start -->
+              <template is="dom-if" if="[[!audit.data.length]]">
+                <h4 class="p-16 type center">No data available...</h4>
+              </template>
+
+              <template is="dom-if" if="[[audit.data.length]]">
+                <vaadin-grid items="[[audit.data]]">
+
+                  <vaadin-grid-column width="6em" frozen>
+                    <template class="header">Product Name</template>
+                    <template>
+                        <div >[[item.name]]</div>
+                    </template>
+                  </vaadin-grid-column>
+        
+                  <vaadin-grid-column width="6em">
+                    <template class="header">Category</template>
+                    <template><div >[[item.category]]</div></template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column width="6em">
+                    <template class="header">In Stock</template>
+                    <template><div>[[item.inStock]]</div></template>
+                  </vaadin-grid-column>
+        
+                  <vaadin-grid-column width="6em">
+                    <template class="header">Physically found</template>
+                    <template>[[item.physicallyFound]]</template>
+                  </vaadin-grid-column>
+        
+                  <vaadin-grid-column width="6em">
+                    <template class="header">Missing amount</template>
+                    <template><div >{{calcMissingAmount(item.physicallyFound, item.inStock)}}</div></template>
+                  </vaadin-grid-column>
+                  
+                </vaadin-grid>
+
+              </template>
+              <!-- product list - end -->
+            </div>
+
+            <div class="type body"><strong>Notes:</strong>{{audit.note}}</div>
+          </div>   
+          <!-- document - end -->
+
+        </div>
+      </div>
+
+      <div class="horizontal layout center center-justified p-horizontal-16">
+        <div class="type body italic"><strong>printed by: </strong>[[user.name]]</div>
+      </div>
+    </template>
+
+  </template>
+  <script src="page-store-audit-preview.coffee-compiled.js"></script>
+</dom-module>

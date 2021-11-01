@@ -1,0 +1,340 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-message-share">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin: 0;
+        margin-top: 1px;
+        width: 100%;
+        /* max-width: 1200px; */
+      }
+
+      .custom-ordered-list {
+        padding-left: 24px;
+        margin: 0
+      }
+
+      paper-item {
+        border-bottom: 1px solid #eee;
+      }
+
+      paper-progress {
+        width: 100%;
+      }
+
+      .m-right-5 {
+        margin-right: 5px;
+      }
+
+      .custom-button {
+        padding: 4px 8px;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      paper-card {
+        border-radius: 0;
+        padding: 0;
+        /* background-color: #fff; */
+      }
+
+      vaadin-grid {
+        height: 100% !important;
+      }
+
+      #dialogRequestMessage {
+        width: 80%;
+      }
+      .custom-dialog-scrollable ::content .scrollable {
+        padding: 0;
+
+      }
+
+      .custom-date-down{
+        position: relative;
+        padding-top: 8px;
+      }
+      .custom-checkbox-down{
+        position: relative;
+        padding-top: 36px;
+      }
+    </style>
+
+    <!-- local DOM -->
+ 
+    <div id="tabContainer" class="tabs-container">
+      
+      <paper-tabs selected="{{selectedPage}}" scrollable noink='true'>
+        <paper-tab>Request</paper-tab>
+        <paper-tab>Recieved</paper-tab>  
+      </paper-tabs>
+
+    </div>
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+        <iron-pages selected="{{selectedPage}}">
+          <!-- Requested - start -->
+          <section>
+            <paper-card>
+              <!-- search -->
+              <div class="layout horizontal custom-input-field">
+                <vaadin-combo-box label="[[$TRANSLATE('Search By User', LANG)]]" class="organization-dropdown m-left-8 m-right-8" items="[[requestedToUserList]]" value="{{filterByRequestedToUser}}" 
+                  item-label-path="name" on-selected-item-changed="requestedToUserSelected">
+                  <template>
+                    <div><strong>[[item.name]]</strong></div>
+                    <div><span>[[item.phone]]</span></div>
+                  </template>
+                </vaadin-combo-box>
+                
+                <div class="m-left-8"></div>
+                <custom-vital-search class="custom-date-down" on-date-select="requestedFilterByDateClicked" on-clear="requestedFilterByDateClearButtonClicked"></custom-vital-search>
+                <!-- <paper-checkbox class="m-left-8 custom-checkbox-down" checked="{{showDuesOnly}}">Include pending requests</paper-checkbox> -->
+                <paper-input class="custom-date-down m-left-8 m-right-8" label="[[$TRANSLATE('Filter by Subject keywords', LANG)]]" title="Enter space-separated keywords" value="{{filterByRequestedToSubject}}"></paper-input>
+
+                <div class="flex"></div>
+
+                <div class="p-12 horizontal layout end-justified">
+                  <paper-button raised class="btn btn-success" on-tap="requestedSearchButtonClicked">[[$TRANSLATE('Search', LANG)]]</paper-button>
+                  <paper-button raised class="m-right-24" on-tap="requestedResetButtonClicked">[[$TRANSLATE('Reset', LANG)]]</paper-button>
+
+                  <paper-button raised class="colored" on-tap="showSendRequestDialog">[[$TRANSLATE('Send Request', LANG)]]</paper-button>
+                </div>
+
+              </div>
+
+              <div class="">
+                <template is="dom-if" if="[[!requestedMessageList.length]]">
+                  <div class="card-content">
+                    <h4 class="type center">- [[$TRANSLATE('No data', LANG)]] -</h4>
+                  </div>
+                  
+                </template>
+
+                <template is="dom-if" if="[[requestedMessageList.length]]">
+                  <vaadin-grid items="[[requestedMessageList]]">
+                    <!-- <vaadin-grid-column width="40px">
+                      <template class="header">No.</template>
+                      <template>[[_returnSerial(index)]]</template>
+                    </vaadin-grid-column> -->
+                    <!-- <vaadin-grid-column width="60px">
+                      <template class="header">Id</template>
+                      <template>[[item.serial]]</template>
+                    </vaadin-grid-column> -->
+
+                    <vaadin-grid-column width="150px" flex-grow="0">
+                      <template class="header">[[$TRANSLATE('Request on', LANG)]]</template>
+                      <template>[[_formatDate(item.createdDatetimeStamp)]]</template>
+                    </vaadin-grid-column>
+
+                    <vaadin-grid-column width="300px" flex-grow="0">
+                      <template class="header">[[$TRANSLATE('Request to', LANG)]]</template>
+                      <template>
+                        <div class="type body">[[item.requestTo.name]]</div>
+                        <div class="type caption-2 secondary">[[item.requestTo.phone]], [[item.requestTo.email]]</div>
+                      </template>
+                    </vaadin-grid-column>
+
+                    <vaadin-grid-column resizable>
+                      <template class="header">[[$TRANSLATE('Subject', LANG)]]</template>
+                      <template>
+                        <div class="type body">[[item.dataSubject]]</div>
+                      </template>
+                    </vaadin-grid-column>
+
+                    <vaadin-grid-column resizable>
+                      <template class="header">[[$TRANSLATE('Message', LANG)]]</template>
+                      <template>
+                        <div class="type body">[[item.data]]</div>
+                      </template>
+                    </vaadin-grid-column>
+
+                    <vaadin-grid-column>
+                      <template class="header">[[$TRANSLATE('log', LANG)]]</template>
+                      <template>
+                        <div>
+                          <template is="dom-repeat" items="[[item.logs]]" as="log" index-as="logIndex">
+                            <div class$="type caption [[log.class]]" style="text-transform: capitalize;">[[_returnSerial(logIndex)]]. [[log.type]] by [[log.name]] on [[$formatDateTime(log.createdDatetimeStamp)]]</div>
+                          </template>
+                        </div>
+                        <div class="horizontal layout wrap m-top-8">
+                          <!-- <paper-button class="custom-button colored" hidden$="[[item.buttonState.hideRecievedButton]]" raised on-tap="_onTapRecieved">recieved</paper-button> -->
+                          <paper-button class="custom-button btn btn-danger" hidden$="[[item.buttonState.hideCancelButton]]" raised on-tap="_onTapCancel">[[$TRANSLATE('cancel', LANG)]]</paper-button>
+                          <!-- <paper-button class="custom-button" hidden$="[[item.buttonState.hideEditButton]]" raised on-tap="_onTapEdit"><iron-icon icon="create" class="icon small-tiny m-right-5"></iron-icon>edit</paper-button> -->
+                          <!-- <paper-button class="custom-button" hidden$="[[item.buttonState.hidePrintButton]]" raised on-tap="_onTapPrint"><iron-icon icon="print" class="icon small-tiny m-right-5"></iron-icon>  print</paper-button> -->
+                        </div>
+                      </template>
+                    </vaadin-grid-column>
+                  </vaadin-grid>
+                </template>
+
+              </div>
+            </paper-card>
+          </section>
+
+          <!-- Recieved- start -->
+          <section>
+            <paper-card>
+
+              <!-- search -->
+              <div class="layout horizontal custom-input-field">
+                <vaadin-combo-box label="[[$TRANSLATE('Search By User', LANG)]]" class="organization-dropdown m-left-8 m-right-8" items="[[receivedFromUserList]]" value="{{filterByReceivedFromUser}}" 
+                  item-label-path="name" on-selected-item-changed="receivedFromUserSelected">
+                  <template>
+                    <div><strong>[[item.name]]</strong></div>
+                    <div><span>[[item.phone]]</span></div>
+                  </template>
+                </vaadin-combo-box>
+                
+                <div class="m-left-8"></div>
+                <custom-vital-search class="custom-date-down" on-date-select="receivedFilterByDateClicked" on-clear="receivedFilterByDateClearButtonClicked"></custom-vital-search>
+                <!-- <paper-checkbox class="m-left-8 custom-checkbox-down" checked="{{showDuesOnly}}">Include pending requests</paper-checkbox> -->
+                <paper-input class="custom-date-down m-left-8 m-right-8" label="[[$TRANSLATE('Filter by Subject keywords', LANG)]]" title="Enter space-separated keywords" value="{{filterByReceivedFromSubject}}"></paper-input>
+
+                <div class="flex"></div>
+
+                <div class="p-12 horizontal layout end-justified">
+                  <paper-button raised class="btn btn-success" on-tap="receivedSearchButtonClicked">[[$TRANSLATE('Search', LANG)]]</paper-button>
+                  <paper-button raised class="m-right-24" on-tap="receivedResetButtonClicked">[[$TRANSLATE('Reset', LANG)]]</paper-button>
+                </div>
+
+              </div>
+
+              <div class="">
+                <template is="dom-if" if="[[!receivedMessageList.length]]">
+                  <div class="card-content">
+                    <h4 class="type center">- [[$TRANSLATE('No data', LANG)]] -</h4>
+                  </div>
+                  
+                </template>
+
+                <template is="dom-if" if="[[receivedMessageList.length]]">
+                  <vaadin-grid items="[[receivedMessageList]]">
+
+                    <!-- <vaadin-grid-column width="60px">
+                      <template class="header">Id</template>
+                      <template>[[item.serial]]</template>
+                    </vaadin-grid-column> -->
+
+                    <vaadin-grid-column width="150px" flex-grow="0">
+                      <template class="header">[[$TRANSLATE('Recieved on', LANG)]]</template>
+                      <template>[[_formatDate(item.createdDatetimeStamp)]]</template>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column width="300px" flex-grow="0">
+                      <template class="header">[[$TRANSLATE('Recieved From', LANG)]]</template>
+                      <template>
+                        <div class="type body">[[item.requestFrom.name]]</div>
+                        <div class="type caption secondary"><i>[[item.requestFrom.phone]]</i></div>
+                      </template>
+                    </vaadin-grid-column>
+
+                    <vaadin-grid-column resizable>
+                      <template class="header">[[$TRANSLATE('Subject', LANG)]]</template>
+                      <template>
+                        <div class="type body">[[item.dataSubject]]</div>
+                      </template>
+                    </vaadin-grid-column>
+
+                    <vaadin-grid-column resizable>
+                      <template class="header">[[$TRANSLATE('Message', LANG)]]</template>
+                      <template>
+                        <div class="type caption-2">[[item.data]]</div>
+                      </template>
+                    </vaadin-grid-column>
+
+                    <vaadin-grid-column>
+                      <template class="header">[[$TRANSLATE('log', LANG)]]</template>
+                      <template>
+                        <div>
+                          <template is="dom-repeat" items="[[item.logs]]" as="log" index-as="logIndex">
+                            <div class$="type caption [[log.class]]" style="text-transform: capitalize;">[[_returnSerial(logIndex)]]. [[log.type]] by [[log.name]] on [[$formatDateTime(log.createdDatetimeStamp)]]</div>
+                          </template>
+                        </div>
+                        <div class="horizontal layout wrap">
+                          <paper-button class="custom-button colored" raised on-tap="_onTapAccept" hidden$="[[item.buttonState.hideAcceptButton]]">[[$TRANSLATE('accept', LANG)]]</paper-button> 
+                          <!-- <paper-button class="custom-button btn btn-primary" raised on-tap="_onTapDelivered" hidden$="[[item.buttonState.hideDeliveredButton]]">delivered</paper-button> -->
+                          <paper-button class="custom-button btn btn-danger" raised on-tap="_onTapCancelFromRecieved" hidden$="[[item.buttonState.hideCancelButton]]">[[$TRANSLATE('cancel', LANG)]]</paper-button>
+                        </div>
+                      </template>
+                    </vaadin-grid-column>
+                  </vaadin-grid>
+                </template>
+
+              </div>
+            </paper-card>
+          </section>
+        </iron-pages>
+
+      </div>
+
+    </div>
+
+    <!-- Dialog - Request pharmacy item - start -->
+    <paper-dialog id="dialogRequestMessage" class="custom-input-field">
+      <div class="type title-2 bold text-success">[[$TRANSLATE('Request Message', LANG)]]</div>
+
+      <paper-autocomplete class="flex" id="userSearch" label="[[$TRANSLATE('Request to',LANG)]]" on-autocomplete-selected="userSelected"
+        on-autocomplete-reset="userSearchCleared" on-keyup="userSearchEnterKeyPressed" error-message="Input Required"
+        text-property="name" value-property="idOnServer" required>
+        <template autocomplete-custom-template>
+          <paper-item on-tap="_onSelect" id$="[[_getSuggestionId(index)]]" role="option" aria-selected="false">
+            <div class="type bold">[[item.name]]</div>
+            <div class="type secondary m-left-8">([[item.phone]])</div>
+            <div class="type secondary m-left-8">[[item.email]]</div>
+            <paper-ripple></paper-ripple>
+          </paper-item>
+        </template>
+      </paper-autocomplete>
+      <paper-input label="[[$TRANSLATE('Subject', LANG)]]" value="{{msgObj.dataSubject}}"></paper-input>
+      <paper-input label="[[$TRANSLATE('Message', LANG)]]" value="{{msgObj.data}}"></paper-input>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+        <paper-button raised class="btn btn-success" on-tap="sendRequestBtnPressed">[[$TRANSLATE('Send', LANG)]]</paper-button>
+    </paper-dialog>
+    <!-- Dialog - Request pharmacy item - end -->
+
+  </template>
+  <script src="page-message-share.js"></script>
+</dom-module>

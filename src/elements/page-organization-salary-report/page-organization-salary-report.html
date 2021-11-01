@@ -1,0 +1,428 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<dom-module id="page-organization-salary-report">
+
+  <template>
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        width: 100%;
+        margin: 0;
+      }
+
+      .search {
+        background-color: #fafafa;
+        border: 1px solid #dadada;
+        padding: 0px 8px 12px 8px;
+        margin: 4px;
+        margin-left: 0;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      /* styles related to print preview */
+      .print-button-style {
+        margin-top: 16px;
+        background:burlywood;
+      }
+
+    </style>
+
+    <paper-card class="m-top-8">
+      <div class="card-content custom-input-field">
+
+        <div class="search layout horizontal end wrap">
+
+          <vaadin-combo-box class="m-right-8" label="Select Department" items="[[departmentList]]" on-value-changed="departmentSelected"
+            loading="[[deparmentLoading]]"></vaadin-combo-box>
+
+          <vaadin-combo-box class="m-right-8" label="Select Employee" items="[[matchingEmployeeList]]" on-value-changed="employeeSelected"
+            loading="[[employeeListLoading]]"></vaadin-combo-box>
+
+          <custom-vital-search class="" on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
+
+          <div class="flex"></div>
+          <paper-button class="btn btn-primary btn-large" on-tap="searchButtonClicked">Search</paper-button>
+          <paper-button on-tap="resetButtonClicked">Reset</paper-button>
+          <template is="dom-if" if="[[_isEmptyArray(salarySheet)]]">
+            <paper-button raised class="print-button-style" on-tap="_printButtonPressed">Print the Report</paper-button>
+          </template>
+
+        </div>
+
+        <vaadin-grid items="[[salarySheet]]">
+          <vaadin-grid-column resizable frozen>
+            <template class="header">Employee Id</template>
+            <template>
+              <span>[[item.employeeId]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable frozen>
+            <template class="header">Employee Name</template>
+            <template>
+              <span>[[item.employeeName]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable frozen>
+            <template class="header">Basic Salary</template>
+            <template>
+              <span>[[item.salaryUnitPrice]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable frozen>
+            <template class="header">Unit</template>
+            <template>
+              <span>[[item.salaryUnit]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable frozen>
+            <template class="header">Total Basic Salary</template>
+            <template>
+              <span>[[getTotal(item.salaryUnitPrice, item.salaryUnit)]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Overtime/Unit</template>
+            <template>
+              <span>[[item.overtimeUnitPrice]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Unit</template>
+            <template>
+              <span>[[item.overtimeUnit]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Total Overtime</template>
+            <template>
+              <span>[[getTotal(item.overtimeUnitPrice, item.overtimeUnit)]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Festival Bonus/Unit</template>
+            <template>
+              <span>[[item.festivalBonusUnitPrice]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Unit</template>
+            <template>
+              <span>[[item.festivalBonusUnit]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Total Bonus</template>
+            <template>
+              <span>[[getTotal(item.festivalBonusUnitPrice, item.festivalBonusUnit)]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">House Rent</template>
+            <template>
+              <span>[[item.houseRent]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Conveyance</template>
+            <template>
+              <span>[[item.conveyance]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Medical Allowance</template>
+            <template>
+              <span>[[item.medicalAllowance]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Education</template>
+            <template>
+              <span>[[item.education]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">LFC</template>
+            <template>
+              <span>[[item.lfc]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Dues Paid</template>
+            <template>
+              <span>[[item.dues]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Advance Taken</template>
+            <template>
+              <span>[[item.advances]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Tax Deduction</template>
+            <template>
+              <span>[[item.taxDeduction]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Insurance</template>
+            <template>
+              <span>[[item.insurance]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Provident Fund</template>
+            <template>
+              <span>[[item.providentFund]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Gratuity</template>
+            <template>
+              <span>[[item.gratuityFund]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Advance Deduction</template>
+            <template>
+              <span>[[item.advanceDeduction]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Gross Salary</template>
+            <template>
+              <span class="type primary">[[item.grossSalary]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Total Deductibles</template>
+            <template>
+              <span class="type danger">[[item.totalDeductibles]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Net Salary</template>
+            <template>
+              <span class="type bold">[[item.netSalary]]</span>
+            </template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Paid</template>
+            <template>
+              <span class="type bold success">[[item.paid]]</span>
+            </template>
+          </vaadin-grid-column>
+        </vaadin-grid>
+
+        <div class="layout vertical">
+          <div class="layout horizontal m-top-8 type title-2 bold">
+            <label for="" class="flex">Total Salary Expense</label>
+            <div class="">
+              [[$toTwoDecimalPlace(salarySheet.totalSalaryExpense)]]
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </paper-card>
+
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'page-organization-salary-report',
+      behaviors: [
+        app.behaviors.translating,
+        app.behaviors.pageLike,
+        app.behaviors.dbUsing,
+        app.behaviors.apiCalling,
+        app.behaviors.commonComputes
+      ],
+
+      properties: {
+        user: {
+          type: Object,
+          notify: true,
+          value: null
+        },
+        organization: {
+          type: Object,
+          value: {}
+        },
+        salarySheet: {
+          type: Array,
+          value: []
+        },
+        loading: {
+          type: Boolean,
+          value: false
+        },
+        selectedDepartmentId: String,
+        selectedEmployeeSerial: String
+      },
+
+      navigatedIn() {
+        const params = this.domHost.getPageParams()
+        let { organization, salary } = params;
+        this._loadUser();
+        if (organization) {
+          this._loadOrganization(organization, () => {
+            this._loadDepartmentList(organization)
+            this._loadEmployeeList(organization)
+          });
+        } else {
+          this._notifyInvalidOrganization()
+        }
+      },
+
+      _isEmptyArray(array){
+        return array && array.length > 0
+      },
+
+      _loadUser() {
+        const userList = app.db.find('user');
+        if (userList.length === 1) {
+          return this.user = userList[0];
+        }
+      },
+
+      _loadOrganization(idOnServer, cbfn) {
+        const data = {
+          apiKey: this.user.apiKey,
+          idList: [idOnServer]
+        };
+        this.loading = true;
+        this.callApi('/bdemr-organization-list-organizations-by-ids', data, (err, response) => {
+          this.loading = false;
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (!response.data.matchingOrganizationList.length) return this._notifyInvalidOrganization();
+          this.set('organization', response.data.matchingOrganizationList[0]);
+          return cbfn();
+        });
+      },
+
+      _notifyInvalidOrganization() {
+        return this.domHost.showModalDialog("Invalid Organization");
+      },
+
+      _loadEmployeeList(organizationIdentifier) {
+        const query = {
+          apiKey: this.user.apiKey,
+          organizationId: organizationIdentifier
+        }
+        this.employeeListLoading = true;
+        this.callApi('/bdemr-organization-get-employee-list', query, (err, response) => {
+          this.employeeListLoading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (response.data.length) {
+            let employeeList = response.data;
+            this.employeeList = employeeList;
+            this.matchingEmployeeList = employeeList.map((item) => {
+              return { label: item.data.name, value: item.serial }
+            });
+          }
+        })
+      },
+
+      _loadDepartmentList(organizationIdentifier) {
+        const query = {
+          apiKey: this.user.apiKey,
+          organizationId: organizationIdentifier
+        }
+        this.departmentLoading = true;
+        this.callApi('/bdemr--organizations-get-department-list', query, (err, response) => {
+          this.departmentLoading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (response.data.length) {
+            this.set('departmentList', response.data.map((item) => {
+              return { label: item.name, value: item._id }
+            }));
+          }
+        })
+      },
+
+      getTotal(unitPrice = 0, unit = 1) {
+        return parseInt(unitPrice) * parseInt(unit);
+      },
+
+      departmentSelected(e) {
+        if (!e.detail.value) return;
+        this.selectedDepartmentId = e.detail.value;
+        this.matchingEmployeeList = this.employeeList.filter(item => item.departmentId === this.selectedDepartmentId).map((item) => {
+          return { label: item.data.name, value: item.serial }
+        })
+      },
+
+      employeeSelected(e) {
+        if (!e.detail.value) return;
+        this.selectedEmployeeSerial = e.detail.value;
+      },
+
+      filterByDateClicked(e) {
+        const startDate = new Date(e.detail.startDate);
+        startDate.setHours(0, 0, 0, 0);
+        const endDate = new Date(e.detail.endDate);
+        endDate.setHours(23, 59, 59, 999);
+        this.set('dateCreatedFrom', startDate.getTime())
+        this.set('dateCreatedTo', endDate.getTime())
+      },
+
+      searchButtonClicked() {
+        let query = {
+          apiKey: this.user.apiKey,
+          organizationId: this.organization.idOnServer,
+          searchParameters: {
+            selectedDepartmentId: this.selectedDepartmentId || '',
+            selectedEmployeeSerial: this.selectedEmployeeSerial || '',
+            dateCreatedFrom: this.dateCreatedFrom || '',
+            dateCreatedTo: this.dateCreatedTo || ''
+          }
+        }
+        // return console.log(query);
+        this.loading = true;
+        this.callApi('/bdemr-organization-get-salary-report', query, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          this.set('salarySheet', response.data);
+        })
+      },
+
+      resetButtonClicked() {
+        return this.domHost.reloadPage()
+      },
+
+      arrowBackButtonPressed() {
+        return this.domHost.navigateToPreviousPage();
+      },
+
+      _printButtonPressed(){
+        localStorage.setItem('previewSalaryReportObject', JSON.stringify(this.salarySheet));
+        this.domHost.navigateToPage("#/salary-report-print-preview");
+      }
+
+
+    })
+  </script>
+
+</dom-module>

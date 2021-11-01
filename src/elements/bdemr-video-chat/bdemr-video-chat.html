@@ -1,0 +1,227 @@
+
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower-assets/iron-icons/communication-icons.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+
+
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box-light.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/api-calling.html">
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="bdemr-video-chat">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+
+      :host {
+        /* background: white;
+        color: black;
+        padding: 24px;
+        box-shadow: rgba(0, 0, 0, 0.24) -2px 5px 12px 0px, rgba(0, 0, 0, 0.12) 0px 0px 12px 0px; */
+        position: fixed;
+        z-index: 99999;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+      }
+
+      #invitationDialog {
+        width: 400px;
+        border-radius: 6px;;
+      }
+
+      .timer {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        padding: 24px;
+        z-index: 2;
+        font-weight: bold;
+        color: #DB4437;
+        font-size: 20px;
+        opacity: .76;
+      }
+
+      .btn-action {
+        border-radius: 6px;
+        background-color: white;
+        color: black;
+        /* padding: 8px 24px; */
+        width: 128px;
+        font-weight: bold;
+        box-shadow: 2px 2px 6px #00000057;
+        opacity: .5;
+        margin: 4px 8px;
+        transition: opacity .3s;
+      }
+
+      .btn-action.active {
+        opacity: 1;
+      }
+
+      #searchBtn {
+        border-radius: 6px;
+        background-color: white;
+        color: black;
+        width: 128px;
+        font-weight: bold;
+      }
+
+      .btn-action.success {
+        background-color: rgb(35, 148, 35);
+        color: #fff;
+      }
+
+      .btn-action.danger {
+        background-color: red;
+        color: #fff;
+      }
+
+      .btn-action:hover {
+        opacity: 1;
+      }
+
+      #patientSearch input {
+        width: calc(100% - 16px);
+        line-height: 32px;
+        font-size: 16px;
+        padding: 0 8px;
+        border-radius: 6px;
+        border: 1px solid rgba(0,0,0, .86);
+        background-color: white;
+      }
+      
+      .profile-image {
+        height: 48px;
+        width: 48px;
+        border-radius: 50%;
+        border: 1px solid #f7f7f7;
+      }
+
+      .profile-image.small {
+        height: 30px;
+        width: 30px;
+      }
+
+      @media screen and (max-width: 640px) {
+        #invitationDialog {
+          width: 80%;
+        }
+      }
+
+      #TokBox {
+        margin-top: 56px !important;
+      }
+    </style>
+
+    <div id="TokBox" class="TokBox">
+      <div class="TokBox-main">
+        <div id="controls" class='TokBox-control-container hidden'>
+          <!-- <div class="ots-video-control circle invite" on-click="togglInvitePressed"></div> -->
+          <!-- <div id="toggleLocalVideo" class="ots-video-control circle pip" on-click="togglePictureInPicture"></div> -->
+          <div id="toggleLocalAudio" class="ots-video-control circle audio" on-click="toggleLocalAudio"></div>
+          <div id="toggleLocalVideo" class="ots-video-control circle video" on-click="toggleLocalVideo"></div>
+          <div class="ots-video-control circle call-end" on-click="endCall"></div>
+        </div>
+        <div class="TokBox-video-container" id="TokBoxVideoContainer">
+          <div class="TokBox-mask" id="connectingMask">
+            <progress-spinner style="font-size:50px"></progress-spinner>
+            <div class="message with-spinner">Connecting</div>
+          </div>
+          <!-- <div class="TokBox-mask hidden" id="startMask">
+            <div class="type body">[[publisherName]]</div>
+            <div class="message button clickable" id="start" on-click="startCall">[[callButtonLabel]]</div>
+          </div> -->
+          <div id="cameraPublisherContainer" class="video-container hidden"></div>
+          <div id="screenPublisherContainer" class="video-container hidden"></div>
+          <div id="cameraSubscriberContainer" class="video-container-hidden"></div>
+          <div id="screenSubscriberContainer" class="video-container-hidden"></div>
+        </div>
+        <div id="chat" class="TokBox-chat-container"></div>
+      </div>
+    </div>
+
+
+    <paper-dialog id="invitationDialog"  modal on-iron-overlay-opened="patchOverlay">
+      <div class="horizontal layout center">
+        <iron-icon icon="send" class="m-right-8"></iron-icon>
+        <h2 class="flex">Send Invitation</h2>
+      </div>
+      
+      <div class="card-content">
+        <template is="dom-if" if="[[!selectedPatients]]">
+          <vaadin-combo-box-light id="patientSearch" filter="{{patientSearchQuery}}" loading="[[fetchingPatientSearchResult]]" item-label-path='name' item-value-path='id' value="{{item.slotId}}" on-selected-item-changed="patientSelected">
+            <input class="filter-input" is="iron-input" placeholder="Search By Name/Mobile/Email">
+            <template>
+              <div class="horizontal layout center">
+                <iron-image class="profile-image small m-right-8" src$="[[$getProfileImage(item.profileImage)]]" preload sizing="cover"></iron-image>
+                <div class="flex">
+                  <div class="type body">[[item.name]]</div>
+                  <div class="type caption secondary m-bottom-8">[[item.phone]] - [[item.email]]</div>
+                </div>
+              </div>
+              
+            </template>
+          </vaadin-combo-box-light>
+        </template>
+      </div>
+
+      <template is="dom-if" if="{{selectedPatients}}">
+        <div class="patient-container horizontal layout center">
+          <iron-image class="profile-image m-right-8" src$="{{$getProfileImage(selectedPatients.profileImage)}}" sizing="cover"></iron-image>
+          <div class="flex">
+            <div class="type body">{{selectedPatients.name}}</div>
+            <div class="type body">{{selectedPatients.phone}}</div>
+            <div class="type body">{{selectedPatients.email}}</div>
+          </div>
+          <paper-icon-button icon="delete" on-tap="_clearSelectedPatientData"></paper-icon-button>
+        </div>
+      </template>
+      
+      <template is="dom-if" if="[[currentSessionId]]">
+        <div>
+          <div class="type caption-2 m-right-8 text-bold">Session ID:</div>
+          <div class="horizontal layout center">
+            <kbd class="flex" style="word-break: break-all;">{{currentSessionId}}</kbd>
+            <paper-icon-button on-tap="copyToClipboard" icon="icons:content-copy"></paper-icon-button>
+          </div>
+        </div>
+      </template>
+      
+      
+      
+      <div class="buttons m-top-16">
+        <paper-button dialog-dismiss>[[$TRANSLATE('Close',LANG)]]</paper-button>
+        <paper-button id="btnSendInvitation" class="colored" autofocus on-tap="sendInvitationButtonPressed" raised>[[$TRANSLATE('Send',LANG)]]</paper-button>
+      </div>
+    </paper-dialog>
+
+  </template>
+
+  <script src="https://static.opentok.com/v2/js/opentok.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/livestamp/1.1.2/livestamp.min.js"></script>
+  <script src="components/opentok-solutions-logging.js"></script>
+  <script src="components/opentok-text-chat.js"></script>
+  <script src="components/opentok-screen-sharing.js"></script>
+  <script src="components/opentok-annotation.js"></script>
+  <script src="components/opentok-archiving.js"></script>
+  <script src="components/opentok-acc-core.js"></script>
+  <script src="bdemr-video-chat.js"></script>
+</dom-module>

@@ -1,0 +1,589 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box-light.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<dom-module id="page-ambulance-manager">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      paper-dialog {
+        min-width: 210px;
+      }
+
+      app-header-layout ::content #contentContainer {
+        overflow: hidden !important;
+      }
+
+      :host {
+        /* height: calc(100% - 56px);
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 56px; */
+      }
+
+      vaadin-grid.grid-table vaadin-combo-box-light {
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+    
+
+      vaadin-grid.grid-table {
+        height: inherit
+        /* overflow: auto; */
+        font-family: Roboto, sans-serif;
+        --divider-color: rgba(0,0,0, .54);
+
+
+        /* --vaadin-grid-cell: {
+          padding: 0;
+        }; */
+
+        --vaadin-grid-header-cell: {
+          height: 48px;
+          /* color: rgba(0, 0, 0, var(--dark-secondary-opacity)); */
+          font-size: 16px;
+          text-align: center;
+          
+          border-right: 1px solid rgba(0,0,0, .64);
+        };
+
+        --vaadin-grid-body-cell: {
+          min-height: 54px;
+          color: rgba(0, 0, 0, var(--dark-primary-opacity));
+          font-size: 16px;
+          padding: 0 8px;
+          border-right: 1px solid rgba(0,0,0, .64) !important;
+          border-bottom: 1px solid rgba(0,0,0, .64) !important;
+          text-align: center;
+        };
+
+        --vaadin-grid-body-row-hover-cell: {
+          background-color: var(--paper-grey-200);
+        };
+
+        --vaadin-grid-body-row-selected-cell: {
+          background-color: var(--paper-grey-100);
+        };
+
+        --vaadin-grid-focused-cell: {
+          box-shadow: none;
+          font-weight: bold;
+        };
+
+      }
+
+
+      .top-container {
+        /* background-color: #f3f5f7; */
+        box-shadow:rgba(0, 0, 0, .54) 0 -10px 6px -10px inset;
+        height: 310px;
+      }
+
+      .filter {
+        padding: 8px 16px;
+        background-color: #f3f5f7;
+        position: relative;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+
+      .editor {
+        position: fixed;
+        right: -80%;
+        top: 104px;
+        bottom: 0;
+        z-index: 1;
+        width: 80%;
+        /* height: calc(100% - 104px); */
+        /* border-left: 1px solid #eee; */
+        background-color: #fff;
+        /* height: 100%; */
+        box-shadow: -3px 0px 2px rgba(0,0,0, 0.16);
+        transition: .5s;
+      }
+
+      .open {
+        transition: .5s;
+        right: 0;
+      }
+
+      .editor-content {
+        margin-top: 84px;
+        position: relative;
+        box-sizing: border-box;
+        padding: 16px;
+        height: calc(100% - 84px);
+        overflow-y: auto;
+      }
+
+      .editor-content vaadin-grid {
+        height: inherit;
+        overflow-y: auto;
+      }
+
+      .editor-buttons {
+        background-color: #eee;
+        padding: 12px 16px;
+        @apply(--layout-horizontal);
+        position: absolute;
+        bottom: -106px;
+        left: 0;
+        right: 0;
+      }
+
+      .custom-input {
+        padding-top: 6px;
+        padding-bottom: 6px;
+      }
+
+      .custom-button {
+        padding: 0.4em 2em;
+        font-size: 16px;
+        background-color: #f7f7f7;
+      }
+
+      .custom-flat-button {
+        font-weight: bold;
+        font-size: 14px;
+        text-transform: uppercase;
+      }
+
+      #importResult {
+        overflow-y: scroll;
+        height: 200px;
+        background: white;
+        padding: 12px;
+        margin-top: 16px;
+      }
+
+      .type.capton-2 {
+        line-height: 25px;
+      }
+
+      .left {
+        width: 30%;
+      }
+      .right {
+        width: 100%;
+        height: inherit;
+      }
+
+      .custom-title {
+        padding: 16px 20px;
+        background-color: #fafafa;
+        border-bottom: 1px solid #eee;
+      }
+
+      .custom-dialog-content {
+        height: 400px;
+        overflow-y: scroll;
+        margin-top: 0;
+        padding-top: 16px;
+      }
+
+      @media screen and (max-width: 859px) {
+        .left, .right {
+          width: 100%;
+        }
+      }
+
+      @media screen and (max-width: 479px) {
+        .filter-input {
+          width: 100%;
+        }
+
+        .btnFilter {
+          margin-top: 8px;
+          margin-bottom: 8px;
+        }
+      }
+
+
+
+      .label {
+        text-align: center;
+        height: 100%;
+        border-right: 1px solid #eee;
+      }
+
+      .text-left {
+        text-align: left;
+      }
+
+      .fixed-title {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 12px 12px 12px 16px;
+        border-bottom: 1px solid #eee;
+        z-index: 1;
+        background-color: #fafafa;
+        width: calc( 100% - 20px);
+      }
+
+      .date-input {
+        border: none;
+        background-color: inherit;
+        font-size: 16px;
+        /* font-weight: bold; */
+        outline: none;
+        padding: 0 10px;
+      }
+
+      #memberComboBox {
+        padding: 0 !important;
+      }
+
+      #memberComboBox ::content paper-input-container {
+        padding-bottom: 8px !important;
+      }
+
+      .filter-input  {
+        border: none;
+        background-color: inherit;
+        font-size: 16px;
+        /* height: 100%; */
+        width: 100%;
+        text-align: center;
+        outline: none;
+      }
+
+      .cell-avatar {
+        margin: 8px 0 0 8px;
+        border-radius: 16px;
+        padding: 3px 8px;
+        /* max-width: 179px; */
+        background-color: #b2dfdb;
+      }
+
+      .cell-avatar iron-image {
+        height: 30px;
+        width: 30px;
+        border-radius: 50%;
+        background-color: #eee;
+      }
+
+      .cell-avatar paper-icon-button ::content iron-icon {
+        color: #000;
+        height: 20px;
+        width: 20px;
+      }
+
+      .cell-avatar paper-icon-button {
+        text-align: center;
+        height: 24px;
+        width: 24px;
+        padding: 2px;
+        font-size: 16px;
+      }
+
+      .cell-child-item {
+        border-radius: 50%;
+        border: 1px solid #eee
+      }
+
+      .cell-avatar.danger {
+        background-color: #ef9a9a;
+      }
+
+      paper-dialog {
+        width: 80%;
+      }
+
+      .report-stats {
+        background-color: #fff;
+        padding: 16px;
+        text-align: center;
+      }
+
+      .report-stats-item {
+        width: 90px;
+        box-sizing: border-box;
+        height: 90px;
+        border-radius: 50%;
+        text-align: center;
+        background-color: #E0F2F1;
+        color: var(--brand-primary-color);
+        padding: 16px;
+        margin: 8px;
+        box-shadow: 1px 1px 2px #00000024;
+      }
+
+      .custom-dropdown ::content paper-input-container {
+        padding-bottom: 0;
+      }
+
+      .organizaiton-stats {
+        background-color: #fff;
+        padding: 4px 16px 16px;
+        text-align: center;
+      }
+
+      .custom-paper-input.auto-width {
+        width: auto;
+      }
+
+      .custom-paper-input {
+        width: 100%;
+        /* box-sizing: border-box; */
+      }
+
+      .custom-paper-input ::content .underline {
+        display: none;
+      }
+
+      .custom-paper-input ::content paper-input-container {
+        padding-bottom: 0;
+      }
+      .custom-paper-input ::content input {
+        font-weight: bold !important;
+        background-color: #eee !important;
+        padding: 4px 6px;
+        box-sizing: border-box !important;
+        border-radius: 6px !important;
+      }
+
+      .custom-paper-input ::content input::placeholder {
+        color: rgba(0, 0, 0, .87) !important;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      td, th {
+        border: 1px solid teal;
+        text-align: left;
+        padding: 8px;
+      }
+
+      th {
+        background-color: #b4e0d9;
+      }
+
+      /* tr:nth-child(odd) {
+        background-color: #b4e0d9 ;
+      } */
+
+      .custom-label {
+        margin-right: 8px;
+        width: 190px;
+        margin-bottom: 8px;
+      }
+ 
+    </style>
+
+    <div id="tabContainer" class="tabs-container">
+      <paper-tabs class="tabs-container" id="tabs" selected="{{selectedPageIndex}}" scrollable noink='true'>
+        <paper-tab>[[$TRANSLATE('Available', LANG)]]</paper-tab>
+        <paper-tab>[[$TRANSLATE('On Duty', LANG)]]</paper-tab>
+      </paper-tabs>
+    </div>
+
+    <div class="container">
+
+      <div class="horizontal layout end-justified p-8">
+        <paper-button raised class="colored" on-tap="addAmbulanceBtnPressed">[[$TRANSLATE('Add New Ambulance', LANG)]]</paper-button>
+      </div>
+      
+
+      <div id="editor" class$="editor {{editorHasOpened(hideEditForm)}}">
+
+        <div class="fixed-title horizontal layout center">
+          <paper-icon-button icon="icons:delete" on-tap="_deleteAmbulance" hidden$="{{!EDIT_MODE}}"></paper-icon-button>
+          <div class="flex"></div>
+          <paper-button class="btn btn-success" on-tap="_addOrUpdateBtnPressed" autofocus raised>
+            <span hidden$="{{!EDIT_MODE}}">[[$TRANSLATE('Update', LANG)]]</span>
+            <span hidden$="{{EDIT_MODE}}">[[$TRANSLATE('Save', LANG)]]</span>
+          </paper-button>
+
+          
+          
+          
+          <paper-button on-tap="_closeEditForm">[[$TRANSLATE('Close', LANG)]]</paper-button>
+          
+        </div>
+
+        <div class="editor-content">
+          
+          <div class="horizontal layout center wrap">
+            <div class="custom-label">[[$TRANSLATE('Label',LANG)]]:</div>
+            <paper-input no-label-float class="paper-custom-input flex" placeholder="" value="{{ambulance.label}}"></paper-input>
+          </div>
+          <div class="horizontal layout center wrap">
+            <div class="custom-label">[[$TRANSLATE('Model',LANG)]]: </div>
+            <paper-input no-label-float class="paper-custom-input flex" placeholder="" value="{{ambulance.modelName}}"></paper-input>
+          </div>
+          <div class="horizontal layout center wrap">
+            <div class="custom-label">[[$TRANSLATE('Registration Number',LANG)]]: </div>
+            <paper-input no-label-float class="paper-custom-input flex" placeholder="" value="{{ambulance.regNumber}}"></paper-input>
+          </div>
+          <div class="horizontal layout center warp">
+            <div class="custom-label">[[$TRANSLATE('Driver Name',LANG)]]: </div>
+            <paper-input no-label-float class="paper-custom-input flex" placeholder="" value="{{ambulance.driverName}}"></paper-input>
+          </div>
+
+          <div class="horizontal layout center wrap">
+            <div class="custom-label">[[$TRANSLATE('Driver Phone Number',LANG)]]: </div>
+            <paper-input type="number" no-label-float class="paper-custom-input flex" placeholder="" value="{{ambulance.driverPhoneNumber}}"></paper-input>
+          </div>
+
+          <div class="horizontal layout center warp">
+            <div class="custom-label">[[$TRANSLATE('Driver NID Number',LANG)]]: </div>
+            <paper-input type="number" no-label-float class="paper-custom-input flex" placeholder="" value="{{ambulance.driverNID}}"></paper-input>
+          </div>
+
+          <paper-checkbox class="m-top-8" checked="{{ambulance.isOxizenAvailable}}">[[$TRANSLATE('Oxygen Available', LANG)]]</paper-checkbox>
+          
+          <div class="horizontal layout m-top-16">
+            
+            <paper-button raised disabled="{{!ambulance.isAvailable}}" on-tap="_toggleAvailability">[[$TRANSLATE('Mark As On Duty', LANG)]]</paper-button>
+            <paper-button raised disabled="{{ambulance.isAvailable}}" on-tap="_toggleAvailability">[[$TRANSLATE('Mark As Available', LANG)]]</paper-button>
+            
+          </div>
+
+
+          <div class="horizontal layout end-justified p-8">
+            <paper-button class="colored" raised  on-tap="_insertBooking">[[$TRANSLATE('Add New Booking', LANG)]]</paper-button>
+          </div>
+          
+
+          <table>
+            <tr>
+              <th></th>
+              <th>[[$TRANSLATE('Booked Person Name', LANG)]]</th>
+              <th>[[$TRANSLATE('Person Number', LANG)]]</th>
+              <th>[[$TRANSLATE('Pick Up Point Address', LANG)]]</th>
+              <th>[[$TRANSLATE('Drop Off Point Address', LANG)]]</th>
+              <th>[[$TRANSLATE('Mark As Active', LANG)]]</th>
+            </tr>
+
+            <template is="dom-repeat" items="{{ambulance.bookingHistory}}">
+              <tr>
+                <td>
+                  <div class="horizontal layout center">
+                    <paper-icon-button icon="delete" on-tap="_deleteBookingHistory"></paper-icon-button>
+                  </div>
+                </td>
+                <td><paper-input class="filter-input" value="{{item.bookedPersonName}}"></paper-input></td>
+                <td><paper-input type="number" class="filter-input" value="{{item.bookedPersonPhoneNumber}}"></paper-input></td>
+                <td><paper-textarea class="filter-input" value="{{item.pickupPointAddress}}"></paper-textarea></td>
+                <td><paper-textarea class="filter-input" value="{{item.dropoffPointAddress}}"></paper-textarea></td>
+                <td>
+                  <div class="horizontal layout center center-justified">
+                    <paper-checkbox checked={{item.isActive}}></paper-checkbox>
+                  </div>
+              </td>
+              </tr>
+            </template>
+            
+          </table>
+          
+        </div>    
+
+      </div>
+
+      <!-- table - start -->
+      <template is="dom-if" if="[[$isEmptyArray(matchingAmbulance.length)]]">
+        <div class="type caption-2 secondary" style="text-align: center; width: 100%; background: #fff; padding: 16px;">[[$TRANSLATE('No Ambulance Available!', LANG)]]</div>
+      </template>
+      <template is="dom-if" if="[[!$isEmptyArray(matchingAmbulance.length)]]">
+        <div class="type caption-2 secondary m-horizontal-4">[[matchingAmbulance.length]] available</div>
+        
+        <vaadin-grid items="{{matchingAmbulance}}" id="ambulanceList" class="grid-table" active-item="{{activeItem}}">
+
+          <vaadin-grid-column width="8em" frozen>
+            <template class="header">
+              <vaadin-grid-filter  aria-label="Model" path="modelName" value="[[filterByModelName]]">
+                <paper-input class="custom-paper-input" no-label-float placeholder="[[$TRANSLATE('Model', LANG)]]" value="{{filterByModelName}}"></paper-input>
+              </vaadin-grid-filter>
+            </template>
+            <template>{{item.modelName}}</template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="8em" frozen>
+            <template class="header">
+              <vaadin-grid-filter  aria-label="Reg. Number" path="regNumber" value="[[filterByRegNumber]]">
+                <paper-input class="custom-paper-input" no-label-float placeholder="[[$TRANSLATE('Reg. Number', LANG)]]" value="{{filterByRegNumber}}"></paper-input>
+              </vaadin-grid-filter>
+            </template>
+            <template>{{item.regNumber}}</template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="8em" frozen>
+            <template class="header">
+              <vaadin-grid-filter  aria-label="Label" path="label" value="[[filterByLabel]]">
+                <paper-input class="custom-paper-input" no-label-float placeholder="[[$TRANSLATE('Label', LANG)]]" value="{{filterByLabel}}"></paper-input>
+              </vaadin-grid-filter>
+            </template>
+            <template>{{item.label}}</template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="8em" frozen>
+            <template class="header">
+              Oxizen Available
+            </template>
+            <template><span hidden$="{{item.isOxizenAvailable}}">[[$TRANSLATE('no', LANG)]]</span> <span hidden$="{{!item.isOxizenAvailable}}">[[$TRANSLATE('yes', LANG)]]</span></template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="8em" frozen>
+            <template class="header">
+              [[$TRANSLATE('Driver Name', LANG)]]
+            </template>
+            <template>{{item.driverName}}</template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="8em" frozen>
+            <template class="header">
+              [[$TRANSLATE('Driver Number', LANG)]]
+            </template>
+            <template>{{item.driverPhoneNumber}}</template>
+          </vaadin-grid-column>
+
+        </vaadin-grid>
+      </template>
+      <!-- table - start -->
+      
+    </div>
+
+  </template>
+
+  <script src="page-ambulance-manager.coffee-compiled.js"></script>
+</dom-module>

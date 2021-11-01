@@ -1,0 +1,207 @@
+
+<!-- paper- -->
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+
+<link rel="import" href="../bdemr-qrcode/bdemr-qrcode.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<dom-module id="page-manage-academic-session">
+  <template>
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+        width: 90%;
+      }
+
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .header {
+        background-color: var(--paper-grey-100);
+        padding: 15px;
+      }
+
+      .label {
+        background-color: var(--paper-grey-100);
+        padding: 5px;
+      }
+
+      .border-bottom {
+        border-bottom: 1px solid rgb(235, 230, 230);
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      input {
+        background-color: #dde2e8;
+        border-radius: 6px;
+        height: 36px;
+        font-weight: 500;
+        padding: 0px 8px;
+        box-sizing: border-box;
+      }
+
+      .paper-custom-input ::content input {
+        border-color: #dadada !important;
+      }
+
+      .session-info {
+        color: #37474F;
+      }
+
+      .session-text {
+        font-size: large;
+        line-height: 1.6;
+      }
+
+      .timer {
+        padding: 12px;
+        font-weight: bold;
+        color: #2770dd;
+        font-size: 18px;
+        opacity: .75;
+        text-align: right;
+      }
+
+      .qr-code-style {
+        margin-top: 64px;
+        margin-right: 20px;
+      }
+    </style>
+
+
+    <div class="master-container">
+      <div class="limiting-container">
+        <paper-progress indeterminate hidden$="[[!loading]]"></paper-progress>
+        <div class="timer">Session Time: {{sessionTimer}}</div>
+        <paper-card heading="Academic Session Details">
+          <div class="layout horizontal">
+            <div class="card-content session-text">
+              <div><span class="session-info">Title:</span> [[academicSessionList.title]]</div>
+              <div><span class="session-info">Type:</span> [[academicSessionList.type]]</div>
+              <div><span class="session-info">Subject:</span> [[academicSessionList.subject]]</div>
+              <div><span class="session-info">Topics:</span> [[academicSessionList.topics]]</div>
+              <div><span class="session-info">Presenter Name:</span> [[academicSessionList.presenter.name]]</div>
+              <div><span class="session-info">Presenter Designation:</span> [[academicSessionList.presenter.designation]]
+              </div>
+              <div><span class="session-info">Award Points Type:</span> [[academicSessionList.awardPoints.type]]</div>
+              <div><span class="session-info">Date:</span> [[$formatDate(academicSessionList.date)]]</div>
+              <div><span class="session-info">Start Time:</span>
+                [[$formatTimeStampToTimeString(academicSessionList.startTime)]]</div>
+              <div><span class="session-info">End Time:</span>
+                [[$formatTimeStampToTimeString(academicSessionList.endTime)]]</div>
+              <div hidden$="[[!academicSessionList.attendees.length]]">
+                <span class="session-info">Total Attendees: [[academicSessionList.attendees.length]]</span>
+              </div>
+              <br>
+            </div>
+            <div class="flex"></div>
+            <div class="qr-code-style">
+              <template is="dom-if" if="[[academicSessionList._id]]">
+                <bdemr-qrcode code="{{academicSessionList._id}}" width="184" height="184"></bdemr-qrcode>
+                <br>
+                <h4><center>Scan to Join</center></h4>
+              </template>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <paper-button raised on-tap="_editSessionButtonTapped">Edit Session</paper-button>
+          </div>
+        </paper-card>
+        <br>
+        <paper-card heading="Attendee Details">
+          <div class="card-content">
+            <vaadin-combo-box class="paper-custom-input" label="Search an Attendee" id="assignAttendee"
+              items="[[attendeeList]]" item-label-path="name" allow-custom-value value="{{attendeeName}}"
+              on-selected-item-changed="attendeeSelected">
+              <template>
+                <div><strong>[[item.name]]</strong></div>
+                <div><small>[[item.phone]], [[item.email]]</small></div>
+              </template>
+            </vaadin-combo-box>
+
+            <h3 class="m-top-64 m-left-8">ATTENDEE LIST</h3>
+            <vaadin-grid class="m-top-16" items="[[academicSessionList.attendees]]">
+              <vaadin-grid-column resizable>
+                <template class="header"><Strong>Attendee Name</Strong></template>
+                <template>[[_returnSerial(index)]]. [[$getFullName(item.name)]]</template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column resizable>
+                <template class="header"><strong>Status</strong></template>
+                <template>
+                  <span hidden$="[[item.isPresent]]" class="type danger">Absent</span>
+                  <span hidden$="[[!item.isPresent]]" class="type success">Present</span>
+                </template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column resizable>
+                <template class="header"><strong>Minutes Awarded</strong></template>
+                <template>[[item.minutesAwarded]]</template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column resizable>
+                <template class="header"><strong>Actions</strong></template>
+                <template>
+                  <span hidden$="[[item.isPresent]]">
+                    <div class="horizontal layout">
+                      <paper-button raised class="btn btn-success" on-tap="takeAttendanceButtonPressed">Take Attendance
+                      </paper-button>
+                    </div>
+                  </span>
+                </template>
+              </vaadin-grid-column>
+
+            </vaadin-grid>
+
+          </div>
+        </paper-card>
+
+      </div>
+    </div>
+
+
+
+  </template>
+  <script src="page-manage-academic-session.coffee-compiled.js"></script>
+</dom-module>

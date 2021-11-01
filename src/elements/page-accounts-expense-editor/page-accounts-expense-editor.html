@@ -1,0 +1,245 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-accounts-expense-editor">
+
+  <template>
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td {
+        color: #444;
+      }
+
+      .table td,
+      .table th {
+        vertical-align: middle;
+        padding: 10px 20px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+      .table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .search {
+        background-color: var(--paper-grey-100);
+        border: 1px solid #dadada;
+        border-radius: 3px;
+        padding: 8px;
+        margin: 4px 0;
+      }
+
+      .heading {
+        font-size: 21px;
+        padding: 8px 0;
+        margin: 0;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #666;
+        color: var(--brand-primary-color);
+      }
+
+      .input-box {
+        background-color: var(--paper-blue-grey-50);
+        border: 1px solid #dadada;
+        border-radius: 4px;
+        padding: 0 8px;
+        box-shadow: -1px 0px #ccc;
+        --paper-input-container: {
+          padding: 0;
+        }
+        --paper-input-container-underline: {
+          display:none;
+        }
+      }
+
+      .input-box[no-label-float] {
+        --paper-input-container: {
+          padding:0;
+          padding-top: 8px;
+        }
+      }
+
+      #pull-addbutton-up {
+        position: relative;
+        top: -8px;
+      }
+
+      /* styles related to print preview */
+      .print-button-style {
+        background: burlywood;
+      }
+
+      
+    </style>
+
+    <div class="master-container">
+      <div class="limiting-container custom-input-field">
+
+        <paper-card>
+          <div class="card-content">
+            
+            <h2 class="heading">[[$TRANSLATE('Billed to', LANG)]]</h2>
+            <div class="layout horizontal">
+              <paper-input label="[[$TRANSLATE('Name', LANG)]]" value="{{expense.customerDetails.name}}" class="flex"></paper-input>
+              <paper-input label="[[$TRANSLATE('Mobile', LANG)]]" value="{{expense.customerDetails.phone}}" class="flex m-left-8"></paper-input>
+            </div>
+            <paper-input label="[[$TRANSLATE('Address', LANG)]]" value="{{expense.customerDetails.address}}" class="flex m-top-8"></paper-input>
+
+            <br>
+
+            <h2 class="heading">[[$TRANSLATE('Items', LANG)]]</h2>
+            <div class="layout horizontal end search">
+              <paper-input class="flex-2" label="[[$TRANSLATE('Item Name', LANG)]]" value="{{expenseItem.name}}" required></paper-input>
+              <vaadin-combo-box label="[[$TRANSLATE('Category', LANG)]]" class="flex m-left-8" items="[[expenseCategories]]" value="{{expenseItem.category}}"
+                on-selected-item-changed="categorySelected" on-custom-value-set='expenseCategoryCustomSet'
+                item-label-path='name' item-value-path='name' allow-custom-value></vaadin-combo-box>
+              <paper-input class="flex m-left-8" type="number" label="[[$TRANSLATE('Qty', LANG)]]" value="{{expenseItem.qty}}" required></paper-input>
+              <paper-input class="flex m-left-8" type="number" step="0.1" label="[[$TRANSLATE('Unit Price', LANG)]]" value="{{expenseItem.unitPrice}}"
+                required></paper-input>
+              <div class="m-left-8">
+                <paper-button id="pull-addbutton-up" on-tap="addItemButtonClicked" class="btn btn-primary" raised>[[$TRANSLATE('Add', LANG)]]</paper-button>
+              </div>
+            </div>
+
+            <div class="table-wrapper">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>[[$TRANSLATE('Item Name', LANG)]]</th>
+                    <th>[[$TRANSLATE('Category', LANG)]]</th>
+                    <th>[[$TRANSLATE('Qty', LANG)]]</th>
+                    <th>[[$TRANSLATE('Unit Price', LANG)]]</th>
+                    <th>[[$TRANSLATE('Total', LANG)]]</th>
+                    <th>[[$TRANSLATE('Action', LANG)]]</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template is='dom-repeat' items='[[expense.data]]'>
+                    <tr>
+                      <td>[[item.name]]</td>
+                      <td>[[item.category]]</td>
+                      <td>[[item.qty]]</td>
+                      <td>[[item.unitPrice]]</td>
+                      <td>[[getItemTotal(item)]]</td>
+                      <td width=50>
+                        <paper-icon-button class="type danger" icon="delete" on-tap="deleteItemClicked"></paper-icon-button>
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+
+            <br>
+
+            <div class="layout vertical">
+              <div class="layout horizontal m-top-8 type title-2">
+                <label for="" class="flex-2">[[$TRANSLATE('Gross', LANG)]]</label>
+                <div class="flex-4">
+                  [[$toTwoDecimalPlace(expenseGross)]]
+                </div>
+              </div>
+              <div class="layout horizontal center m-top-8">
+                <label for="" class="flex-2">[[$TRANSLATE('Discount Amt.', LANG)]]</label>
+                <div class="flex-4">
+                  <paper-input no-label-float type="number" value="{{expense.discount}}"></paper-input>
+                </div>
+              </div>
+              <div class="layout horizontal center m-top-8">
+                <label for="" class="flex-2">[[$TRANSLATE('VAT/TAX', LANG)]]</label>
+                <div class="flex-4">
+                  <paper-input id="vatTax" type="number" step="0.1" no-label-float on-change="vatTaxInputChanged">
+                    <div class="type secondary m-right-8" prefix>%</div>
+                    <div suffix class="type secondary">[[$toTwoDecimalPlace(expense.vatOrTax)]]</div>
+                  </paper-input>
+                </div>
+              </div>
+              <div class="layout horizontal m-top-8 type title-2 bold">
+                <label for="" class="flex-2">[[$TRANSLATE('Total Billed', LANG)]]</label>
+                <div class="flex-4">
+                  [[$toTwoDecimalPlace(expense.totalBilled)]]
+                </div>
+              </div>
+              <div class="layout horizontal center m-top-8">
+                <label for="" class="flex-2">[[$TRANSLATE('Paid', LANG)]]</label>
+                <div class="flex-4">
+                  <paper-input type="number" step="0.1" no-label-float value="{{expense.totalAmountPaid}}"
+                    max="[[expense.totalBilled]]"></paper-input>
+                </div>
+              </div>
+              <div class="layout horizontal center m-top-8">
+                <label for="" class="flex-2">[[$TRANSLATE('Due', LANG)]]</label>
+                <div class="flex-4"><span class="type danger">[[cacluateDue(expense.totalBilled,
+                    expense.totalAmountPaid)]]</span></div>
+              </div>
+            </div>
+
+
+          </div>
+
+          <div class="card-actions layout horizontal">
+            <paper-button on-tap="invoiceDateChangeOpenModalClicked" class="btn btn-default">[[$TRANSLATE('Change Date', LANG)]]</paper-button>
+            <div class="flex"></div>
+            <paper-button raised class="print-button-style" on-tap="_printPreviewButtonPressed">[[$TRANSLATE('Print Preview', LANG)]]</paper-button>
+            <div class="flex"></div>
+            <paper-button on-tap="cancelButtonClicked" class="btn btn-default">[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+            <paper-button on-tap="saveButtonClicked" class="btn btn-success" raised>[[$TRANSLATE('Save', LANG)]]</paper-button>
+          </div>
+
+        </paper-card>
+
+      </div>
+    </div>
+
+    <!-- Dialog for Changing Invoice Date start -->
+    <paper-dialog class="custom-input-field" id="invoiceDateModal">
+        <h2 class="p-8">[[$TRANSLATE('Change Visit Date', LANG)]]</h2>
+        <div class="p-horizontal-8">
+          <vaadin-date-picker label="[[$TRANSLATE('Chose Date', LANG)]]" required value="{{customVisitDate}}"></vaadin-date-picker>
+          <div class="m-top-8">
+            <label for="">[[$TRANSLATE('Chose Time', LANG)]]</label>
+            <input class="m-left-8" type="time" is="iron-input" required bind-value="{{customVisitTime}}">
+          </div>
+        </div>
+        <div class="buttons">
+          <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+          <paper-button class="btn btn-primary" on-tap="saveNewInvoiceDateButtonClicked">[[$TRANSLATE('Save', LANG)]]</paper-button>
+        </div>
+      </paper-dialog>
+  
+      <!-- Dialog for Changing Invoice Date end -->
+
+
+  </template>
+  <script src="page-accounts-expense-editor.js"></script>
+</dom-module>

@@ -1,0 +1,279 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-radio-button/paper-radio-button.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-organization-medicine-sales-statistics">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .organization-info-card-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .organization-info-cards {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+
+      .organization-info-cards .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+
+      .organization-info-cards .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+
+      .organization-info-cards .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+
+      .organization-info-cards .row .modifier.online {
+        background: #757575;
+      }
+
+      .organization-info-cards .row .modifier.local-only {
+        background: #039BE5;
+      }
+
+      .organization-info-cards .row .modifier.locally-updated {
+        background: #009688;
+      }
+
+      .organization-info-cards .row .modifier.imported {
+        background: #4CAF50;
+      }
+
+      .info-row {
+        margin-top: 10px;
+      }
+
+      .top-info-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      .address1 {
+        margin-right: 10px;
+      }
+
+      .break-on-tablet {
+        @apply(--layout-horizontal);
+      }
+
+      @media screen and (max-width: 740px) {
+        .break-on-tablet {
+          display: block;
+        }
+      }
+
+      .val {
+        text-decoration: underline;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .primary {
+        background: var(--brand-primary-color);
+        color: white;
+      }
+
+      .margin-right-children * {
+        margin-right: 5px;
+      }
+
+      .districtAndSearch {
+        position: relative;
+        top: 4px;
+      }
+
+
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container custom-input-field">
+
+        <template is="dom-if" if="{{!isOrganizationValid}}">
+          [[$TRANSLATE('Organization invalid', LANG)]]
+        </template>
+
+        <!-- editing organization - start -->
+        <template is="dom-if" if="{{isOrganizationValid}}">
+
+          <div class="organization-info-card-counter">
+            <div>[[$TRANSLATE('Organization', LANG)]]: [[organization.name]]</div>
+          </div>
+
+          <paper-card class="organization-info-cards">
+
+            <div class="card-custom-header">
+              <div class="layout horizontal center">
+                <div class="title flex">[[$TRANSLATE('Search Filters', LANG)]]</div>
+              </div>
+            </div>
+
+            <div class="card-content">
+              <div class="layout horizontal center">
+                <paper-radio-button on-change="setSearchByBrandName" checked="[[shouldSearchByBrandName]]"></paper-radio-button>
+                <paper-input type="text" value="{{searchFilterBrandName}}" label="[[$TRANSLATE('Brand Name', LANG)]]" disabled="[[!shouldSearchByBrandName]]"></paper-input>
+                <div style="margin:12px;">or</div>
+                <paper-radio-button on-change="setDontSearchByBrandName" checked="[[!shouldSearchByBrandName]]"></paper-radio-button>
+                <paper-input class="m-right-8" type="text" value="{{searchFilterGenericName}}" label="[[$TRANSLATE('Generic Name', LANG)]]" disabled="[[shouldSearchByBrandName]]"></paper-input>
+                <paper-input type="text" value="{{searchFilterNameOfManufacturer}}" label="[[$TRANSLATE('Name of Manufacturer', LANG)]]" disabled="[[shouldSearchByBrandName]]"></paper-input>
+              </div>
+              <div class="layout horizontal center margin-right-children">
+                <vaadin-date-picker label="[[$TRANSLATE('Chose Start Date', LANG)]]" value="{{searchFilterStartDate}}"></vaadin-date-picker>
+                <vaadin-date-picker label="[[$TRANSLATE('Chose End Date', LANG)]]" value="{{searchFilterEndDate}}" min="[[searchFilterStartDate]]" disabled$="[[!searchFilterStartDate]]"></vaadin-date-picker>
+                <paper-input class="districtAndSearch" type="text" value="{{searchFilterDistrictName}}" label="[[$TRANSLATE('District Name', LANG)]]"></paper-input>
+                <paper-button class="primary flex districtAndSearch" on-tap="searchButtonTapped">[[$TRANSLATE('Search', LANG)]]</paper-button>
+              </div>
+            </div>
+          </paper-card>
+
+          <template is="dom-if" if="[[statistics]]">
+            <paper-card class="organization-info-cards">
+
+              <div class="card-custom-header">
+                <div class="layout horizontal center">
+                  <div class="title flex">[[$TRANSLATE('Statistics', LANG)]]</div>
+                </div>
+              </div>
+
+              <div class="card-content">
+                <strong class="statistics-item">[[statistics.brandName]]</strong> by
+                <strong class="statistics-item">[[statistics.manufacturer]]</strong> has been prescribed <strong class="statistics-item">[[statistics.prescriptionCountWithBrandName]]</strong> times out of a total of
+                <strong class="statistics-item">[[statistics.prescriptionCountWithGenericName]]</strong> prescriptions of <strong class="statistics-item">[[statistics.genericName]]</strong>. Recommendation Percentage is <strong class="statistics-item">[[statistics.recommendationPercentage]]</strong>%.
+              </div>
+
+            </paper-card>
+          </template>
+          <template is="dom-if" if="[[statistics]]">
+            <paper-card class="organization-info-cards">
+
+              <div class="card-custom-header">
+                <div class="layout horizontal center">
+                  <div class="title flex">Currently there are [[marketShareList.length]] manufacturers marketing [[statistics.genericName]].</div>
+                </div>
+              </div>
+
+              <template is="dom-if" if="[[marketShareList.length]]">
+                <div class="p-0">
+                  <paper-listbox>
+
+                    <template id="assistant-list-repeater" is="dom-repeat" items="[[marketShareList]]" as="marketShare">
+                      <paper-item class="custom layout horizontal center">
+
+                        <div class="flex m-left-8">
+                          <div class="type body capitalize">[[marketShare.manufacturer]]</div>
+                          <div class="type caption secondary">
+                            <div class="layout vertical">
+                              <template is="dom-repeat" items="[[marketShare.brandSalesList]]" as="brandSale" index-as="brandSaleIndex">
+                                <div>
+                                  <template is="dom-if" if="[[$equals(brandSale.brand, statistics.brandName)]]">*&nbsp;</template>[[brandSale.brand]] = [[brandSale.count]]</div>
+                              </template>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="layout horizontal m-horizontal-4 wrap">
+                          <div class="type caption">[[marketShare.count]]</div>
+
+                          <!-- <div class="type caption">([[marketShare.effectiveRegion]])</div> -->
+                        </div>
+
+                      </paper-item>
+                    </template>
+
+                  </paper-listbox>
+
+                </div>
+              </template>
+            </paper-card>
+          </template>
+
+        </template>
+        <!-- editing organization - end -->
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-organization-medicine-sales-statistics.coffee-compiled.js"></script>
+</dom-module>

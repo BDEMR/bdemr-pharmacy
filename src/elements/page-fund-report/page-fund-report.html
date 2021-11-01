@@ -1,0 +1,458 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-fund-report">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+        width: 90%;
+      }
+
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .header {
+        background-color: var(--paper-grey-100);
+        padding: 15px;
+      }
+
+      .label {
+        background-color: var(--paper-grey-100);
+        padding: 5px;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      .pull-div-up {
+        position: relative;
+        top: -10px;
+      }
+
+      /* styles related to print preview */
+      .print-button-style {
+        margin-top: 16px;
+        background: burlywood;
+      }
+
+      #printPreview {
+        display: none !important;
+      }
+
+      @media print {
+
+        .hideOnPrint {
+          display: none !important;
+        }
+
+        #printPreview {
+          display: block !important;
+          background-color: transparent;
+        }
+      }
+
+
+      .print-document {
+        font-family: 'Times New Roman';
+        background: white;
+        width: 100%;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td,
+      .table th {
+        vertical-align: left;
+        padding: 10px;
+        border: 1px solid var(--paper-grey-300);
+      }
+
+      .table td.special-td {
+        padding: 0px;
+        margin: 0px;
+        height: 100%;
+      }
+
+      .print-header {
+        position: relative;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px
+      }
+
+      .print-document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .print-document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+      
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+      .print-table {
+        table-layout: fixed;
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .print-table tr {
+        margin-bottom: 15px;
+      }
+
+      .print-table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .print-table td {
+        color: #444;
+      }
+
+      .print-table td,
+      .print-table th {
+        vertical-align: middle;
+        padding: 10px 0px;
+        margin-right: 5px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+      .print-table tr:last-child td {
+        border-bottom: 0;
+      }
+    </style>
+
+    <!-- <module-accounts-top-nav page-name="fund-report" organization-id="[[organization.idOnServer]]" class="hideOnPrint">
+    </module-accounts-top-nav> -->
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <!-- Main Content -->
+        <div class="hideOnPrint">
+          <template is="dom-if" if="[[loadingCounter]]">
+            <div class="layout horizontal center type bold text-center">
+              <paper-progress indeterminate></paper-progress>
+            </div>
+            <h2 class="type center">[[$TRANSLATE('Please Wait, Loading', LANG)]]...</h2>
+          </template>
+
+          <!-- Card - Search - start -->
+          <paper-card>
+            <div class="card-custom-header">
+              <div class="layout horizontal center">
+                <div class="title flex">[[$TRANSLATE('Fund Report', LANG)]]</div>
+              </div>
+            </div>
+
+            <div class="card-content">
+              <div class="layout horizontal end wrap">
+
+                <paper-dropdown-menu label="[[$TRANSLATE('Discount Funds', LANG)]]" class="m-left-16">
+                  <paper-listbox class="dropdown-content" on-iron-activate="filterByFunds">
+                    <template is="dom-repeat" items="[[fundList]]">
+                      <paper-item>[[item.name]]</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+
+                <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked">
+                </custom-vital-search>
+
+                <paper-button class="btn btn-success" raised on-tap="searchButtonClicked">[[$TRANSLATE('Search', LANG)]]</paper-button>
+                <paper-button raised on-tap="resetButtonClicked">[[$TRANSLATE('Reset', LANG)]]</paper-button>
+                <template is="dom-if" if="[[_isEmptyArray(matchingInvoiceList)]]">
+                  <paper-button raised class="print-button-style" on-tap="_printButtonPressed">[[$TRANSLATE('Print the Report', LANG)]]
+                  </paper-button>
+                </template>
+
+                <div style="color: rgb(182, 182, 182)" class="m-left-8 m-bottom-8">
+                  <span>[[$TRANSLATE('Press Search to Generate All The Reports', LANG)]]</span>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="card-content">
+
+              <vaadin-grid items="[[matchingInvoiceList]]">
+                <vaadin-grid-column width="100px" flex-grow="0">
+                  <template class="header">
+                    <vaadin-grid-sorter path="serial">[[$TRANSLATE('Serial', LANG)]]</vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <template is="dom-if" if="[[!item.referenceNumber]]">
+                      <strong class="label">[[item.serial]]</strong>
+                    </template>
+                    <template is="dom-if" if="[[item.referenceNumber]]">
+                      <strong class="label">[[item.referenceNumber]]</strong>
+                    </template>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="175px" flex-grow="0">
+                  <template class="header">
+                    <vaadin-grid-sorter path="createdDatetimeStamp" direction="desc">[[$TRANSLATE('Date', LANG)]]</vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div>[[$formatDate(item.createdDatetimeStamp)]]</div>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <span>[[$TRANSLATE('Patient Name', LANG)]]</span>
+                  </template>
+                  <template>
+                    <div>[[$getFullName(item.patientName)]]</div>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <span>[[$TRANSLATE('Patient Mobile', LANG)]]</span>
+                  </template>
+                  <template>
+                    <div>[[item.patientPhone]]</div>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <span>[[$TRANSLATE('Fund Name', LANG)]]</span>
+                  </template>
+                  <template>
+                    <div>[[item.discountFromFund.name]]</div>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <span>[[$TRANSLATE('Discount Given from Fund', LANG)]]</span>
+                  </template>
+                  <template>
+                    <div>[[item.discountFromFund.amount]]</div>
+                  </template>
+                  <template class="footer"><strong>[[$TRANSLATE('Total', LANG)]]: [[$formatCurrency(totalDiscountFromFund)]]</strong></template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <span>[[$TRANSLATE('Total Discount Given', LANG)]]</span>
+                  </template>
+                  <template>
+                    <div>[[item.discount]]</div>
+                  </template>
+                  <template class="footer"><strong>[[$TRANSLATE('Total', LANG)]]: [[$formatCurrency(totalDiscount)]]</strong></template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column resizable>
+                  <template class="header">[[$TRANSLATE('Action', LANG)]]
+                    <span></span>
+                  </template>
+                  <template>
+                    <div>
+                      <paper-icon-button icon="launch" on-tap="viewCommissionButtonPressed"></paper-icon-button>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+              </vaadin-grid>
+
+            </div>
+          </paper-card>
+        </div>
+
+        <!-- Print Preview -->
+        <div id="printPreview">
+          <div class="print-document">
+            <template is="dom-if" if="[[settings.printDecoration.headerLine]]">
+              <div class="print-header vertical layout center">[[settings.printDecoration.headerLine]]</div>
+            </template>
+
+            <div class="print-document-header horizontal layout center">
+
+              <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+                <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+              </template>
+
+              <div class="leftSide vertical layout">
+                <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+                <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+                <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+              </div>
+              <div class="flex"></div>
+              <div class="rightSide vertical layout end">
+                <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+                <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+                <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+              </div>
+            </div>
+
+            <div class="horiline"></div>
+            <div style="text-align: center">
+              <h1>[[$TRANSLATE('Fund Report', LANG)]]</h1>
+            </div>
+
+            <!-- Report Content -->
+            <div>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>[[$TRANSLATE('Date', LANG)]]</th>
+                    <th>#[[$TRANSLATE('Invoice', LANG)]]</th>
+                    <th>[[$TRANSLATE('Fund Name', LANG)]]</th>
+                    <th>[[$TRANSLATE('Patient Name', LANG)]]</th>
+                    <th>[[$TRANSLATE('Patient Phone', LANG)]]</th>
+                    <th>[[$TRANSLATE('Discount Given from Fund', LANG)]]</th>
+                    <th>[[$TRANSLATE('Total Discount Given', LANG)]]</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template is="dom-repeat" items="[[matchingInvoiceList]]" sort="_sortByDate">
+                    <tr>
+                      <td>[[$formatDateTime(item.createdDatetimeStamp)]]</td>
+                      <td>
+                        <template is="dom-if" if="[[!item.referenceNumber]]">
+                          <strong class="label">[[item.serial]]</strong>
+                        </template>
+                        <template is="dom-if" if="[[item.referenceNumber]]">
+                          <strong class="label">[[item.referenceNumber]]</strong>
+                        </template>
+                      </td>
+                      <td>[[item.discountFromFund.name]]</td>
+                      <td>[[$getFullName(item.patientName)]]</td>
+                      <td>[[item.patientPhone]]</td>
+                      <td>[[item.discountFromFund.amount]]</td>
+                      <td style="text-align:center;">[[item.discount]]</td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+
+              <!-- footer div -->
+              <div class="m-top-16 m-bottom-16 layout vertical">
+                <div>
+                  <div class="layout vertical" style="position: relative; float: right;">
+                    <div class="m-bottom-8">
+                      <span><strong>
+                        [[$TRANSLATE('Total Discount Given From Fund', LANG)]]: [[$formatCurrency(totalDiscountFromFund)]]
+                      </strong></span>
+                    </div>
+                    <div class="m-bottom-8">
+                      <span><strong>
+                        [[$TRANSLATE('Total Discount Given', LANG)]]: [[$formatCurrency(totalDiscount)]]
+                      </strong></span>
+                    </div>
+                  </div>
+                </div>
+  
+                <div>
+                  <template is="dom-if" if="[[settings.printDecoration.footerLine]]">
+                    <div class="footer vertical layout">[[settings.printDecoration.footerLine]]</div>
+                  </template>
+                </div>
+
+              </div>
+
+            </div>
+
+            <div style="text-align: center; margin-top: 16px">
+              <span class="type secondary">[[$TRANSLATE('Report Generation Date & Time', LANG)]] -
+                [[_getFormattedCurrentDateTime(currentDateTime)]]</span>
+            </div>
+          </div>
+
+          <div class="horizontal layout center center-justified p-horizontal-16">
+            <div class="type body italic"><strong>[[$TRANSLATE('Printed by', LANG)]]: </strong>[[user.name]]</div>
+          </div>
+        </div>
+
+
+
+      </div>
+
+    </div>
+
+
+
+  </template>
+  <script src="page-fund-report.coffee-compiled.js"></script>
+</dom-module>

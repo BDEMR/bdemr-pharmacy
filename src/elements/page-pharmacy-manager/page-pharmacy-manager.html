@@ -1,0 +1,569 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- element -->
+<dom-module id="page-pharmacy-manager">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      app-header-layout ::content #contentContainer {
+        overflow: hidden !important;
+      }
+
+      :host {
+        /* height: calc(100% - 56px); */
+    position: relative;
+    width: 90%;
+    /* margin: 10px; */
+    margin: 0 auto;
+    display: flex;
+    /* justify-content: space-between; */
+    left: 0;
+    /* right: 0; */
+    /* top: 56px; */
+    border-radius: 10px;
+      }
+
+      .container {
+        width: 100%;
+        height: 100%;
+        /* background-color: #fff; */
+      }
+
+      paper-dialog {
+        min-width: 450px;
+      }
+
+      vaadin-grid#list {
+        height: inherit;
+        font-family: Roboto, sans-serif;
+        --divider-color: rgba(0, 0, 0, var(--dark-divider-opacity));
+        padding: 20px;
+
+        --vaadin-grid-cell: {
+          padding: 0;
+        };
+
+        --vaadin-grid-header-cell: {
+          height: 48px;
+          /* color: rgba(0, 0, 0, var(--dark-secondary-opacity)); */
+          font-size: 16px;
+        };
+
+        --vaadin-grid-body-cell: {
+          /* height: 48px; */
+          color: rgba(0, 0, 0, var(--dark-primary-opacity));
+          font-size: 16px;
+        };
+
+        --vaadin-grid-body-row-hover-cell: {
+          background-color: var(--paper-grey-200);
+        };
+
+        --vaadin-grid-body-row-selected-cell: {
+          background-color: var(--paper-grey-100);
+        };
+
+        --vaadin-grid-focused-cell: {
+          box-shadow: none;
+          font-weight: bold;
+        };
+      }
+ 
+      .top-container {
+        /* background-color: #f3f5f7; */
+        box-shadow:rgba(0, 0, 0, .54) 0 -10px 6px -10px inset;
+        height: 310px;
+      }
+
+      #filter {
+        /* padding: 8px 8px 16px 8px; */
+       
+        position: relative;
+    margin: 10px 0px 0px 0px;
+    background: white;
+    padding: 20px;
+      }
+
+      .filter {
+        padding: 0 6px 1px 6px;
+      }
+
+      #editor {
+        background-color: #fff;
+        /* border: 1px solid rgba(0, 0, 0, var(--dark-divider-opacity)); */
+        position: relative;
+        height: 100%;
+        box-shadow: -3px -3px 2px rgba(0,0,0, 0.16);
+        
+      }
+
+      .editor-content {
+        margin-top: 64px;
+        padding: 16px;
+        width: calc(100%-32px);
+        height: calc(100% - 161px);
+        overflow-y: auto;
+      }
+
+      .editor-buttons {
+        background-color: #eee;
+        padding: 12px 16px;
+        @apply(--layout-horizontal);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+
+      .custom-input {
+        padding-top: 6px;
+        padding-bottom: 6px;
+      }
+
+      input {
+        background-color: #dde2e8;
+        border-radius: 6px;
+        height: 36px;
+        font-weight: 500;
+        padding: 0px 8px;
+        box-sizing: border-box;
+      }
+
+      .custom-iron-input {
+        margin-top: 5px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        width: 200px;
+      }
+
+      .custom-button {
+        padding: 0.4em 2em;
+        font-size: 16px;
+        background-color: #fff;
+      }
+      .custom-button:hover {
+        color: white;
+        transition: 20ms all ease;
+        background-color: rgb(0, 159, 233);
+      }
+
+      .custom-flat-button {
+        font-weight: bold;
+        font-size: 14px;
+        text-transform: uppercase;
+      }
+
+      #importResult {
+        overflow-y: scroll;
+        height: 200px;
+        background: white;
+        padding: 12px;
+        margin-top: 16px;
+      }
+
+      .type.capton-2 {
+        line-height: 25px;
+      }
+
+      .left {
+        width: 30%;
+      }
+      .right {
+        width: 100%;
+        height: inherit;
+      }
+
+      @media screen and (max-width: 859px) {
+        .left, .right {
+          width: 100%;
+        }
+      }
+
+      @media screen and (max-width: 479px) {
+        .filter-input {
+          width: 100%;
+        }
+
+        #btnFilter {
+          margin-top: 8px;
+          margin-bottom: 8px;
+        }
+      }
+
+      #editor {
+        position: fixed;
+        right: 0;
+        top: 56px;
+        bottom: 0;
+        z-index: 1;
+        height: calc(100% - 156px);
+        border-left: 1px solid #eee;
+      }
+
+
+      .fixed-title {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 12px 8px 11px 12px;
+        border-bottom: 1px solid #eee;
+        z-index: 1;
+        background-color: #fafafa;
+        width: calc( 100% - 24px);
+      }
+
+      
+      #addNewQuantity {
+        border-radius: 6px;
+        border: 1px solid rgba(0, 0, 0, .54);
+        padding: 8px;
+      }      
+
+    </style>
+
+    <div class="container horizontal layout wrap">
+
+      
+      <!-- Item add/editor form -->
+      <div id="editor" hidden$="{{hideEditForm}}">  
+
+        <div class="editor-content">
+          
+          <div class="fixed-title horizontal layout center">
+            <h2 class="flex"><span hidden$="{{!EDIT_MODE}}">[[$TRANSLATE('Edit', LANG)]]</span>
+              <span hidden$="{{EDIT_MODE}}">[[$TRANSLATE('New', LANG)]]</span> [[$TRANSLATE('Product', LANG)]]</h2>
+            <paper-icon-button icon="close" on-tap="_closeEditForm"></paper-icon-button>
+          </div>
+
+          <br>
+          <br>
+  
+          <vaadin-combo-box id="productSearch" class="flex" label="[[$TRANSLATE('Type/Search Item', LANG)]]" item-label-path="name" item-label-value="name" 
+            filter="{{itemSearchQuery}}" loading="[[fetchingInventorySearchResult]]" on-selected-item-changed="itemSelected" value="{{product.name}}" 
+            allow-custom-value error-message="Medicine name is required!" required>
+          </vaadin-combo-box>
+          <div class="horizontal layout wrap">
+            <paper-checkbox class="m-8" checked="{{product.flags.isPublic}}">[[$TRANSLATE('Publicly Available', LANG)]]</paper-checkbox>
+            <paper-checkbox class="m-8" checked="{{product.flags.isActive}}">[[$TRANSLATE('Active Product', LANG)]]</paper-checkbox>
+          </div>
+          <paper-input class="custom-input" type="text" id="inputActualCost" label="[[$TRANSLATE('Actual Cost/Unit', LANG)]]" value="{{product.actualCost}}" pattern="^-?\d*[.,]?\d*$" error-message="Actual Cost is required!" required></paper-input>
+          <paper-input type="text" class="custom-input" id="inputPrice" label="[[$TRANSLATE('Price/Unit', LANG)]]" value="{{product.price}}" error-message="Please add product price"  pattern="^-?\d*[.,]?\d*$" required></paper-input>
+
+          <!-- <paper-input class="custom-input" type="number" id="inputQuantity" label="[[$TRANSLATE('Quantity', LANG)]]" value="{{product.quantity}}"></paper-input> -->
+          <div>
+            <paper-checkbox class="m-horizontal-4 m-top-16" checked="{{product.hasQuantity}}">Quantifiable</paper-checkbox>
+            <template is="dom-if" if="{{product.hasQuantity}}">
+          
+              <div id="addNewQuantity" class="m-top-8">
+                <div class="horizontal layout center center-justified">
+                  <paper-input class="paper-custom-input flex" type="number" label="Quantity" value="{{qtyTransaction.quantity}}">
+                  </paper-input>
+                  <paper-button raised on-tap="_addNewQuantity" class="m-left-16">Add</paper-button>
+                </div>
+                <div class="horizontal layout center m-top-8">
+                  <div class="type body"><strong>Quantity available:</strong><span
+                      class="m-horizontal-8">{{product.quantity}}</span></div>
+                  <div class="flex"></div>
+                </div>
+              </div>
+          
+          
+            </template>
+          
+          </div>
+          <paper-input class="custom-input" type="number" label="[[$TRANSLATE('Alert Quantity', LANG)]]" value="{{product.alertQuantity}}"></paper-input>
+          <paper-input id="inputBatchNumber" class="custom-input" label="[[$TRANSLATE('Batch', LANG)]]" value="{{product.batch}}" error-message="Input Required" min-length="2" required></paper-input>
+
+          <paper-input id="inputGenericName" class="custom-input" label="[[$TRANSLATE('Generic Name', LANG)]]" value="{{product.genericName}}" error-message="Input Required" min-length="2" required></paper-input>
+          <paper-input  id="inputManufacturer" class="custom-input" label="[[$TRANSLATE('Manufacturer', LANG)]]" value="{{product.manufacturer}}" error-message="Input Required" min-length="2" required></paper-input>
+          <paper-input  id="inputSupplier" class="custom-input" label="[[$TRANSLATE('Supplier', LANG)]]" value="{{product.supplier}}" error-message="Input Required" min-length="2" required></paper-input>
+
+          <vaadin-date-picker-light placeholder="[[$TRANSLATE('Expiry Date of the Product', LANG)]]">
+            <label style="color: rgb(117, 117, 117);">[[$TRANSLATE('Expiry Date', LANG)]] &nbsp;&nbsp;</label>
+            <input is="iron-input" min="[[today]]" class="custom-iron-input" placeholder="[[$TRANSLATE('Expiry Date of the Product', LANG)]]"
+              bind-value="{{customExpiryDate}}" />
+          </vaadin-date-picker-light>
+
+          <paper-input class="custom-input" type="number" label="[[$TRANSLATE('Expire Alert Days', LANG)]]" value="{{product.expireAlertDays}}"></paper-input>
+          <vaadin-combo-box label="[[$TRANSLATE('Form', LANG)]]" items="[[medicineFormList]]" allow-custom-value="true" value="{{product.form}}"></vaadin-combo-box>
+          
+          <vaadin-combo-box label="[[$TRANSLATE('Dose', LANG)]]" items="[[doseList]]" allow-custom-value="true" value="{{product.doseDirection}}"></vaadin-combo-box>
+          <vaadin-combo-box label="[[$TRANSLATE('Route', LANG)]]" items="[[routeList]]" allow-custom-value="true" value="{{product.route}}"></vaadin-combo-box>
+          <vaadin-combo-box label="[[$TRANSLATE('Direction', LANG)]]" items="[[directionList]]" allow-custom-value="true" value="{{product.direction}}"></vaadin-combo-box>
+
+        </div>
+  
+        <div class="editor-buttons">
+          <paper-icon-button icon="icons:delete" on-tap="_deleteProduct" hidden$="{{!EDIT_MODE}}">[[$TRANSLATE('Delete', LANG)]]</paper-icon-button>
+  
+          <div class="flex"></div>
+          <paper-button on-click="_clearProduct">[[$TRANSLATE('Clear', LANG)]]</paper-button>
+          <paper-button class="btn btn-success" on-click="_setProduct" autofocus raised>
+            <span hidden$="{{!EDIT_MODE}}">[[$TRANSLATE('Update', LANG)]]</span>
+            <span hidden$="{{EDIT_MODE}}">[[$TRANSLATE('Add', LANG)]]</span>
+          </paper-button>
+        </div>
+
+      </div>
+ 
+
+      <div class="right flex">
+
+        <!-- filter - start -->
+        <div id="filter" >
+      
+      
+          <!-- filter - form - start -->
+          <section hidden$="{{!isBulkImportHidden}}">
+            <div class="horizontal layout center filter">
+              <div class="horizontal layout center wrap flex">
+                <vaadin-date-picker class="filter-input m-horizontal-8" type="date" max="" value="{{filterBy.fromDate}}" label="[[$TRANSLATE('From', LANG)]]"></vaadin-date-picker>
+                <vaadin-date-picker class="filter-input m-horizontal-8" type="date" max="" value="{{filterBy.toDate}}" label="[[$TRANSLATE('To', LANG)]]"></vaadin-date-picker>
+                <paper-button raised id="btnFilter" on-tap="onFilterTapped" class="custom-button m-top-8"><iron-icon class="m-right-8" icon="icons:sort"></iron-icon>[[$TRANSLATE('Filter', LANG)]]</paper-button>
+                <div class="flex"></div>
+                <template is="dom-if" if="[[productReStockAlertArr.length]]">
+                  <paper-button raised class="btn btn-danger" on-tap="_viewAlertBoxButtonClicked">[[$TRANSLATE('Check Product Alert', LANG)]]</paper-button>
+                </template>
+                <template is="dom-if" if="[[!hideOriginalCreatedProductInvoiceButton]]">
+                  <paper-button raised class="btn btn-success" on-tap="goToPharmacyInvoice">[[$TRANSLATE('Create Product invoice', LANG)]]</paper-button>
+                </template>
+                <template is="dom-if" if="[[hideOriginalCreatedProductInvoiceButton]]">
+                  <paper-button raised class="btn btn-success" on-tap="goToOutPatientInvoice">[[$TRANSLATE('Create Pharmacy invoice', LANG)]]</paper-button>
+                </template>
+                <paper-button raised style="color: white; background-color: cornflowerblue;" on-tap="goToRefundInvoice">Create Refund invoice</paper-button>
+
+                <!-- <paper-button raised class="btn btn-success" on-tap="goToSupplierInvoice">Create Supplier invoice</paper-button> -->
+              </div>
+
+              <paper-menu-button class="p-0" vertical-align="top" horizontal-align="right">
+                <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+                <paper-menu class="dropdown-content">
+                  <paper-item on-tap="_showNewProductForm"><iron-icon class="m-right-8" icon="icons:add"></iron-icon>[[$TRANSLATE('Add New Item', LANG)]]</paper-item>
+                  <paper-item on-tap="onClearFilterTapped"><iron-icon class="m-right-8" icon="icons:clear"></iron-icon>[[$TRANSLATE('Clear Filter', LANG)]]</paper-item>
+                  <paper-item on-tap="showBulkImportForm"><iron-icon class="m-right-8" icon="icons:cloud-upload"></iron-icon>[[$TRANSLATE('Bulk Import/Export', LANG)]]</iron-icon></paper-item>
+                  <paper-item on-tap="_exportBtnPressed"><iron-icon class="m-right-8" icon="icons:file-download"></iron-icon>[[$TRANSLATE('Export', LANG)]]</paper-item>
+                  <!-- <paper-item on-tap="_downloadDemoTemplate"><iron-icon class="m-right-8" icon="icons:file-download"></iron-icon>Download CSV Template (Demo)</paper-item> -->
+                </paper-menu>
+              </paper-menu-button>
+            </div>
+            
+
+            <!-- <div class="m-top-16 horizontal layout end-justified">
+              <paper-icon-button on-tap="onClearFilterTapped" icon="icons:clear"></paper-icon-button>
+              <paper-button on-tap="onFilterTapped" class="custom-button" raised>Filter</paper-button>
+              <div class="flex"></div>
+              <paper-button on-tap="_showNewProductForm" class="custom-button colored" raised>Add New</paper-button>
+              <paper-menu-button class="p-0" vertical-align="top" horizontal-align="right">
+                <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+                <paper-menu class="dropdown-content">
+                  <paper-item on-tap="_exportBtnPressed"><iron-icon class="m-right-8" icon="icons:file-download"></iron-icon>Export</paper-item>
+                </paper-menu>
+              </paper-menu-button>
+            </div> -->
+    
+          </section>
+          <!-- filter - form - end -->
+  
+          <!-- bulk import - form - start -->
+          <section hidden$="{{isBulkImportHidden}}" style="padding: 8px 8px 16px 8px;">
+            <div class="horizontal layout center">
+              <div class="type caption-2 p-horizontal-8 flex"><iron-icon icon="icons:cloud-upload" class="m-right-8"></iron-icon><strong>[[$TRANSLATE('BULK IMPORT', LANG)]]</strong></div>
+              <paper-button class="custom-flat-button" on-tap="showFilterForm" hidden$="{{isBulkImportHidden}}"><iron-icon  icon="icons:chevron-left" class="m-right-8"></iron-icon>[[$TRANSLATE('Back', LANG)]]</paper-button>
+            </div>
+  
+            <input id="inputCsvFile" class="p-24" type='file' on-change='openFile'>
+    
+            <template is="dom-if" if="{{bulkImportLog}}">
+              <div id="importResult">
+                <div class="type body"><span class="type text-success">[[$TRANSLATE('Success', LANG)]]: {{bulkImportLog.counter.success}}</span>, <span class="type text-success">[[$TRANSLATE('Failed', LANG)]]: {{bulkImportLog.counter.failed}}</span></div>
+                <template is="dom-repeat" items="{{bulkImportLog.stats}}">
+                  <div class="type caption horizontal layout">
+                    <div class="m-right-8">[[$returnSerial(index)]].</div>
+                    <div class$="type text-{{item.status}}">[[item.name]] : [[item.comments]]</div>
+                  </div>
+                </template>
+              </div>
+            </template>
+    
+            <div class="m-top-16">
+              <template is="dom-if" if="{{IMPORT_DONE}}">
+                <paper-button on-tap="onClearImportBulkBtnPressed" class="custom-button">[[$TRANSLATE('Clear', LANG)]]</paper-button>
+              </template>
+              <template is="dom-if" if="{{!IMPORT_DONE}}">
+                <paper-button on-tap="onBulkImportBtnPressed" class="custom-button colored">[[$TRANSLATE('Import', LANG)]]</paper-button>
+              </template>
+            </div>
+          </section>
+          <!-- filter - form - end -->
+          
+        </div>
+        <!-- filter - end -->
+
+        <!-- inventory - start -->
+        <vaadin-grid items="[[inventory]]" id="list" active-item="{{activeItem}}">
+
+          <vaadin-grid-column width="40px" frozen>
+            <template class="header">[[$TRANSLATE('No', LANG)]].</template>
+            <template>[[$returnSerial(index)]]</template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="12em" frozen>
+            <template class="header">
+              <vaadin-grid-sorter path="name" direction="asc">
+                
+                <vaadin-grid-filter aria-label="Name" path="name" value="[[searchString]]">
+                  <paper-input label="[[$TRANSLATE('Search By Name', LANG)]]" value="{{searchString}}" no-label-float></paper-input>
+                </vaadin-grid-filter>
+            
+              </vaadin-grid-sorter>
+            </template>
+            <template>
+              [[item.name]]
+            </template>
+          </vaadin-grid-column>
+    
+          <vaadin-grid-column width="6em">
+            <template class="header">
+              <vaadin-grid-sorter path="actualCost" class="numeric">
+                <div class="header-cell">
+                  [[$TRANSLATE('Actual Cost', LANG)]]
+                </div>
+              </vaadin-grid-sorter>
+            </template>
+            <template>
+              [[item.actualCost]]
+            </template>
+          </vaadin-grid-column>
+    
+          <vaadin-grid-column width="6em">
+            <template class="header">
+              <vaadin-grid-sorter path="price" class="numeric">
+                <div class="header-cell">
+                  [[$TRANSLATE('Price', LANG)]]
+                </div>
+              </vaadin-grid-sorter>
+            </template>
+            <template>
+              <span class="total">[[item.price]]</span>
+            </template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="6em">
+              <template class="header">
+                <vaadin-grid-sorter path="quantity" class="numeric">
+                  <div class="header-cell">
+                    [[$TRANSLATE('Quantity', LANG)]]
+                  </div>
+                </vaadin-grid-sorter>
+              </template>
+              <template>
+                <span class$="type {{_classForQuantityAlert(item)}}">[[item.quantity]]</span>
+              </template>
+            </vaadin-grid-column>
+
+          <vaadin-grid-column width="12em">
+            <template class="header">
+                [[$TRANSLATE('Supplier', LANG)]]
+            </template>
+            <template>
+              <span>[[item.supplier]]</span>
+            </template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="12em">
+            <template class="header">
+              <vaadin-grid-sorter path="createdDatetimeStamp">
+                <div class="header-cell">
+                 [[$TRANSLATE(' Added on', LANG)]]
+                </div>
+              </vaadin-grid-sorter>
+            </template>
+            <template>
+              <span style="text-transform: capitalize;"></span>[[$formatDateTime(item.createdDatetimeStamp)]]</span>
+            </template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="12em">
+            <template class="header">
+              <vaadin-grid-sorter path="createdDatetimeStamp">
+                <div class="header-cell">
+                  [[$TRANSLATE('Expiry Date', LANG)]]
+                </div>
+              </vaadin-grid-sorter>
+            </template>
+            <template>
+              <span>[[$formatDate(item.expiryDate)]]</span>
+              <hr>
+              <span>[[_computeDaysLeft(item.expiryDate)]] [[$TRANSLATE('Days Left', LANG)]]</span>
+            </template>
+          </vaadin-grid-column>
+    
+        </vaadin-grid>
+        <!-- inventory - end -->
+
+        <!-- alert box starts -->
+        <paper-dialog class="custom-input-field" id="dialogAlertBox">
+          <div class="type body-lead" style="color: green;">
+            <strong>[[$TRANSLATE('Product Alert', LANG)]]</strong>
+            <hr>
+          </div>
+          <paper-dialog-scrollable>
+            <div class="card-content">
+              <template is="dom-repeat" items="[[productReStockAlertArr]]">
+                <div class="log-box">
+                  <div class="horizontal layout wrap m-top-8">
+                    <span>[[$TRANSLATE('Product Name', LANG)]]:<strong> [[item.name]]&nbsp;</strong></span>
+                    <span>([[$TRANSLATE('Batch', LANG)]]: [[item.batch]])</span>
+                    <template is="dom-if" if="[[item.expireDateAlert]]"><span
+                        class="type secondary">&nbsp; [[$TRANSLATE('Expire Date Alert', LANG)]]</span></template>
+                    <template is="dom-if" if="[[item.quantityAlert]]"><span
+                        class="type secondary">&nbsp; [[$TRANSLATE('Quantity Alert', LANG)]]</span></template>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </paper-dialog-scrollable>
+          <div class="buttons">
+            <paper-button class="btn btn-danger" dialog-dismiss>[[$TRANSLATE('Dismiss', LANG)]]</paper-button>
+          </div>
+        </paper-dialog>
+        <!-- alert box ends -->
+
+      </div>
+      
+    </div>
+
+  </template>
+  <script src="page-pharmacy-manager.coffee-compiled.js"></script>
+</dom-module>

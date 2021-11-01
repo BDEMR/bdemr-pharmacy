@@ -1,0 +1,343 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower-assets/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower-assets/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-organization-send-bulk-sms">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .btn-add {
+        min-width: 0;
+        margin: 0;
+        padding: 0.5em 2em;
+        background-color: #fff;
+        color: rgba(0, 0, 0, .87);
+      }
+
+      .btn-add.danger {
+        background-color: red !important;
+        color: white  !important;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        border: none;
+      }
+
+      .table th {
+        /* text-align: left; */
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td {
+        color: #444;
+      }
+
+      .table td,
+      .table th {
+        vertical-align: middle;
+        padding: 10px 20px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+      .table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .filter-input  {
+        border: none;
+        background-color: inherit;
+        font-size: 16px;
+        /* height: 100%; */
+        width: 100%;
+        text-align: center;
+        outline: none;
+      }
+
+      .custom-button {
+        padding: 0.4em 2em;
+        font-size: 16px;
+        background-color: #fff;
+      }
+
+      vaadin-grid.custom-vaadin-grid {
+        --vaadin-grid-header-cell: {
+          height: 64px;
+          font-weight: bold;
+        };
+      }
+
+      #list {
+        min-height: 400px;
+        overflow-y: hidden;
+      }
+
+      .custom-dialog-content {
+        overflow-y: auto;
+        height: 210px;
+      }
+
+      vaadin-grid.custom-vaadin-grid {
+        height: inherit;
+        font-family: Roboto, sans-serif;
+        --divider-color: rgba(0, 0, 0, var(--dark-divider-opacity));
+
+        /* --vaadin-grid-cell: {
+          padding: 0;
+        }; */
+
+        --vaadin-grid-header-cell: {
+          height: 48px;
+          /* color: rgba(0, 0, 0, var(--dark-secondary-opacity)); */
+          font-size: 16px;
+        };
+
+        --vaadin-grid-body-cell: {
+          /* height: 48px; */
+          color: rgba(0, 0, 0, var(--dark-primary-opacity));
+          font-size: 16px;
+        };
+
+        --vaadin-grid-body-row-hover-cell: {
+          background-color: var(--paper-grey-200);
+        };
+
+        --vaadin-grid-body-row-selected-cell: {
+          background-color: var(--paper-grey-100);
+        };
+
+        --vaadin-grid-focused-cell: {
+          box-shadow: none;
+          font-weight: bold;
+        };
+      }
+      
+    </style>
+
+    <template is="dom-if" if="[[$and(user, organization)]]">
+
+      <div class="tabs-container">
+        <paper-tabs id="tabs" selected="{{pageIndex}}" scrollable noink='true' on-iron-select="">
+          <paper-tab>[[$TRANSLATE('Send SMS',LANG)]]</paper-tab>
+          <paper-tab>[[$TRANSLATE('Logs',LANG)]]</paper-tab>
+        </paper-tabs>
+      </div>
+
+
+      <iron-pages selected="{{pageIndex}}">
+        <section>
+          <div class="master-container">
+
+            <div class="limiting-container">
+    
+              <paper-card>
+    
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <div class="title flex">Send SMS</div>
+                  </div>
+                </div>
+    
+                <div class="card-content">
+    
+                  <div>[[audienceList.length]] audience(s).</div>
+                  
+                  <paper-textarea class="paper-custom-input" placeholder="Write your message here..." value="{{newSmsInput}}" rows="5" char-counter minlength="1" maxlength="918"></paper-textarea>
+    
+                  <div class="horizontal layout m-top-24">
+                    <!-- <div class="type body success text-bold"><strong>Note:</strong> BDT {{_getEstimatePerSMSCost(newSmsInput)}}tk/Per SMS</div> -->
+                    <div class="flex"></div>
+                    <paper-button raised on-tap="sendSmsTappedNew" class="btn-add colored">Send SMS</paper-button>
+                  </div>
+                  <template is="dom-repeat" items="[[responseList]]" as="response">
+                    <div>[[response]]</div>
+                  </template>
+    
+                  
+                </div>
+    
+              </paper-card>
+              
+              <paper-card class="m-top-8" heading="">
+                <div class="card-custom-header">
+                  <div class="title flex">Add Audiences Phone numbers</div>
+                  <div class="type caption-2">Every Phone Number must be 11 digits long. i.e. 017123456789</div>
+                  <div class="type caption-2">Please put every phone number in a new line.</div>
+                </div>
+                <div class="card-content">
+                  <paper-textarea class="paper-custom-input" placeholder="Phone numbers, one by one" value="{{newAudienceRawInput}}" rows="6"></paper-textarea>
+                  <div class="horizontal layout m-top-8">
+                    <div class="flex"></div>
+                    <paper-button class="btn-add colored" raised on-tap="addAudiencesTapped">Add</paper-button>
+                  </div>
+                </div> 
+              </paper-card>
+              
+              <paper-card class="m-top-8">
+    
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <div class="title flex">[[audienceList.length]] Audiences</div>
+                  </div>
+    
+                  <div class="horizontal layout wrap end-justified">
+                    <!-- <paper-button raised class="m-4" on-tap="addSelectedAudiencesToGroup" class="btn-add" >Add to Group</paper-button> -->
+                    <!-- <paper-button raised class="m-4" on-tap="_clearSelection" class="btn-add">Clear Selection</paper-button> -->
+                    <!-- <paper-button raised class="m-4" on-tap="_selectAll" class="btn-add">Select All</paper-button> -->
+                    <paper-button class="m-4" on-tap="_deleteAll" class="btn-add danger" raised>Delete All</paper-button>
+                    <!-- <paper-button raised class="m-4" on-tap="deleteSelectedAudiences" class="btn-add colored">Delete Selected</paper-button> -->
+                  </div>
+                </div>
+    
+                
+    
+                <template is="dom-if" if="[[!audienceList.length]]">
+                  <div class="horizontal layout center center-justified card-content">
+                    <i class="type capton-2 secondary">-- empty --</i>
+                  </div>
+                </template>
+                <template is="dom-if" if="[[audienceList.length]]">
+                  
+                  <table class="table">
+                    <tbody>
+                      <template is="dom-repeat" items="{{audienceList}}">
+                        <tr>
+                          <div class="horizontal layout">
+                            <td>
+                              <div class="horizontal layout">
+                                <!-- <input class="m-right-8"  type="checkbox" id$="[[item.phone]]" on-click="_togglePhoneNumberSelection"> -->
+                                <label for$="[[item.phone]]" class="flex">[[item.phone]]</label>
+                              </div>
+                            </td>
+                          </div>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                </template>
+                
+              </paper-card>
+    
+            </div>
+    
+          </div>
+        </section>
+
+        <section>
+
+          <div class="horizontal layout wrap p-4">
+            <vaadin-date-picker class="paper-custom-input m-horizontal-4" type="date" max="" value="{{filterBy.fromDate}}" label="From"></vaadin-date-picker>
+            <vaadin-date-picker class="paper-custom-input m-horizontal-4 type="date" max="" value="{{filterBy.toDate}}" label="To"></vaadin-date-picker>
+          </div>
+
+          <div class="horizontal layout end-justified">
+            <paper-button  class="colored" riased on-tap="onFilterTapped" class="custom-button m-top-20"><iron-icon class="m-right-8" icon="icons:sort"></iron-icon>Filter</paper-button>
+          </div>
+
+          <vaadin-grid items="{{logs}}" class="custom-vaadin-grid m-top-24" active-item="">
+    
+            <vaadin-grid-column width="6em">
+              <template class="header">[[$TRANSLATE('Date & Time', LANG)]]</template>
+              <template>[[$formatDateTime(item.createdDatetimeStamp)]]</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="12em">
+              <template class="header">[[$TRANSLATE('SMS Body', LANG)]]</template>
+              <template>[[item.smsBody]]</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="4em">
+              <template class="header">[[$TRANSLATE('Total Sent', LANG)]]</template>
+              <template>[[item.logs.length]]</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="4em">
+              <template class="header">[[$TRANSLATE('Success', LANG)]]</template>
+              <template>[[item.successCounter]]</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="4em">
+              <template class="header">[[$TRANSLATE('Failed', LANG)]]</template>
+              <template>[[item.failedCounter]]</template>
+            </vaadin-grid-column>
+            
+            <!-- <vaadin-grid-column width="8em">
+              <template class="header">[[$TRANSLATE('Sent By', LANG)]]</template>
+              <template>{{item.createdByUserName}}</template>
+            </vaadin-grid-column> -->
+
+          </vaadin-grid>
+        </section>
+      </iron-pages>
+
+      
+
+      
+    </template>
+
+    <!-- Dialog for - Logs - start -->
+    <paper-dialog id="dialogLogs" vertical-align='top'>
+      
+      <div class="custom-title">
+        <h2 class="flex">Bulk Sms Report</h2>
+        <div class="horizontal layout wrap">
+          <div class="type capton-2 m-horizontal-4"><strong>Per SMS Charge:</strong> [[logs.perSmsRequiredCount]]</div>
+          <div class="type capton-2 m-horizontal-4"><strong>Total SMS Deducted: </strong>[[logs.totalSMSDeducted]]</div>
+          <div class="type capton-2 m-horizontal-4"><strong>Total Phone Numbers: </strong>[[logs.logs.length]]</div>
+          <div class="type capton-2 m-horizontal-4"><strong>Successfully Sent:</strong> [[logs.successCounter]]</div>
+          <div class="type capton-2 m-horizontal-4"><strong>Failed: </strong>[[logs.failedCounter]]</div>
+        </div>
+        
+      </div>
+      <div class="custom-dialog-content">
+        
+        <template is="dom-repeat" items="[[logs.logs]]">
+          <div class$="custom-item horizontal layout center type caption-2 [[_getStatsClass(item.status)]]">
+            <div class="m-right-8">[[$returnSerial(index)]].</div>
+            <div class$="flex">[[item.phone]] - [[item.status]]</div>
+          </div>
+        </template>
+
+      </div>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss>Got it</paper-button>
+      </div>
+    </paper-dialog>
+    <!-- Dialog for - Logs - end -->
+
+    
+
+  </template>
+  <script src="page-organization-send-bulk-sms.coffee-compiled.js"></script>
+</dom-module>

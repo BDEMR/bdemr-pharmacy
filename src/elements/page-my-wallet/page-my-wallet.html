@@ -1,0 +1,461 @@
+<!-- Iron elements -->
+<link rel="import" href="../../bower-assets/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+
+<!-- Paper elements -->
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+
+<!-- Required behaviors -->
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- Commong Styles -->
+<link rel="import" href="../../styles/common-style.html">
+
+<dom-module id='page-my-wallet'>
+
+  <template>
+    <style is='custom-style' include='iron-flex iron-flex-alignment common-style'>
+      /*util classes*/
+      .limiting-container {
+        width: 80%;
+      }
+      
+      .m-left-8 {
+        margin-left: 8px;
+      }
+
+      .m-right-8 {
+        margin-right: 8px;
+      }
+
+      .p-0 {
+        padding: 0 !important;
+      }
+
+      .type.body {
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+      }
+
+      .type.body-lead {
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 28px;
+      }
+
+      .type.caption {
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 18px;
+      }
+
+      .type.text-bold {
+        font-weight: bold;
+      }
+
+      .type.secondary {
+        color: rgba(0, 0, 0, .54) !important;
+      }
+
+      /*paper element*/
+
+      paper-button.colored {
+        background-color: var(--brand-primary-color);
+        color: #fff;
+      }
+
+      paper-dialog {
+        min-width: 320px;
+      }
+
+      paper-listbox {
+        padding: 0 !important;
+      }
+
+      paper-item.custom {
+        border-top: 1px solid #eee !important;
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
+      }
+
+      paper-item.custom:first-child {
+        border-top: none !important;
+      }
+
+      /*custom class*/
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: #47baaf !important;
+        
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        
+      }
+
+      .card-sub-header {
+        padding: 8px 16px;
+        background-color: #f7f7f7;
+        border-bottom: 1px solid #eee;
+      }
+
+      vaadin-grid #transactionList {
+        height: inherit;
+        font-family: Roboto, sans-serif;
+        --divider-color: rgba(0, 0, 0, var(--dark-divider-opacity));
+
+        /* --vaadin-grid-cell: {
+          padding: 0;
+        }; */
+
+        --vaadin-grid-header-cell: {
+          height: 48px;
+          /* color: rgba(0, 0, 0, var(--dark-secondary-opacity)); */
+          font-size: 16px;
+        };
+
+        --vaadin-grid-body-cell: {
+          /* height: 48px; */
+          color: rgba(0, 0, 0, var(--dark-primary-opacity));
+          font-size: 16px;
+        };
+
+        --vaadin-grid-body-row-hover-cell: {
+          background-color: var(--paper-grey-200);
+        };
+
+        --vaadin-grid-body-row-selected-cell: {
+          background-color: var(--paper-grey-100);
+        };
+
+        --vaadin-grid-focused-cell: {
+          box-shadow: none;
+          font-weight: bold;
+        };
+      }
+    </style>
+
+    <!-- Card - Transaction History - start -->
+    <div class="master-container">
+
+      <div class="limiting-container">
+        <paper-card>
+          <div class="card-custom-header">
+            <div class="layout horizontal justified center">
+              <div class="title">
+                <div>[[$TRANSLATE('Balance',LANG)]]:<span class="m-left-8">[[_fixedToTwoDecimal(walletTransaction.balance)]] {{walletTransaction.nativeCurrency}}</span></div>
+                <div class="type caption-2">[[$TRANSLATE('SMS Balance', LANG)]]: [[userSmsBalance]]</div>
+              </div>
+              <paper-menu-button class="p-0" horizontal-align="right">
+                <paper-icon-button icon="icons:more-vert" class="dropdown-trigger wallat-icon" alt="options" style="color:white"></paper-icon-button>
+                <paper-menu class="dropdown-content">
+                  <paper-item on-tap="showAddFundsDialog">Add Funds</paper-item>
+                  <paper-item on-tap="showBuySmsDialog">Buy Bulk SMS</paper-item>
+                  <paper-item on-tap="showSendMoneyDialog">Send Money</paper-item>
+                  <paper-item on-tap="showValidedVoucherDialog">Valided Voucher</paper-item>
+                  <paper-item on-tap="showRedeemVoucherDialog">Redeem Voucher</paper-item>
+
+                </paper-menu>
+              </paper-menu-button>
+            </div>
+          </div>
+          <div class="card-sub-header horizontal layout center">
+            <iron-icon icon="history" class="m-right-8"></iron-icon>
+            <div class="type body-lead">[[$TRANSLATE('Transaction History', LANG)]]</div>
+          </div>
+
+          <div class="card-sub-header horizontal layout center">
+            <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked">
+            </custom-vital-search>
+            <div class="flex"></div>
+            <paper-button class="btn btn-sm btn-success" raised on-tap="dateFilterTapped">Filter</paper-button>
+            <paper-button raised class="btn btn-sm" on-tap="resetButtonClicked">Reset</paper-button>
+          </div>
+
+          <template is="dom-if" if="[[$isEmptyArray(walletTransactionList.length)]]">
+            <div class="card-content layout horizontal center center-justified">
+              <div class="type body secondary">-- [[$TRANSLATE('empty', LANG)]] --</div>
+            </div>
+          </template>
+          <template is="dom-if" if="[[!$isEmptyArray(walletTransactionList.length)]]">
+            <vaadin-grid items="[[walletTransactionList]]" id="transactionList" active-item="{{activeItem}}" style="padding:20px">
+              <vaadin-grid-column width="8em" resizable>
+                <template class="header">
+                  <vaadin-grid-sorter path="name" direction="asc">
+            
+                    <vaadin-grid-filter aria-label="Date" path="createdDatetimeStamp" value="[[dateString]]">
+                      <paper-input label="[[$TRANSLATE('Date', LANG)]]" value="{{dateString}}" no-label-float>
+                      </paper-input>
+                    </vaadin-grid-filter>
+            
+                  </vaadin-grid-sorter>
+                </template>
+                <template>
+                  [[item.createdDatetimeStamp]]
+                </template>
+              </vaadin-grid-column>
+            
+              <vaadin-grid-column width="8em" resizable>
+                <template class="header">
+                  <vaadin-grid-sorter path="name" direction="asc">
+            
+                    <vaadin-grid-filter aria-label="Description" path="notes" value="[[noteString]]">
+                      <paper-input label="[[$TRANSLATE('Description', LANG)]]" value="{{noteString}}" no-label-float></paper-input>
+                    </vaadin-grid-filter>
+            
+                  </vaadin-grid-sorter>
+                </template>
+                <template>
+                  [[item.notes]]
+                </template>
+              </vaadin-grid-column>
+            
+              <vaadin-grid-column width="8em" resizable>
+                <template class="header">
+                  <span>Income</span>
+                </template>
+                <template>
+                  <template is="dom-if" if="[[$equals(item.type, 'add')]]">
+                    [[item.amount]] BDT
+                  </template>
+                </template>
+                <template class="footer"><strong>[[$formatCurrency(totalIncome)]]</strong></template>
+              </vaadin-grid-column>
+            
+              <vaadin-grid-column width="8em" resizable>
+                <template class="header">
+                  <span>Expense</span>
+                </template>
+                <template>
+                  <template is="dom-if" if="[[$equals(item.type, 'subtract')]]">
+                    [[item.amount]] BDT
+                  </template>
+                </template>
+                <template class="footer"><strong>[[$formatCurrency(totalExpense)]]</strong></template>
+              </vaadin-grid-column>
+            
+              <!-- <vaadin-grid-column width="8em">
+                <template class="header">
+                  <vaadin-grid-sorter path="name" direction="asc">
+                    
+                    <vaadin-grid-filter aria-label="Category" path="notes" value="[[categoryString]]">
+                      <paper-input label="[[$TRANSLATE('Category', LANG)]]" value="{{categoryString}}" no-label-float></paper-input>
+                    </vaadin-grid-filter>
+                
+                  </vaadin-grid-sorter>
+                </template>
+                <template>
+                  [[item.category]]
+                </template>
+              </vaadin-grid-column> -->
+            
+              <!-- <vaadin-grid-column width="8em" resizable>
+                <template class="header">
+                  <vaadin-grid-sorter path="name" direction="asc">
+    
+                    <vaadin-grid-filter aria-label="Amount" path="amount" value="[[amountString]]">
+                      <paper-input label="[[$TRANSLATE('Amount', LANG)]]" value="{{amountString}}" no-label-float>
+                      </paper-input>
+                    </vaadin-grid-filter>
+    
+                  </vaadin-grid-sorter>
+                </template>
+                <template>
+                  {{item.amount}} BDT
+                </template>
+              </vaadin-grid-column> -->
+            
+            </vaadin-grid>
+          </template>
+        </paper-card>
+        <!-- Card - Transaction History - end -->
+
+        <!-- Dialog for - Transaction Details - start -->
+        <paper-dialog id="dialogTransactionDetails">
+          <div class="horizontal layout center">
+            <div class="type title-2 flex" style="color: green;">[[$TRANSLATE('Transaction Details', LANG)]]</div>
+            <paper-icon-button dialog-dismiss icon="close"></paper-icon-button>
+          </div>
+          
+          <div class="dialog-content" style="border-top: 1px solid #eee; padding-top: 16px;">
+            <div>
+              <div class="type caption-2 secondary"><strong>[[$TRANSLATE('Transaction Date', LANG)]]: </strong></div>
+              <div class="type body">{{selectedRecord.createdDatetimeStamp}}</div>
+            </div>
+            <div  class="m-top-8"> 
+              <div class="type caption-2 secondary"><strong>[[$TRANSLATE('Transaction Amount', LANG)]]: </strong></div>
+              
+              <div class="type title">
+                <strong>{{selectedRecord.amount}} {{selectedRecord.currency}}</strong>
+              </div>
+            </div>
+            <template is="dom-if" if="{{selectedRecord.sendTo}}">
+              <div  class="m-top-8"> 
+                <div class="type caption-2 secondary"><strong>[[$TRANSLATE('Send to', LANG)]]: </strong></div>
+                
+                <div class="type body">
+                    {{selectedRecord.sendTo}}
+                </div>
+              </div>
+            </template>
+            
+            <div  class="m-top-8"> 
+              <div class="type caption-2 secondary"><strong>[[$TRANSLATE('Category', LANG)]]: </strong></div>
+              <div class="type body">
+                {{selectedRecord.category}}
+              </div>
+            </div>
+
+            <div  class="m-top-8"> 
+              <div class="type caption-2 secondary"><strong>[[$TRANSLATE('Description', LANG)]]: </strong></div>
+              <div class="type body">
+                {{selectedRecord.notes}}
+              </div>
+            </div>
+            
+          </div>
+        </paper-dialog>
+        <!-- Dialog for - Transaction Details - end -->
+
+        <!-- Dialog for - Add Fund(s) - start -->
+        <paper-dialog id="dialogAddFund">
+          <div class="type body-lead" style="color: green;">
+            <iron-icon src="../../images/icons/ico_add_funds_b.png" class="m-right-8"></iron-icon>[[$TRANSLATE('Add Fund', LANG)]]</div>
+          <div class="horizontal layout">
+            <paper-input type='number' class="flex m-right-8" label="[[$TRANSLATE('Amount', LANG)]]" value="{{addFund.amount}}"></paper-input>
+            <paper-dropdown-menu label="[[$TRANSLATE('Currency', LANG)]]" disabled>
+              <paper-listbox class="dropdown-content " selected="{{currencyIndex}} " on-iron-select="_currencyValueChanged ">
+                <template is="dom-repeat " items="{{currencyList}} ">
+                  <paper-item>{{item}}</paper-item>
+                </template>
+
+              </paper-listbox>
+            </paper-dropdown-menu>
+          </div>
+          <paper-textarea label="[[$TRANSLATE('Note', LANG)]]" value="{{addFund.notes}}"></paper-textarea>
+          <div class="buttons">
+            <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+            <paper-button class="colored" on-click="addFundRequest" autofocus raised>[[$TRANSLATE('Proceed to Purchase', LANG)]]</paper-button>
+          </div>
+        </paper-dialog>
+        <!-- Dialog for - Add Funds - end -->
+
+        <!-- Dialog for - Send Money(s) - start -->
+        <paper-dialog id="dialogSendMoney">
+          <div class="type body-lead" style="color: green;">
+            <iron-icon src="../../images/icons/ico_add_funds_b.png" class="m-right-8"></iron-icon>[[$TRANSLATE('Send Money', LANG)]]</div>
+          <!-- <paper-input type="text" label="Recipients Email/Phone" value="{{sendMoney.recipientsEmailOrPhone}}"></paper-input> -->
+          
+          <paper-autocomplete id="userSearch" label="[[$TRANSLATE('Search & Select Recipient',LANG)]]" on-autocomplete-selected="userSelected"
+            on-autocomplete-reset="userSearchCleared" on-keyup="userSearchEnterKeyPressed" error-message="Input Required"
+            text-property="name" value-property="idOnServer" required>
+            <template autocomplete-custom-template>
+              <paper-item on-tap="_onSelect" id$="[[_getSuggestionId(index)]]" role="option" aria-selected="false">
+                <div class="type bold">
+                  <div class="type body">[[item.name]]</div>
+                  <div class="type caption-2 secondary">[[item.phone]] - [[item.email]]</div>
+                </div>
+              </paper-item>
+            </template>
+          </paper-autocomplete>
+          <paper-input type="number" label="[[$TRANSLATE('Amount', LANG)]]" value="{{sendMoney.amountInBdt}}"></paper-input>
+          <paper-textarea label="[[$TRANSLATE('Note', LANG)]]" value="{{sendMoney.notes}}"></paper-textarea>
+          <div class="buttons">
+            <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+            <paper-button class="colored" on-click="sendMoneyRequest" autofocus raised>[[$TRANSLATE('Send', LANG)]]</paper-button>
+          </div>
+        </paper-dialog>
+        <!-- Dialog for - Send Money - end -->
+
+        <!-- Dialog for - Send Money - Verification Code - start -->
+        <paper-dialog id="dialogSendMoneyVerificationCode">
+          <div class="type body-lead" style="color: green;">
+            <iron-icon src="../../images/icons/ico_add_funds_b.png" class="m-right-8"></iron-icon>[[$TRANSLATE('Please enter verification code', LANG)]]</div>
+          <paper-input type="text" label="[[$TRANSLATE('Verification Code', LANG)]]" value="{{sendMoneyVerification.verificationCode}}"></paper-input>
+          <div class="buttons">
+            <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+            <paper-button class="colored" on-click="checkVerificaitonCodeForSendMoney" autofocus raised>[[$TRANSLATE('Check', LANG)]]</paper-button>
+          </div>
+        </paper-dialog>
+        <!-- Dialog for - Send Money - Verification Code - end -->
+
+        <!-- Dialog for - Valided Voucher - start -->
+        <paper-dialog id="dialogValidedVoucher">
+          <div class="type body-lead" style="color: green;">
+            <iron-icon src="../../images/icons/ico_add_funds_b.png" class="m-right-8"></iron-icon>[[$TRANSLATE('Valided Voucher', LANG)]]</div>
+          <paper-input type="text" label="[[$TRANSLATE('Enter your Voucher', LANG)]]" value="{{validedVoucher.voucherCode}}"></paper-input>
+          <div class="buttons">
+            <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+            <paper-button class="colored" on-click="sendValidedVoucherRequest" autofocus raised>[[$TRANSLATE('Check', LANG)]]</paper-button>
+          </div>
+        </paper-dialog>
+        <!-- Dialog for - Valided Voucher - end -->
+
+        <!-- Dialog for - Redeem Voucher - start -->
+        <paper-dialog id="dialogRedeemVoucher">
+          <div class="type body-lead" style="color: green;">
+            <iron-icon src="../../images/icons/ico_add_funds_b.png" class="m-right-8"></iron-icon>[[$TRANSLATE('Redeem Voucher', LANG)]]</div>
+          <paper-input type="text" label="[[$TRANSLATE('Enter your Code', LANG)]]" value="{{redeemVoucher.voucherCode}}"></paper-input>
+          <div class="buttons">
+            <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+            <paper-button class="colored" on-click="sendRedeemVoucherRequest" autofocus raised>[[$TRANSLATE('Redeem', LANG)]]</paper-button>
+          </div>
+        </paper-dialog>
+        <!-- Dialog for - Redeem Voucher - end -->
+
+
+        <!-- Dialog for - Bulk SMS(s) - start -->
+        <paper-dialog id="dialogBulkSms">
+          <div class="type body-lead">[[$TRANSLATE('Buy SMS', LANG)]]</div>
+          <div class="horizontal layout">
+            <paper-input type="number" class="flex" label="[[$TRANSLATE('quantity', LANG)]]" value="{{bulkSms.quantity}}" on-keyup="quntityEntered" required>
+              <div suffix>[[$TRANSLATE('sms', LANG)]]</div>
+            </paper-input>
+          </div>
+
+          <div class="type body text-success">[[$TRANSLATE('Calculated Amount is', LANG)]]: <strong>{{bulkSms.currency}} {{bulkSms.calcAmount}}/=</strong></div>
+
+          <div class="horizontal layout">
+            <paper-dropdown-menu label="[[$TRANSLATE('For', LANG)]]" class="flex" value="{{smsUserType}}">
+              <paper-listbox class="dropdown-content" selected="0">
+                <paper-item>Organization</paper-item>
+                <paper-item>Personal</paper-item>
+              </paper-listbox>
+            </paper-dropdown-menu>
+          </div>
+
+          <div class="buttons m-top-24">
+            <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+            <paper-button class="colored" on-click="buyBulkSmsBtnPressed" autofocus raised>[[$TRANSLATE('Proceed', LANG)]]</paper-button>
+          </div>
+        </paper-dialog>
+        <!-- Dialog for - Bulk SMS - end -->
+      </div>
+    </div>
+  </template>
+  <script src="page-my-wallet.coffee-compiled.js"></script>
+</dom-module>

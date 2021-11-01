@@ -1,0 +1,77 @@
+unless app.behaviors.local['root-element']
+  app.behaviors.local['root-element'] = {}
+app.behaviors.local['root-element'].dataSyncConfig =
+
+
+
+  # syncPatientListConfig:
+  #   collectionName: 'patient-list'
+  #   deletedCollectionName: 'patient-list--deleted'
+  #   headerApi: '/bdemr-doctor-app--sync--patient-list--exchange-headers'
+  #   dataApi: '/bdemr-doctor-app--sync--patient-list--exchange-data'
+
+
+  syncVisitConfig:
+    collectionName: 'doctor-visit'
+    deletedCollectionName: 'doctor-visit--deleted'
+    headerApi: '/bdemr-clinic-app--sync--doctor-visit--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--doctor-visit--exchange-data'
+
+  syncTestAdvisedConfig:
+    collectionName: 'visit-advised-test'
+    deletedCollectionName: 'visit-advised-test--deleted'
+    headerApi: '/bdemr-clinic-app--sync--visit-advised-test--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--visit-advised-test--exchange-data'
+
+  syncPatientTestResultsConfig:
+    collectionName: 'patient-test-results'
+    deletedCollectionName: 'patient-test-results--deleted'
+    headerApi: '/bdemr-clinic-app--sync--patient-test-results--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--patient-test-results--exchange-data'
+
+  syncPatientStayConfig:
+    collectionName: 'visit-patient-stay'
+    deletedCollectionName: 'visit-patient-stay--deleted'
+    headerApi: '/bdemr-clinic-app--sync--patient-stay--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--patient-stay--exchange-data'
+
+
+  syncPatientGalleryAttachmentConfig:
+    collectionName: 'patient-gallery--online-attachment'
+    deletedCollectionName: 'patient-gallery--online-attachment--deleted'
+    headerApi: '/bdemr-clinic-app--sync--patient-gallery--online-attachment--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--patient-gallery--online-attachment--exchange-data'
+
+
+  # syncFavoriteAdvisedTestConfig:
+  #   collectionName: 'favorite-advised-test'
+  #   deletedCollectionName: 'favorite-advised-test--deleted'
+  #   headerApi: '/bdemr-doctor-app--sync--favorite-advised-test--exchange-headers'
+  #   dataApi: '/bdemr-doctor-app--sync--favorite-advised-test--exchange-data'
+
+  # syncUserAddedInstitutionConfig:
+  #   collectionName: 'user-added-institution-list'
+  #   deletedCollectionName: 'user-added-institution-list--deleted'
+  #   headerApi: '/bdemr-doctor-app--sync--user-added-institution-list--exchange-headers'
+  #   dataApi: '/bdemr-doctor-app--sync--user-added-institution-list--exchange-data'
+
+
+  syncPatientInvoice:
+    collectionName: 'patient-invoice'
+    deletedCollectionName: 'patient-invoice--deleted'
+    headerApi: '/bdemr-clinic-app--sync--patient-invoice--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--patient-invoice--exchange-data'
+
+  syncPccRecords:
+    collectionName: 'pcc-records'
+    deletedCollectionName: 'pcc-records--deleted'
+    headerApi: '/bdemr-clinic-app--sync--pcc-records--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--pcc-records--exchange-data'
+
+  syncNdrRecords:
+    collectionName: 'ndr-records'
+    deletedCollectionName: 'ndr-records--deleted'
+    headerApi: '/bdemr-clinic-app--sync--ndr-records--exchange-headers'
+    dataApi: '/bdemr-clinic-app--sync--ndr-records--exchange-data'
+
+  

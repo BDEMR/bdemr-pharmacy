@@ -1,0 +1,312 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- element -->
+<dom-module id="page-operation-report">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        width: 90%;
+        margin: 0 auto;
+        margin-top: 10px;
+      }
+
+      paper-button {
+        background: white;
+      }
+
+      paper-card {
+        margin: 4px;
+      }
+
+      .search {
+        background-color: #fafafa;
+        border: 1px solid #dadada;
+        padding: 0px 8px 12px 8px;
+        margin: 4px;
+        margin-left: 0;
+      }
+
+      .results {
+        margin-top: 20px;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      /* styles related to print preview */
+      .print-button-style {
+        margin-top: 16px;
+        background:burlywood;
+      }
+
+      #printPreview {
+        word-break: break-word;
+        display: none !important;
+      }
+
+      @media print {
+
+        #hideOnPrint {
+          display: none !important;
+        }
+
+        #printPreview {
+          display: block !important;
+          background-color: transparent;
+        }
+      }
+
+      /*  */
+      .print-document {
+        font-family: 'Times New Roman';
+        background: white;
+        width: 100%;
+      }
+
+      .print-header {
+        position: relative;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px
+      }
+      
+      .print-document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .print-document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table th {
+        text-align: middle;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td {
+        color: #444;
+        text-align: center;
+      }
+
+      .table td,
+      .table th {
+        vertical-align: middle;
+        padding: 10px 20px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+      .table tr:last-child td {
+        border-bottom: 0;
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container vertical layout">
+
+        <paper-card id="hideOnPrint" heading="Operation Reports">
+
+          <div class="card-content custom-input-field">
+
+            <div class="search layout horizontal end wrap">
+
+              <vaadin-combo-box id="summaryOrganizationSelector" class="organization-dropdown m-right-8" items="[[childOrganizationList]]"
+                on-value-changed="organizationSelected" loading="[[loading]]" disabled="[[!childOrganizationList.length]]"></vaadin-combo-box>
+
+              <vaadin-combo-box label="[[$TRANSLATE('Deparment', LANG)]]" id="departmentName"
+                items="[[departmentList]]" value="{{departmentName}}" class="m-right-8">
+              </vaadin-combo-box>
+
+              <vaadin-combo-box style="width: 280px;" label="[[$TRANSLATE('Operation Staff Designation', LANG)]]" id="operationStaffDesignation"
+                items="[[operationStaffList]]" value="{{operationStaffDesignation}}" class="m-right-8">
+              </vaadin-combo-box>
+
+              <vaadin-combo-box id="doctorSearch" class="m-right-8" style="width: 280px;"
+                label="Operation Staff Name" item-label-path="name"
+                filter="{{doctorSearchQuery}}" loading="[[fetchingDoctorSearchResult]]"
+                value="{{operationStaffNameSrchStrng}" on-selected-item-changed="staffSelected">
+                <template>
+                  <div><strong>[[item.name]]</strong></div>
+                  <div><small>[[item.phone]] | [[item.email]]</small></div>
+                </template>
+              </vaadin-combo-box>
+
+              <paper-input class="m-left-4" label="Search by Operation Name" value="{{searchString}}" style="margin-right: 8px; width: 240px"></paper-input>
+
+              <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
+
+              
+            </div>
+            <div class="layout horizontal end wrap">
+              <div class="flex"></div>
+              <paper-button class="btn btn-primary btn-large" on-tap="searchButtonClicked">Search</paper-button>
+              <paper-button raised on-tap="resetButtonClicked">Reset</paper-button>
+              <template is="dom-if" if="[[_isEmptyArray(reportResults)]]">
+                <paper-button raised class="print-button-style" on-tap="_printButtonPressed">Print the Report</paper-button>
+              </template>
+            </div>
+
+            <div class="results">
+              <paper-progress indeterminate hidden="[[!loading]]"></paper-progress>
+              <vaadin-grid items="[[reportResults]]">
+                <vaadin-grid-column width="150px" resizable>
+                  <template class="header">
+                    <span><strong>Operation</strong></span>
+                  </template>
+                  <template>
+                    <div>[[item.operationName]]</div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column width="350px" flex-grow="0" resizable>
+                  <template class="header">
+                    <span><strong>Number of Times Done</strong></span>
+                  </template>
+                  <template>
+                    <span>[[item.operationCount]]</span>
+                  </template>
+                </vaadin-grid-column>
+              </vaadin-grid>
+
+            </div>
+
+          </div>
+        </paper-card>
+
+        <!-- Print Preview -->
+        <div id="printPreview">
+          <div class="print-document">
+            <template is="dom-if" if="[[settings.printDecoration.headerLine]]">
+              <div class="print-header vertical layout center">[[settings.printDecoration.headerLine]]</div>
+            </template>
+
+            <div class="print-document-header horizontal layout center">
+
+              <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+                <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+              </template>
+
+              <div class="leftSide vertical layout">
+                <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+                <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+                <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+              </div>
+              <div class="flex"></div>
+              <div class="rightSide vertical layout end">
+                <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+                <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+                <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+              </div>
+            </div>
+
+            <div class="horiline"></div>
+            <div style="text-align: center">
+              <h4 class="type title">[[$TRANSLATE('Operation Report', LANG)]]</h4>
+            </div>
+
+            <!-- Report Content -->
+            <div>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>[[$TRANSLATE('Operation', LANG)]]</th>
+                    <th >[[$TRANSLATE('Number of Times Done', LANG)]]</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template is="dom-repeat" items="[[reportResults]]">
+                    <tr>
+                      <td>[[item.operationName]]</td>
+                      <td>[[item.operationCount]]</td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+              <div class="m-top-16">
+                <span style="position: relative; float: right;"><strong>[[$TRANSLATE('Total', LANG)]]: [[$TRANSLATE('BDT', LANG)]] [[totalServiceAmount]]</strong></span>
+              </div>
+            </div>
+            
+            <br>
+            <template is="dom-if" if="[[settings.printDecoration.footerLine]]">
+              <div class="footer vertical layout">[[settings.printDecoration.footerLine]]</div>
+            </template>
+            
+            <div style="text-align: center; margin-top: 16px">
+              <span class="type secondary">[[$TRANSLATE('Report Generation Date & Time', LANG)]] - [[_getFormattedCurrentDateTime(currentDateTime)]]</span>
+            </div>
+          </div>
+
+          <div class="horizontal layout center center-justified p-horizontal-16">
+            <div class="type body italic"><strong>[[$TRANSLATE('Printed by', LANG)]]: </strong>[[user.name]]</div>
+          </div>
+        </div>
+
+      </div>
+      <!--Limiting Container Ends-->
+
+    </div>
+    <!--Master Container Ends-->
+
+  </template>
+  <script src="page-operation-report.coffee-compiled.js"></script>
+</dom-module>

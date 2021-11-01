@@ -1,0 +1,732 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-ripple/paper-ripple.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-list/iron-list.html">
+<link rel="import" href="../../bower-assets/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
+
+<link rel="import" href="../../bower-assets/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower-assets/paper-radio-button/paper-radio-button.html">
+
+<!-- Custom Componnets -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+
+<!-- <link rel="import" href="../bdemr-patient-summary-information/bdemr-patient-summary-information.html"> -->
+<!-- <link rel="import" href="../bdemr-investigation/bdemr-investigation.html"> -->
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<dom-module id="page-emergencypatient-invoice">
+  <template>
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      paper-card {
+        --paper-card-content: {
+          padding: 0;
+        }
+      }
+
+      paper-card.no-radius {
+        border-radius: 0;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+        color: gray;
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .item {
+        padding: 10px;
+      }
+
+      .item:nth-child(even) {
+        background-color: var(--paper-grey-100);
+      }
+
+      .text-mute {
+        color: var(--paper-grey-700);
+      }
+
+     
+
+      .invoice-item {
+        padding: 10px 0;
+        margin-left: 20px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .invoice-item :first-child {
+        padding-right: 15px;
+      }
+
+
+      .add {
+        color: var(--paper-green-500);
+      }
+
+      .calculation {
+        background-color: var(--paper-blue-grey-50);
+      }
+
+      .calculation>* {
+        padding: 5px 0;
+        border-bottom: 1px solid #f5f5f5;
+      }
+
+      .calculation>div:last-child {
+        border-bottom: 0;
+      }
+
+      .calculation paper-input {
+        --paper-input-prefix: {
+          margin-right: 10px;
+          color: #999;
+        }
+      }
+
+      .text-success {
+        color: var(--paper-green-400);
+      }
+
+      #invoiceSearchInput {
+        padding: 0 15px;
+      }
+
+
+      .paper-menu-width {
+        width: 200px;
+      }
+
+     
+
+      @media screen and (min-width: 656px) {
+        .paper-custom {
+          min-width: calc(50% - 26px);
+        }
+        .paper-custom.full {
+          min-width: calc(100% - 26px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .paper-custom {
+          min-width: calc(33.33333% - 26px);
+        }
+        .paper-custom.full {
+          min-width: calc(100% - 26px);
+        }
+      }
+
+      input {
+        background-color: #dde2e8;
+        border-radius: 6px;
+        height: 36px;
+        font-weight: 500;
+        padding: 0px 8px;
+        box-sizing: border-box;
+      }
+
+
+      .pull-input-down{
+        position: relative;
+        top: 8px;
+      }
+
+    </style>
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+        
+        <!-- patient info -->
+        <paper-card class="no-radius m-bottom-8">
+          <div class="card-custom-header custom-input-field">
+            <div class="title flex" style="text-align: center; margin-bottom: 10px;">Patient Information</div>
+
+            <template is="dom-if" if="[[patientExists]]">
+                <div class="title flex" style="text-align: center; color: darkgoldenrod;">This patient already exists in your system. Kindly proceed through <strong>Patient Import</strong></div>
+            </template>
+
+            <paper-input class="custom-input paper-custom full" class="p-horizontal-8" value="{{patient.phone}}" label="Phone Number" pattern="^[0-9]{11,11}(-[0-9]*){0,1}$" required auto-validate error-message="Phone Number Required. i.e.: 01712345678 or 01712345678-12'" char-counter minlength="11" maxlength="14">
+                <div prefix>+88</div>
+            </paper-input>
+
+          </div>
+
+          <div class$="[[_getDisabledDivClassesForPatient(patientExists)]]">
+            <paper-input class="custom-input paper-custom full m-bottom-16 m-left-8" label="Full Name" required value="{{patient.name}}" label="Full Name" auto-validate error-message="Patient Name is Required!"></paper-input>
+
+            <div class="custom-input paper-custom horizontal layout full m-left-8">
+              <div class="horizontal layout" style="width: 50%;">
+                <vaadin-date-picker on-keyup="checkNextBtnStatus" required auto-validate 
+                error-message="Date of Birth is Required!" class="flex m-right-8" type="date" 
+                max="[[$getTodayDate()]]"  value="{{patient.dateOfBirth}}" label="Date of Birth" on-value-changed="calculateAge"></vaadin-date-picker>
+              </div>
+
+              <div class="vertical layout" style="width: 50%;">
+                <div class="custom-input paper-custom horizontal layout">
+                  <!-- Date picker for age in years -->
+                  <paper-input class="m-right-24" label="Years" min="0" type="number" value="{{ageInYears}}" on-change="makeDOBFromYMD"></paper-input>
+  
+                  <!-- Date picker for age in months -->
+                  <paper-input label="Months" min="0" type="number" value="{{ageInMonths}}" on-change="makeDOBFromYMD"></paper-input>
+                </div>
+  
+                <div>(If patient is unable to provide Date of birth)</div>
+              </div>
+
+            </div>
+            
+            <div class="custom-radio-button-group full-width m-left-8">
+              <div class="type body secondary">Gender</div>
+              <paper-radio-group selected="{{patient.gender}}">
+                <paper-radio-button name="male">Male</paper-radio-button>
+                <paper-radio-button name="female">Female</paper-radio-button>
+                <paper-radio-button name="other">Other</paper-radio-button>
+              </paper-radio-group>
+            </div>
+
+            <!-- Contact Address - start -->
+            <div class="card-item p-8">
+              <div on-tap="togglePatientContactDetails">
+                  <paper-button style="background:#dde2e8 !important;">
+                    <span class="m-right-16">Contact Address</span>
+                    <template is="dom-if" if="[[showPatientContactDetails]]">
+                      <iron-icon icon="icons:arrow-downward" class="m-right-8"></iron-icon>
+                    </template>
+
+                    <template is="dom-if" if="[[!showPatientContactDetails]]">
+                      <iron-icon icon="icons:arrow-forward" class="m-right-8"></iron-icon>
+                    </template>
+                    
+                  </paper-button>
+              </div>
+
+              <template is="dom-if" if="[[showPatientContactDetails]]">
+                <paper-input class="custom-input full-width" value="{{patient.addressList.0.addressLine1}}" label="Address Line 1"></paper-input>
+                <paper-input class="custom-input full-width" value="{{patient.addressList.0.addressLine2}}" label="Address Line 2"></paper-input>
+  
+                <div class="horizontal layout wrap">
+                  <vaadin-combo-box class="custom-input m-right-8" label="Division" items="{{divisionList}}" allow-custom-value="true" value="{{patient.addressList.0.addressDivision}}"></vaadin-combo-box>
+                  <vaadin-combo-box class="custom-input m-right-8" label="District" items="{{districtList}}" allow-custom-value="true" value="{{patient.addressList.0.addressDistrict}}"></vaadin-combo-box>
+  
+                  <paper-input class="custom-input m-right-8 pull-input-down" value="{{patient.addressList.0.subdistrictName}}" label="Thana/Sub Disctrict"></paper-input>
+                    
+                </div>
+  
+                <paper-input class="custom-input full-width" value="{{patient.addressList.0.addressCountry}}" label="Country"></paper-input>
+  
+                <div class="horizontal layout end-justified p-8">
+                  <paper-toggle-button class="m-left-16" checked="{{hideMoreAddressInput}}">More Address options</paper-toggle-button>
+                </div>
+  
+                <div class="horizontal layout wrap" hidden$="[[!hideMoreAddressInput]]">
+                  <paper-input class="custom-input m-right-8" value="{{patient.addressList.0.addressAreaName}}" label="Area"></paper-input>
+                  <paper-input class="custom-input m-right-8" value="{{patient.addressList.0.flat}}" label="Flat"></paper-input>
+                  <paper-input class="custom-input m-right-8" value="{{patient.addressList.0.floor}}" label="Floor"></paper-input>
+                  <paper-input class="custom-input m-right-8" value="{{patient.addressList.0.plot}}" label="Plot"></paper-input>
+                
+                  <paper-input class="custom-input m-right-8" value="{{patient.addressList.0.block}}" label="Block"></paper-input>
+                  <paper-input class="custom-input m-right-8" value="{{patient.addressList.0.road}}" label="Road"></paper-input>
+                  <paper-input class="custom-input m-right-8" value="{{patient.addressList.0.village}}" label="Village"></paper-input>
+                
+                  <paper-input class="custom-input m-right-8" value="{{patient.addressList.0.addressUnion}}" label="Union"></paper-input>
+  
+                  <paper-input type="number" class="custom-input m-right-8" value="{{patient.addressList.0.addressPostalOrZipCode}}" label="Postal/Zip Code"></paper-input>
+                  <paper-input class="custom-input m-right-8" value="{{patient.addressList.0.addressCityOrTown}}" label="City/Town"></paper-input>
+  
+                  <paper-input class="custom-input m-right-8" value="{{patient.addressList.0.stateOrProvince}}" label="State/Province"></paper-input>
+                </div>
+              </template>
+              
+            </div>
+            <!-- Contact Address - end -->
+
+          </div>
+        </paper-card>
+
+        <!-- Categories, select items, add custom item -->
+        <paper-card class="no-radius m-bottom-8">
+          <div class$="[[_getDisabledDivClassesForCategoryAndInvoice(patientExists)]]">
+            <div class="title flex" style="text-align: center;">Invoice [[invoice.referenceNumber]]</div>
+            
+            <template is="dom-if" if="[[showCategoryAndItemSearch]]">
+              <div class="layout horizontal">
+
+                <!-- select category -->
+                <div class="flex-4" style="margin-top: -10px;">
+                  <vaadin-combo-box id="filterByCategory" label="Category" items="[[categories]]" item-label-path='name' 
+                  item-value-path='name' value={{filterCategory}} on-selected-item-changed="categorySelected">
+                  </vaadin-combo-box>
+                </div>
+
+                <!-- select item -->
+                <div class="flex-5">
+                  <vaadin-combo-box id="invoiceSearchInput" label="Search Item to Add" allow-custom-value 
+                  items="[[invoiceSourceDataList]]" filter="{{inventoryItemSearchQuery}}" loading="[[fetchingInventoryItemSearchResult]]" 
+                  value="{{filterByInventoryItem}}" on-selected-item-changed="invoiceItemAutocompleteSelected">
+                  </vaadin-combo-box>
+                </div>
+                <!-- <div class="flex-4">
+                  <vaadin-combo-box id="invoiceSearchInput" label="Search Item to Add" items="[[invoiceSourceDataList]]"
+                    on-selected-item-changed="invoiceItemAutocompleteSelected">
+                  </vaadin-combo-box>
+                </div> -->
+  
+                  
+                <!-- Add custom item -->
+                <div class="flex-3" style="margin-top: 16px;">
+                  <paper-button class="btn btn-sm btn-primary" on-tap="addCustomItemToInvoiceButtonPressed">
+                    <iron-icon icon="add"></iron-icon>
+                    Add Custom Item
+                  </paper-button>
+                </div>
+
+              </div>
+            </template>
+          </div>
+        </paper-card>
+        
+        <!-- Invoice -->
+        <paper-card heading="Invoice">
+          <div class$="[[_getDisabledDivClassesForCategoryAndInvoice(patientExists)]]">
+            <div class="card-content">
+              <div class="p-16">
+                <vaadin-combo-box class="flex" label="Type of Invoice" id="invoiceType"
+                  items="[[invoiceCategoryList.data]]" allow-custom-value="true" value="{{invoice.category}}"
+                  on-custom-value-set="invoiceTypeCustomValueSet">
+                </vaadin-combo-box>
+                
+              </div>
+  
+              <!-- Invoice columns -->
+              <div class="layout horizontal start invoice-item">
+                <div class="flex-1">
+                  <strong>Unit Price</strong>
+                </div>
+                <div class="flex-1">
+                  <strong>Qty</strong>
+                </div>
+                <div class="flex-6">
+                  <strong>Items</strong>
+                </div>
+                <div class="flex-2">
+                  <strong>Price</strong>
+                </div>
+                <div class="flex-2">
+                  <strong>Commission</strong>
+                </div>
+                <div class="flex-1"></div>
+              </div>
+              <template is="dom-if" if="[[!invoice.data.length]]">
+                <div class="layout horizontal center center-justified p-16">Add Item</div>
+              </template>
+  
+              <!-- Invoice item list -->
+              <template id="invoice-item-repeater" is="dom-repeat" items="{{invoice.data}}">
+                <paper-item class="invoice-item">
+                  <template is="dom-if" if="[[item.price]]">
+                    <div class="flex-1">[[item.price]]</div>
+                  </template>
+                  <template is="dom-if" if="[[!item.price]]">
+                    <paper-input class="flex-1" type="number" min="0" on-change="itemUnitPriceChanged" no-label-float
+                      style="padding-right:10px;"></paper-input>
+                  </template>
+                  <paper-input class="flex-1" label="Qty" type="number" min="0" value="[[item.qty]]"
+                    on-input="quantityChanged" no-label-float style="padding-right:10px;"></paper-input>
+                  <div class="flex-6 layout vertical">
+                    <div>
+                      <strong>[[item.name]]</strong>
+                      <template is="dom-if" if="[[item.type]]">
+                        <span class="type secondary">[[item.type]]</span>
+                      </template>
+                    </div>
+                    <template is="dom-if" if="[[item.itemList]]">
+                      <ul>
+                        <template is="dom-repeat" items="[[item.itemList]]" as="packageItem">
+                          <li>[[packageItem.name]] - [[packageItem.price]] BDT</li>
+                        </template>
+                      </ul>
+                    </template>
+                  </div>
+                  <div class="flex-2">[[item.totalPrice]]
+                    <span class="text-mute">BDT</span>
+                  </div>
+                  <div class="flex-2">
+                    <paper-input class="flex-1" type="number" min="0" on-change="itemCommissionPriceChanged"
+                      no-label-float style="padding-right:10px;"></paper-input>
+                  </div>
+                  <paper-icon-button class="flex-1" icon="delete" on-tap="deleteInvoiceItem"></paper-icon-button>
+                </paper-item>
+              </template>
+  
+  
+              <div class="layout vertical calculation p-16">
+  
+                <!-- Report delivery date & time -->
+                <div class="layout horizontal center">
+                  <label class="flex-2">Report Delivery Date and Time</label>
+                  <div class="flex-4 layout horizontal">
+                    <vaadin-date-picker-light min="[[today]]">
+                      <input is="iron-input" class="custom-input" placeholder="MM/DD/YYYY"
+                        bind-value="{{customDeliveryDate}}" />
+                    </vaadin-date-picker-light>
+                    <input class="m-left-8 custom-input" type="time" is="iron-input" required
+                      value="{{customDeliveryTime::input}}">
+                  </div>
+                </div>
+  
+                <!-- Referral doctor -->
+                <div class="layout horizontal center">
+                  <label class="flex-2">Referral Doctor</label>
+                  <!-- <paper-autocomplete class="flex m-right-8" text="{{invoice.referralDoctor.name}}" id="doctorUserSearch"
+                    label="Name of the Referred Doctor" on-autocomplete-selected="referredDoctorSelected" on-keyup="onlineSearchEnterKeyPressedForReferredDoctor">
+                  </paper-autocomplete> -->
+                  <div class="flex-4 layout horizontal end">
+                    <vaadin-combo-box no-label-float id="doctorSearch" class="flex"
+                      label="Search By Name/Mobile/Email or Input Name" item-label-path="name"
+                      filter="{{doctorSearchQuery}}" loading="[[fetchingDoctorSearchResult]]" allow-custom-value
+                      value="{{invoice.referralDoctor.name}}" on-selected-item-changed="referredDoctorSelected">
+                      <template>
+                        <div><strong>[[item.name]]</strong></div>
+                        <div><small>[[item.phone]], [[item.email]]</small></div>
+                      </template>
+                    </vaadin-combo-box>
+                    <paper-input no-label-float class="m-left-8" label="Mobile No." type="number"
+                      value="{{invoice.referralDoctor.mobile}}"></paper-input>
+                  </div>
+                </div>
+  
+                <!-- Discount options -->
+                <div class="layout horizontal center wrap">
+                  <label for="" class="flex-2">Discount Options</label>
+                  <div class="layout horizontal center flex-4">
+                    <paper-dropdown-menu label="Discount By" selected-item-label="{{invoice.discountBy}}">
+                      <paper-menu class="dropdown-content">
+                        <paper-item>Doctor</paper-item>
+                        <paper-item>Organization</paper-item>
+                        <paper-item>Management</paper-item>
+                        <paper-item>Staff</paper-item>
+                      </paper-menu>
+                    </paper-dropdown-menu>
+                    <template is="dom-if" if="[[fundList.length]]">
+                      <paper-dropdown-menu class="m-left-8" label="Discount Fund Type">
+                        <paper-menu selected="{{discountFundType}}" id="discountFundType" class="dropdown-content">
+                          <paper-item>General</paper-item>
+                          <paper-item>Special</paper-item>
+                        </paper-menu>
+                      </paper-dropdown-menu>
+                      <paper-dropdown-menu hidden$="[[!discountFundType]]" label="Discount From Fund" class="m-left-8"
+                        on-iron-activate="discountfundSelected">
+                        <paper-menu class="dropdown-content">
+                          <template is="dom-repeat" items="[[fundList]]">
+                            <paper-item>[[item.name]]</paper-item>
+                          </template>
+                        </paper-menu>
+                      </paper-dropdown-menu>
+                    </template>
+  
+                  </div>
+                </div>
+  
+                <!-- Discount amount -->
+                <div class="layout horizontal center">
+                  <div class="flex-2">
+                    <paper-dropdown-menu class="m-left-8" label="Discount Type">
+                      <paper-menu selected="{{discountType}}" id="discountType" class="dropdown-content"
+                        on-iron-select="discountTypeChanged">
+                        <paper-item>Amount</paper-item>
+                        <paper-item>Percentage</paper-item>
+                      </paper-menu>
+                    </paper-dropdown-menu>
+                  </div>
+                  <div class="flex-4">
+                    <input class="custom-input" is="iron-input" type="number" max="99" min="0" maxlength="2"
+                      value="{{invoiceDiscount::input}}" step="0.1" />
+                    <div hidden$="[[!getSpecialDiscountPercentage(invoiceDiscount)]]">
+                      <span class="type caption">General: [[generalDiscountPercentageLimit]]%</span>
+                      <span class="type caption m-left-8">Fund: [[getSpecialDiscountPercentage(invoiceDiscount,
+                        discountType)]]%</span>
+                    </div>
+                  </div>
+                </div>
+  
+                <div class="layout horizontal center">
+                  <label class="flex-2">Vat/Tax Percentage %</label>
+                  <div class="flex-4">
+                    <input is="iron-input" class="custom-input" type="number" max="60" min="0"
+                      value="{{invoiceVatOrTax::input}}" step="0.1" /></div>
+                </div>
+                <div class="layout horizontal center">
+                  <label class="flex-2" for="">Advance Payment</label>
+                  <div class="flex-4">
+                    <input class="custom-input" is="iron-input" value="{{invoice.advancePayment::input}}"
+                      allowed-pattern="[0-9]" auto-validate /></div>
+                </div>
+                <div class="layout horizontal" hidden$="[[!invoiceRemaingBalanceFromAdvance]]">
+                  <label for="" class="flex-2">Remaining Balance</label>
+                  <div class="flex-4">
+                    [[invoiceRemaingBalanceFromAdvance]] &nbsp;
+                    <paper-button class="btn btn-sm btn-primary" raised on-tap="cashBackButtonClicked">Cash Back
+                    </paper-button>
+                  </div>
+                </div>
+                <div class="layout horizontal type body-lead">
+                  <label class="flex-2">Gross</label>
+                  <div class="flex-4">[[$toTwoDecimalPlace(invoiceGrossPrice)]] BDT</div>
+                </div>
+                <div class="layout horizontal type body-lead">
+                  <label class="flex-2">Vat/Tax</label>
+                  <div class="flex-4">[[$toTwoDecimalPlace(invoice.vatOrTax)]] BDT</div>
+                </div>
+                <div class="layout horizontal type body-lead">
+                  <label class="flex-2">Discount</label>
+                  <div class="flex-4">[[$toTwoDecimalPlace(invoice.discount)]] BDT</div>
+                </div>
+  
+                <div class="layout horizontal type title-2 bold">
+                  <label class="flex-2 type bold">Total Bill</label>
+                  <div class="flex-4">[[$toTwoDecimalPlace(invoice.totalBilled)]] BDT</div>
+                </div>
+                <div class="layout horizontal center">
+                  <label class="flex-2" for="">Paid Amount</label>
+                  <div class="flex-4 ">
+                    <input is="iron-input" class="custom-input" value="{{invoice.paid::input}}" min="0"
+                      max="[[invoice.totalBilled]]" step="0.01" type="number" auto-validate
+                      error-message="Amount can't be more than Total" disabled="[[invoice.freePatient]]" />
+                  </div>
+                </div>
+                <div class="layout horizontal type body-lead">
+                  <label for="" class="flex-2">Due</label>
+                  <div class="flex-4 type bold danger ">
+                    [[_calculateDue(invoice.advancePayment,invoice.totalBilled,invoice.paid,invoice.lastPaid)]] BDT
+                  </div>
+                </div>
+                <!-- <div class="layout horizontal center wrap">
+                  <label class="flex-2">Due guarantor</label>
+                  <paper-dropdown-menu class="flex-4" label="Select member">
+                    <paper-menu class="dropdown-content" selected="{{selectedDueGarrantorIndex}}"
+                      on-iron-select="dueGarrantorSelectedIndexChanged">
+                      <paper-item><i>None</i></paper-item>
+                      <template is="dom-repeat" items="{{members}}">
+                        <paper-item class="layout vertical">
+                          <div>{{item.name}} - {{item.role}}</div>
+                          <div><i class="type caption-2">{{item.phone}}</i></div>
+                        </paper-item>
+                      </template>
+                    </paper-menu>
+                  </paper-dropdown-menu>
+                </div> -->
+  
+                <div class="flex-4 layout horizontal end">
+                  <label class="flex">Due Guarantor</label>
+                  <vaadin-combo-box no-label-float id="guarantorSearch" class="flex" label="Search By Name/Mobile/Email or Input Name"
+                    item-label-path="name" allow-custom-value
+                    value="{{invoice.dueGuarantor.name}}" on-selected-item-changed="dueGuarantorSelected">
+                    <template>
+                      <div><strong>[[item.name]]</strong></div>
+                      <div><small>[[item.role]]</small></div>
+                      <div><small>[[item.phone]], [[item.email]]</small></div>
+                    </template>
+                  </vaadin-combo-box>
+                  <paper-input no-label-float class="m-left-8" label="Mobile No." type="number"
+                    value="{{invoice.dueGuarantor.phone}}"></paper-input>
+                  <paper-input no-label-float class="m-left-8" label="Role" type="text"
+                    value="{{invoice.dueGuarantor.role}}"></paper-input>
+                </div>
+  
+                <div class="layout horizontal center"
+                  hidden$="[[!_calculateDue(invoice.advancePayment, invoice.totalBilled, invoice.paid, invoice.lastPaid)]]">
+                  <label class="flex-2">Next Payment Date</label>
+                  <div class="flex-4 layout horizontal type body-lead">
+                    <vaadin-date-picker-light>
+                      <input is="iron-input" min="[[today]]" class="custom-input" placeholder="MM/DD/YYYY"
+                        bind-value="{{customNextPaymentDate}}" />
+                    </vaadin-date-picker-light>
+                  </div>
+                </div>
+                <div class="layout horizontal center">
+                  <label for="" class="flex-2">Last Paid Amount</label>
+                  <div class="flex-4">
+                    <input is="iron-input" class="custom-input" value="{{invoice.lastPaid::input}}" min="0"
+                      on-change="lastPaymentChanged" type="number" disabled$="[[!invoice.paid]]" step="0.01"
+                      error-message="Last Payment Can not be more than the Due Amount" />
+                  </div>
+                </div>
+                <div class="layout horizontal text-success type body-lead bold">
+                  <label class="flex-2" for="">Total Amount Received: </label>
+                  <div class="flex-4">[[$toTwoDecimalPlace(invoice.totalAmountReceieved)]] BDT
+                  </div>
+                </div>
+  
+                <div class="layout horizontal center" hidden="[[!invoice.cashBackPaid]]">
+                  <label for="" class="flex-2">Cash Back Paid</label>
+                  <div class="flex-4">
+                    <span>[[invoice.cashBackPaid]] BDT</span>
+                    <paper-icon-button icon="delete" on-tap="revertCashBack"></paper-icon-button>
+                  </div>
+                </div>
+  
+              </div>
+  
+              <div class="type subhead bold">
+                <paper-toggle-button checked="{{showCommissionForm}}">Third Party Commission: </paper-toggle-button>
+              </div>
+  
+              <iron-collapse class="p-12" opened="{{showCommissionForm}}">
+                <template is="dom-if" if="[[!thirdParties.length]]">
+                  <div class="card-content">
+                    <h4 class="type center">- No third parties available, please add from third party manager. -</h4>
+                  </div>
+                </template>
+  
+                <template is="dom-if" if="[[thirdParties.length]]">
+                  <vaadin-combo-box class="custom-input combo-box flex" always-float-label label="Select a third party"
+                    items="[[thirdParties]]" value="{{invoice.commission}}" on-keyup="onKeyUpChangeThirdParty">
+                  </vaadin-combo-box>
+                </template>
+  
+                <template is="dom-if" if="[[!invoice.commission]]">
+                  <div class="type body-lead secondary">Please select a third party...</div>
+                </template>
+                <template is="dom-if" if="[[invoice.commission]]">
+                  <div class="type body"><strong>Name: [[invoice.commission.name]]</strong></div>
+                  <div class="type caption secondary"><i>Id#[[invoice.commission.serial]]</i></div>
+                  <div class="type caption-2">Phone: [[invoice.commission.phone]]</div>
+                  <div class="type caption-2">Email: [[invoice.commission.email]]</strong></div>
+                  <div class="type caption-2">Address: [[invoice.commission.address]]</strong></div>
+                </template>
+  
+  
+                <!-- <div class="layout horizontal">
+                  <paper-autocomplete class="m-left-10" label="Name" text="{{invoice.commission.name}}" no-label-float
+                    source="[[thirdPartyUserListNameSourceMap]]" on-autocomplete-selected="thirdPartyUserNameSelected"
+                    disable-show-clear></paper-autocomplete>
+  
+                  <paper-autocomplete class="m-left-10" label="Mobile" text="{{invoice.commission.mobile}}"
+                    no-label-float source="[[thirdPartyUserListMobileSourceMap]]" on-autocomplete-selected="thirdPartyUserMobileSelected"
+                    disable-show-clear></paper-autocomplete>
+  
+                  <paper-input class="m-left-10" label="Address" type="tel" value="{{invoice.commission.address}}"
+                    no-label-float></paper-input>
+                </div> -->
+                <div class="layout horizontal">
+                  <!-- <vaadin-combo-box class="" label="Types of Commission" id="commissionCategory" items="[[commissionCategoryList]]"
+                    allow-custom-value value="{{invoice.commission.category}}">
+                  </vaadin-combo-box> -->
+                  <paper-dropdown-menu label="Category of Commission" on-iron-activate="commissionCategorySelected">
+                    <paper-menu class="dropdown-content">
+                      <template is="dom-repeat" items="[[commissionCategoryList]]">
+                        <paper-item>[[item.name]]</paper-item>
+                      </template>
+                    </paper-menu>
+                  </paper-dropdown-menu>
+                  <paper-input class="m-left-10" label="Total Billed" value="{{invoice.commission.billed}}">
+                  </paper-input>
+                  <paper-input class="m-left-10" label="Percentage" value="{{commissionPercentage}}">
+                    <div suffix>%</div>
+                  </paper-input>
+                  <paper-input class="m-left-10" label="Commission" value="{{invoice.commission.amount}}"></paper-input>
+                </div>
+              </iron-collapse>
+  
+            </div>
+  
+            <div class="vertical layout">
+              <div class="m-left-8 m-top-16 layout horizontal center">
+                <vaadin-combo-box label="Patient Type" id="patientStatus" style="position: relative; top: -10px;"
+                  items="[[patientStatusArray]]" value="{{invoice.patientStatus}}">
+                </vaadin-combo-box>
+                <div class="flex"></div>
+                
+                <paper-button class="btn btn-primary btn-sm" on-tap="chargeIndoorWalletButtonPressed">Charge Indoor
+                  Wallet</paper-button>
+                <paper-button class="btn btn-primary btn-sm" on-tap="chargeOutdoorWalletButtonPressed">Charge Outdoor
+                  Wallet</paper-button>
+              </div>
+  
+              <div class="layout horizontal m-left-8">
+                <paper-dropdown-menu label="Print Copy Type" style="margin-bottom:25px;">
+                  <paper-menu selected="{{printTypeValue}}" id="printType" class="dropdown-content paper-menu-width">
+                    <paper-item>Cash/Original</paper-item>
+                    <paper-item>Duplicate</paper-item>
+                    <paper-item>Final Bill</paper-item>
+                  </paper-menu>
+                </paper-dropdown-menu>
+              </div>
+  
+              <div class="card-actions m-top-16 layout horizontal center">
+                <paper-checkbox checked="{{invoice.availableToPatient}}">Send To Patient</paper-checkbox>
+                <div class="flex"></div>
+                <paper-button class="btn btn-primary" on-tap="makeFreePatientButtonClicked">Free Patient</paper-button>
+                <template is="dom-if" if="[[!_calculateDue(invoice.advancePayment, invoice.totalBilled, invoice.paid, invoice.lastPaid)]]">
+                  <paper-button raised class="btn btn-success" on-tap="saveAndCompleteInvoiceButtonClicked" hidden$="[[!_checkUserAccess('D031')]]">Save + Complete Invoice</paper-button>
+                </template>
+  
+                <paper-button class="btn btn-success" on-tap="saveInvoiceButtonClicked">Save Invoice</paper-button>
+                <paper-button class="btn btn-success" on-tap="savePlusPrintInvoiceButtonClicked" hidden$="[[!_checkUserAccess('C036')]]">Save + Print Invoice</paper-button>
+                
+              </div>
+            </div>
+          </div>
+        </paper-card>
+
+        
+        
+      </div>
+    </div>
+
+    <!--Modal for Custom Unit and Price-->
+    <paper-dialog id="customItemModal">
+      <h2>Add Item</h2>
+      <paper-dialog-scrollable class="custom-input-field">
+        <paper-item class="layout vertical">
+          <paper-input id="customUnitNameField" autofocus label="Item Name" required
+            error-message="Item Name is required" auto-validate></paper-input>
+          <paper-input id="customUnitCostField" label="Actual Cost" type="number" min="0"></paper-input>
+          <paper-input id="customUnitPriceField" label="Unit Price" type="number" min="0" required
+            error-message="Item Price is required" auto-validate></paper-input>
+        </paper-item>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button raised on-tap="customUnitAddButtonClicked">Add</paper-button>
+      </div>
+    </paper-dialog>
+
+  </template>
+
+  <script src="page-emergencypatient-invoice.coffee-compiled.js"></script>
+</dom-module>

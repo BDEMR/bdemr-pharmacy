@@ -1,0 +1,81 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+
+<link rel="import" href="../../behaviors/translating.html">
+
+<dom-module id="custom-vital-search">
+  <template>
+    <style is="custom-style" include="iron-flex iron-flex-alignment">
+      
+      :host {
+        display: inline-block;
+      }
+
+      /* .filter paper-input {
+        --paper-input-container: {
+          margin-left: 10px;
+          width: 200px;
+        }
+        --paper-input-container-label: {
+          font-size: 13px;
+        }
+        --paper-input-container-input: {
+          font-size: 13px;
+        }
+      }
+
+      .filter paper-icon-button {
+        width: 36px;
+        height: 36px
+      } */
+
+      @media only screen and (max-width : 380px){
+        .filter paper-input {
+          --paper-input-container: {
+            margin-left: 0;
+          }
+          --paper-input-container-label: {
+            font-size: 13px;
+            text-align: left;
+          }
+          --paper-input-container-input: {
+            font-size: 13px;
+            text-align: left;
+          }
+        }
+      }
+
+    </style>
+    
+    <div class="filter layout horizontal center wrap">
+      <paper-input label="[[$TRANSLATE('Click to Filter By Date', LANG)]]" readonly value="[[filterDateRange]]" on-click="showFilterModalButtonClicked"></paper-input>
+      <paper-icon-button icon="close" on-tap="clearIconClicked" hidden$="[[!filterDateRange]]"></paper-icon-button>
+    </div>
+    
+    <!--Filter Modal-->
+    <paper-dialog id="filterModal">
+      <h3>[[$TRANSLATE('Filter By', LANG)]]</h3>
+      <div class="layout vertical">
+        <vaadin-date-picker label="[[$TRANSLATE('Chose Start Date', LANG)]]" value="{{startDate}}"></vaadin-date-picker>
+        <vaadin-date-picker label="[[$TRANSLATE('Chose End Date', LANG)]]" value="{{endDate}}" min="[[startDate]]" disabled$="[[!startDate]]"></vaadin-date-picker>
+        <br>
+      </div>
+      <div class="buttons">
+        <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+        <paper-button raised dialog-confirm on-tap="filterButtonClicked" disabled$="[[!endDate]]">[[$TRANSLATE('Filter', LANG)]]</paper-button>
+      </div>
+    </paper-dialog>
+
+  </template>
+  <script src="custom-vital-search.coffee-compiled.js"></script>
+</dom-module>
+
+
+
+

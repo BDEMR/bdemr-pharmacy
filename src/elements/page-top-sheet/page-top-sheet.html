@@ -1,0 +1,524 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+
+<link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-top-sheet">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+        width: 90%;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .header {
+        background-color: var(--paper-grey-100);
+        padding: 15px;
+      }
+
+      .label {
+        background-color: var(--paper-grey-100);
+        padding: 5px;
+      }
+
+      .border-bottom {
+        border-bottom: 1px solid rgb(235, 230, 230);
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      /* paper-dialog {
+        min-width: 450px;
+        min-height: 100%;
+      } */
+      
+      .top-margin {
+      margin-top: 10px
+      }
+      
+      .table {
+      width: 100%;
+      border-collapse: collapse;
+      }
+      
+      .table th {
+      text-align: left;
+      background-color: var(--paper-grey-50);
+      }
+      
+      .table td,
+      .table th {
+      vertical-align: left;
+      padding: 10px;
+      border: 1px solid var(--paper-grey-300);
+      }
+
+      /* styles related to print preview */
+      .print-button-style {
+        margin-top: 16px;
+        background: burlywood;
+      }
+
+      #printPreview {
+        display: none !important;
+      }
+
+      @media print {
+
+        .hideOnPrint {
+          display: none !important;
+        }
+
+        #printPreview {
+          display: block !important;
+          background-color: transparent;
+        }
+      }
+
+
+
+      .print-document {
+        font-family: 'Times New Roman';
+        background: white;
+        width: 100%;
+      }
+
+      .print-header {
+        position: relative;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px
+      }
+
+      .print-document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .print-document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+      
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+      .print-table {
+        table-layout: fixed;
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .print-table tr {
+        margin-bottom: 15px;
+      }
+
+      .print-table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .print-table td {
+        color: #444;
+      }
+
+      .print-table td,
+      .print-table th {
+        vertical-align: middle;
+        padding: 10px 0px;
+        margin-right: 5px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+      .print-table tr:last-child td {
+        border-bottom: 0;
+      }
+      
+       
+    </style>
+
+    <!-- <module-accounts-top-nav page-name="top-sheet" organization-id="[[organization.idOnServer]]" class="hideOnPrint"></module-accounts-top-nav> -->
+    
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <!-- Main Content -->
+        <div class="hideOnPrint">
+            <template is="dom-if" if="[[isLoading]]">
+                <div class="layout horizontal center type bold text-center">
+                  <paper-progress indeterminate></paper-progress>
+                </div>
+                <h2 class="type center">[[$TRANSLATE('Please Wait, Loading', LANG)]]...</h2>
+              </template>
+      
+              <paper-card heading="[[$TRANSLATE('Top Sheet of Accounts', LANG)]]">
+                <div class="card-actions">
+                  <paper-button class="btn btn-success" raised on-tap="_addNewEntryButtonClicked">+ [[$TRANSLATE('Add a New Entry', LANG)]]</paper-button>
+                </div>
+                <div class="card-content custom-input-field">
+      
+                  <div class="layout horizontal end wrap">
+                    <paper-input type="search" class="filter-query m-right-8" label="[[$TRANSLATE('Filter By Mobile', LANG)]]" no-label-float value="{{mobileSearchString}}"></paper-input>
+      
+                    <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
+      
+                    <paper-button class="btn btn-success" raised on-tap="searchButtonClicked">[[$TRANSLATE('Search', LANG)]]</paper-button>
+                    <paper-button raised on-tap="resetButtonClicked">[[$TRANSLATE('Reset', LANG)]]</paper-button>
+                    <template is="dom-if" if="[[_isEmptyArray(topSheetEntryList)]]">
+                      <paper-button raised class="print-button-style" on-tap="_printButtonPressed">[[$TRANSLATE('Print the Report', LANG)]]
+                      </paper-button>
+                    </template>
+      
+                  </div>
+                </div>
+                <div class="card-content">
+                  <template is="dom-if" if="[[!topSheetEntryList.length]]">
+                    <h3 class="type center">[[$TRANSLATE('NO DATA YET', LANG)]]</h3>
+                  </template>
+                  <template is="dom-if" if=[[topSheetEntryList.length]]>
+
+                     <vaadin-grid class="custom-agent-table" id="paymentList" items="[[topSheetEntryList]]">
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <vaadin-grid-sorter path="name">
+                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Name', LANG)]]" path="name"
+                        value="[[filterName]]">
+                        <paper-input label="[[$TRANSLATE('Name', LANG)]]" value="{{filterName}}" no-label-float>
+                        </paper-input>
+                      </vaadin-grid-filter>
+                    </vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[item.name]]
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <vaadin-grid-sorter path="mobile">
+                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Mobile', LANG)]]" path="mobile"
+                        value="[[filterMobile]]">
+                        <paper-input label="[[$TRANSLATE('Mobile', LANG)]]" value="{{filterMobile}}" no-label-float>
+                        </paper-input>
+                      </vaadin-grid-filter>
+                    </vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[item.mobile]]
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    [[$TRANSLATE('Added On', LANG)]]
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[_formatDateTime(item.addedOn)]]
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    [[$TRANSLATE('Total Billed', LANG)]]
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[item.totalBilled]] BDT
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    [[$TRANSLATE('Total Discount', LANG)]]
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[item.totalDiscount]] BDT
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    [[$TRANSLATE('Total Fund Discount', LANG)]]
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[item.totalFundDiscount]] BDT
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    [[$TRANSLATE('Total Due', LANG)]]
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[item.totalDue]] BDT
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    [[$TRANSLATE('Cash Handover', LANG)]]
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[item.totalCashHandover]] BDT
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+                  </template>
+                  <!-- <table class="table">
+                    <tr>
+                      <th>[[$TRANSLATE('Name', LANG)]]</th>
+                      <th>[[$TRANSLATE('Mobile', LANG)]]</th>
+                      <th>[[$TRANSLATE('Added On', LANG)]]</th>
+                      <th>[[$TRANSLATE('Total Billed', LANG)]]</th>
+                      <th>[[$TRANSLATE('Total Discount', LANG)]]</th>
+                      <th>[[$TRANSLATE('Total Fund Discount', LANG)]]</th>
+                      <th>[[$TRANSLATE('Total Due', LANG)]]</th>
+                      <th>[[$TRANSLATE('Cash Handover', LANG)]]</th>
+                      
+                    </tr>
+                    <template is="dom-if" if="[[!topSheetEntryList.length]]">
+                      <h3 class="type center">[[$TRANSLATE('NO DATA YET', LANG)]]</h3>
+                    </template>
+                    <template is="dom-repeat" items="[[topSheetEntryList]]">
+                      <tr>
+                        <td>[[item.name]]</td>
+                        <td>[[item.mobile]]</td>
+                        <td>[[_formatDateTime(item.addedOn)]]</td>
+                        <td>[[item.totalBilled]] BDT</td>
+                        <td>[[item.totalDiscount]] BDT</td>
+                        <td>[[item.totalFundDiscount]] BDT</td>
+                        <td>[[item.totalDue]] BDT</td>
+                        <td>[[item.totalCashHandover]] BDT</td>
+                       
+                      </tr>
+                    </template>
+                  </table> -->
+    
+                  <div class="layout vertical">
+                    <div class="m-top-16 m-bottom-8">
+                      <span style="position: relative; float: right;"><strong>[[$TRANSLATE('Total Fund Discount', LANG)]]: [[$TRANSLATE('BDT', LANG)]] [[sumTotalFundDiscount]]</strong></span>
+                    </div>
+  
+                    <div class="m-top-8 m-bottom-24">
+                      <span style="position: relative; float: right;"><strong>[[$TRANSLATE('Total Cash Handover', LANG)]]: [[$TRANSLATE('BDT', LANG)]] [[sumTotalCashHandover]]</strong></span>
+                    </div>
+                  </div>
+                  
+      
+                </div>
+              </paper-card>
+      
+              <!-- Dialog for - Add New Entry - start -->
+              <paper-dialog class="custom-input-field" id="dialogAddNewEntry">
+                <div class="card-content">
+                  <div style="color: green;">
+                    <iron-icon icon="receipt" class="m-right-8"></iron-icon>[[$TRANSLATE('Add Entry', LANG)]]
+                  </div>
+        
+                  <div class="layout horizontal">
+                    <h4>[[$TRANSLATE('Select Entry Date', LANG)]]:</h4>
+                    <div class="m-left-16">
+                      <vaadin-date-picker-light>
+                        <input is="iron-input" class="custom-input" placeholder="[[$TRANSLATE('MM/DD/YYYY', LANG)]]" bind-value="{{addedDate}}" />
+                      </vaadin-date-picker-light>
+                    </div>
+                  </div>
+        
+                  <div>
+                    <paper-input label="[[$TRANSLATE('Name', LANG)]]" value="{{topSheetEntryObject.name}}"></paper-input>
+                    <paper-input label="[[$TRANSLATE('Mobile', LANG)]]" value="{{topSheetEntryObject.mobile}}"></paper-input>
+                    
+                    <paper-input label="[[$TRANSLATE('Total Billed', LANG)]]" value="{{topSheetEntryObject.totalBilled}}"></paper-input>
+                    <paper-input label="[[$TRANSLATE('Total Discount', LANG)]]" value="{{topSheetEntryObject.totalDiscount}}"></paper-input>
+                    <paper-input label="[[$TRANSLATE('Total Fund Discount', LANG)]]" value="{{topSheetEntryObject.totalFundDiscount}}"></paper-input>
+          
+                    <paper-input label="[[$TRANSLATE('Total Due', LANG)]]" value="{{topSheetEntryObject.totalDue}}"></paper-input>
+                    <paper-input label="[[$TRANSLATE('Cash Handover', LANG)]]" value="{{topSheetEntryObject.totalCashHandover}}"></paper-input>
+                  </div>
+                </div>
+      
+                <div class="card-actions buttons">
+                  <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+                  <paper-button class="colored" on-click="_addTopSheetEntry" autofocus raised>[[$TRANSLATE('Add', LANG)]]</paper-button>
+                </div>
+              </paper-dialog>
+              <!-- Dialog for - Add New Entry - end -->
+        </div>
+
+        <!-- Print Preview -->
+        <div id="printPreview">
+            <div class="print-document">
+              <template is="dom-if" if="[[settings.printDecoration.headerLine]]">
+                <div class="print-header vertical layout center">[[settings.printDecoration.headerLine]]</div>
+              </template>
+  
+              <div class="print-document-header horizontal layout center">
+  
+                <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+                  <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+                </template>
+  
+                <div class="leftSide vertical layout">
+                  <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+                  <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+                  <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+                </div>
+                <div class="flex"></div>
+                <div class="rightSide vertical layout end">
+                  <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+                  <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+                  <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+                </div>
+              </div>
+  
+              <div class="horiline"></div>
+              <div style="text-align: center">
+                <h4 class="type secondary">[[$TRANSLATE('Top Sheet Report', LANG)]]</h4>
+              </div>
+  
+              <!-- Report Content -->
+              <div>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>[[$TRANSLATE('Name', LANG)]]</th>
+                      <th>[[$TRANSLATE('Mobile', LANG)]]</th>
+                      <th>[[$TRANSLATE('Added On', LANG)]]</th>
+                      <th>[[$TRANSLATE('Total Billed', LANG)]]</th>
+                      <th>[[$TRANSLATE('Total Discount', LANG)]]</th>
+                      <th>[[$TRANSLATE('Total Fund Discount', LANG)]]</th>
+                      <th>[[$TRANSLATE('Total Due', LANG)]]</th>
+                      <th>[[$TRANSLATE('Cash Handover', LANG)]]</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template is="dom-repeat" items="[[topSheetEntryList]]" sort="_sortByDate">
+                      <tr>
+                        <td>[[item.name]]</td>
+                        <td>[[item.mobile]]</td>
+                        <td>[[_formatDateTime(item.addedOn)]]</td>
+                        <td>[[item.totalBilled]] [[$TRANSLATE('BDT', LANG)]]</td>
+                        <td>[[item.totalDiscount]] [[$TRANSLATE('BDT', LANG)]]</td>
+                        <td>[[item.totalFundDiscount]] [[$TRANSLATE('BDT', LANG)]]</td>
+                        <td>[[item.totalDue]] [[$TRANSLATE('BDT', LANG)]]</td>
+                        <td>[[item.totalCashHandover]] [[$TRANSLATE('BDT', LANG)]]</td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+  
+                <!-- footer div -->
+                <div class="m-top-16 m-bottom-16 layout vertical">
+                  <div class="m-bottom-8">
+                    <span style="position: relative; float: right;"><strong>[[$TRANSLATE('Total Fund Discount', LANG)]]: [[$TRANSLATE('BDT', LANG)]] [[sumTotalFundDiscount]]</strong></span>
+                  </div>
+                  <div class="m-bottom-8">
+                    <span style="position: relative; float: right;"><strong>[[$TRANSLATE('Total Cash Handover', LANG)]]: [[$TRANSLATE('BDT', LANG)]] [[sumTotalCashHandover]]</strong></span>
+                  </div>
+    
+                  <div>
+                    <template is="dom-if" if="[[settings.printDecoration.footerLine]]">
+                      <div class="footer vertical layout">[[settings.printDecoration.footerLine]]</div>
+                    </template>
+                  </div>
+  
+                </div>
+  
+              </div>
+  
+              <div style="text-align: center; margin-top: 16px">
+                <span class="type secondary">[[$TRANSLATE('Report Generation Date & Time', LANG)]] -
+                  [[_getFormattedCurrentDateTime(currentDateTime)]]</span>
+              </div>
+            </div>
+  
+            <div class="horizontal layout center center-justified p-horizontal-16">
+              <div class="type body italic"><strong>[[$TRANSLATE('Printed by', LANG)]]: </strong>[[user.name]]</div>
+            </div>
+        </div>
+        
+      </div>
+
+    </div>
+
+
+
+  </template>
+  <script src="page-top-sheet.coffee-compiled.js"></script>
+</dom-module>

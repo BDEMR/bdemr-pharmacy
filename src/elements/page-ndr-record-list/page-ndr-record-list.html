@@ -1,0 +1,164 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-ndr-record-list">
+
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style"></style>
+
+    <!-- local dom -->
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <paper-card>
+          <div class="card-content">
+
+            <div class="horizontal layout wrap center">
+              <iron-image class="profile-image m-right-8" src$="[[$getProfileImage(patient.profileImage)]]" preload sizing="cover"></iron-image>
+
+              <div class="flex">
+                <div class="m-horizontal-4 horizontal layout">
+                  <div class="type body-lead capitalize">{{$getFullName(patient.name)}}</div>
+                  <div class="m-left-8 type caption bg-gray">{{patient.serial}}</div>
+                </div>
+
+                <div class="horizontal layout wrap type caption-2 secondary">
+                  <template is="dom-if" if="[[orgSpecificPatientId]]">
+                    <div class="m-horizontal-4">
+                      <strong>Patient Id: </strong>
+                      <span>[[orgSpecificPatientId]]</span>
+                    </div>
+                  </template>
+                  <div class="m-horizontal-4">
+                    <strong>Registerd Phone Number: </strong>
+                    <span>{{patient.phone}}</span>
+                  </div>
+                </div>
+
+                <div class="horizontal layout wrap type caption-2 secondary">
+
+                  <template is="dom-if" if="[[!patient.isForOrganizationOnly]]">
+
+                    <div class="m-horizontal-4">
+                      <strong>Sex: </strong>
+                      <span>{{patient.gender}}</span>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <strong>Age: </strong>
+                      <span>[[$computeAge(patient.dateOfBirth)]] </span>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <strong>Blood Group: </strong>
+                      <span> [[patient.bloodGroup]]</span>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <strong>Allergy: </strong>
+                      <span>[[patient.allergy]] </span>
+                    </div>
+                  </template>
+
+                  <template is="dom-if" if="[[patient.isForOrganizationOnly]]">
+                    <div class="m-horizontal-4">
+                      <strong>Patient Name: </strong>
+                      <i>REDACTED FOR CONFIDENTIALITY</i>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <strong>Age: </strong>
+                      <i>REDACTED FOR CONFIDENTIALITY</i>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <strong>Blood Group: </strong>
+                      <span>[[patient.bloodGroup]]</span>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <strong>Allergy: </strong>
+                      <span>[[patient.allergy]]</span>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
+        </paper-card>
+
+        <br>
+
+        <paper-card heading="NDR Records">
+          <div class="card-content">
+
+            <template is="dom-if" if="[[!ndrRecordList.length]]">
+              <div class="layout horizontal center">
+                <p class="text-center">No Records to Show</p>
+              </div>
+            </template>
+
+            <paper-listbox>
+              <template is="dom-repeat" items="[[ndrRecordList]]">
+
+                <paper-item class="custom layout horizontal center">
+                  <div class="type caption secondary">[[$returnSerial(index)]]</div>
+                  <div class="flex m-left-8">
+                    <div class="type body-lead">{{item.data.visitType}}</div>
+                    <div class="type caption-2 secondary">
+                      <strong>Serial: </strong> {{item.serial}}
+                      <strong>Record Created on: </strong>[[$mkDateTime(item.createdDatetimeStamp)]]
+                      <strong> by: </strong>[[item.doctorName]]
+                      <i>[[item.doctorSpeciality]]</i>
+                    </div>
+                  </div>
+
+
+                  <!-- <template is="dom-if" if="[[$equals(toAuthorizeNdrIndex, index)]]">
+                        <paper-dropdown-menu label="Authorize To" class="flex">
+                          <paper-listbox class="dropdown-content" on-iron-select="authorizeToSelected" selected="{{authorizeToSelectedIndex}}">
+                            <template is="dom-repeat" items="{{organizationsIBelongToList}}" as="authorizeTo">
+                              <paper-item>{{authorizeTo.name}}</paper-item>
+                            </template>
+                          </paper-listbox>
+                        </paper-dropdown-menu>
+                      </template> -->
+
+                  <paper-menu-button class="p-0" vertical-align="bottom" horizontal-align="right">
+
+                    <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+                    <paper-menu class="dropdown-content">
+                      <paper-item on-tap="viewNdrRecord">View</paper-item>
+                      <!-- <paper-item on-tap="editNdrRecord">Edit</paper-item> -->
+                    </paper-menu>
+                  </paper-menu-button>
+                </paper-item>
+
+              </template>
+            </paper-listbox>
+
+          </div>
+        </paper-card>
+
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-ndr-record-list.js"></script>
+</dom-module>

@@ -1,0 +1,441 @@
+/* === document-wide  === */
+
+body {
+    margin: 0px;
+    font-family: "Roboto", "Noto", sans-serif;
+    background-color: #e0f2f1;
+    word-wrap: break-word;
+}
+
+paper-item.iron-selected div {
+    font-weight: 500;
+}
+
+.basic-list {
+    word-wrap: break-word;
+}
+
+.basic-list span {
+    /*color: gray;*/
+    color: rgba(0, 0, 0, 0.87);
+    /*margin-left: 10px;*/
+}
+
+.avatar {
+    height: 46px;
+    width: 46px;
+    border-radius: 50%;
+    box-sizing: border-box;
+    background-color: #ddd;
+}
+
+.sp {
+    border: 1px solid #eee;
+    margin: 16px 0;
+}
+
+.pull {
+    position: absolute;
+}
+
+.pull.top-right-8 {
+    top: 8px;
+    right: 8px;
+}
+
+.pull.top-left {
+    top: 0;
+    left: 0;
+}
+
+.add-comment-box {
+    padding: 8px 16px 16px 16px;
+    /*background-color: #fafafa;*/
+    border-bottom: 1px solid #eee;
+    border-top: 1px solid #eee;
+}
+
+.box-grayed {
+    padding: 8px 16px 8px 16px;
+    background-color: #fafafa;
+    border-bottom: 1px solid #eee;
+}
+
+.comment-history-item {
+    margin-top: 16px;
+}
+
+.comment-history-item .comment-content {
+    border-radius: 6px;
+    background-color: #fafafa;
+    padding: 12px;
+    width: 60%;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.23);
+    position: relative;
+}
+
+.comment-history-item.right {
+    text-align: right;
+}
+
+.comment-user {
+    margin-top: 8px;
+}
+
+.comment-history-item.right .comment-user {
+    color: #009688;
+}
+
+
+/* Paper Item */
+
+paper-item.danger {
+    color: #f44336 !important;
+}
+
+paper-item.warning {
+    color: #ef6c00 !important;
+}
+
+
+/* Paper Button */
+
+paper-button.colored {
+    background-color: #009688 !important;
+    color: #fff !important;
+}
+
+paper-button.bg-gray {
+    background-color: #fafafa !important;
+}
+
+.border {
+    border: 1px solid #eee;
+}
+
+.bg-gray {
+    background-color: #fafafa;
+}
+
+paper-button.p-all {
+    padding: 0.29em;
+}
+
+
+/* === unsupported-screen-size-overlay  === */
+
+#unsupported-screen-size-overlay {
+    display: none;
+    background: white;
+    color: red;
+    font-size: 28px;
+    font-family: monospace;
+}
+
+
+/* Paper tabs */
+
+
+/*paper-tabs {
+  background-color: #fafafa;
+}
+*/
+
+paper-tabs.paper-tabs #selectionBar {
+    background-color: #009688;
+}
+
+
+/* Paper Icon Button */
+
+paper-icon-button.icon-btn.secondary {
+    color: rgba(0, 0, 0, 0.54);
+}
+
+paper-listbox {
+    padding: 0 !important;
+}
+
+paper-item.custom {
+    border-top: 1px solid #eee !important;
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+}
+
+paper-item.custom:first-child {
+    border-top: none !important;
+}
+
+paper-slider {
+    width: auto !important;
+}
+
+ul {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.attachment-card {
+    max-width: 210mm;
+}
+
+@media screen and (max-width: 640px) {
+    .comment-history-item .comment-content {
+        width: 76%;
+    }
+}
+
+@media screen and (max-width: 239px) {
+    #unsupported-screen-size-overlay {
+        display: block;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+}
+
+@media print {
+    .print-table {
+        width: 100%;
+    }
+}
+
+
+/* video chat - start */
+
+@media print {
+    app-header-layout #contentContainer {
+        overflow-y: unset !important;
+    }
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+/* *,
+*:before,
+*:after {
+    box-sizing: inherit;
+} */
+
+.TokBox {
+    /* background-color: black; */
+    height: 100%;
+    width: 100%;
+}
+
+.TokBox-main {
+    position: relative;
+    width: inherit;
+    height: inherit;
+}
+
+.TokBox-control-container {
+    position: absolute;
+    height: 100%;
+    width: 60px;
+    left: 24px;
+    display: flex;
+    z-index: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.TokBox-control-container.hidden {
+    display: none;
+}
+
+.TokBox-control-container .ots-video-control {
+    width: 50px;
+    height: 50px;
+    margin: 15px 0 !important;
+    border: 2px solid white;
+    border-radius: 50%;
+    background-position: center;
+    background-color: rgba(27, 134, 144, 0.4);
+    background-color: lightgrey;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    opacity: .64;
+}
+
+.TokBox-control-container .ots-video-control:hover {
+    opacity: 1;
+}
+
+.TokBox-control-container .ots-video-control.audio {
+    background-image: url(https://assets.tokbox.com/solutions/images/icon-mic.png);
+}
+
+.TokBox-control-container .ots-video-control.audio:hover,
+.TokBox-control-container .ots-video-control.audio.muted {
+    background-image: url(https://assets.tokbox.com/solutions/images/icon-muted-mic.png);
+}
+
+.TokBox-control-container .ots-video-control.video {
+    background-image: url(https://assets.tokbox.com/solutions/images/icon-video.png);
+}
+
+.TokBox-control-container .ots-video-control.video.muted {
+    background-image: url(https://assets.tokbox.com/solutions/images/icon-no-video.png);
+}
+
+.TokBox-control-container .ots-video-control.invite {
+    background-image: url(../images/icons/ico_add_user.png);
+    background-size: 24px 24px;
+}
+
+.TokBox-control-container .ots-video-control.call-end {
+    background-image: url(../images/icons/ico_end-call.png);
+    background-size: 24px 24px;
+}
+
+.TokBox-video-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.TokBox-mask {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    color: black;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.TokBox-mask.hidden {
+    display: none;
+}
+
+.TokBox-mask .react-spinner {
+    position: absolute;
+}
+
+.TokBox-mask .message {
+    font-weight: 200;
+}
+
+.TokBox-mask .message.with-spinner {
+    position: absolute;
+    top: 57.5%;
+}
+
+.TokBox-mask .message.button {
+    border: 1px solid white;
+    background-color: #785448;
+    color: white;
+    padding: 20px 40px;
+    border-radius: 6px;
+}
+
+.TokBox-video-container .video-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.TokBox-video-container .video-container.small {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 160px;
+    height: 96px;
+    border: 1px solid #fcba00;
+    z-index: 2;
+}
+
+.TokBox-video-container .video-container.small.left {
+    left: 20px;
+    border: 1px solid #00fcc2;
+}
+
+.TokBox-video-container .video-container.hidden {
+    display: none;
+}
+
+.TokBox-video-container .video-container.active-2 .OT_subscriber {
+    width: 50%;
+}
+
+.TokBox-video-container .video-container.active-3 .OT_subscriber {
+    width: calc(100%/2) !important;
+    height: calc(100%/2) !important;
+}
+
+.TokBox-video-container .video-container.active-3 {
+    flex-wrap: wrap;
+}
+
+.TokBox-video-container .video-container.active-4 {
+    flex-wrap: wrap;
+}
+
+.TokBox-video-container .video-container.active-4 .OT_subscriber {
+    width: 50% !important;
+    height: 50% !important;
+}
+
+progress-spinner {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border: 1px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    -webkit-animation: rotate 800ms linear infinite;
+    animation: rotate 800ms linear infinite;
+}
+
+progress-spinner[dark] {
+    border-top-color: rgba(255, 255, 255, 0.6);
+}
+
+progress-spinner[dotted] {
+    border-width: 0;
+    border-style: dotted;
+    border-top-width: 2px;
+}
+
+@-webkit-keyframes rotate {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes rotate {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+.hidden {
+    display: none;
+}
+
+.OT_video-poster {
+    display: none !important;
+}
+
+
+/* video chat - end */

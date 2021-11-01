@@ -1,0 +1,108 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box-light.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<dom-module id="page-complain-box">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+
+      vaadin-grid.grid-table {
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+      }
+
+      .new-attachment-preview {
+        border-radius: 6px;
+        height: 128px;
+        width: 128px;
+      }
+
+      .thumbnail {
+        border: 1px solid #eee;
+        border-radius: 6px;
+        margin: 4px;
+        padding: 0 8px;
+      }
+
+      
+    </style>
+    <div class="master-container">
+
+      <div class="limiting-container">
+        <paper-card heading="[[$TRANSLATE('Submit your complain', LANG)]]">
+          <div class="card-content">
+            <paper-input class="paper-custom-input" value="{{complain.name}}" required auto-validate error-message="Applicants name required!" minlength="2" label="[[$TRANSLATE('Applicants name', LANG)]]" ></paper-input>
+            <paper-input class="paper-custom-input" value="{{complain.position}}" label="Applicants position" label="[[$TRANSLATE('Applicants position', LANG)]]"></paper-input>
+            <paper-input class="paper-custom-input" label="[[$TRANSLATE('Organization Name', LANG)]]" required auto-validate error-message="Organization name required!" minlength="2" value="{{complain.organization.name}}"></paper-input>
+            <paper-input class="paper-custom-input" value="{{complain.location}}" label="[[$TRANSLATE('Applicants location', LANG)]]"></paper-input>
+            <paper-input class="paper-custom-input" value="{{complain.dateOfOccurrence}}" label="[[$TRANSLATE('Date of occurrence', LANG)]]" type="date"></paper-input>
+            <vaadin-combo-box class="paper-custom-input" label="[[$TRANSLATE('Type of complaint', LANG)]]" items="{{complaintList}}" value="{{complain.typeOfComplaint}}"></vaadin-combo-box>
+            <paper-input class="paper-custom-input" value="{{complain.complaintAgainstPerson}}" label="[[$TRANSLATE('Complain against person', LANG)]]"></paper-input>
+            <paper-input class="paper-custom-input" label="[[$TRANSLATE('Complain Organization Name', LANG)]]" value="{{complain.complainAgainstOrganization.name}}"></paper-input>
+            <paper-textarea rows="5" class="paper-custom-input" required auto-validate error-message="Complain Details required!" char-counter label="[[$TRANSLATE('Complain Details', LANG)]]" value="{{complain.complainDetails}}"></paper-textarea>
+            
+        
+            <!-- Attachemnt - start -->
+            <paper-input id="attachmentFile" class="paper-custom-input" type="file" accept="*/*" on-change="fileInputChanged"></paper-input>
+            
+            <div hidden$="{{$equals(complain.attachments.length, 0)}}">
+              <div class="type body"><strong>[[$TRANSLATE('Attachments', LANG)]]:</strong></div>
+              <div class="horizontal layout wrap">
+                
+                <template is="dom-repeat" items="{{complain.attachments}}">
+                  <div class="horizontal layout center thumbnail">
+                    <div class="flex">{{item.name}}</div>
+                    <paper-icon-button icon="delete" on-tap="_removeAttachment"></paper-icon-button>
+                  </div>
+                </template>
+              </div>
+            </div>
+            <!-- Attachemnt - end -->
+
+            <div class="m-top-8 horizontal layout end-justified">
+              <paper-button on-tap="_onTapClear">[[$TRANSLATE('Clear', LANG)]]</paper-button>
+              <!-- <paper-button class="colored" raised on-tap="_onSubmitComplain">Preview</paper-button> -->
+              <paper-button class="colored" raised on-tap="_onSubmitComplain">[[$TRANSLATE('Submit', LANG)]]</paper-button>
+            </div>
+          </div>
+        </paper-card>
+      </div>
+    </div>
+
+  </template>
+
+  <script src="page-complain-box.coffee-compiled.js"></script>
+</dom-module>

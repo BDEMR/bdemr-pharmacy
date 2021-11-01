@@ -1,0 +1,910 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+
+<dom-module id="page-pcc-reports">
+  <template>
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        width: 90%;
+        margin: 0 auto;
+        margin-top: 10px;
+      }
+
+      paper-button {
+        background: white;
+      }
+
+      .invoice-card {
+        background: white;
+      }
+
+      paper-card {
+        margin: 4px;
+      }
+
+      .search {
+        background-color: #fafafa;
+        border: 1px solid #dadada;
+        padding: 8px 12px;
+        margin: 4px;
+        margin-left: 0;
+      }
+
+      .results {
+        margin-top: 20px;
+      }
+
+      .results span {
+        color: #333;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      ul {
+        padding: 0;
+        margin: 0;
+      }
+
+      ul>ol {
+        margin: 0;
+        padding: 5px;
+        list-style-type: decimal;
+      }
+
+      .organization-dropdown {
+        width: 210px;
+      }
+    </style>
+
+    <div class="master-container">
+
+      <div class="limiting-container vertical layout">
+
+        <paper-card heading="Reports">
+          <paper-progress indeterminate hidden="[[!loading]]"></paper-progress>
+          <div class="card-content">
+
+            <div class="search layout horizontal justified end">
+
+              <vaadin-combo-box class="organization-dropdown m-right-8" label="Organization" items="[[childOrganizationList]]" on-value-changed="organizationSelected"
+                loading="[[organizationLoading]]" disabled="[[!childOrganizationList.length]]"></vaadin-combo-box>
+
+              <paper-dropdown-menu label="Filter by Gender" class="m-right-8">
+                <paper-listbox class="dropdown-content" on-iron-activate="genderSelected" selected="0">
+                  <paper-item>All</paper-item>
+                  <paper-item>Male</paper-item>
+                  <paper-item>Female</paper-item>
+                </paper-listbox>
+              </paper-dropdown-menu>
+
+              <paper-dropdown-menu label="Filter by Age Group" class="m-right-8">
+                <paper-listbox class="dropdown-content" on-iron-activate="ageGroupSelected" selected="0">
+                  <template is="dom-repeat" items="[[ageGroupList]]">
+                    <paper-item>[[item]]</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+
+              <paper-dropdown-menu label="Filter by Salary Range" class="m-right-8">
+                <paper-listbox class="dropdown-content" on-iron-activate="salaryRangeSelected" selected="0">
+                  <template is="dom-repeat" items="[[salaryRangeList]]">
+                    <paper-item>[[item]]</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+
+              <paper-input label="Search by Name" class="m-right-8" value="{{searchString}}"></paper-input>
+
+              <custom-vital-search style="width:210px" on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
+
+            </div>
+            <div class="layout horizontal center-justified center m-horizontal-4 m-top-16">
+              <paper-button class="btn btn-default" on-tap="resetButtonClicked">Reset</paper-button>
+              <paper-button raised class="btn btn-primary" style="margin: 0" on-tap="searchButtonClicked"><iron-icon icon="search" class="m-right-8"></iron-icon>Search</paper-button>
+              
+            </div>
+
+            
+
+            <template is="dom-if" if="[[!isEmptyArray(reportResults.length)]]">
+            
+              <h4>Total Records Found: [[reportResults.length]]</h4>
+
+              <div class="results">
+
+                <!-- <paper-progress indeterminate hidden="[[!loading]]"></paper-progress> -->
+                <vaadin-grid items="[[reportResults]]">
+                  <vaadin-grid-column frozen width="50px" flex-grow="0">
+                    <template class="header">#</template>
+                    <template>
+                      <span>[[$getItemCounter(index)]]</span>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable frozen>
+                    <template class="header">Record Id</template>
+                    <template>
+                      <span>[[item.pcc.serial]]</span>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable frozen>
+                    <template class="header">Patient Id</template>
+                    <template>
+                      <span>[[item.patientInfo.serial]]</span>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable width="220px" flex-grow="0" frozen>
+                    <template class="header layout horizontal">
+                      <vaadin-grid-filter aria-label="Name" path="patientInfo.name" value="[[nameFilter]]">
+                        <paper-input label="Search By Name" value="{{nameFilter}}" no-label-float></paper-input>
+                      </vaadin-grid-filter>
+                    </template>
+                    <template>
+                      <p>[[item.patientInfo.name]]</p>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable>
+                    <template class="header">Center </template>
+                    <template>
+                      <span>[[item.organizationInfo.name]]</span>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable width="180px" flex-grow="0">
+                    <template class="header">
+                      <vaadin-grid-sorter path="pcc.createdDatetimeStamp" direction="desc">Created Date</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[$formatDateTime(item.pcc.createdDatetimeStamp)]]</span>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable>
+                    <template class="header">Email Address</template>
+                    <template>
+                      <span>[[item.patientInfo.email]]</span>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable>
+                    <template class="header">Contact Number</template>
+                    <template>
+                      <span>[[item.patientInfo.phone]]</span>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable>
+                    <template class="header">Date of Birth</template>
+                    <template>
+                      <span>[[item.patientInfo.dateOfBirth]]</span>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable>
+                    <template class="header">Age</template>
+                    <template>
+                      <span>[[$computeAge(item.patientInfo.dateOfBirth)]]</span>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Spouse Name</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.patientInfo.patientSpouseName]]</span>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Father's Name</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.patientInfo.patientFatherName]]</span>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Expenditure</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.patientInfo.expenditure]]</span>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Profession</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.patientInfo.profession]]</span>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>National ID</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.patientInfo.nationalIdCardNumber]]</span>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Division</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.patientInfo.addressDivision]]</span>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>District</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.patientInfo.addressDistrict]]</span>
+                    </template>
+                  </vaadin-grid-column>
+                  <!-- <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Area</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.patientInfo.addressArea]]</span>
+                    </template>
+                  </vaadin-grid-column> -->
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Marital Status</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.patientInfo.maritalStatus]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Marital Age</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.patientInfo.maritalAge]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Number of Family Member</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.patientInfo.numberOfFamilyMember]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Number of children</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.patientInfo.numberOfChildren]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Number of children:</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.patientInfo.numberOfChildren]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Blood Group</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.patientInfo.bloodGroup]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Have Allergy?</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.patientInfo.allergy]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Tetanus</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.vaccinationList.0.value]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>MMR</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.vaccinationList.1.value]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Varicella</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.vaccinationList.2.value]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Hepatitis</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.vaccinationList.3.value]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Others</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.vaccinationList.4.value]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Previous Preconception Care</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.didPreviousPreconceptionCare]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Previous Preconception Care</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.didPreviousPreconceptionCare]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Have Family Planning?</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.haveFamilyPlanning]] </span>
+                      <span>[[item.pcc.medicalInfo.methodsOfFamilyPlanning]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Have Family Planning</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.haveFamilyPlanning]] </span>
+                      <span>[[item.pcc.medicalInfo.methodsOfFamilyPlanning]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Cigarette Smoking</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.drugAddictionList.0.isYes]] </span>
+                      <span>[[item.pcc.medicalInfo.drugAddictionList.0.amount]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Tobacco leaf</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.drugAddictionList.1.isYes]] </span>
+                      <span>[[item.pcc.medicalInfo.drugAddictionList.1.amount]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Betel leaf</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.drugAddictionList.2.isYes]] </span>
+                      <span>[[item.pcc.medicalInfo.drugAddictionList.2.amount]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Alcohol</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.drugAddictionList.3.isYes]] </span>
+                      <span>[[item.pcc.medicalInfo.drugAddictionList.3.amount]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Others</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.drugAddictionList.4.isYes]] </span>
+                      <span>[[item.pcc.medicalInfo.drugAddictionList.4.amount]]</span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <!-- <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Physical Activity</vaadin-grid-sorter>
+                    </template>
+                    <template is="dom-repeat" items="[[]]">
+                      <span>[[item.pcc.medicalInfo.drugAddictionList.4.isYes]] </span>
+                      <span>[[item.pcc.medicalInfo.drugAddictionList.4.amount]]</span>
+                    </template>
+                  </vaadin-grid-column> -->
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Watching TV</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.otherActivityList.0.duration]] </span>
+                      <span>[[item.pcc.medicalInfo.otherActivityList.0.unit]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Sleeping</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.otherActivityList.1.duration]] </span>
+                      <span>[[item.pcc.medicalInfo.otherActivityList.1.unit]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Rice(daily)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.0.consumeAmount.0.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Rice(weekly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.0.consumeAmount.1.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Rice(monthly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.0.consumeAmount.2.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Ruti/Chapati(daily)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.1.consumeAmount.0.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Ruti/Chapati(weekly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.1.consumeAmount.1.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Ruti/Chapati(monthly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.1.consumeAmount.2.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Fish(daily)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.2.consumeAmount.0.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Fish(weekly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.2.consumeAmount.1.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Fish(monthly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.2.consumeAmount.2.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Meat(daily)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.3.consumeAmount.0.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Meat(weekly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.3.consumeAmount.1.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Meat(monthly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.3.consumeAmount.2.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Green Vegetable(daily)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.4.consumeAmount.0.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Green Vegetable(weekly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.4.consumeAmount.1.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Green Vegetable(monthly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.4.consumeAmount.2.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Fruits(daily)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.5.consumeAmount.0.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Fruits(weekly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.5.consumeAmount.1.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Fruits(monthly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.5.consumeAmount.2.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Soft drinks(daily)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.6.consumeAmount.0.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Soft drinks(weekly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.6.consumeAmount.1.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Soft drinks(monthly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.6.consumeAmount.2.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Table Salt(daily)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.7.consumeAmount.0.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Table Salt(weekly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.7.consumeAmount.1.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Table Salt(monthly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.7.consumeAmount.2.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Sweets(daily)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.8.consumeAmount.0.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Sweets(weekly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.8.consumeAmount.1.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Sweets(monthly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.8.consumeAmount.2.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Fast Foods(daily)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.9.consumeAmount.0.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Fast Foods(weekly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.9.consumeAmount.1.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Fast Foods(monthly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.9.consumeAmount.2.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Ghee/butter(daily)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.10.consumeAmount.0.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Ghee/butter(weekly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.10.consumeAmount.1.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Ghee/butter(monthly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.10.consumeAmount.2.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Hotel Food(daily)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.11.consumeAmount.0.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Hotel Food(weekly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.11.consumeAmount.1.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter>Hotel Food(monthly)</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <span>[[item.pcc.medicalInfo.dietaryHistoryList.11.consumeAmount.2.value]] </span>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <template is="dom-repeat" items="[[item.tempList]]" as="column">
+                    <vaadin-grid-column resizable>
+                      <template class="header">[[column]]</template>
+                      <!-- <template>test 2</template> -->
+                    </vaadin-grid-column>
+                  </template>
+                 
+              </div>
+            </template>
+
+          </div>
+
+          <div class="card-actions">
+            <paper-button raised on-tap="exportButtonClicked">Export</paper-button>
+          </div>
+        </paper-card>
+
+      </div>
+      <!--Limiting Container Ends-->
+
+    </div>
+    <!--Master Container Ends-->
+
+
+    <table style="background: #fff; border: 1px; width: 100%;">
+
+      <tr>
+        <th>Patient ID No.</th>
+        <th>Name</th>
+        <th>Email Address</th>
+        <th>Contact Number</th>
+        <th>Additional Contact Number</th>
+        <th>Date of Birth (mm/dd/yyyy)</th>
+        <th>Age</th>
+        <th>Spouse Name</th>
+        <th>Father's Name</th>
+        <th>Mother's Name</th>
+        <th>Expenditure</th>
+        <th>Profession</th>
+        <th>National ID</th>
+        <th>Division</th>
+        <th>District</th>
+        <th>Area</th>
+        <th>Marital Status</th>
+        <th>Marital Age</th>
+        <th>Number of Family Member</th>
+        <th>Number of children</th>
+        <th>How did you find out about this project?</th>
+        <th>Blood Group</th>
+        <th>Have Allergy?</th>
+      </tr>
+
+      <template is="dom-repeat" items="[[reportResults]]" as="record">
+        <tr>
+          <td>[[record.patientInfo.serial]]</td>
+          <td>[[record.patientInfo.name]]</td>
+          <td>[[record.patientInfo.email]]</td>
+          <td>[[record.patientInfo.phone]]</td>
+          <td>Additional Contact Number</td>
+          <td>[[record.patientInfo.dateOfBirth]]</td>
+          <td>[[$computeAge(item.patientInfo.dateOfBirth)]]</td>
+          <td>[[record.patientInfo.patientSpouseName]]</td>
+          <td>[[record.patientInfo.patientFatherName]]</td>
+          <td>[[record.patientInfo.patientMotherName]]</td>
+          <td>[[record.patientInfo.expenditure]]</td>
+          <td>[[record.patientInfo.profession]]</td>
+          <td>[[record.patientInfo.nationalIdCardNumber]]</td>
+          <td>[[record.patientInfo.addressDivision]]</td>
+          <td>[[record.patientInfo.addressDistrict]]</td>
+          <td>Area</td>
+          <td>[[record.patientInfo.maritalStatus]]</td>
+          <td>[[record.patientInfo.maritalAge]]</td>
+          <td>[[record.patientInfo.numberOfFamilyMember]]</td>
+          <td>[[record.patientInfo.numberOfChildren]]</td>
+          <td>[[record.pcc.pccOthers.survey.0.answer]]</td>
+          <td>[[record.patientInfo.bloodGroup]]</td>
+          <td>[[record.patientInfo.allergy]]</td>
+        </tr>
+      </template>
+    </table>
+
+  </template>
+  <script type="text/javascript" src="page-pcc-reports.js"></script>
+</dom-module>

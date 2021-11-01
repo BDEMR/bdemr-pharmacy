@@ -1,0 +1,785 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../elements/custom-vital-search/custom-vital-search.html">
+
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+
+<link rel="import" href="../../elements/bdemr-generic-template/bdemr-generic-template.html">
+
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+
+
+<dom-module id='page-test-results-editor'>
+  <template>
+    <style is='custom-style' include="common-style">
+      paper-dropdown-menu {
+        width: 100%;
+      }
+
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .custom-card-list-item {
+        padding: 4px 16px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .custom-card-list-item:last-child {
+        border-bottom: none;
+      }
+
+      paper-checkbox {
+        margin: 8px;
+      }
+
+      .card-item {
+        border-radius: 6px;
+        border: 1px solid #eee;
+        margin: 3px;
+      }
+
+      .card-item div {
+        background-color: #fafafa;
+        /*border-right: 1px solid #eee;*/
+      }
+
+      /*Region - Patient Gallary*/
+
+      .new-attachment-preview {
+        display: block;
+        ;
+        width: 100%;
+        max-height: 128px;
+      }
+
+      .descriptive-area {
+        padding: 4px;
+      }
+
+      paper-button {
+        background: white;
+      }
+
+      .attachment-card {
+        background: white;
+        width: 128px;
+        height: 128px;
+        margin: 6px;
+      }
+
+      .image {
+        display: block;
+        width: 128px;
+        height: 128px;
+      }
+
+      .footer {
+        margin-top: 4px;
+      }
+
+      .usage {
+        margin-right: 20px;
+      }
+
+      .usage .title {
+        font-size: 36px;
+        text-align: left;
+      }
+
+      .attachment-card-list {
+        margin: 10px 0;
+      }
+
+      .attachment-card-list paper-material {
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+
+      .attachment-card .footer {
+        padding: 10px;
+      }
+
+      ol.order-list {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+      }
+
+      ul.unorderd-list-custom {
+        margin: 4px 0;
+        padding-left: 16px;
+      }
+
+      ol.order-list li:nth-child(even) {
+        background-color: var(--paper-teal-50)
+      }
+
+      ol.order-list li {
+        padding: 8px 16px;
+      }
+
+      .print-sub-header {
+        font-size: bold;
+        background-color: #fafafa;
+        margin-bottom: 8px;
+      }
+
+      .test-result-count {
+        font-weight: bold;
+        color: var(--paper-green-500);
+      }
+
+      paper-icon-button.custom-icon-button {
+        width: 32px;
+        height: 32px;
+      }
+
+      paper-item.custom-2 {
+        padding: 0 !important;
+        --paper-item-min-height: 48px;
+
+        --paper-item-selected: {
+          background-color: var(--paper-teal-500);
+          color: #fff;
+          border-bottom: 2px solid var(--paper-teal-500);
+        }
+
+        --paper-item-focused: {
+          background-color: var(--paper-teal-500);
+          color: #fff;
+          border-bottom: 2px solid var(--paper-teal-500);
+        }
+
+        --paper-item-focused-before: {
+          background-color: var(--paper-teal-500);
+          color: #fff;
+          border-bottom: 2px solid var(--paper-teal-500);
+        }
+      }
+
+      paper-item.custom-2.iron-selected {
+        font-weight: 400;
+      }
+
+      paper-item.custom-2.iron-selected:hover {
+        background-color: var(--paper-teal-500);
+        color: #fff;
+      }
+
+      paper-item.custom-2.iron-selected .item-heading {
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+
+      paper-item.custom-2 .item-heading {
+        padding-left: 16px;
+      }
+
+      paper-checbox.item-checkbox {
+        --paper-checkbox-unchecked-color: #fff;
+      }
+
+      .item-content {
+        color: rgba(0, 0, 0, .87);
+        background-color: #fafafa;
+      }
+
+      .custom-small-button {
+        padding: 4px 8px;
+        border-radius: 3px;
+        font-size: 12px;
+        color: #000;
+        font-weight: 500;
+        background: #eee;
+      }
+
+      .custom-small-button iron-icon {
+        margin-right: 6px;
+        height: 14px;
+        width: 14px;
+        color: #000;
+      }
+
+      .custom-small-button.colored {
+        color: #fff;
+        background: #009588;
+      }
+
+      .custom-small-button.colored iron-icon {
+        color: #fff;
+      }
+
+      paper-dialog .buttons {
+        padding: 10px 16px;
+      }
+
+      paper-dialog>* {
+        padding: 0 16px;
+      }
+
+      paper-tab.iron-selected {
+        background-color: var(--paper-teal-500);
+        color: #fff;
+      }
+
+      .b-colored {
+        border: 2px solid var(--paper-teal-500);
+      }
+
+      .preview-title {
+        padding-left: 16px;
+        padding-right: 8px;
+        background-color: #fafafa;
+        min-height: 64px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .btn-add {
+        min-width: 0;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+        background-color: #eceff1;
+        color: rgba(0, 0, 0, .87);
+      }
+
+      .card-actions-2 {
+        padding: 15px;
+        border-top: 1px solid #eee;
+
+      }
+
+      paper-item.custom {
+        padding: 8px;
+
+      }
+
+      paper-item.custom:nth-child(even) {
+        background-color: #fafafa
+      }
+
+      vaadin-date-picker ::content paper-input-container {
+        padding-top: 0 !important;
+      }
+
+      vaadin-date-picker ::content .floated-label-placeholder {
+        display: none;
+      }
+
+      @media screen and (max-width: 597px) {
+        vaadin-date-picker ::content .floated-label-placeholder {
+          display: block;
+        }
+        vaadin-date-picker {
+          width: 100%;
+        }
+      }
+
+      paper-dialog#dialogAttachement {
+        margin: 0 16px !important;
+        top: 24px !important;
+      }
+
+      paper-dialog .buttons paper-button {
+        margin: 3px !important;
+      }
+
+      .custom-scroll {
+        overflow-y: auto;
+        max-height: 390px;
+      }
+
+      .custom-item {
+        margin-top: 4px !important;
+        margin-bottom: 4px !important;
+        background-color: #fff;
+        box-sizing: border-box;
+        padding: 8px;
+      }
+
+      .custom-item:first-child {
+        border-top: none !important;
+      }
+    </style>
+
+    <div class="master-container">
+
+      <div class="limiting-container custom-input-field">
+
+        <!-- Test Resutls - start -->
+        <template is="dom-if" if="[[!_isEmptyArray(testResultObjectList)]]">
+          <template id="test-result-list-repeater" is="dom-repeat" items="[[testResultObjectList]]">
+            <paper-card class="m-bottom-8">
+              <div class="preview-title horizontal layout center">
+                <div class="type caption-2 m-right-8">[[_returnSerial(index)]].</div>
+                <div class="flex">
+                  <div class="type body-lead" style="color: #009688; font-weight: 500;">{{item.investigationName}}</div>
+                  <div class="type body">
+                    <strong>Advised by:</strong> {{item.advisedDoctorName}} on [[_formatDateTime(item.advisedTestCreatedDatetimeStamp)]]</div>
+                </div>
+                <div class="action-area horizontal layout center">
+                  <paper-button on-tap="showAttachmentDialog" raised class="btn-add" on-tap="">
+                    <iron-icon icon="attachment" class="m-right-8"></iron-icon>Add Attachment
+                  </paper-button>
+                </div>
+                <paper-button on-tap="readFromMachineTapped" raised class="primary">Read From Machine</paper-button>
+
+              </div>
+              
+              <!-- Single Investigations -->
+              <template is="dom-if" if="[[!item.data.groupInvestigation]]">
+                <div class="p-4">
+                  <template is="dom-repeat" items="{{item.data.testList}}">
+                    <div class="custom-item">
+                      <div style="width: 100%;">
+                        <div class="horizontal layout center">
+                          <div class=" flex type body" style="font-weight: bold; text-transform: capitalize; color: green;">
+                            <span class="type caption m-right-8">[[_returnSerial(index)]].</span>{{item.testName}}</div>
+                        </div>
+                        <div class="horizontal layout center wrap center-justified">
+                          <paper-textarea rows="2" style="min-width: 128px;" no-label-float="true" class="m-horizontal-8 flex" label="Value" value="{{item.testResult}}"></paper-textarea>
+                          <vaadin-combo-box class="m-horizontal-8" no-label-float="true" label="Unit(s)" items="{{item.testUnitList}}" allow-custom-value="true" value="{{item.testUnit}}"></vaadin-combo-box>
+                          <vaadin-date-picker no-label-float="true" label="[[$TRANSLATE('Date Perform',LANG)]]" class="m-horizontal-8" value="{{item.datePerform}}"></vaadin-date-picker>
+                        </div>
+                        <div class="horizontal layout center m-left-8 m-top-8">
+                          <div class="type caption-2">
+                            <strong>Reference:</strong> {{item.referenceRange}}</div>
+                          <paper-button on-tap="showRefRangeDialog" class="m-left-8 custom-small-button">
+                            <iron-icon icon="create"></iron-icon>Edit</paper-button>
+                        </div>
+                        <div>
+                          <paper-textarea rows="2" no-label-float="true" label="Comment" class="m-horizontal-8" value="{{item.comment}}"></paper-textarea>
+                        </div>
+                        <div>
+                          <paper-textarea rows="2" no-label-float="true" label="Method" class="m-horizontal-8" value="{{item.method}}"></paper-textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </template>
+
+              <!-- Group Investigations -->
+              <template is="dom-if" if="[[item.data.groupInvestigation]]">
+                <div class="p-4">
+                  <template is="dom-repeat" items="{{item.data.groupTestList}}" as="group">
+                    <div class="custom-item">
+                      <div style="width: 100%;">
+                        <div class="horizontal layout center m-bottom-8">
+                          <div class=" flex type body" style="font-weight: bolder; text-transform: capitalize; color: green;">
+                            <span class="type caption m-right-8">[[_returnSerial(index)]].</span>{{group.groupName}}</div>
+                        </div>
+                        <template is="dom-repeat" items="{{group.testList}}">
+                          <div class=" flex type body" style="font-weight: bold; text-transform: capitalize; color: rgb(196, 127, 0);">
+                            <span class="type caption m-left-8">[[_returnSerial(index)]]. </span>{{item.testName}}
+                          </div>
+                          <div class="horizontal layout center wrap center-justified">
+                            <paper-textarea rows="2" style="min-width: 128px;" no-label-float="true" class="m-horizontal-8 flex" label="Value" value="{{item.testResult}}"></paper-textarea>
+                            <vaadin-combo-box class="m-horizontal-8" no-label-float="true" label="Unit(s)" items="{{item.testUnitList}}" allow-custom-value="true" value="{{item.testUnit}}"></vaadin-combo-box>
+                            <vaadin-date-picker no-label-float="true" label="[[$TRANSLATE('Date Perform',LANG)]]" class="m-horizontal-8" value="{{item.datePerform}}"></vaadin-date-picker>
+                          </div>
+                          <div class="horizontal layout center m-left-8 m-top-8">
+                            <div class="type caption-2">
+                              <strong>Reference:</strong> {{item.referenceRange}}</div>
+                            <paper-button on-tap="showRefRangeDialog" class="m-left-8 custom-small-button">
+                              <iron-icon icon="create"></iron-icon>Edit</paper-button>
+                          </div>
+                          <div>
+                            <paper-textarea rows="2" no-label-float="true" label="Comment" class="m-horizontal-8" value="{{item.comment}}"></paper-textarea>
+                          </div>
+                          <div>
+                            <paper-textarea rows="2" no-label-float="true" label="Method" class="m-horizontal-8" value="{{item.method}}"></paper-textarea>
+                          </div>
+                        </template>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </template>
+              <div>
+                  <paper-textarea rows="2" value="{{item.data.overallComment}}" class="m-horizontal-8" label="Overall Comments"></paper-textarea>
+                  <paper-textarea rows="2" value="{{item.data.heading}}" class="m-horizontal-8" label="Heading"></paper-textarea>
+                  <vaadin-combo-box class="m-horizontal-8" rows="2" no-label-float="true" label="Sub Heading Dropdown" items="[[pathologyNameList]]"
+                    allow-custom-value="true" value="{{item.data.subHeading}}"></vaadin-combo-box>
+                  <!-- <paper-textarea rows="2" value="{{item.data.subHeading}}" class="m-horizontal-8" label="Sub heading"></paper-textarea> -->
+              </div>
+              <div class="card-actions">
+                <div class="horizontal layout">
+                  <paper-checkbox checked={{item.availableToPatient}}>Available to Patient</paper-checkbox>
+                  <div class="flex"></div>
+                  
+                </div>
+              </div>
+            </paper-card>
+          </template>
+        </template>
+        <paper-card class="m-top-8">
+          <div class="card-actions-2 horizontal layout center">
+            <div class="flex horizontal layout center">
+              <paper-icon-button style="height: 36px; width: 36px;" icon="create" on-tap="showCheckedByUserDialog"></paper-icon-button>
+              <div class="type body flex">
+                <strong>Checked By: </strong>{{checkedByUserObj.checkedByUserName}}
+                <template is="dom-if" if="[[checkedByUserObj.checkedByUserSpeciality]]">
+                  <span> ({{checkedByUserObj.checkedByUserSpeciality}})</span>
+                </template>
+              </div>
+            </div>
+          </div>
+        </paper-card>
+
+        <paper-card class="m-top-8">
+          <div class="card-actions-2 horizontal layout center">
+            <div class="flex horizontal layout center">
+              <paper-icon-button style="height: 36px; width: 36px;" icon="create" on-tap="showReportedDoctorDialog"></paper-icon-button>
+              <div class="type body flex">
+                <strong>Reported By: </strong>{{reportedDoctorObj.reportedDoctorName}}
+                <template is="dom-if" if="[[reportedDoctorObj.reportedDoctorSpeciality]]">
+                  <span> ({{reportedDoctorObj.reportedDoctorSpeciality}})</span>
+                </template>
+              </div>
+            </div>
+          </div>
+        </paper-card>
+        <!-- Test Resutls - end -->
+
+      </div>
+    </div>
+
+    <paper-dialog id="dialogReferenceRange" dynamic-align="true">
+      <div>
+        <paper-textarea rows="2" label="Reference Range" value="{{referenceRangeValue}}"></paper-textarea>
+      </div>
+
+
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button autofocus raised class="colored" on-tap="updateTestRefRange">Update</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="dialogCheckedByUser" style="min-width: 492px !important;">
+      <paper-tabs  class="basic-tabs" selected="{{selectedCheckedByUserPage}}">
+        <paper-tab>Available</paper-tab>
+        <paper-tab>Search</paper-tab>
+      </paper-tabs>
+    
+      <iron-pages selected="{{selectedCheckedByUserPage}}">
+    
+        <!-- Page - Checked By User List -->
+        <div>
+          <template is="dom-if" if="[[!_isEmptyArray(matchingUserAddedCheckedByUserList.length)]]">
+            <div class="p-0">
+              <paper-listbox>
+    
+                <template id="user-added-checked-by-user-list-repeater" is="dom-repeat"
+                  items="[[matchingUserAddedCheckedByUserList]]">
+                  <paper-item class="custom layout horizontal center">
+                    <!-- <div class="type caption secondary">[[item.serial]]</div> -->
+                    <paper-icon-button icon="delete" on-click="_onCheckedByUserItemDeleteBtnPressed"></paper-icon-button>
+    
+                    <div class="type body capitalize flex">[[item.data.name]]
+                      <i>[[item.data.specializationList.0.specializationTitle]]</i>
+                    </div>
+    
+                    <paper-icon-button icon="add" on-click="_onCheckedByUserItemAddBtnPressed"></paper-icon-button>
+                </template>
+    
+              </paper-listbox>
+    
+            </div>
+          </template>
+    
+          <template is="dom-if" if="[[_isEmptyArray(matchingUserAddedCheckedByUserList.length)]]">
+            <div class="card-content layout horizontal center center-justified">
+              <div class="type body secondary">-- empty --</div>
+            </div>
+          </template>
+        </div>
+        <!-- /Page - Checked By User List -->
+    
+        <!-- Page - Checked By User Finder -->
+        <div>
+    
+          <div class="box-grayed">
+            <paper-input class="flex" value="{{searchFieldForCheckedByUserMainInput}}"
+              label="Search By User Name, Phone, Email"></paper-input>
+            <div class="horizontal layout end-justified">
+              <paper-button class="colored" raised on-tap="searchForCheckedByUserOnlineButtonPressed">Search User</paper-button>
+            </div>
+          </div>
+          <template is="dom-if" if="[[hasSearchBeenPressedForCheckedByUser]]">
+            <div class="layout horizontal center p-16">
+              <div class="title flex">Results: [[matchingCheckedByUserList.length]] User(s) found</div>
+              <paper-icon-button class="m-left-16" icon="clear" on-tap="clearSearchResultsClicked"></paper-icon-button>
+            </div>
+    
+            <div class="p-0">
+              <paper-listbox>
+    
+                <template id="checked-by-user-list-repeater" is="dom-repeat" items="[[matchingCheckedByUserList]]">
+                  <paper-item class="custom layout horizontal center">
+                    <div class="type caption secondary">[[item.serial]]</div>
+    
+                    <div class="flex m-left-8">
+                      <div class="type body capitalize">[[item.name]]</div>
+                      <div class="type caption">[[item.email]]</div>
+                      <div class="type caption">[[item.phone]]</div>
+                    </div>
+    
+                    <paper-menu-button horizontal-align="right" no-animations>
+                      <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                      <paper-menu class="dropdown-content">
+                        <template is="dom-if" if="[[isThatNewTest]]">
+                          <paper-item on-tap="_onClickAddToCheckedByUser">Add as Checked By</paper-item>
+                        </template>
+    
+                        <paper-item on-tap="_onClickAddToCheckedByUser">Add to Checked By</paper-item>
+                      </paper-menu>
+                    </paper-menu-button>
+                  </paper-item>
+                </template>
+    
+              </paper-listbox>
+    
+            </div>
+          </template>
+        </div>
+        <!-- /Page - Checked By User Finder -->
+    
+      </iron-pages>
+    
+    
+      <div class="buttons">
+        <paper-button raised dialog-dismiss class="">Close</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="dialogReportedDoctor" style="min-width: 492px !important;">
+      <paper-tabs style="background-color: #fafafa;" class="basic-tabs" selected="{{selectedReportedDoctorPage}}">
+        <paper-tab>Available</paper-tab>
+        <paper-tab>Search</paper-tab>
+      </paper-tabs>
+
+      <iron-pages selected="{{selectedReportedDoctorPage}}">
+
+        <!-- Page - Reported Doctor List -->
+        <div>
+          <template is="dom-if" if="[[!_isEmptyArray(matchingUserAddedReportedDoctorList.length)]]">
+            <div class="p-0">
+              <paper-listbox>
+
+                <template id="user-added-reported-doctor-list-repeater" is="dom-repeat" items="[[matchingUserAddedReportedDoctorList]]">
+                  <paper-item class="custom layout horizontal center">
+                    <!-- <div class="type caption secondary">[[item.serial]]</div> -->
+                    <paper-icon-button icon="delete" on-click="_onReportedDoctorItemDeleteBtnPressed"></paper-icon-button>
+
+                    <div class="type body capitalize flex">[[item.data.name]]
+                      <i>[[item.data.specializationList.0.specializationTitle]]</i>
+                    </div>
+
+                    <paper-icon-button icon="add" on-click="_onReportedDoctorItemAddBtnPressed"></paper-icon-button>
+                </template>
+
+              </paper-listbox>
+
+            </div>
+          </template>
+
+          <template is="dom-if" if="[[_isEmptyArray(matchingUserAddedReportedDoctorList.length)]]">
+            <div class="card-content layout horizontal center center-justified">
+              <div class="type body secondary">-- empty --</div>
+            </div>
+          </template>
+        </div>
+        <!-- /Page - Reported Doctor List -->
+
+        <!-- Page - Doctor Finder -->
+        <div>
+
+          <div class="box-grayed">
+            <paper-input class="flex" value="{{searchFieldMainInput}}" label="Search By Doctor Name, phone, Email, NID or Hospital Number"></paper-input>
+            <div class="horizontal layout end-justified">
+              <paper-button class="colored" raised on-tap="searchOnlineButtonPressed">Search Doctor</paper-button>
+            </div>
+          </div>
+          <template is="dom-if" if="[[hasSearchBeenPressed]]">
+            <div class="layout horizontal center p-16">
+              <div class="title flex">Results: [[matchingDoctorList.length]] Doctor(s) found</div>
+              <paper-icon-button class="m-left-16" icon="clear" on-tap="clearSearchResultsClicked"></paper-icon-button>
+            </div>
+
+            <div class="p-0">
+              <paper-listbox>
+
+                <template id="doctor-list-repeater" is="dom-repeat" items="[[matchingDoctorList]]">
+                  <paper-item class="custom layout horizontal center">
+                    <div class="type caption secondary">[[item.serial]]</div>
+
+                    <div class="flex m-left-8">
+                      <div class="type body capitalize">[[item.name]]</div>
+                      <div class="type caption">[[item.email]]</div>
+                      <div class="type caption">[[item.phone]]</div>
+                    </div>
+
+                    <paper-menu-button horizontal-align="right" no-animations>
+                      <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                      <paper-menu class="dropdown-content">
+                        <template is="dom-if" if="[[isThatNewTest]]">
+                          <paper-item on-tap="_onClickAddAsAdvisedDoctor">Add as Advised Doctor</paper-item>
+                        </template>
+
+                        <paper-item on-tap="_onClickAddToReportedDoctor">Add to Reported Doctor</paper-item>
+                      </paper-menu>
+                    </paper-menu-button>
+                  </paper-item>
+                </template>
+
+              </paper-listbox>
+
+            </div>
+          </template>
+        </div>
+        <!-- /Page - Doctor Finder -->
+
+      </iron-pages>
+
+
+      <div class="buttons">
+        <paper-button raised dialog-dismiss class="">Close</paper-button>
+      </div>
+    </paper-dialog>
+
+
+
+
+    <!-- Dialog for - Attachemnt - start -->
+    <paper-dialog class="custom-input-field" id="dialogAttachement" modal dynamic-align="true">
+      <h2>Attachments</h2>
+      <div class="custom-scroll">
+        <template is="dom-if" if="[[newAttachment]]">
+
+          <div class="horizontal layout wrap">
+            <div class="vertical layout center descriptive-area">
+              <template is="dom-if" if="[[newAttachment.isImage]]">
+                <img class="new-attachment-preview" src$="[[newAttachment.dataUri]]" />
+              </template>
+              <!-- <template is="dom-if" if="[[!newAttachment.isImage]]">
+                <img class="new-attachment-preview" src="../../../assets/no-preview.png" />
+              </template> -->
+              <paper-progress value="[[newAttachment.progress]]"></paper-progress>
+            </div>
+            <div class="vertical layout descriptive-area">
+              <paper-input class="logo-input" type="file" accept="*/*" on-change="fileInputChanged" no-ink></paper-input>
+
+              <template is="dom-if" if="[[newAttachment.isLoaded]]">
+
+                <paper-input label="Title" value="{{newAttachment.title}}"></paper-input>
+
+                <paper-input label="Description" value="{{newAttachment.description}}"></paper-input>
+
+                <paper-input readonly label="Space Needed" value="[[$toMega(newAttachment.sizeInChars)]]MB"></paper-input>
+
+              </template>
+            </div>
+          </div>
+
+        </template>
+
+        <div class="layout horizontal center" hidden$="[[!isDownloading]]">
+          <paper-spinner active></paper-spinner>
+          <span class="text-muted"> &nbsp; &nbsp; Loading Images...</span>
+        </div>
+        <template is="dom-if" if="[[attachmentList]]">
+          <div class="attachment-card-list horizontal layout wrap">
+
+            <template is="dom-repeat" items="[[attachmentList]]" as="attachment" index-as="attachmentIndex">
+
+              <div class="attachment-card vertical layout">
+                <img class="image" src$="[[$getImageSrc(attachment)]]" hidden$="[[!attachment.isImage]]" />
+                <div class="footer">
+                  <div class="title horizontal layout center">
+                    <div class="flex">[[attachment.title]]</div>
+                    <paper-icon-button on-tap="downloadPressed" icon="file-download"></paper-icon-button>
+                    <paper-icon-button on-tap="deletePressed" icon="delete"></paper-icon-button>
+                  </div>
+                </div>
+              </div>
+            </template>
+
+          </div>
+        </template>
+
+      </div>
+
+      <div class="buttons layout horizontal wrap">
+        <paper-button dialog-dismiss class="btn btn-default">Close</paper-button>
+        <template is="dom-if" if="[[newAttachment]]">
+          <template is="dom-if" if="[[newAttachment.isLoaded]]">
+            <div class="layout horizontal center" hidden$="[[!isUploading]]">
+              <paper-spinner style="margin-right: 10px;" active></paper-spinner>
+              <paper-button disabled>UPLOADING...</paper-button>
+            </div>
+
+            <paper-button class="btn btn-default" on-tap="saveLocallyPressed">SAVE LOCALLY</paper-button>
+            <paper-button class="btn btn-default" on-tap="keepUntilBrowserClosedPressed">KEEP UNTIL BROWSER IS CLOSED</paper-button>
+            <paper-button autofocus class="colored" raised on-tap="uploadPressed" hidden$="[[isUploading]]">UPLOAD</paper-button>
+          </template>
+        </template>
+      </div>
+    </paper-dialog>
+    <!-- Dialog for - Attachemnt - end -->
+
+
+
+  </template>
+  <script src='page-test-results-editor.coffee-compiled.js'></script>
+</dom-module>

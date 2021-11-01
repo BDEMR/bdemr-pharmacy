@@ -1,0 +1,382 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<dom-module id="page-attendance-manager">
+  <template>
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+        width: 90%;
+      }
+
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .header {
+        background-color: var(--paper-grey-100);
+        padding: 15px;
+      }
+
+      .label {
+        background-color: var(--paper-grey-100);
+        padding: 5px;
+      }
+
+      .border-bottom {
+        border-bottom: 1px solid rgb(235, 230, 230);
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      input {
+        background-color: #dde2e8;
+        border-radius: 6px;
+        height: 36px;
+        font-weight: 500;
+        padding: 0px 8px;
+        box-sizing: border-box;
+      }
+
+      vaadin-grid.custom-vaadin-grid {
+        height: inherit;
+        font-family: Roboto, sans-serif;
+        --divider-color: rgba(0, 0, 0, var(--dark-divider-opacity));
+
+        --vaadin-grid-header-cell: {
+          height: 48px;
+          font-size: 16px;
+        }
+
+        --vaadin-grid-body-cell: {
+          /* height: 48px; */
+          color: rgba(0, 0, 0, var(--dark-primary-opacity));
+          font-size: 16px;
+        }
+
+        --vaadin-grid-body-row-hover-cell: {
+          background-color: var(--paper-grey-200);
+        }
+
+        --vaadin-grid-body-row-selected-cell: {
+          background-color: var(--paper-grey-100);
+        }
+
+        --vaadin-grid-focused-cell: {
+          box-shadow: none;
+          font-weight: bold;
+        }
+
+      }
+    </style>
+
+    <div id="tabContainer" class="tabs-container">
+      <paper-tabs id="tabs" selected="{{selectedPage}}" scrollable noink='true'>
+        <paper-tab style="text-transform: uppercase;">Manage Academic Sessions</paper-tab>
+        <paper-tab style="text-transform: uppercase;">Manage Groups</paper-tab>
+        <paper-tab style="text-transform: uppercase;">Attendee List</paper-tab>
+        <paper-tab style="text-transform: uppercase;">Activity Logs</paper-tab>
+      </paper-tabs>
+    </div>
+
+    <div class="master-container">
+      <div class="limiting-container">
+        <paper-progress indeterminate hidden$="[[!loadingCounter]]"></paper-progress>
+
+        <iron-pages selected="{{selectedPage}}">
+
+          <!-- Manage Academic Sessions -->
+          <section>
+            <paper-card heading="Manage Academic Sessions">
+              <div class="card-content custom-input-field">
+
+                <div class="layout horizontal end wrap">
+                  <paper-button class="btn btn-success m-bottom-8" raised on-tap="createNewSessionTapped">Create New
+                    Session</paper-button>
+                  <div class="flex"></div>
+                  <custom-vital-search on-date-select="filterByDateClickedFromManageSession"
+                    on-clear="filterByDateClearButtonClickedFromManageSession">
+                  </custom-vital-search>
+                  <div class="m-bottom-8">
+                    <paper-button class="btn btn-success" raised on-tap="showAllSessionTapped">Show All Sessions
+                    </paper-button>
+                    <paper-button raised on-tap="resetButtonClicked">Reset</paper-button>
+                  </div>
+                </div>
+
+                <vaadin-grid class="custom-vaadin-grid m-top-8" items="[[academicSessionList]]">
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter path="date" direction="asc">Date</vaadin-grid-sorter>
+                    </template>
+                    <template>[[$formatDate(item.date)]]</template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">Title</template>
+                    <template>[[item.title]]</template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">Subject</template>
+                    <template>[[item.subject]]</template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">Presenter</template>
+                    <template>[[item.presenter.name]]</template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">Start Time</template>
+                    <template>[[$getFormatted12HRTimeFromMS(item.startTime)]]</template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">End Time</template>
+                    <template>[[$getFormatted12HRTimeFromMS(item.endTime)]]</template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column width="250px" resizable>
+                    <template class="header">Actions</template>
+                    <template>
+                      <div class="horizontal layout">
+                        <paper-button raised class="btn btn-success" on-tap="viewSessionButtonPressed">View
+                        </paper-button>
+                        <paper-button raised on-tap="editSessionButtonPressed">Edit</paper-button>
+                        <!-- <paper-icon-button icon="delete" class="btn btn-danger" on-tap="deleteSessionBtnClicked"></paper-icon-button> -->
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+
+                </vaadin-grid>
+
+              </div>
+            </paper-card>
+          </section>
+
+          <!-- Manage Groups -->
+          <section>
+            <paper-card heading="Manage Groups">
+              <div class="card-content">
+
+                <div class="layout horizontal end wrap">
+                  <!-- <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search> -->
+
+                  <paper-button class="btn btn-success" raised on-tap="createGroupsPressed">Create Group</paper-button>
+                  <div class="flex"></div>
+                  <paper-button class="btn btn-success" raised on-tap="showGroupsPressed">Show All Groups</paper-button>
+                  <!-- <paper-button raised on-tap="resetButtonClicked">Reset</paper-button> -->
+                </div>
+
+                <vaadin-grid class="custom-vaadin-grid m-top-16" items="[[groupList]]">
+                  <vaadin-grid-column resizable>
+                    <template class="header">Name</template>
+                    <template>[[item.name]]</template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <span>Description</span>
+                    </template>
+                    <template>
+                      <div>[[item.description]]</div>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <span>Total Attendee Count</span>
+                    </template>
+                    <template>
+                      <div>[[item.attendees.length]]</div>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <span>Action</span>
+                    </template>
+                    <template>
+                      <div class="horizontal layout">
+                        <paper-button class="btn btn-success" on-tap="editGroupPressed">Edit</paper-button>
+                        <!-- <paper-icon-button icon="delete" class="btn btn-danger" on-tap="deleteGroupPressed"> -->
+                        </paper-icon-button>
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+
+                </vaadin-grid>
+
+              </div>
+            </paper-card>
+          </section>
+
+          <!-- Attendee List -->
+          <section>
+            <paper-card heading="All Attendee List">
+              <div class="card-content custom-input-field">
+
+                <div class="layout horizontal end wrap">
+                  <div class="flex"></div>
+                  <custom-vital-search on-date-select="filterByDateClickedFromAttendeeList"
+                    on-clear="filterByDateClearButtonClickedFromAttendeeList">
+                  </custom-vital-search>
+                  <div class="m-bottom-8">
+                    <paper-button class="btn btn-success" raised on-tap="showAllAttendeeTapped">Show All Attendees
+                    </paper-button>
+                    <paper-button raised on-tap="resetButtonClicked">Reset</paper-button>
+                  </div>
+                </div>
+
+                <vaadin-grid class="custom-vaadin-grid m-top-8" items="[[attendeeList]]">
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">Attendee Name</template>
+                    <template>[[$getFullName(item.name)]]</template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column width="30px" resizable>
+                    <template class="header">User Role</template>
+                    <template>
+                      <template is="dom-repeat" items="[[item.userRoles]]">
+                        <paper-item>[[item]]</paper-item>
+                      </template>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column width="30px" resizable>
+                    <template class="header">Organization Role</template>
+                    <template>
+                      <template is="dom-repeat" items="[[item.organizationRole]]">
+                        <paper-item>[[item]]</paper-item>
+                      </template>
+                    </template>
+                  </vaadin-grid-column>
+
+
+                  <vaadin-grid-column width="200px" resizable>
+                    <template class="header">Total Attendance as Per Lecture</template>
+                    <template>
+                      <template is="dom-repeat" items="[[item.list]]" as="lecture">
+                        <paper-item>
+                          <strong>[[lecture.type]]:</strong>&nbsp;[[lecture.totalPresentCount]]/[[lecture.totalCount]]
+                        </paper-item>
+                      </template>
+                    </template>
+                  </vaadin-grid-column>
+
+
+                  <vaadin-grid-column width="75px" resizable>
+                    <template class="header">Total Session Attended</template>
+                    <template>[[item.totalPresentCount]] / [[item.totalCount]]</template>
+                  </vaadin-grid-column>
+
+
+                  <vaadin-grid-column width="200px" resizable>
+                    <template class="header">Actions</template>
+                    <template>
+                      <div class="horizontal layout">
+                        <paper-button raised class="btn btn-success" on-tap="viewAttendeeButtonPressed">View
+                        </paper-button>
+                        <paper-button raised on-tap="qualifiedBtnPressed">Qualified</paper-button>
+                        <paper-button raised on-tap="disqualifiedBtnPressed">Disqualified</paper-button>
+                        </paper-icon-button>
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+
+                </vaadin-grid>
+
+
+              </div>
+            </paper-card>
+          </section>
+
+          <!-- Activity logs -->
+          <section>
+            <paper-card heading="Activity logs">
+              <div class="card-content custom-input-field">
+
+                <!-- <div class="layout horizontal end wrap">
+                  <div class="flex"></div>
+                  <custom-vital-search on-date-select="" on-clear="">
+                  </custom-vital-search>
+                  <div class="m-bottom-8">
+                    <paper-button class="btn btn-success" raised on-tap="">Show All Attendees
+                    </paper-button>
+                    <paper-button raised on-tap="resetButtonClicked">Reset</paper-button>
+                  </div>
+                </div> -->
+
+                <vaadin-grid class="custom-vaadin-grid m-top-8" items="[[activityLogs]]">
+
+
+                  <vaadin-grid-column width="30px" resizable>
+                    <template class="header">Date & time</template>
+                    <template>[[$mkDateTime(item.lastModifiedDatetimeStamp)]]</template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">Activity</template>
+                    <template>[[item.userName]] has [[item.action]]ed [[item.subject]]</template>
+                  </vaadin-grid-column>
+
+
+                </vaadin-grid>
+
+
+              </div>
+            </paper-card>
+          </section>
+
+        </iron-pages>
+
+      </div>
+    </div>
+
+
+
+  </template>
+  <script src="page-attendance-manager.coffee-compiled.js"></script>
+</dom-module>

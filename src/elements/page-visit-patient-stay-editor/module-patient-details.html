@@ -1,0 +1,274 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="module-patient-details">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      :host {
+        display: block;
+      }
+
+      .pull-combobox-up vaadin-combo-box{
+        position: relative;
+        top: -8px;
+      }
+
+      /* vaadin-combo-box.combobox-custom-style ::content label {
+        margin-top: 10px;
+        margin-left: 10px;
+        padding-bottom: 10px;
+      } */
+
+    </style>
+
+
+    <paper-card heading="Patient Details">
+
+      <div class="card-content ">
+
+        <div class="layout vertical ">
+
+          <paper-input label="Name" value="{{$getFullName(patient.name)}}"></paper-input>
+
+          <div class="layout horizontal">
+            <!-- <vaadin-date-picker class="flex" value="{{patient.dateOfBirth}}" label="Date of Birth (MM/DD/YYYY)" placeholder="MM/DD/YYYY"></vaadin-date-picker> -->
+            <paper-input class="flex" label="Date of Birth (MM/DD/YYYY)" type="date" value="{{patient.dateOfBirth}}"></paper-input>
+            <paper-input value="[[$computeAge(patient.dateOfBirth)]]" label="Age" disabled></paper-input>
+            <vaadin-combo-box class="flex m-left-10" label="Gender" items="[[genderList]]" value="{{patient.gender}}"></vaadin-combo-box>
+          </div>
+
+          <div class="layout horizontal">
+            <vaadin-combo-box class="flex" label="Marital Status" items="[[maritalStatusList]]" value="{{patient.maritalStatus}}">
+            </vaadin-combo-box>
+            <vaadin-combo-box class="flex m-left-10" label="Religion" items="[[religionList]]" value="{{patient.religion}}">
+            </vaadin-combo-box>
+          </div>
+
+          <paper-input class="flex" label="Father/Spouse Name" value="{{patient.patientFatherName}}"></paper-input>
+
+          <div class="layout horizontal pull-combobox-up">
+            <vaadin-combo-box class="flex" label="Blood Group" items="[[bloodGroupList]]" value="{{patient.bloodGroup}}">
+            </vaadin-combo-box>
+            <paper-input class="flex m-left-10" label="Known Allergy" value="{{patient.allergy}}"></paper-input>
+          </div>
+
+          <paper-input class="flex" label="Contact No." value="{{patient.phone}}" type="tel"></paper-input>
+
+          <paper-input class="flex" label="Occupation" value="{{patient.profession}}"></paper-input>
+
+          <!-- Contact Address - start -->
+          <div class="">
+            <div class="type title-2 primary m-vertical-8">Contact Address</div>
+            <paper-input class="full-width" value="{{patient.addressList.0.addressLine1}}" label="Address Line 1"></paper-input>
+            <paper-input class="full-width" value="{{patient.addressList.0.addressLine2}}" label="Address Line 2"></paper-input>
+
+            <div class="horizontal layout pull-combobox-up">
+
+              <!-- <paper-dropdown-menu class="custom-input" label="District" value="{{patient.addressList.0.addressDistrict}}">
+                <paper-menu class="dropdown-content" selected="[[districtIndex]]">
+                  <template is="dom-repeat" items="[[districtList]]">
+                    <paper-item>{{item}}</paper-item>
+                  </template>
+                </paper-menu>
+              </paper-dropdown-menu> -->
+
+              <vaadin-combo-box class="flex" label="District" items="[[districtList]]" value="{{patient.addressList.0.addressDistrict}}">
+              </vaadin-combo-box>
+
+              <paper-input class="flex m-left-10" value="{{patient.addressList.0.subdistrictName}}" label="Thana/Sub Disctrict"></paper-input>
+
+              <paper-input class="flex m-left-10" value="{{patient.addressList.0.addressCountry}}" label="Country"></paper-input>
+
+            </div>
+
+
+
+            <div class="m-top-8">
+              <paper-toggle-button checked="{{hideMoreAddressInput}}">More Address options</paper-toggle-button>
+            </div>
+
+            <div class="horizontal layout wrap" hidden$="[[!hideMoreAddressInput]]">
+              <paper-input class="m-left-4" value="{{patient.addressList.0.addressAreaName}}" label="Area"></paper-input>
+              <paper-input class="m-left-4" value="{{patient.addressList.0.flat}}" label="Flat"></paper-input>
+              <paper-input class="m-left-4" value="{{patient.addressList.0.floor}}" label="Floor"></paper-input>
+              <paper-input class="m-left-4" value="{{patient.addressList.0.plot}}" label="Plot"></paper-input>
+
+              <paper-input class="m-left-4" value="{{patient.addressList.0.block}}" label="Block"></paper-input>
+              <paper-input class="m-left-4" value="{{patient.addressList.0.road}}" label="Road"></paper-input>
+              <paper-input class="m-left-4" value="{{patient.addressList.0.village}}" label="Village"></paper-input>
+
+              <paper-input class="m-left-4" value="{{patient.addressList.0.addressUnion}}" label="Union"></paper-input>
+
+              <paper-input type="number" class="m-left-4" value="{{patient.addressList.0.addressPostalOrZipCode}}"
+                label="Postal/Zip Code"></paper-input>
+              <paper-input class="m-left-4" value="{{patient.addressList.0.addressCityOrTown}}" label="City/Town"></paper-input>
+
+              <paper-input class="m-left-4" value="{{patient.addressList.0.stateOrProvince}}" label="State/Province"></paper-input>
+            </div>
+
+
+          </div>
+          <!-- Contact Address - end -->
+
+        </div>
+
+        <div>
+          <div class="type title-2 primary m-top-8">Emergency Contact:</div>
+          <paper-input label="Name" value="{{patient.emergencyContact.name}}"></paper-input>
+          <paper-input label="Relationship" value="{{patient.emergencyContact.relation}}"></paper-input>
+          <paper-textarea class="m-bottom-24" label="Address" value="{{patient.emergencyContact.address}}"></paper-textarea>
+          <paper-input label="Contact No." value="{{patient.emergencyContact.contact}}" type="tel"></paper-input>
+        </div>
+
+      </div>
+
+    </paper-card>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'module-patient-details',
+      behaviors: [
+        app.behaviors.commonComputes,
+      ],
+      properties: {
+        patient: {
+          type: Object,
+          value: {},
+          notify: true
+        },
+
+        maritalStatusList: {
+          type: Array,
+          value: [
+            'Married',
+            'Unmarried'
+          ]
+        },
+        genderList: {
+          type: Array,
+          value: [
+            'Male',
+            'Female',
+            'Other'
+          ]
+        },
+        bloodGroupList: {
+          type: Array,
+          value: [
+            'A+',
+            'A-',
+            'B+',
+            'B-',
+            'O+',
+            'O-',
+            'AB+',
+            'AB-'
+          ]
+        },
+        religionList: {
+          type: Array,
+          value: [
+            'Hinduism',
+            'Islam',
+            'Christianity',
+            'Judaism',
+            'Buddhism',
+            'Other'
+          ]
+        },
+        districtList: {
+          type: Array,
+          value: [
+            'Bagerhat',
+            'Bandarban',
+            'Barguna',
+            'Barisal',
+            'Bhola',
+            'Bogra',
+            'Brahmanbaria',
+            'Chandpur',
+            'Chittagong',
+            'Chuadanga',
+            'Comilla',
+            'Cox\'s Bazar',
+            'Dhaka',
+            'Dinajpur',
+            'Faridpur',
+            'Feni',
+            'Gaibandha',
+            'Gazipur',
+            'Gopalganj',
+            'Habiganj',
+            'Jamalpur',
+            'Jessore',
+            'Jhalokati',
+            'Jhenaidah',
+            'Joypurhat',
+            'Khagrachhari',
+            'Khulna',
+            'Kishoreganj',
+            'Kurigram',
+            'Kushtia',
+            'Lakshmipur',
+            'Lalmonirhat',
+            'Madaripur',
+            'Magura',
+            'Manikganj',
+            'Meherpur',
+            'Moulvibazar',
+            'Munshiganj',
+            'Mymensingh',
+            'Naogaon',
+            'Narail',
+            'Narayanganj',
+            'Narsingdi',
+            'Natore',
+            'Nawabganj',
+            'Netrakona',
+            'Nilphamari',
+            'Noakhali',
+            'Pabna',
+            'Panchagarh',
+            'Patuakhal',
+            'Pirojpur',
+            'Rajbari',
+            'Rajshahi',
+            'Rangamati',
+            'Rangpur',
+            'Satkhira',
+            'Shariatpur',
+            'Sherpur',
+            'Sirajganj',
+            'Sunamganj',
+            'Sylhet',
+            'Tangail ',
+            'Thakurgaon'
+          ]
+        }
+      },
+      
+    });
+  </script>
+
+</dom-module>

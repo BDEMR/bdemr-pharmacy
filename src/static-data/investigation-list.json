@@ -1,0 +1,7269 @@
+[
+  {
+    "name": "Acid Phosphatase",
+    "investigationList": [
+      {
+        "name": "Acid Phosphatase  non Prostatic",
+        "unitList": [
+          "ng/mL"
+        ],
+        "referenceRange": "ng/mL"
+      },
+      {
+        "name": "Acid Phosphatase  Prostatic",
+        "unitList": [
+          "U/L",
+          "ng/mL"
+        ],
+        "referenceRange": "0-0.8 U/L or <2.1 ng/mL"
+      },
+      {
+        "name": "Acid Phosphatase Total",
+        "unitList": [
+          "ng/mL",
+          "µgm/L",
+          "mg/L"
+        ],
+        "referenceRange": "2.5 to 3.7 ng /mL;or 2.5 to 3.7 microg /L"
+      }
+    ],
+    "investigationId": 0
+  },
+  {
+    "name": "Bronchoscopy/Colonoscopy/Endoscopy",
+    "investigationList": [
+      {
+        "name": "Bronchoscopy"
+      },
+      {
+        "name": "CLO Test"
+      },
+      {
+        "name": "Colonoscopy Full"
+      },
+      {
+        "name": "Colonoscopy Short"
+      },
+      {
+        "name": "Colonoscopy with Polypectomy"
+      },
+      {
+        "name": "Endoscopy and Band Ligation"
+      },
+      {
+        "name": "Endoscopy and Oesophageal ballon dilatation"
+      },
+      {
+        "name": "Endoscopy and Oesophageal Stenting"
+      },
+      {
+        "name": "Endoscopy and Polypectomy"
+      },
+      {
+        "name": "Endoscopy and Sclero therapy of Oesophageal Varices"
+      },
+      {
+        "name": "Endoscopy of Upper GIT"
+      },
+      {
+        "name": "Endoscopy Under Sedation"
+      },
+      {
+        "name": "ENDOSCOPY GUIDED FEEDING TUBE INTRODUCTION"
+      },
+      {
+        "name": "Endoscopy GUIDED ESOPHAGEAL STENTING"
+      },
+      {
+        "name": "Endoscopy GUIDED PEG Tube Insertion"
+      },
+      {
+        "name": "Endoscopy GUIDED PEJ Tube Insertion"
+      },
+      {
+        "name": "Endoscopy GUIDED EST"
+      },
+      {
+        "name": "Endoscopy GUIDED EVL"
+      },
+      {
+        "name": "Endoscopy GUIDED"
+      },
+      {
+        "name": "Endoscopy GUIDED Baloon Dilatation"
+      },
+      {
+        "name": "Endoscopy GUIDED Salivary gland Dilatation"
+      },
+      {
+        "name": "Endoscopy GUIDED Foreign Body Removal"
+      },
+      {
+        "name": "Endoscopy GUIDED REMOVAL OF UPPER G.I. POLYP"
+      },
+      {
+        "name": "Endoscopy GUIDED HAEMOSTASIS"
+      },
+      {
+        "name": "Endoscopy GUIDED DUODENAL DILATATION"
+      },
+      {
+        "name": "Proctoscopy"
+      },
+      {
+        "name": "Sigmoidoscopy"
+      }
+    ],
+    "investigationId": 1
+  },
+  {
+    "name": "CANCER MARKER",
+    "investigationList": [
+      {
+        "name": "AFP (Alpha Feto Protein)",
+        "unitList": [
+          "µgm/L",
+          "ng/mL"
+        ],
+        "referenceRange": "0-40 ng/mL(nanogram/ml) or µgm/L(microgram/L) (µgm/L) for Men and nonpregnant women;10-150 nanogram/ml or microgram/L (µgm/L) for  Women 15-18 week pregnant;"
+      },
+      {
+        "name": "B2-Microglobulin",
+        "unitList": [
+          "µgm/L"
+        ],
+        "referenceRange": "0-3 µgm/L(microgram/mL)"
+      },
+      {
+        "name": "BHCG (Beta-Human Chorionic Gonadotropin)",
+        "unitList": [
+          "mIU/mL"
+        ],
+        "referenceRange": "0.5-2.9 negative; 2.9-5 Borderline; Positive >5.0; 500-10000 mIU/ml in 3-4 weeks; 1000-50000 mIU/ml in 4-5 weeks; 10000-100000 mIU/ml in 5-6 weeks; 15000-200000 mIU/ml in 6-8 weeks;10000-100000 mIU/ml in 8-12 weeks; intrauterine structure that must be seen : >100 (intrauterine sac), >7200 (Intra-uterine gestation sac with yolk sac), >12,800 (Intra-uterine gestational sac, yolk sac and fetal pole with HEART BEAT)"
+      },
+      {
+        "name": "CA 15-3 (Cancer Antigen)",
+        "unitList": [
+          "U/mL"
+        ],
+        "referenceRange": "<30 U/mL"
+      },
+      {
+        "name": "CA- 125 (Cancer Antigen)",
+        "unitList": [
+          "kU/L",
+          "U/mL"
+        ],
+        "referenceRange": "0-35 units/mL (0-35 kU/L)"
+      },
+      {
+        "name": "CA- 19-9 (Cancer Antigen)",
+        "unitList": [
+          "U/mL"
+        ],
+        "referenceRange": "0-37 U/mL"
+      },
+      {
+        "name": "CEA(Carcinoembryonic Antigen Test)",
+        "unitList": [
+          "ng/mL",
+          "µgm/L"
+        ],
+        "referenceRange": "0-3 ng/mL(nanogram/ml) or microgram/L (µgm/L)"
+      },
+      {
+        "name": "PSA Free to total ratio",
+        "unitList": [
+          "% of PSA or no unit"
+        ],
+        "referenceRange": "interpretation by physician only."
+      },
+      {
+        "name": "PSA Total",
+        "unitList": [
+          "ng/mL"
+        ],
+        "referenceRange": "<40 years age: < or =2.0; 40-49 years age:< or =2.5;50-59 years age:< or =3.5; 60-69 years age: < or =4.5; 70-79 years age:< or =6.5>; or 80 years age:< or =7.2"
+      }
+    ],
+    "investigationId": 2
+  },
+  {
+    "name": "CARDIAC IMAGING",
+    "investigationList": [
+      {
+        "name": "24 Hr. Ambulatory Blood Pressure"
+      },
+      {
+        "name": "24 Hr. Ambulatory ECG (Holter Monitoring)"
+      },
+      {
+        "name": "COLOUR DOPPLER ECHO"
+      },
+      {
+        "name": "E.C.G"
+      },
+      {
+        "name": "E.T.T-Stress E.C.G"
+      },
+      {
+        "name": "ECHOCARDIOGRAM-2D & M-MODE"
+      },
+      {
+        "name": "Lymphoscintigraphy"
+      }
+    ],
+    "investigationId": 3
+  },
+  {
+    "name": "24 Hr. Ambulatory Blood Pressure",
+    "investigationList": [],
+    "investigationId": 4
+  },
+  {
+    "name": "DC (differential count) of blood",
+    "investigationList": [
+      {
+        "name": "Neutrophils",
+        "unitList": [
+          "10^9/l"
+        ],
+        "referenceRange": "2.0–7.0×10^9/l (40–80%)"
+      },
+      {
+        "name": "Lymphocytes",
+        "unitList": [
+          "10^9/l"
+        ],
+        "referenceRange": "1.0–3.0×10^9/l (20–40%)"
+      },
+      {
+        "name": "Monocytes",
+        "unitList": [
+          "10^9/l"
+        ],
+        "referenceRange": "0.2–1.0×10^9/l (2–10%)"
+      },
+      {
+        "name": "Eosinophils",
+        "unitList": [
+          "10^9/l"
+        ],
+        "referenceRange": "0.02–0.5×10^9/l (1–6%)"
+      },
+      {
+        "name": "Basophils",
+        "unitList": [
+          "10^9/l"
+        ],
+        "referenceRange": "0.02–0.1×10^9/l (< 1–2%)"
+      },
+      {
+        "name": "",
+        "unitList": [
+          ""
+        ]
+      },
+      {
+        "name": "White Blood Cell",
+        "unitList": [
+          "10^3/mm^3"
+        ]
+      },
+      {
+        "name": "Atypical Lymphocytes",
+        "unitList": [
+          "10^3/mm^3",
+          "%"
+        ]
+      },
+      {
+        "name": "Large Immature Cell",
+        "unitList": [
+          "10^3/mm^3",
+          "%"
+        ]
+      },
+      {
+        "name": "Large Immature Cell",
+        "unitList": [
+          "10^3/mm^3",
+          "%"
+        ]
+      },
+      {
+        "name": "C Reactive Protein",
+        "unitList": [
+          "mg/dL"
+        ]
+      }
+    ],
+    "showGroupNameOnInvoice": true,
+    "investigationId": 5
+  },
+  {
+    "name": "CARDIOLOGY Markers",
+    "investigationList": [
+      {
+        "name": "CK-MB",
+        "unitList": [
+          "IU/L"
+        ],
+        "referenceRange": "5-25 IU/L"
+      },
+      {
+        "name": "Troponin 1",
+        "unitList": [
+          "ng/mL"
+        ],
+        "referenceRange": "<0.01. Increased level is to be interpreted by physician"
+      },
+      {
+        "name": "Myoglobin",
+        "unitList": [
+          "ng/mL"
+        ],
+        "referenceRange": "0-85 ng/mL"
+      },
+      {
+        "name": "CPK",
+        "unitList": [
+          "U/L"
+        ],
+        "referenceRange": "22-198 U/L"
+      },
+      {
+        "name": "Homocysteine",
+        "unitList": [
+          "µmol/L"
+        ],
+        "referenceRange": "4-15 µmol/L)"
+      },
+      {
+        "name": "BNP (Brain-Type Natriuretic Peptide)",
+        "unitList": [
+          "pg/mL"
+        ],
+        "referenceRange": "< 100 pg/mL(picogram/mililiter) - HF unlikely; >400 pg/mL - HF likely; 100-400 pg/mL - Use clinical judgment"
+      },
+      {
+        "name": "NT-pro BNP (Brain-Type Natriuretic Peptide)",
+        "unitList": [
+          "ng/mL"
+        ],
+        "referenceRange": "< 300 ng/mL (nanogram/mililiter) - HF unlikely; Age < 50 years: NT-proBNP >450 pg/mL - HF likely; Age 50-75 years: NT-proBNP >900 pg/mL – HF likely; Age >75 years: NT-proBNP >1800 – HF likely"
+      }
+    ],
+    "investigationId": 6
+  },
+  {
+    "name": "DOPPLER",
+    "investigationList": [
+      {
+        "name": "Colour DOPPLER Study of Great Vessels of Neck Lt side"
+      },
+      {
+        "name": "Colour DOPPLER Study of Great Vessels of Neck Rt side"
+      },
+      {
+        "name": "Colour DOPPLER Study of Great Vessels of Neck"
+      },
+      {
+        "name": "Colour DOPPLER Study of Spermatic Veins"
+      },
+      {
+        "name": "DOPPLER AND DUPLEX Study of Facial region"
+      },
+      {
+        "name": "DOPPLER Study of Arteries of Both Lower Limbs"
+      },
+      {
+        "name": "DOPPLER Study of Arteries of Both Upper Limbs"
+      },
+      {
+        "name": "DOPPLER Study of Arteries of Lt Lower Limbs"
+      },
+      {
+        "name": "DOPPLER Study of Arteries of Lt Upper Limbs"
+      },
+      {
+        "name": "DOPPLER Study of Arteries of Rt Lower Limbs"
+      },
+      {
+        "name": "DOPPLER Study of Arteries of Rt Upper Limbs"
+      },
+      {
+        "name": "DOPPLER Study of CAROTID bilateral"
+      },
+      {
+        "name": "DOPPLER Study of CAROTID Lt"
+      },
+      {
+        "name": "DOPPLER Study of CAROTID Rt"
+      },
+      {
+        "name": "DOPPLER Study of Facial region"
+      },
+      {
+        "name": "DOPPLER Study of Facial region"
+      },
+      {
+        "name": "DOPPLER Study of Lt Lower Limbs"
+      },
+      {
+        "name": "DOPPLER Study of Neck Vessels"
+      },
+      {
+        "name": "DOPPLER Study of Pampiniform Plexus"
+      },
+      {
+        "name": "DOPPLER Study of Portal and Hepatic Veins"
+      },
+      {
+        "name": "DOPPLER Study of Renal Artery"
+      },
+      {
+        "name": "DOPPLER Study of Rt Lower Limbs"
+      },
+      {
+        "name": "DOPPLER Study of Throat for Swelling"
+      },
+      {
+        "name": "DOPPLER Study of Veins of Both Lower Limbs"
+      },
+      {
+        "name": "DOPPLER Study of Veins of Both Upper Limbs"
+      },
+      {
+        "name": "DOPPLER Study of Veins of Lt Lower Limbs"
+      },
+      {
+        "name": "DOPPLER Study of Veins of Lt Upper Limbs"
+      },
+      {
+        "name": "DOPPLER Study of Veins of Rt Lower Limbs"
+      },
+      {
+        "name": "DOPPLER Study of Veins of Rt Upper Limbs"
+      },
+      {
+        "name": "DOPPLER Study of Vessels of Both Lower Limbs"
+      },
+      {
+        "name": "DOPPLER Study of Vessels of Both Lower Limbs"
+      },
+      {
+        "name": "DOPPLER Study of Vessels of Lt Lower Limbs"
+      },
+      {
+        "name": "DOPPLER Study of Vessels of Lt Lower Limbs"
+      },
+      {
+        "name": "DOPPLER Study of Vessels of Rt Lower Limbs"
+      },
+      {
+        "name": "DOPPLER Study of Vessels of Rt Lower Limbs"
+      },
+      {
+        "name": "DUPLEX Study of both Lower Limb"
+      },
+      {
+        "name": "DUPLEX Study of Both side of Neck"
+      },
+      {
+        "name": "DUPLEX Study of Facial region"
+      },
+      {
+        "name": "DUPLEX Study of Lt Femoral Vein and Artery"
+      },
+      {
+        "name": "DUPLEX Study of Lt side of Neck"
+      },
+      {
+        "name": "DUPLEX Study of Rt Femoral Vein and Artery"
+      },
+      {
+        "name": "DUPLEX Study of Rt side of Neck"
+      },
+      {
+        "name": "DUPLEX Study of Scrotum"
+      }
+    ],
+    "investigationId": 7
+  },
+  {
+    "name": "EMG",
+    "investigationList": [
+      {
+        "name": "EMG OF BOTH BRACHIAL PLEXUS"
+      },
+      {
+        "name": "EMG OF BOTH BRACHIAL PLEXUS Rt side"
+      },
+      {
+        "name": "EMG OF BOTH BRACHIAL PLEXUS Lt side"
+      },
+      {
+        "name": "EMG OF LUMBO SACRAL PLEXUS  Rt side"
+      },
+      {
+        "name": "EMG OF BOTH UPPER & LOWER LIMB"
+      },
+      {
+        "name": "EMG OF BOTH LOWER LIMB "
+      },
+      {
+        "name": "EMG OF BOTH UPPER LIMB"
+      },
+      {
+        "name": "EMG OF UPER & LOWER LIMB Lt side"
+      },
+      {
+        "name": "EMG OF UPER & LOWER LIMB Rt side"
+      },
+      {
+        "name": "EMG OF UPPER LIMB Rt side"
+      },
+      {
+        "name": "EMG OF UPPER LIMB Lt side"
+      },
+      {
+        "name": "EMG OF Lower LIMB Rt side"
+      },
+      {
+        "name": "EMG OF Lower LIMB Lt side"
+      }
+    ],
+    "investigationId": 8
+  },
+  {
+    "name": "CRP",
+    "investigationList": [
+      {
+        "name": "CRP (C-reactive Protein)",
+        "unitList": [
+          "mg/L"
+        ],
+        "referenceRange": "<8 mg/L"
+      }
+    ],
+    "investigationId": 9
+  },
+  {
+    "name": "Coagulation",
+    "investigationList": [
+      {
+        "name": "ACT",
+        "unitList": [
+          "second/s"
+        ],
+        "referenceRange": "varies with test device used. Please check manufacturer's referrence.May vary between 80-160 seconds"
+      },
+      {
+        "name": "APTT",
+        "unitList": [
+          "second/s"
+        ],
+        "referenceRange": "70-120 seconds"
+      },
+      {
+        "name": "PTT",
+        "unitList": [
+          "second/s"
+        ],
+        "referenceRange": "10-13 seconds"
+      },
+      {
+        "name": "Prothrombin time",
+        "unitList": [
+          "second/s"
+        ],
+        "referenceRange": "28-38 seconds"
+      },
+      {
+        "name": "D-dimer",
+        "unitList": [
+          "µg/mL"
+        ],
+        "referenceRange": "Interpretation is by physician only. "
+      },
+      {
+        "name": "FDP (Fibrin Degradation Products)",
+        "unitList": [
+          "µg/mL"
+        ],
+        "referenceRange": "<10 µg/mL or less than 10 mg/L (SI units). An FDP level of more than 40 mg/mL is considered critical"
+      },
+      {
+        "name": "Fibrinogen",
+        "unitList": [
+          "mg/dL"
+        ],
+        "referenceRange": "Fibrinogen: 150-400 mg/dL. Fibrinogen antigen (range 149-353 mg/dL) is different"
+      },
+      {
+        "name": "INR, Prothrombin time "
+      },
+      {
+        "name": "INR, Prothrombin time, Fibrinogen "
+      },
+      {
+        "name": "INR, Prothrombin time, Fibrinogen, FDP "
+      },
+      {
+        "name": "INR (International Normalized Ratio)",
+        "unitList": [],
+        "referenceRange": "0.9-1.2"
+      },
+      {
+        "name": "Protein C",
+        "unitList": [
+          "IU/dL"
+        ],
+        "referenceRange": "The normal protein C level in a healthy adult is approximately 65-135 IU/dL. For a healthy term infant, the average value is 40 IU/dL, which will increase as the child ages, to approximately 60 IU/dL;Protein C deficiency is considered mild at plasma levels greater than 20 IU/dL but below the reference range. Moderate-to-severe deficiency is blood concentrations ranging from 1-20 IU/dL. Severe protein C deficiency is a value of less than 1 IU/dL or if protein C is not detectable."
+      },
+      {
+        "name": "Protein S",
+        "unitList": [
+          "U/dL"
+        ],
+        "referenceRange": "Males: Greater than 73 U/dL; Females: Greater than 63 U/dL"
+      }
+    ],
+    "investigationId": 10
+  },
+  {
+    "name": "COLPOSCOPY",
+    "investigationList": [
+      {
+        "name": "COLPOSCOPY"
+      }
+    ],
+    "investigationId": 11
+  },
+  {
+    "name": "CT SCAN",
+    "investigationList": [
+      {
+        "name": "CT Angiogram of Abdominal Aorta"
+      },
+      {
+        "name": "CT Angiogram of Abdominal Aorta with Lower Limb Arteries"
+      },
+      {
+        "name": "CT Angiogram of Brain"
+      },
+      {
+        "name": "CT Angiogram of Carotid"
+      },
+      {
+        "name": "CT Angiogram of Coronary Vessels"
+      },
+      {
+        "name": "CT Angiogram of Pheripheral artery"
+      },
+      {
+        "name": "CT Angiogram of Cardiac"
+      },
+      {
+        "name": "CT Angiogram with IVU"
+      },
+      {
+        "name": "CT Angiogram of Renal"
+      },
+      {
+        "name": "CT Angiogram of Thoracic Aorta and Arch of Aorta"
+      },
+      {
+        "name": "CT Angiogram of Upper Limb Arteries"
+      },
+      {
+        "name": "CT Aortogram from Neck and Femoral Head"
+      },
+      {
+        "name": "CT Ankles"
+      },
+      {
+        "name": "CT Ankle Rt"
+      },
+      {
+        "name": "CT Ankle Lt"
+      },
+      {
+        "name": "CT Angiogram of Brain"
+      },
+      {
+        "name": "CT Arm Rt"
+      },
+      {
+        "name": "CT Arm Lt"
+      },
+      {
+        "name": "CT Base of the Skull"
+      },
+      {
+        "name": "CT Bones"
+      },
+      {
+        "name": "CT Brain"
+      },
+      {
+        "name": "CT Brain & Orbits"
+      },
+      {
+        "name": "CT Brain & PNS"
+      },
+      {
+        "name": "CT Brain/Head/Skull"
+      },
+      {
+        "name": "CT Calcaneous Rt"
+      },
+      {
+        "name": "CT Calcaneous Lt"
+      },
+      {
+        "name": "CT Cervical spine"
+      },
+      {
+        "name": "CT Cervical spine with Myelogram"
+      },
+      {
+        "name": "CT Chest"
+      },
+      {
+        "name": "CT Chest and CT guided FNAC"
+      },
+      {
+        "name": "CT Colonoscopy (Virtual)"
+      },
+      {
+        "name": "CT Dorsal Spine"
+      },
+      {
+        "name": "CT Dorsal Spine with Myelogram"
+      },
+      {
+        "name": "CT Elbow Rt"
+      },
+      {
+        "name": "CT Elbow Lt"
+      },
+      {
+        "name": "CT Foot Rt"
+      },
+      {
+        "name": "CT Foot Lt"
+      },
+      {
+        "name": "CT Guided FNAC"
+      },
+      {
+        "name": "CT Guided RFT"
+      },
+      {
+        "name": "CT HBS ( Hepatobiliary system)"
+      },
+      {
+        "name": "CT HRCT of Lungs"
+      },
+      {
+        "name": "CT HRCT Chest"
+      },
+      {
+        "name": "CT Hip Joints"
+      },
+      {
+        "name": "CT Hip Joint Rt"
+      },
+      {
+        "name": "CT Hip Joint Lt"
+      },
+      {
+        "name": "CT Humerus Rt"
+      },
+      {
+        "name": "CT Humerus Lt"
+      },
+      {
+        "name": "CT Iliac Fossa Rt"
+      },
+      {
+        "name": "CT Iliac Fossa Lt"
+      },
+      {
+        "name": "CT Joints",
+        "haveCustomField": true,
+        "customFieldValue": null
+      },
+      {
+        "name": "CT Kidney Rt"
+      },
+      {
+        "name": "CT Kidney Lt"
+      },
+      {
+        "name": "CT Knee Joint Rt"
+      },
+      {
+        "name": "CT Knee Joint Lt"
+      },
+      {
+        "name": "CT KUB (kidney, ureter, bladder regions)"
+      },
+      {
+        "name": "CT KUB (kidney, ureter, bladder regions) Without Contrast"
+      },
+      {
+        "name": "CT KUB (kidney, ureter, bladder regions) With Contrast"
+      },
+      {
+        "name": "CT Liver/Pancreas/Kidneys"
+      },
+      {
+        "name": "CT Lower Abdomen"
+      },
+      {
+        "name": "CT Lumber Spine"
+      },
+      {
+        "name": "CT Lumbo-Sacral Spine"
+      },
+      {
+        "name": "CT Lumbo-Sacral Spine"
+      },
+      {
+        "name": "CT Lungs"
+      },
+      {
+        "name": "CT Lung Rt"
+      },
+      {
+        "name": "CT Lung Lt"
+      },
+      {
+        "name": "CT Mastoid Lt"
+      },
+      {
+        "name": "CT Mastoid Rt"
+      },
+      {
+        "name": "CT Maxalofacial Region"
+      },
+      {
+        "name": "CT Mid Theigh"
+      },
+      {
+        "name": "CT Nasopharynx"
+      },
+      {
+        "name": "CT Neck"
+      },
+      {
+        "name": "CT Oesophagus"
+      },
+      {
+        "name": "CT Orbits"
+      },
+      {
+        "name": "CT Orbit Right"
+      },
+      {
+        "name": "CT Orbit Left"
+      },
+      {
+        "name": "CT Pancreas"
+      },
+      {
+        "name": "CT Pelvis"
+      },
+      {
+        "name": "CT Pituitary Fossa"
+      },
+      {
+        "name": "CT Pituitary Gland/Sella Turcica"
+      },
+      {
+        "name": "CT PNS (Para-Nasal Sinus)"
+      },
+      {
+        "name": "CT Scull"
+      },
+      {
+        "name": "CT Shoulder Joint Rt"
+      },
+      {
+        "name": "CT Shoulder Joint Lt"
+      },
+      {
+        "name": "CT Supra-renal glands"
+      },
+      {
+        "name": "CT Temperomandibular Joint Rt"
+      },
+      {
+        "name": "CT Temperomandibular Joint Lt"
+      },
+      {
+        "name": "CT Thoracic / Dorsal Spine"
+      },
+      {
+        "name": "CT Thorax"
+      },
+      {
+        "name": "CT Upper Abdomen"
+      },
+      {
+        "name": "CT Urogram"
+      },
+      {
+        "name": "CT Whole Abdomen"
+      },
+      {
+        "name": "Myelo-CT of Cervical Spine"
+      }
+    ],
+    "investigationId": 12
+  },
+  {
+    "name": "cystoscopy",
+    "investigationList": [
+      {
+        "name": "cystoscopy"
+      }
+    ],
+    "investigationId": 13
+  },
+  {
+    "name": "DRUG MONITORING (THERAPEUTIC DRUGS)",
+    "investigationList": [
+      {
+        "name": "Carbamazepine",
+        "unitList": [
+          "mg/L"
+        ],
+        "referenceRange": "The therapeutic reference range of carbamazepine is 4-12 mg/L. The minimum toxic level is 10 mg/kg. The toxic concentration/critical laboratory value is greater than 30-40 mg/L"
+      },
+      {
+        "name": "Cyclosporine",
+        "unitList": [
+          "ng/mL"
+        ],
+        "referenceRange": "Most individuals display optimal response to cyclosporine with trough whole blood levels 100 to 400 ng/mL. Preferred therapeutic ranges may vary by transplant type, protocol, and comedications. Therapeutic ranges are based on specimens drawn at trough (ie, immediately before the next scheduled dose)"
+      },
+      {
+        "name": "Digoxin",
+        "unitList": [
+          "ng/mL"
+        ],
+        "referenceRange": "Therapeutic serum digoxin levels range from 0.5–2 ng/mL. Serum levels may be drawn 6–8 hr after a dose is administered, although they are usually drawn immediately before the next dose."
+      },
+      {
+        "name": "Phenobarbital",
+        "unitList": [
+          "µg/mL"
+        ],
+        "referenceRange": "There is no exact relationship between the concentration of phenobarbital in the plasma and its therapeutic effects, however, plasma levels of 10-35 µg/mL are recommended for seizure management"
+      },
+      {
+        "name": "Phenytoin",
+        "unitList": [
+          "µg/mL"
+        ],
+        "referenceRange": "Phenytoin doses are usually selected to attain therapeutic plasma total phenytoin concentrations of 10 to 20 µg/mL"
+      },
+      {
+        "name": "Tacrolimus",
+        "unitList": [
+          "ng/mL"
+        ],
+        "referenceRange": "Most individuals display optimal response to Tacrolimus with trough whole blood levels of 5.0 to 15.0 ng/mL. Preferred therapeutic ranges may vary by transplant type, protocol, and comedications. Therapeutic ranges are based on samples drawn at trough "
+      },
+      {
+        "name": "Valproic Acid",
+        "unitList": [
+          "µg/mL"
+        ],
+        "referenceRange": "The therapeutic range for Valproic acid (total) is 50-125 µg/mL. The toxic level is greater than 150 µg/mL. The therapeutic range for valproic acid (free) is 6-22 µg/mL. The toxic level is greater than 50 µg/mL; above this threshold concentration, the binding sites on plasma albumin begin to become saturated."
+      }
+    ],
+    "investigationId": 14
+  },
+  {
+    "name": "DRUGS OF ABUSE/TOXICITY Screening: Blood",
+    "investigationList": [
+      {
+        "name": "Amphetamine"
+      },
+      {
+        "name": "Benzodiazepine"
+      },
+      {
+        "name": "Cannabinoids"
+      },
+      {
+        "name": "Cocaine"
+      },
+      {
+        "name": "Opiates"
+      },
+      {
+        "name": "Methadone"
+      },
+      {
+        "name": "Heroin"
+      },
+      {
+        "name": "Codeine"
+      },
+      {
+        "name": "Morphine"
+      },
+      {
+        "name": "marijuana"
+      },
+      {
+        "name": "Phencyclidine"
+      },
+      {
+        "name": "Bezodiazepine, Cocaine, Amphetamine, Opiates"
+      }
+    ],
+    "investigationId": 15
+  },
+  {
+    "name": "DUPLEX STUDY of VESSELS of",
+    "investigationList": [
+      {
+        "name": "DUPLEX STUDY of VESSELS of Abdominal Aorta"
+      },
+      {
+        "name": "DUPLEX STUDY of VESSELS of Kidney"
+      },
+      {
+        "name": "DUPLEX STUDY of VESSELS of Liver"
+      },
+      {
+        "name": "DUPLEX STUDY of VESSELS of Lower Limb Left"
+      },
+      {
+        "name": "DUPLEX STUDY of VESSELS of Lower Limb Right"
+      },
+      {
+        "name": "DUPLEX STUDY of VESSELS of Penis"
+      },
+      {
+        "name": "DUPLEX STUDY of VESSELS of Portal Vain"
+      },
+      {
+        "name": "DUPLEX STUDY of VESSELS of Scrotum"
+      },
+      {
+        "name": "DUPLEX STUDY of VESSELS of Theigh Left"
+      },
+      {
+        "name": "DUPLEX STUDY of VESSELS of Theigh Right"
+      }
+    ],
+    "investigationId": 16
+  },
+  {
+    "name": "EEG",
+    "investigationList": [
+      {
+        "name": "EEG"
+      }
+    ],
+    "investigationId": 17
+  },
+  {
+    "name": "Serum Electrolytes",
+    "investigationList": [
+      {
+        "name": "Ca (Serum Total)",
+        "unitList": [
+          "mmol/L"
+        ],
+        "referenceRange": "2.18-2.58 mmol/L"
+      },
+      {
+        "name": "Ca (Serum Ionized)",
+        "unitList": [
+          "mmol/L"
+        ],
+        "referenceRange": "1.05-1.30 mmol/L"
+      },
+      {
+        "name": "Cl",
+        "unitList": [
+          "mmol/L"
+        ],
+        "referenceRange": "98-106 mmol/L"
+      },
+      {
+        "name": "HCO3-",
+        "unitList": [
+          "mmol/L"
+        ],
+        "referenceRange": "24-30 mmol/L"
+      },
+      {
+        "name": "Inorganic Phosphate",
+        "unitList": [
+          "mmol/L"
+        ],
+        "referenceRange": "0.8-1.5 mmol/L"
+      },
+      {
+        "name": "K"
+      },
+      {
+        "name": "Mg",
+        "unitList": [
+          "mmol/L"
+        ],
+        "referenceRange": "0.75-0.95 mmol/L"
+      },
+      {
+        "name": "Na, K, Cl,HCO3"
+      },
+      {
+        "name": "Na",
+        "unitList": [
+          "mmol/L"
+        ],
+        "referenceRange": "135-145 mmol/L"
+      }
+    ],
+    "investigationId": 18
+  },
+  {
+    "name": "EMG",
+    "investigationList": [
+      {
+        "name": "EMG"
+      }
+    ],
+    "investigationId": 19
+  },
+  {
+    "name": "Enzymes",
+    "investigationList": [
+      {
+        "name": "Aldolase",
+        "unitList": [
+          "U/L"
+        ],
+        "referenceRange": "The specific ranges for an abnormal test may vary slightly by laboratory, and there are slight differences between normal levels for men and women. In general, normal results range from 1.0 to 7.5 units per liter"
+      },
+      {
+        "name": "Lipase",
+        "unitList": [
+          "U/L"
+        ],
+        "referenceRange": "0-160 U/L"
+      },
+      {
+        "name": "Serum Amylase",
+        "unitList": [
+          "U/L"
+        ],
+        "referenceRange": "<23-85 U/L"
+      }
+    ],
+    "investigationId": 20
+  },
+  {
+    "name": "ERCP",
+    "investigationList": [
+      {
+        "name": "ERCP"
+      },
+      {
+        "name": "ERCP DIAGNOSTIC"
+      },
+      {
+        "name": "ERCP & Stenting"
+      },
+      {
+        "name": "ERCP STENT REMOVAL"
+      },
+      {
+        "name": "ERCP & Stone Extraction"
+      },
+      {
+        "name": "ERCP and Extraction of Ascaris from Billiary tree & Pancreatic duct"
+      },
+      {
+        "name": "ERCP Diagnostic"
+      },
+      {
+        "name": "ERCP With Papillotomy"
+      }
+    ],
+    "investigationId": 21
+  },
+  {
+    "name": "Plasma Glucose",
+    "investigationList": [
+      {
+        "name": "Glucose Tolerance Test"
+      },
+      {
+        "name": "Plasma Glucose 2hrs after 75g Glucose",
+        "unitList": [
+          "mg/dL",
+          "mmol/L"
+        ],
+        "referenceRange": "Non-diabetic:under 7.8 mmol/L; Type 2 diabetes:under 8.5 mmol/L"
+      },
+      {
+        "name": "Plasma Glucose 2hrs After Breakfast",
+        "unitList": [
+          "mg/dL",
+          "mmol/L"
+        ],
+        "referenceRange": "Non-diabetic:under 7.8 mmol/L; Type 2 diabetes:under 8.5 mmol/L"
+      },
+      {
+        "name": "Plasma Glucose (Fasting)",
+        "unitList": [
+          "mmol/L"
+        ],
+        "referenceRange": "<5.5 mmol in non-diabetic, 5.5- 6.9 impaired Glucose Tolerance, >7 diabetic "
+      },
+      {
+        "name": "Plasma Glucose (Random)",
+        "unitList": [
+          "mmol/L"
+        ],
+        "referenceRange": "<5.5 mmol/L in non-diabetic, 5.5- 11 mmol/L impaired Glucose Tolerance, >11 mmol/L is diabetic "
+      }
+    ],
+    "investigationId": 22
+  },
+  {
+    "name": "Blood Film",
+    "investigationList": [
+      {
+        "name": "Blood Film",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 23
+  },
+  {
+    "name": "BT",
+    "unitList": [
+      "minutes"
+    ],
+    "referenceRange": "<9 minutes",
+    "investigationId": 24
+  },
+  {
+    "name": "CT",
+    "unitList": [
+      "minutes"
+    ],
+    "referenceRange": "8-15 minutes",
+    "investigationId": 25
+  },
+  {
+    "name": "Complete Blood Count, ESR",
+    "investigationList": [
+      {
+        "name": "HCT/PCV"
+      },
+      {
+        "name": "LE Cell"
+      },
+      {
+        "name": "Platelet Count"
+      },
+      {
+        "name": "Reticulocyte Count"
+      },
+      {
+        "name": "TC, DC"
+      },
+      {
+        "name": "TC, DC, Hb% ESR"
+      },
+      {
+        "name": "MP"
+      }
+    ],
+    "investigationId": 26
+  },
+  {
+    "name": "Complete Blood Count (CBC)",
+    "unitList": [],
+    "referenceRange": "",
+    "investigationId": 27
+  },
+  {
+    "name": "Complete Blood Count (CBC) Group",
+    "investigationList": [
+      {
+        "name": "Haematocrit",
+        "unitList": [],
+        "referenceRange": "Female: 0.370-0.460, Male 0.380-0.500"
+      },
+      {
+        "name": "Haemoglobin",
+        "unitList": [
+          "g/L",
+          "gm/dL"
+        ],
+        "referenceRange": "Female: 123-157 g/L; Male: 130-170 g/L"
+      },
+      {
+        "name": "Mean corpuscular volume (MCV)",
+        "unit": [
+          "fL"
+        ],
+        "referenceRange": "80-100 fL"
+      },
+      {
+        "name": "Mean corpuscular hemoglobin (MCH)",
+        "unitList": [
+          "pg(picogram)"
+        ],
+        "referenceRange": "27-34 pg(picogram)"
+      },
+      {
+        "name": "Red blood cells (RBC)",
+        "unitList": [
+          "millioncell/µL"
+        ],
+        "referenceRange": "For men: approximately 4.7 to 6.1 million cells/ul (microliter). The normal range in women range from 4.2 to 5.4 million cells/ul."
+      },
+      {
+        "name": "Red cell distribution width (RDW)",
+        "unitList": [
+          "%"
+        ],
+        "referenceRange": "11.5-14.5%"
+      },
+      {
+        "name": "Reticulocyte count",
+        "unitList": [
+          "%",
+          "10 to the power 9 /L"
+        ],
+        "referenceRange": "20-84 10 to the power 9 /L; when expressed as percentage of Red Blood Cell 0.5% to 2.5% in adults and 2% to 6% in infants."
+      },
+      {
+        "name": "Platelet Count",
+        "unitList": [
+          "%",
+          "10 to the power 9 /L"
+        ],
+        "referenceRange": "140-400 10 to the power 9 /L"
+      },
+      {
+        "name": "white Cell Count",
+        "unitList": [
+          "%",
+          "10 to the power 9 /L"
+        ],
+        "referenceRange": "4000-11000"
+      },
+      {
+        "name": "Mean Platelet Volume",
+        "unitList": [
+          "µm^3"
+        ]
+      },
+      {
+        "name": "Plateletcrit",
+        "unitList": [
+          "%"
+        ]
+      },
+      {
+        "name": "Platelet Distribution Width",
+        "unitList": [
+          "%"
+        ]
+      }
+    ],
+    "showGroupNameOnInvoice": true,
+    "investigationId": 28
+  },
+  {
+    "name": "HEPATITIS PROFILE",
+    "investigationList": [
+      {
+        "name": "Anti HA IgM",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "HBS Ag",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "HB Core Ag",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Anti HBS",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Anti HCV",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Anti HCV IgM",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "HVE Ag",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Anti HVE",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Anti HEV IgM",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 29
+  },
+  {
+    "name": "HISTOPATHOLOGY & CYTOPATHOLOGY",
+    "investigationList": [
+      {
+        "name": "Discharge/Fluid for malignant cell"
+      },
+      {
+        "name": "FNAC of",
+        "haveCustomField": true,
+        "customFieldValue": null
+      },
+      {
+        "name": "CT guided FNAC  of",
+        "haveCustomField": true,
+        "customFieldValue": null
+      },
+      {
+        "name": "Ultrasound guided FNAC  of",
+        "haveCustomField": true,
+        "customFieldValue": null
+      },
+      {
+        "name": "Ultrasound guided Biosy of",
+        "haveCustomField": true,
+        "customFieldValue": null
+      },
+      {
+        "name": "Pap’s Smear for Cytology"
+      },
+      {
+        "name": "Sputum for malignant cell"
+      },
+      {
+        "name": "Urine for malignant cell"
+      },
+      {
+        "name": "Histopathology of",
+        "haveCustomField": true,
+        "customFieldValue": null
+      }
+    ],
+    "investigationId": 30
+  },
+  {
+    "name": "HORMONE TEST",
+    "investigationList": [
+      {
+        "name": "ACTH",
+        "unitList": [
+          "pg/mL",
+          "pmol/L"
+        ],
+        "referenceRange": "Normal ranges for ACTH are fairly broad and like cortisol levels are time-dependent. They also vary from assay to assay. A typical normal range for an 8AM sample using the new assays is 10 to 50 picograms per milliliter (pg/ml); levels are usually less than 20 pg/ml at 4 PM and less than 5-10 pg/ml at midnight."
+      },
+      {
+        "name": "FT3 ( Free T3)",
+        "unitList": [
+          "pmol/L",
+          "pg/dl"
+        ],
+        "referenceRange": "260-480 pg/dL, or 4-7.4 pmol/L in adult. usually not measured in children"
+      },
+      {
+        "name": "TT3 ( Total triiodothyronine)",
+        "unitList": [
+          "ng/dL"
+        ],
+        "referenceRange": "80-220 ng/dL in adults and 125-250 ng/dL in children"
+      },
+      {
+        "name": "TSH",
+        "unitList": [
+          "mIU/L"
+        ],
+        "referenceRange": "0.4 to 4.0 milli-international units per liter. If you're already being treated for a thyroid disorder, the normal range is 0.5 to 3.0 milli-international units per liter."
+      },
+      {
+        "name": "ANTI- TG Ab",
+        "unitList": [
+          "IU/mL"
+        ],
+        "referenceRange": "116 IU/mL"
+      },
+      {
+        "name": "Estradiol",
+        "unitList": [
+          "pg/mL"
+        ],
+        "referenceRange": "The reference range of estradiol in men is 10-40 pg/mL. The reference range estradiol in women varies by menstrual cycle and menopausal status, as follows: Before menopause, estradiol levels are widely variable throughout the menstrual cycle: Mid-follicular phase: 27-123 pg/mL"
+      },
+      {
+        "name": "Growth Hormone",
+        "unitList": [
+          "pmol/L"
+        ],
+        "referenceRange": "Random growth hormone (GH) levels in a healthy person range as follows: Men: < 5 ng/mL or < 226 pmol/L. Women: < 10 ng/mL or < 452 pmol/L. Children: 0-20 ng/mL or 0-904 pmol/L."
+      },
+      {
+        "name": "Progesterone",
+        "unitList": [
+          "ng/mL"
+        ],
+        "referenceRange": "Female (pre-ovulation): less than 1 ng/mL; Female (mid-cycle): 5 to 20 ng/mL; Male: less than 1 ng/mL; Postmenopausal: less than 1 ng/mL; Pregnancy 1st trimester: 11.2 to 90.0 ng/mL; Pregnancy 2nd trimester: 25.6 to 89.4 ng/mL; Pregnancy 3rd trimester: 48 to 150 to 300 or more ng/mL"
+      },
+      {
+        "name": "Prolactin",
+        "unitList": [
+          "ng/mL"
+        ],
+        "referenceRange": "Males: 2 to 18 ng/mL. Nonpregnant females: 2 to 29 ng/mL. Pregnant women: 10 to 209 ng/mL"
+      },
+      {
+        "name": "PTH",
+        "unitList": [
+          "pg/mL"
+        ],
+        "referenceRange": "10 to 55 picograms per milliliter (pg/mL)"
+      },
+      {
+        "name": "FT4 (Free)",
+        "unitList": [
+          "ng/dL"
+        ],
+        "referenceRange": "0.8 -2.8 ng/dL"
+      },
+      {
+        "name": "TT4 (Total)",
+        "unitList": [
+          "ug/dL"
+        ],
+        "referenceRange": "4.5 -11.5 ug/dL"
+      },
+      {
+        "name": "Testosterone",
+        "unitList": [],
+        "referenceRange": "Men: 270-1070 ng/dL (9-38 nmol/L). Women: 15-70 ng/dL (0.52-2.4 nmol/L. Children (depends on sex and age at puberty): 2-20 ng/dL or 0.07-0.7 nmol/L "
+      },
+      {
+        "name": "FT4 index (Free)",
+        "unitList": [
+          "U"
+        ],
+        "referenceRange": "1.0 -4.3 U"
+      },
+      {
+        "name": "Testosterone Free",
+        "unitList": [
+          "ng/dL"
+        ],
+        "referenceRange": ""
+      },
+      {
+        "name": "FSH",
+        "unitList": [
+          "mIU/ml",
+          "IU/L"
+        ],
+        "referenceRange": "Before puberty: 0 to 4.0 mIU/ml. During puberty: 0.3 to 10.0 mIU/ml. Women who are still menstruating: 4.7 to 21.5 mIU/ml. After menopause: 25.8 to 134.8 mIU/ml."
+      },
+      {
+        "name": "LH",
+        "unitList": [
+          "IU/L"
+        ],
+        "referenceRange": "women in the follicular phase of the menstrual cycle: 1.9 to 12.5 IU/L. women at the peak of the menstrual cycle: 8.7 to 76.3 IU/L. women in the luteal phase of the menstrual cycle: 0.5 to 16.9 IU/L. pregnant women: less than 1.5 IU/L."
+      }
+    ],
+    "investigationId": 31
+  },
+  {
+    "name": "ADA (Adenosine deaminase)",
+    "investigationList": [
+      {
+        "name": "ADA (Adenosine deaminase)",
+        "unitList": [
+          "U/L"
+        ],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 32
+  },
+  {
+    "name": "Anti DNA",
+    "investigationList": [
+      {
+        "name": "Anti DNA",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 33
+  },
+  {
+    "name": "Anti Ds DNA",
+    "investigationList": [
+      {
+        "name": "Anti Ds DNA",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 34
+  },
+  {
+    "name": "Anti-Cardiolipin Antibody",
+    "investigationList": [
+      {
+        "name": "Anti-Cardiolipin Antibody",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 35
+  },
+  {
+    "name": "Anti-CCP Antibody",
+    "investigationList": [
+      {
+        "name": "Anti-CCP Antibody",
+        "unitList": [
+          "u/ml"
+        ],
+        "referenceRange": "<20 u/ml"
+      }
+    ],
+    "investigationId": 36
+  },
+  {
+    "name": "Anti-ANA",
+    "investigationList": [
+      {
+        "name": "Anti-ANA",
+        "unitList": [
+          "u/ml"
+        ],
+        "referenceRange": "<1:40 DILUTION"
+      }
+    ],
+    "investigationId": 37
+  },
+  {
+    "name": "Anti-Phospholipid Antibody",
+    "investigationList": [
+      {
+        "name": "Anti-Phospholipid Antibody",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 38
+  },
+  {
+    "name": "Anti-CHLAMYDIA Antibody",
+    "investigationList": [
+      {
+        "name": "Anti-Phospholipid Antibody",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 39
+  },
+  {
+    "name": "AntiNucleur Antigen (ANA), AntiNucleur Factor (ANF)",
+    "investigationList": [
+      {
+        "name": "AntiNucleur Antigen (ANA), AntiNucleur Factor (ANF)"
+      }
+    ],
+    "investigationId": 40
+  },
+  {
+    "name": "AntiNucleur Factor (ANF)",
+    "investigationList": [
+      {
+        "name": "AntiNucleur Factor (ANF)",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 41
+  },
+  {
+    "name": "AntiNucleur Antigen (ANA)",
+    "investigationList": [
+      {
+        "name": "AntiNucleur Antigen (ANA)",
+        "unitList": [],
+        "referenceRange": "The frequency of positivity on ANA screening test (on Hep-2 cells) is as follows: Mixed connective tissue disease: 100%; Drug-induced lupus erythematosus: 100%; Systemic lupus erythematosus: 95%-100%; Sjögren Syndrome: 80%; Scleroderma: 60%-95%; Polymyositis-dermatomyositis: 49%-74%; Rheumatoid arthritis: 40%-60%"
+      }
+    ],
+    "investigationId": 42
+  },
+  {
+    "name": "Antisperm Antibody",
+    "investigationList": [
+      {
+        "name": "Antisperm Antibody",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 43
+  },
+  {
+    "name": "ASO Titre",
+    "investigationList": [
+      {
+        "name": "ASO Titre",
+        "unitList": [
+          "IU",
+          "Todd units"
+        ],
+        "referenceRange": "An antistreptolysin titer (ASO) greater than 166 Todd units (or >200 IU) is considered a positive test. This upper limit of normal may vary from lab to lab and by age, with it being higher in school-aged children."
+      }
+    ],
+    "investigationId": 44
+  },
+  {
+    "name": "Blood Group & Rh",
+    "investigationList": [
+      {
+        "name": "Blood Group",
+        "unitList": [
+          "A pos",
+          "A neg",
+          "B pos",
+          "B neg",
+          "AB pos",
+          "AB neg",
+          "O pos",
+          "O neg"
+        ],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 45
+  },
+  {
+    "name": "C-ANCA",
+    "investigationList": [
+      {
+        "name": "C-ANCA",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 46
+  },
+  {
+    "name": "C3",
+    "investigationList": [
+      {
+        "name": "C3",
+        "unitList": [
+          "mg/dL",
+          "g/L"
+        ],
+        "referenceRange": "The normal range for a complement C3 blood test is 80 to 160 milligrams per deciliter (mg/dL), or 0.8 to 1.6 grams per liter (g/L). "
+      }
+    ],
+    "investigationId": 47
+  },
+  {
+    "name": "C4",
+    "investigationList": [
+      {
+        "name": "C4",
+        "unitList": [
+          "mg/dL",
+          "g/L"
+        ],
+        "referenceRange": "The normal range for a complement C4 blood test is 16 to 48 milligrams per deciliter (mg/dL), or 0.16 to 0.48 grams per liter (g/L)"
+      }
+    ],
+    "investigationId": 48
+  },
+  {
+    "name": "Clamydial Antibody",
+    "investigationList": [
+      {
+        "name": "Clamydial Antibody",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 49
+  },
+  {
+    "name": "Coomb’s Test (Direct & Indirect)",
+    "investigationList": [
+      {
+        "name": "Coomb’s Test (Direct & Indirect)"
+      }
+    ],
+    "investigationId": 50
+  },
+  {
+    "name": "Coomb’s Test (Direct)",
+    "investigationList": [
+      {
+        "name": "Coomb’s Test (Direct)",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 51
+  },
+  {
+    "name": "Coomb’s Test (Indirect)",
+    "investigationList": [
+      {
+        "name": "Coomb’s Test (Indirect)",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 52
+  },
+  {
+    "name": "CRHP",
+    "investigationList": [
+      {
+        "name": "CRHP",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 53
+  },
+  {
+    "name": "D-dimer",
+    "investigationList": [
+      {
+        "name": "D-dimer",
+        "unitList": [
+          "µg/L FEU",
+          "ng/mL DDU"
+        ],
+        "referenceRange": "A normal D-dimer result (< or =250 ng/mL DDU; < or =0.50  µg/L FEU)"
+      }
+    ],
+    "investigationId": 54
+  },
+  {
+    "name": "Dengue Elisa",
+    "investigationList": [
+      {
+        "name": "Dengue Elisa",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 55
+  },
+  {
+    "name": "Dengue ICT",
+    "investigationList": [
+      {
+        "name": "Dengue ICT",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 56
+  },
+  {
+    "name": "Dengue NSI Antigen",
+    "investigationList": [
+      {
+        "name": "Dengue NSI Antigen",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 57
+  },
+  {
+    "name": "Elisa TB",
+    "investigationList": [
+      {
+        "name": "Elisa TB",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 58
+  },
+  {
+    "name": "Elisa IgA",
+    "investigationList": [
+      {
+        "name": "Elisa IgA",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 59
+  },
+  {
+    "name": "Elisa IgG",
+    "investigationList": [
+      {
+        "name": "Elisa IgG",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 60
+  },
+  {
+    "name": "Elisa IgM",
+    "investigationList": [
+      {
+        "name": "Elisa IgM",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 61
+  },
+  {
+    "name": "Febrile Antigen",
+    "investigationList": [
+      {
+        "name": "Febrile Antigen",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 62
+  },
+  {
+    "name": "H-Pylori Antibody IgG, IgA",
+    "investigationList": [
+      {
+        "name": "H-Pylori Antibody IgG, IgA"
+      }
+    ],
+    "investigationId": 63
+  },
+  {
+    "name": "H-Pylori Antibody IgG",
+    "investigationList": [
+      {
+        "name": "H-Pylori Antibody IgG",
+        "unitList": [
+          "U/mL"
+        ],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 64
+  },
+  {
+    "name": "H-Pylori Antibody IgA",
+    "investigationList": [
+      {
+        "name": "H-Pylori Antibody IgA",
+        "unitList": [
+          "U/mL"
+        ],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 65
+  },
+  {
+    "name": "H-Pylori Antibody",
+    "investigationList": [
+      {
+        "name": "H-Pylori Antibody",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 66
+  },
+  {
+    "name": "H-Pylori Antibody",
+    "unitList": [],
+    "referenceRange": "",
+    "investigationId": 67
+  },
+  {
+    "name": "ICT Filaria",
+    "investigationList": [
+      {
+        "name": "ICT Filaria",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 68
+  },
+  {
+    "name": "ICT Kala-Azar",
+    "investigationList": [
+      {
+        "name": "ICT Kala-Azar",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 69
+  },
+  {
+    "name": "ICT Gonnorhoea",
+    "investigationList": [
+      {
+        "name": "ICT Gonnorhoea",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 70
+  },
+  {
+    "name": "ICT Tuberculosis",
+    "investigationList": [
+      {
+        "name": "ICT Tuberculosis",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 71
+  },
+  {
+    "name": "IgA",
+    "investigationList": [
+      {
+        "name": "IgA",
+        "unitList": [
+          "mg/dl"
+        ],
+        "referenceRange": "Age 0-1 years: 0-83 mg/dL; Age 1-3 years: 20-100 mg/dL; Age 4-6 years: 27-195 mg/dL; Age 7-9 years: 34-305 mg/dL; Age 10-11 years: 53-204 mg/dL; Age 12-13 years: 58-358 mg/dL; Age 14-15 years: 47-249 mg/dL; Age 16-19 years: 61-348 mg/dLOlder than 19 years: 70-400 mg/dL"
+      }
+    ],
+    "investigationId": 72
+  },
+  {
+    "name": "IgE",
+    "investigationList": [
+      {
+        "name": "IgE",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 73
+  },
+  {
+    "name": "IgG",
+    "investigationList": [
+      {
+        "name": "IgG",
+        "unitList": [
+          "mg/dl"
+        ],
+        "referenceRange": "Age 0-1 years: 231-1411 mg/dL; Age 1-3 years: 453-916 mg/dL; Age 4-6 years: 504-1464 mg/dL; Age 7-9 years: 572-1474 mg/dL; Age 10-11 years: 698-1560 mg/dL; Age 12-13 years: 759-1549 mg/dL; Age 14-15 years: 716-1711 mg/dL; Age 16-19 years: 549-1584 mg/dL; Older than 19 years: 700-1600 mg/dL"
+      }
+    ],
+    "investigationId": 74
+  },
+  {
+    "name": "IgM",
+    "investigationList": [
+      {
+        "name": "IgM",
+        "unitList": [
+          "mg/dL"
+        ],
+        "referenceRange": "Age 0-1 years: 0-145 mg/dL; Age 1-3 years: 19-146 mg/dL; Age 4-6 years: 24-210 mg/dL; Age 7-9 years: 31-208 mg/dL; Age 10-11 years: 31-179 mg/dL; Age 12-13 years: 35-239 mg/dL; Age 14-15 years: 15-188 mg/dL; Age 16-19 years: 23-259 mg/dLOlder than 19 years: 40-230 mg/dL"
+      }
+    ],
+    "investigationId": 75
+  },
+  {
+    "name": "P-ANCA",
+    "investigationList": [
+      {
+        "name": "P-ANCA",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 76
+  },
+  {
+    "name": "R.F. Test",
+    "investigationList": [
+      {
+        "name": "R.F. Test",
+        "unitList": [],
+        "referenceRange": "Any result with values 14 IU/ml or above is considered abnormally high, elevated, or positive."
+      }
+    ],
+    "investigationId": 77
+  },
+  {
+    "name": "Rh. Antibody Titre",
+    "investigationList": [
+      {
+        "name": "Rh. Antibody Titre",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 78
+  },
+  {
+    "name": "Rose Waaler Test",
+    "investigationList": [
+      {
+        "name": "Rose Waaler Test",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 79
+  },
+  {
+    "name": "Treponema Pallidum Heamaglutinin test",
+    "investigationList": [
+      {
+        "name": "Treponema Pallidum Heamaglutinin test",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 80
+  },
+  {
+    "name": "VDRL Qlty",
+    "investigationList": [
+      {
+        "name": "VDRL Qlty",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 81
+  },
+  {
+    "name": "VDRL Qnty",
+    "investigationList": [
+      {
+        "name": "VDRL Qnty",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 82
+  },
+  {
+    "name": "Widal Test",
+    "investigationList": [
+      {
+        "name": "Widal Test",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 83
+  },
+  {
+    "name": "S Lactate",
+    "investigationList": [
+      {
+        "name": "S Lactate",
+        "unitList": [
+          "mmol/L",
+          "mg/dL"
+        ],
+        "referenceRange": "4.5 to 19.8 mg/dL or 0.5 to 2.2 mmol/L)"
+      }
+    ],
+    "investigationId": 84
+  },
+  {
+    "name": "Lipid profile",
+    "investigationList": [
+      {
+        "name": "Cholesterol Total",
+        "unitList": [
+          "mmol/L",
+          "mg/dL"
+        ],
+        "referenceRange": "above 240 mg/dL or 6.2 mmol/L"
+      },
+      {
+        "name": "HDL Cholesterol",
+        "unitList": [
+          "mmol/L",
+          "mg/dL"
+        ],
+        "referenceRange": "If HDL-C is less than 40 mg/dL (1.04 mmol/L), there is an increased risk of heart disease that is independent of other risk factors, including the LDL-C level. A level of HDL-C between 40 and 45 mg/dL (1.04-1.17 mmol/L) is borderline"
+      },
+      {
+        "name": "LDL Cholesterol",
+        "unitList": [
+          "mmol/L",
+          "mg/dL"
+        ],
+        "referenceRange": "Less than 100 mg/dL (2.59 mmol/L) — Optimal;  100-129 mg/dL (2.59-3.34 mmol/L) — Near optimal, above optimal; 130-159 mg/dL (3.37-4.12 mmol/L) — Borderline high; 160-189 mg/dL (4.15-4.90 mmol/L) — High; Greater than 189 mg/dL (4.90 mmol/L) — Very high"
+      },
+      {
+        "name": "VLDL Cholesterol",
+        "unitList": [
+          "mmol/L",
+          "mg/dL"
+        ],
+        "referenceRange": "2-30 mg/dl"
+      },
+      {
+        "name": "Triglycerides",
+        "unitList": [
+          "mmol/L",
+          "mg/dL"
+        ],
+        "referenceRange": "Normal — Less than 150 milligrams per deciliter (mg/dL), or less than 1.7 millimoles per liter (mmol/L); Borderline high — 150 to 199 mg/dL (1.8 to 2.2 mmol/L); High — 200 to 499 mg/dL (2.3 to 5.6 mmol/L)"
+      }
+    ],
+    "investigationId": 85
+  },
+  {
+    "name": "Liver",
+    "investigationList": [
+      {
+        "name": "Albumin Globulin Ratio",
+        "unitList": [],
+        "referenceRange": "The normal A/G ratio is 0.8-2.0. The A/G ratio can be decreased in response to a low albumin or to elevated globulins."
+      },
+      {
+        "name": "Albumin",
+        "unitList": [
+          "g/dL",
+          "g/L"
+        ],
+        "referenceRange": "3.5 to 5.5 g/dL or 35-55 g/liter"
+      },
+      {
+        "name": "Alkaline Phosphatase",
+        "unitList": [
+          "IU/L"
+        ],
+        "referenceRange": "44 to 147 IU/L"
+      },
+      {
+        "name": "GGT",
+        "unitList": [
+          "U/L"
+        ],
+        "referenceRange": "0-45 U/L"
+      },
+      {
+        "name": "Globulin",
+        "unitList": [
+          "g/dL"
+        ],
+        "referenceRange": "Normal value ranges are: Serum globulin: 2.0 to 3.5 g/dL (grams per deciliter) IgM component: 75 to 300 mg/dL (milligrams per deciliter) IgG component: 650 to 1850 mg/dL"
+      },
+      {
+        "name": "LDH",
+        "unitList": [
+          "U/L",
+          "mkat/L"
+        ],
+        "referenceRange": "Normal LDH levels range from 140 units per liter (U/L) to 280 U/L or 2.34 mkat/L to 4.68 mkat/L."
+      },
+      {
+        "name": "S. Bilirubin (Direct)",
+        "unitList": [],
+        "referenceRange": "0 to 0.3 mg/dL"
+      },
+      {
+        "name": "S. Bilirubin (Indirect)",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "S. Bilirubin (Total, Direct, Indirect)"
+      },
+      {
+        "name": "S. Bilirubin (Total)",
+        "unitList": [
+          "mg/dL"
+        ],
+        "referenceRange": "0.3 to 1.9 mg/dL"
+      },
+      {
+        "name": "SGOT (AST)",
+        "unitList": [
+          "U/L"
+        ],
+        "referenceRange": "10 to 40 U/L"
+      },
+      {
+        "name": "SGPT (ALT)",
+        "unitList": [
+          "U/L"
+        ],
+        "referenceRange": "7-56 U/L"
+      },
+      {
+        "name": "S Total Protein",
+        "unitList": [
+          "g/dL",
+          "g/L"
+        ],
+        "referenceRange": "6.4-8.3 grams per deciliter (g/dL) or 64-83 grams per liter (g/L)"
+      },
+      {
+        "name": "SGPT(ALT), SGOT(AST), Alk. Phosphatase, S. Bilirubin, INR, Albumin"
+      },
+      {
+        "name": "SGPT(ALT), SGOT(AST), Alk. Phosphatase, S. Bilirubin"
+      }
+    ],
+    "investigationId": 86
+  },
+  {
+    "name": "LUNG FUNCTION TEST (PFT)",
+    "investigationList": [
+      {
+        "name": "LUNG FUNCTION TEST (PFT)"
+      }
+    ],
+    "investigationId": 87
+  },
+  {
+    "name": "MAMMOGRAM",
+    "investigationList": [
+      {
+        "name": "Both Breast"
+      },
+      {
+        "name": "Right Breast"
+      },
+      {
+        "name": "Left Breast"
+      }
+    ],
+    "investigationId": 88
+  },
+  {
+    "name": "C/S(Culture and Sensitivity)",
+    "investigationList": [
+      {
+        "name": "Blood for C/S"
+      },
+      {
+        "name": "Aural Swab for C/S"
+      },
+      {
+        "name": "Conjunctival Swab for C/S"
+      },
+      {
+        "name": "Prostatic/Urethral Smear for C/S"
+      },
+      {
+        "name": "Prostatic/Urethral Smear for Gm Stain"
+      },
+      {
+        "name": "Prostatic/Urethral Smear for RE"
+      },
+      {
+        "name": "Pus for C/S"
+      },
+      {
+        "name": "Pus for Gm Stain"
+      },
+      {
+        "name": "Pus for RE"
+      },
+      {
+        "name": "Sputum  for R/E"
+      },
+      {
+        "name": "Sputum for AFB"
+      },
+      {
+        "name": "Sputum for C/S"
+      },
+      {
+        "name": "Sputum for Gm Stain"
+      },
+      {
+        "name": "Sputum for Fungus"
+      },
+      {
+        "name": "Stool for C/S"
+      },
+      {
+        "name": "Throat Swab for C/S"
+      },
+      {
+        "name": "Throat Swab for KLB"
+      },
+      {
+        "name": "Throat Swab for R/E"
+      },
+      {
+        "name": "Throat Swab Gm Stain"
+      },
+      {
+        "name": "Umblical Swab for C/S"
+      },
+      {
+        "name": "Vaginal Swab for C/S"
+      },
+      {
+        "name": "Vaginal Swab for Gm Stain"
+      },
+      {
+        "name": "Vaginal Swab for R/E"
+      },
+      {
+        "name": "Wound Swab for C/S"
+      }
+    ],
+    "investigationId": 89
+  },
+  {
+    "name": "MRI",
+    "investigationList": [
+      {
+        "name": "MRA of  Brain"
+      },
+      {
+        "name": "MRA of Neck"
+      },
+      {
+        "name": "MRI Ankle Joint Lt"
+      },
+      {
+        "name": "MRI Ankle Joint Lt"
+      },
+      {
+        "name": "MRI Any Single Organ /Part"
+      },
+      {
+        "name": "MRI Base of the Skull"
+      },
+      {
+        "name": "MRI Brain"
+      },
+      {
+        "name": "MRI Cervical Spine"
+      },
+      {
+        "name": "MRI Elbow Joint Lt"
+      },
+      {
+        "name": "MRI Elbow Joint Rt"
+      },
+      {
+        "name": "MRI Foot Lt"
+      },
+      {
+        "name": "MRI Foot Rt"
+      },
+      {
+        "name": "MRI Fore arm Lt"
+      },
+      {
+        "name": "MRI Fore arm Rt"
+      },
+      {
+        "name": "MRI Hip Joint Both"
+      },
+      {
+        "name": "MRI Hip Joint Lt"
+      },
+      {
+        "name": "MRI Hip Joint Rt"
+      },
+      {
+        "name": "MRI Knee Joint Lt"
+      },
+      {
+        "name": "MRI Knee Joint Lt"
+      },
+      {
+        "name": "MRI Leg Lt"
+      },
+      {
+        "name": "MRI Leg Rt"
+      },
+      {
+        "name": "MRI Lower Abdomen/Pelvis"
+      },
+      {
+        "name": "MRI Lumbo-Sacral Spine"
+      },
+      {
+        "name": "MRI MRCP"
+      },
+      {
+        "name": "MRI Nasopharynx"
+      },
+      {
+        "name": "MRI Neck"
+      },
+      {
+        "name": "MRI Orbits"
+      },
+      {
+        "name": "MRI Pituitary Gland"
+      },
+      {
+        "name": "MRI Pelvis"
+      },
+      {
+        "name": "MRI PNS"
+      },
+      {
+        "name": "MRI Shoulder Joint Lt"
+      },
+      {
+        "name": "MRI Shoulder Joint Rt"
+      },
+      {
+        "name": "MRI Theigh Rt"
+      },
+      {
+        "name": "MRI Theigh Lt"
+      },
+      {
+        "name": "MRI Thoracic/Dorsal Spine"
+      },
+      {
+        "name": "MRI Upper Abdomen"
+      },
+      {
+        "name": "MRI Whole Abdomen"
+      },
+      {
+        "name": "MRI Wrist Joint Lt"
+      },
+      {
+        "name": "MRI Wrist Joint Rt"
+      }
+    ],
+    "investigationId": 90
+  },
+  {
+    "name": "NCV",
+    "investigationList": [
+      {
+        "name": "NCV"
+      }
+    ],
+    "investigationId": 91
+  },
+  {
+    "name": "PCR Lab Test/Molicular",
+    "investigationList": [
+      {
+        "name": "HBV-DNA (PcR)",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "HCV-RNA (Qualititive)",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "HCV-RNA (Genotypine)",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 92
+  },
+  {
+    "name": "RENAL",
+    "investigationList": [
+      {
+        "name": "Creatinine Clearance",
+        "unitList": [
+          "mL/min or mililiter per minute"
+        ],
+        "referenceRange": "Male: 97 to 137 ml/min;Female: 88 to 128 ml/min."
+      },
+      {
+        "name": "eGFR",
+        "unitList": [
+          "mL/min/1.73m2"
+        ],
+        "referenceRange": ">90 is considered as normal. eGFR decreases with age. An eGFR below 60 mL/min/1.73m2 suggests that some kidney damage has occurred.Following is a guideline for severity. Stage 1 : 90 or above; Stage 2: 60-89; Stage 3: 30-69. stagge 4 15-29; stage 5 <15."
+      },
+      {
+        "name": "K (Potassium)",
+        "unitList": [
+          "mEq/L (milliEquivalents per liter)"
+        ],
+        "referenceRange": "3.5-5.0 mEq/L"
+      },
+      {
+        "name": "Na, K, Cl, Urea, Creatinine, eGFR"
+      },
+      {
+        "name": "Na, K, Cl, Urea, Creatinine"
+      },
+      {
+        "name": "Na (Sodium)",
+        "unitList": [
+          "mEq/L (milliEquivalents per liter)"
+        ],
+        "referenceRange": "135-145"
+      },
+      {
+        "name": "Osmolality (Blood)",
+        "unitList": [
+          "mOsm/kg Water or miliosmol/kg Water"
+        ],
+        "referenceRange": "282 295 mOsm/kg"
+      },
+      {
+        "name": "Osmolality (Urine)",
+        "unitList": [
+          "mOsm/kg Water or miliosmol/kg Water"
+        ],
+        "referenceRange": "The normal 24-hour urine osmolality is, on average, 500-800 mOsm/kg of water. Random urine osmolality should average 300-900 mOsm/kg of water. After 12-14 hours of fluid intake restriction, the urine osmolality should exceed 850 mOsm/kg of water."
+      },
+      {
+        "name": "Osmolality (Blood/Urine ratio)",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Serum Creatinine",
+        "unitList": [
+          "µmol/L"
+        ],
+        "referenceRange": "50-90 µmol/L"
+      },
+      {
+        "name": "BUN",
+        "unitList": [
+          "µmol/L"
+        ],
+        "referenceRange": "180-420 µmol/L"
+      },
+      {
+        "name": "Urea",
+        "unitList": [
+          "mmol/L",
+          "mg/dL"
+        ],
+        "referenceRange": "7 to 20 mg/dL (2.5 to 7.1 mmol/L)"
+      },
+      {
+        "name": "Urinary Amylase, 24 hour",
+        "unitList": [
+          "U/L"
+        ],
+        "referenceRange": ""
+      },
+      {
+        "name": "Urinary Amylase",
+        "unitList": [
+          "U/L"
+        ],
+        "referenceRange": "24-400 U/L"
+      },
+      {
+        "name": "Urinary Inorganic Phosphate, 24 hour",
+        "unitList": [
+          "mg/dL"
+        ],
+        "referenceRange": ""
+      },
+      {
+        "name": "Urinary Inorganic Phosphate",
+        "unitList": [
+          "mg/dL"
+        ],
+        "referenceRange": ""
+      },
+      {
+        "name": "Urinary Microalbumin, 24 hour",
+        "unitList": [
+          "mg"
+        ],
+        "referenceRange": "30–300 mg of albumin per 24 hours"
+      },
+      {
+        "name": "Urinary Microalbumin",
+        "unitList": [],
+        "referenceRange": "30–300 mg of albumin per 24 hours"
+      },
+      {
+        "name": "Urinary Urea & Creatinine, 24 hour",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Urinary Urea, 24 hour",
+        "unitList": [
+          "g"
+        ],
+        "referenceRange": "0-35 g/24 hours"
+      },
+      {
+        "name": "Urinary Creatinine 24 hour",
+        "unitList": [
+          "mg/day"
+        ],
+        "referenceRange": "500 to 2000 mg/day"
+      },
+      {
+        "name": "Urinary Urea & Creatinine, Spot"
+      },
+      {
+        "name": "Urinary Uric Acid",
+        "unitList": [
+          "mg/d"
+        ],
+        "referenceRange": "250 to 750 milligrams per 24 hours."
+      },
+      {
+        "name": "Urine Calcium Creatinine Ratio",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Urine Microalbumin Creatinine Ratio (MCR)",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Urine Protein & Albumin, Spot "
+      },
+      {
+        "name": "Urine Protein Creatinine Ratio (ACR), Spot",
+        "unitList": [
+          "mg"
+        ],
+        "referenceRange": "Normal daily (24 hour) urine albumin excretion is less than 30 mg in adults. If the 24 hour urine albumin excretion results are between 30-300 mg it becomes defined as microalbuminuria (MAU)"
+      },
+      {
+        "name": "UTP, 24 hour",
+        "unitList": [
+          "mg",
+          "mg/dL"
+        ],
+        "referenceRange": "The normal value is less than 100 milligrams per day or less than 10 milligrams per deciliter of urine."
+      }
+    ],
+    "investigationId": 93
+  },
+  {
+    "name": "STOOL",
+    "investigationList": [
+      {
+        "name": "STOOL for C/S"
+      },
+      {
+        "name": "STOOL for OBT (Occult Blood Test)"
+      },
+      {
+        "name": "STOOL for Ova Count"
+      },
+      {
+        "name": "STOOL for RE"
+      },
+      {
+        "name": "STOOL for Reducing Substance"
+      }
+    ],
+    "investigationId": 94
+  },
+  {
+    "name": "STOOL for C/S",
+    "investigationList": [
+      {
+        "name": "STOOL for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 95
+  },
+  {
+    "name": "STOOL for OBT (Occult Blood Test)",
+    "investigationList": [
+      {
+        "name": "STOOL for OBT (Occult Blood Test)",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 96
+  },
+  {
+    "name": "STOOL for Ova Count",
+    "investigationList": [
+      {
+        "name": "STOOL for Ova Count",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 97
+  },
+  {
+    "name": "STOOL for Reducing Substance (R/S)",
+    "investigationList": [
+      {
+        "name": "STOOL for Reducing Substance",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 98
+  },
+  {
+    "name": "STOOL for RE",
+    "investigationList": [
+      {
+        "name": "Color",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Form & Consistency",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Reaction",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Charcot- Leyden Crystals",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Pus cells",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "RBC",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Macrophages",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Protozoal parasites",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Helminthic ova",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Reducing Substance",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Other Observations",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Helminthic ova",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "showGroupNameOnInvoice": true,
+    "investigationId": 99
+  },
+  {
+    "name": "TORCH PANNEL",
+    "investigationList": [
+      {
+        "name": "CMV IgG",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "CMV IgM",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "HSV 1 IgG",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "HSV 1 IgM",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "HSV 1 & 2 IgM",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "HSV 2 IgG",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "HSV 2 IgM",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Rubella IgG",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Rubella IgM",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Toxo IgM",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 100
+  },
+  {
+    "name": "ULTRASOUND IMAGING",
+    "investigationList": [
+      {
+        "name": "Ultrasound for Pregnancy Profile"
+      },
+      {
+        "name": "Ultrasound guided FNAC",
+        "haveCustomField": true,
+        "customFieldValue": null
+      },
+      {
+        "name": "Ultrasound guided Aspiration"
+      },
+      {
+        "name": "Ultrasound of Brain"
+      },
+      {
+        "name": "Ultrasound of Breasts"
+      },
+      {
+        "name": "Ultrasound of Breast Left"
+      },
+      {
+        "name": "Ultrasound of Breast Right"
+      },
+      {
+        "name": "Ultrasound of HBS (Hepatobiliary system)"
+      },
+      {
+        "name": "Ultrasound of KUB with Prostate & Residual Volume"
+      },
+      {
+        "name": "Ultrasound of KUB"
+      },
+      {
+        "name": "Ultrasound of Pregnancy Profile with anomaly Scan"
+      },
+      {
+        "name": "Ultrasound of Pregnancy Profile with Chromosomal Scan"
+      },
+      {
+        "name": "Ultrasound of PVR"
+      },
+      {
+        "name": "Ultrasound of Scrotum"
+      },
+      {
+        "name": "Ultrasound of Soft Tissue"
+      },
+      {
+        "name": "Ultrasound of Thyroid"
+      },
+      {
+        "name": "Ultrasound of TRUS"
+      },
+      {
+        "name": "Ultrasound of TVUS"
+      },
+      {
+        "name": "Ultrasound of Upper Abdomen"
+      },
+      {
+        "name": "Ultrasound of Uterus & Adnexae"
+      },
+      {
+        "name": "Ultrasound of Whole Abdomen"
+      },
+      {
+        "name": "Ultrasound guided Biosy of Liver"
+      },
+      {
+        "name": "Ultrasound guided ALCOHOL INJECTION of HEPATOMA"
+      }
+    ],
+    "investigationId": 101
+  },
+  {
+    "name": "URINE for Bile Pigment",
+    "investigationList": [
+      {
+        "name": "URINE for Bile Pigment",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 102
+  },
+  {
+    "name": "URINE for Urobilinogen",
+    "investigationList": [
+      {
+        "name": "URINE for Urobilinogen",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 103
+  },
+  {
+    "name": "URINE for Pregnancy Test",
+    "investigationList": [
+      {
+        "name": "URINE for Pregnancy Test",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 104
+  },
+  {
+    "name": "URINE for Gm Stain",
+    "investigationList": [
+      {
+        "name": "URINE for Gm Stain",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 105
+  },
+  {
+    "name": "URINE for C/S",
+    "investigationList": [
+      {
+        "name": "URINE for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 106
+  },
+  {
+    "name": "URINE for Bile Salts",
+    "investigationList": [
+      {
+        "name": "URINE for Bile Salts",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 107
+  },
+  {
+    "name": "URINE for RE",
+    "investigationList": [
+      {
+        "name": "Colour",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Clarity",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Odor",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Specific gravity",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "pH",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Protein",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Glucose",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Nitrites",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Leukocyte esterase",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Ketones.",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Red or white blood cells.",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Casts",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Crystals",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Bacteria, yeast cells, or parasites",
+        "unitList": [],
+        "referenceRange": ""
+      },
+      {
+        "name": "Squamous cells",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "showGroupNameOnInvoice": true,
+    "investigationId": 108
+  },
+  {
+    "name": "UROFLOWMETRY",
+    "investigationList": [
+      {
+        "name": "UROFLOWMETRY",
+        "unitList": [
+          "U/L"
+        ],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 109
+  },
+  {
+    "name": "Ammonia",
+    "investigationList": [
+      {
+        "name": "Ammonia",
+        "unitList": [
+          "mcg/dL"
+        ],
+        "referenceRange": "for adults, anything between 9.5 and 49 micrograms per deciliter (mcg/dL) is considered normal. The levels of ammonia are considered normal in children if they are between 40 and 80mcg/dL. In newborns, the levels of ammonia should be between 90 and 150 mcg/dL."
+      }
+    ],
+    "investigationId": 110
+  },
+  {
+    "name": "Feritin",
+    "investigationList": [
+      {
+        "name": "Feritin",
+        "unitList": [
+          "ng/mL"
+        ],
+        "referenceRange": "24 to 336 nanograms per milliliter in men. 11 to 307 nanograms per milliliter in women"
+      }
+    ],
+    "investigationId": 111
+  },
+  {
+    "name": "Folate",
+    "investigationList": [
+      {
+        "name": "Folate",
+        "unitList": [
+          "ng/mL",
+          "nmol/L"
+        ],
+        "referenceRange": "The reference range of the plasma folate level varies by age, as follows: Adults: 2-20 ng/mL, or 4.5-45.3 nmol/L; Children: 5-21 ng/mL, or 11.3-47.6 nmol/L; Infants: 14-51 ng/mL, or 31.7-115.5 nmol/L"
+      }
+    ],
+    "investigationId": 112
+  },
+  {
+    "name": "Folic Acid",
+    "investigationList": [
+      {
+        "name": "Folic Acid",
+        "unitList": [
+          "ng/mL",
+          "nmol/L"
+        ],
+        "referenceRange": "The reference range of the plasma folate level varies by age, as follows: Adults: 2-20 ng/mL, or 4.5-45.3 nmol/L; Children: 5-21 ng/mL, or 11.3-47.6 nmol/L; Infants: 14-51 ng/mL, or 31.7-115.5 nmol/L"
+      }
+    ],
+    "investigationId": 113
+  },
+  {
+    "name": "Lithium",
+    "investigationList": [
+      {
+        "name": "Lithium",
+        "unitList": [
+          "mmol/L"
+        ],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 114
+  },
+  {
+    "name": "Serum Iron",
+    "investigationList": [
+      {
+        "name": "Serum Iron",
+        "unitList": [
+          "µg/dL"
+        ],
+        "referenceRange": "The serum iron reference range is 55–160 µg/dL in men and40–155 µg/dL in women."
+      }
+    ],
+    "investigationId": 115
+  },
+  {
+    "name": "Serum Uric Acid",
+    "investigationList": [
+      {
+        "name": "Serum Uric Acid",
+        "unitList": [
+          "mg/dL"
+        ],
+        "referenceRange": "Normal Uric acid levels are 2.4-6.0 mg/dL (female) and 3.4-7.0 mg/dL (male)."
+      }
+    ],
+    "investigationId": 116
+  },
+  {
+    "name": "TIBC (Total Iron Binding Capacity)",
+    "investigationList": [
+      {
+        "name": "TIBC (Total Iron Binding Capacity)",
+        "unitList": [
+          "mcg/dL"
+        ],
+        "referenceRange": "240 to 450 micrograms per deciliter (mcg/dL). "
+      }
+    ],
+    "investigationId": 117
+  },
+  {
+    "name": "Vitamin B12",
+    "investigationList": [
+      {
+        "name": "Vitamin B12",
+        "unitList": [
+          "pg/mL"
+        ],
+        "referenceRange": "200 to 900 picograms per milliliter (pg/mL)."
+      }
+    ],
+    "investigationId": 118
+  },
+  {
+    "name": "Vitamin D(25 OH)",
+    "investigationList": [
+      {
+        "name": "Vitamin D(25 OH)",
+        "unitList": [
+          "ng/mL"
+        ],
+        "referenceRange": "A level of 20 nanograms/milliliter to 50 ng/mL is considered adequate for healthy people. A level less than 12 ng/mL indicates vitamin D deficiency."
+      }
+    ],
+    "investigationId": 119
+  },
+  {
+    "name": "X-RAYS",
+    "investigationList": [
+      {
+        "name": "X-RAY Ba follow through"
+      },
+      {
+        "name": "X-RAY Ba meal of Stomach and duodenum"
+      },
+      {
+        "name": "X-RAY Ba-enema single/double contrast"
+      },
+      {
+        "name": "X-RAY Ba-Swallow of  Oesophagus"
+      },
+      {
+        "name": "X-RAY Cervical Spine B/V"
+      },
+      {
+        "name": "X-RAY Chest P/A View"
+      },
+      {
+        "name": "X-RAY Fistulogram"
+      },
+      {
+        "name": "X-RAY Hystero-Salphingogram"
+      },
+      {
+        "name": "X-RAY IVU with Post micturation Flim"
+      },
+      {
+        "name": "X-RAY KUB"
+      },
+      {
+        "name": "X-RAY Lumbo-Dorsal Spine B/V"
+      },
+      {
+        "name": "X-RAY Lumbo-Sacral Spine B/V"
+      },
+      {
+        "name": "X-RAY Myelogram"
+      },
+      {
+        "name": "X-RAY OPG"
+      },
+      {
+        "name": "X-RAY P.N.S."
+      },
+      {
+        "name": "X-RAY P.N.S. (Open.Mouth View)"
+      },
+      {
+        "name": "X-RAY Plain X-Ray Abdomen/C.P.D."
+      },
+      {
+        "name": "X-RAY Retrograde Cystourethrogram (MCU)"
+      },
+      {
+        "name": "X-RAY Sialogram"
+      },
+      {
+        "name": "X-RAY Sinogram"
+      },
+      {
+        "name": "X-RAY Skull B/V"
+      },
+      {
+        "name": "X-RAY Thoracic / Dorsal Spine B/V"
+      },
+      {
+        "name": "X-RAY(PERIAPICAL)(SINGLE TOOTH)"
+      },
+      {
+        "name": "X-RAY(PERIAPICAL)(DOUBLE TOOTH)"
+      },
+      {
+        "name": "X-RAY(PERIAPICAL)(TRIPLE TOOTH)"
+      }
+    ],
+    "investigationId": 120
+  },
+  {
+    "name": "OTHERS",
+    "investigationList": [],
+    "investigationId": 121
+  },
+  {
+    "name": "Aldehyde test",
+    "investigationList": [
+      {
+        "name": "Aldehyde test",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 122
+  },
+  {
+    "name": "Hb Electrophoresis",
+    "investigationList": [
+      {
+        "name": "Hb Electrophoresis",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 123
+  },
+  {
+    "name": "HIV",
+    "investigationList": [
+      {
+        "name": "HIV",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 124
+  },
+  {
+    "name": "Protein Electrophoresis",
+    "investigationList": [
+      {
+        "name": "Protein Electrophoresis",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 125
+  },
+  {
+    "name": "Semen Analysis",
+    "investigationList": [
+      {
+        "name": "Semen Analysis",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 126
+  },
+  {
+    "name": "Serum Immuno Electrophoresis",
+    "investigationList": [
+      {
+        "name": "Serum Immuno Electrophoresis",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 127
+  },
+  {
+    "name": "Skin/Nail Scraping for Fungus",
+    "investigationList": [
+      {
+        "name": "Skin/Nail Scraping for Fungus",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 128
+  },
+  {
+    "name": "Tuberculin Test/Montoux Test",
+    "investigationList": [
+      {
+        "name": "Tuberculin Test/Montoux Test",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 129
+  },
+  {
+    "name": "Blood grouping",
+    "investigationList": [
+      {
+        "name": "Blood grouping",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 130
+  },
+  {
+    "name": "Blood grouping and cross matching",
+    "investigationList": [
+      {
+        "name": "Blood grouping and cross matching",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 131
+  },
+  {
+    "name": "Protein Electropharesis",
+    "investigationList": [
+      {
+        "name": "Protein Electropharesis",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 132
+  },
+  {
+    "name": "Blood for C/S",
+    "investigationList": [
+      {
+        "name": "Blood for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 133
+  },
+  {
+    "name": "Wound Swab for C/S",
+    "investigationList": [
+      {
+        "name": "Wound Swab for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 134
+  },
+  {
+    "name": "Vaginal Swab for R/E",
+    "investigationList": [
+      {
+        "name": "Vaginal Swab for R/E",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 135
+  },
+  {
+    "name": "Vaginal Swab for Gm Stain",
+    "investigationList": [
+      {
+        "name": "Vaginal Swab for Gm Stain",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 136
+  },
+  {
+    "name": "Vaginal Swab for C/S",
+    "investigationList": [
+      {
+        "name": "Vaginal Swab for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 137
+  },
+  {
+    "name": "Umblical Swab for C/S",
+    "investigationList": [
+      {
+        "name": "Umblical Swab for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 138
+  },
+  {
+    "name": "Throat Swab Gm Stain",
+    "investigationList": [
+      {
+        "name": "Throat Swab Gm Stain",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 139
+  },
+  {
+    "name": "Throat Swab for R/E",
+    "investigationList": [
+      {
+        "name": "Throat Swab for R/E",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 140
+  },
+  {
+    "name": "Throat Swab for KLB",
+    "investigationList": [
+      {
+        "name": "Throat Swab for KLB",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 141
+  },
+  {
+    "name": "Throat Swab for C/S",
+    "investigationList": [
+      {
+        "name": "Throat Swab for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 142
+  },
+  {
+    "name": "Stool for C/S",
+    "investigationList": [
+      {
+        "name": "Stool for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 143
+  },
+  {
+    "name": "Sputum for Gm Stain",
+    "investigationList": [
+      {
+        "name": "Sputum for Gm Stain",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 144
+  },
+  {
+    "name": "Sputum for C/S",
+    "investigationList": [
+      {
+        "name": "Sputum for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 145
+  },
+  {
+    "name": "Sputum for AFB",
+    "investigationList": [
+      {
+        "name": "Sputum for AFB",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 146
+  },
+  {
+    "name": "Sputum  for R/E",
+    "investigationList": [
+      {
+        "name": "Sputum  for R/E",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 147
+  },
+  {
+    "name": "Pus for RE",
+    "investigationList": [
+      {
+        "name": "Pus for RE",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 148
+  },
+  {
+    "name": "Pus for Gm Stain",
+    "investigationList": [
+      {
+        "name": "Pus for Gm Stain",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 149
+  },
+  {
+    "name": "Pus for C/S",
+    "investigationList": [
+      {
+        "name": "Pus for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 150
+  },
+  {
+    "name": "Pus for Cytology",
+    "investigationList": [
+      {
+        "name": "Pus for Cytology",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 151
+  },
+  {
+    "name": "Prostatic/Urethral Smear for RE",
+    "investigationList": [
+      {
+        "name": "Prostatic/Urethral Smear for RE",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 152
+  },
+  {
+    "name": "Prostatic/Urethral Smear for Gm Stain",
+    "investigationList": [
+      {
+        "name": "Prostatic/Urethral Smear for Gm Stain",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 153
+  },
+  {
+    "name": "Prostatic/Urethral Smear for C/S",
+    "investigationList": [
+      {
+        "name": "Prostatic/Urethral Smear for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 154
+  },
+  {
+    "name": "Conjunctival Swab",
+    "investigationList": [
+      {
+        "name": "Conjunctival Swab",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 155
+  },
+  {
+    "name": "Aural Swab for C/S",
+    "investigationList": [
+      {
+        "name": "Aural Swab for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 156
+  },
+  {
+    "name": "Urine Benj protein",
+    "investigationList": [
+      {
+        "name": "Urine Benj protein",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 157
+  },
+  {
+    "name": "Ketones/Ketosteroid",
+    "investigationList": [
+      {
+        "name": "Ketones/Ketosteroid.",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 158
+  },
+  {
+    "name": "Glucose ABF (2 hr after breakfast)",
+    "investigationList": [
+      {
+        "name": "Glucose ABF (2 hr after breakfast",
+        "unitList": [
+          "mg/dL",
+          "mmol/L"
+        ],
+        "referenceRange": "Non-diabetic:under 7.8 mmol/L; Type 2 diabetes:under 8.5 mmol/L"
+      }
+    ],
+    "investigationId": 159
+  },
+  {
+    "name": "Glucose ABF (1.5 hr after breakfast)",
+    "investigationList": [
+      {
+        "name": "Glucose ABF (1.5 hr after breakfast",
+        "unitList": [
+          "mg/dL",
+          "mmol/L"
+        ],
+        "referenceRange": "Non-diabetic:under 7.8 mmol/L; Type 2 diabetes:under 8.5 mmol/L"
+      }
+    ],
+    "investigationId": 160
+  },
+  {
+    "name": "Plasma Glucose 2hrs after 75g Glucose",
+    "investigationList": [
+      {
+        "name": "Plasma Glucose 2hrs after 75g Glucose",
+        "unitList": [
+          "mg/dL",
+          "mmol/L"
+        ],
+        "referenceRange": "Non-diabetic:under 7.8 mmol/L; Type 2 diabetes:under 8.5 mmol/L"
+      }
+    ],
+    "investigationId": 161
+  },
+  {
+    "name": "Plasma Glucose (Random) RBS",
+    "investigationList": [
+      {
+        "name": "Plasma Glucose (Random) RBS",
+        "unitList": [
+          "mmol/L"
+        ],
+        "referenceRange": "<5.5 mmol/L in non-diabetic, 5.5- 11 mmol/L impaired Glucose Tolerance, >11 mmol/L is diabetic "
+      }
+    ],
+    "investigationId": 162
+  },
+  {
+    "name": "Plasma Glucose (Random) RBS after iftar",
+    "investigationList": [
+      {
+        "name": "Plasma Glucose (Random) RBS after iftar",
+        "unitList": [
+          "mmol/L"
+        ],
+        "referenceRange": "<5.5 mmol/L in non-diabetic, 5.5- 11 mmol/L impaired Glucose Tolerance, >11 mmol/L is diabetic "
+      }
+    ],
+    "investigationId": 163
+  },
+  {
+    "name": "Spot 5-HIAA in Urine ",
+    "investigationList": [
+      {
+        "name": "5-HIAA in Urine ",
+        "unitList": [
+          "mg"
+        ],
+        "referenceRange": "0-14 mg/g creatinine"
+      }
+    ],
+    "investigationId": 164
+  },
+  {
+    "name": "24 hour 5-HIAA in Urine ",
+    "investigationList": [
+      {
+        "name": "5-HIAA in Urine ",
+        "unitList": [
+          "mg/µmol"
+        ],
+        "referenceRange": "2-7 mg/24 h or 10.5-36.6 µmol/24 h"
+      }
+    ],
+    "investigationId": 165
+  },
+  {
+    "name": "ASCITIC FLUID FOR CYTOLOGY (MALIGNANT)",
+    "investigationList": [
+      {
+        "name": "ASCITIC FLUID FOR CYTOLOGY (MALIGNANT)",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 166
+  },
+  {
+    "name": "Ascitic fluid for R/E",
+    "investigationList": [
+      {
+        "name": "Ascitic fluid for R/E",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 167
+  },
+  {
+    "name": "Ascitic fluid for ADA",
+    "investigationList": [
+      {
+        "name": "Ascitic fluid for ADA",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 168
+  },
+  {
+    "name": "Ascitic fluid for Biochemistry",
+    "investigationList": [
+      {
+        "name": "Ascitic fluid for Biochemistry",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 169
+  },
+  {
+    "name": "Ascitic fluid for CA-125",
+    "investigationList": [
+      {
+        "name": "Ascitic fluid for CA-125",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 170
+  },
+  {
+    "name": "Ascitic fluid for Suger",
+    "investigationList": [
+      {
+        "name": "Ascitic fluid for Suger",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 171
+  },
+  {
+    "name": "Ascitic fluid for Gram stain",
+    "investigationList": [
+      {
+        "name": "Ascitic fluid for Gram stain",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 172
+  },
+  {
+    "name": "CRP",
+    "investigationList": [
+      {
+        "name": "CRP (C-reactive Protein)",
+        "unitList": [
+          "mg/L"
+        ],
+        "referenceRange": "<8 mg/L"
+      }
+    ],
+    "investigationId": 173
+  },
+  {
+    "name": "CR Protein",
+    "investigationList": [
+      {
+        "name": "CR Protein (C-reactive Protein)",
+        "unitList": [
+          "mg/L"
+        ],
+        "referenceRange": "<8 mg/L"
+      }
+    ],
+    "investigationId": 174
+  },
+  {
+    "name": "CK-MB",
+    "investigationList": [
+      {
+        "name": "CK-MB",
+        "unitList": [
+          "IU/L"
+        ],
+        "referenceRange": "5-25 IU/L"
+      }
+    ],
+    "investigationId": 175
+  },
+  {
+    "name": "Troponin 1",
+    "investigationList": [
+      {
+        "name": "Troponin 1",
+        "unitList": [
+          "ng/mL"
+        ],
+        "referenceRange": "<0.01. Increased level is to be interpreted by physician"
+      }
+    ],
+    "investigationId": 176
+  },
+  {
+    "name": "Myoglobin",
+    "investigationList": [
+      {
+        "name": "Myoglobin",
+        "unitList": [
+          "ng/mL"
+        ],
+        "referenceRange": "0-85 ng/mL"
+      }
+    ],
+    "investigationId": 177
+  },
+  {
+    "name": "CPK",
+    "investigationList": [
+      {
+        "name": "CPK",
+        "unitList": [
+          "U/L"
+        ],
+        "referenceRange": "22-198 U/L"
+      }
+    ],
+    "investigationId": 178
+  },
+  {
+    "name": "Homocysteine",
+    "investigationList": [
+      {
+        "name": "Homocysteine",
+        "unitList": [
+          "µmol/L"
+        ],
+        "referenceRange": "4-15 µmol/L)"
+      }
+    ],
+    "investigationId": 179
+  },
+  {
+    "name": "BNP",
+    "investigationList": [
+      {
+        "name": "BNP (Brain-Type Natriuretic Peptide)",
+        "unitList": [
+          "pg/mL"
+        ],
+        "referenceRange": "< 100 pg/mL(picogram/mililiter) - HF unlikely; >400 pg/mL - HF likely; 100-400 pg/mL - Use clinical judgment"
+      }
+    ],
+    "investigationId": 180
+  },
+  {
+    "name": "NT-pro BNP",
+    "investigationList": [
+      {
+        "name": "NT-pro BNP (Brain-Type Natriuretic Peptide)",
+        "unitList": [
+          "ng/mL"
+        ],
+        "referenceRange": "< 300 ng/mL (nanogram/mililiter) - HF unlikely; Age < 50 years: NT-proBNP >450 pg/mL - HF likely; Age 50-75 years: NT-proBNP >900 pg/mL – HF likely; Age >75 years: NT-proBNP >1800 – HF likely"
+      }
+    ],
+    "investigationId": 181
+  },
+  {
+    "name": "Creatinine Clearance",
+    "investigationList": [
+      {
+        "name": "Creatinine Clearance",
+        "unitList": [
+          "mL/min or mililiter per minute"
+        ],
+        "referenceRange": "Male: 97 to 137 ml/min;Female: 88 to 128 ml/min."
+      }
+    ],
+    "investigationId": 182
+  },
+  {
+    "name": "eGFR",
+    "investigationList": [
+      {
+        "name": "eGFR",
+        "unitList": [
+          "mL/min/1.73m2"
+        ],
+        "referenceRange": ">90 is considered as normal. eGFR decreases with age. An eGFR below 60 mL/min/1.73m2 suggests that some kidney damage has occurred.Following is a guideline for severity. Stage 1 : 90 or above; Stage 2: 60-89; Stage 3: 30-69. stagge 4 15-29; stage 5 <15."
+      }
+    ],
+    "investigationId": 183
+  },
+  {
+    "name": "Serum K (Potassium)",
+    "investigationList": [
+      {
+        "name": "Serum K (Potassium)",
+        "unitList": [
+          "mEq/L (milliEquivalents per liter)"
+        ],
+        "referenceRange": "3.5-5.0 mEq/L"
+      }
+    ],
+    "investigationId": 184
+  },
+  {
+    "name": "Serum Na (Sodium)",
+    "investigationList": [
+      {
+        "name": "Na (Sodium)",
+        "unitList": [
+          "mEq/L (milliEquivalents per liter)"
+        ],
+        "referenceRange": "135-145"
+      }
+    ],
+    "investigationId": 185
+  },
+  {
+    "name": "Serum Osmolality (Blood)",
+    "investigationList": [
+      {
+        "name": "Osmolality (Blood)",
+        "unitList": [
+          "mOsm/kg Water or miliosmol/kg Water"
+        ],
+        "referenceRange": "282 295 mOsm/kg"
+      }
+    ],
+    "investigationId": 186
+  },
+  {
+    "name": "S Osmolality (Blood)",
+    "investigationList": [
+      {
+        "name": "Osmolality (Blood)",
+        "unitList": [
+          "mOsm/kg Water or miliosmol/kg Water"
+        ],
+        "referenceRange": "282 295 mOsm/kg"
+      }
+    ],
+    "investigationId": 187
+  },
+  {
+    "name": "Osmolality (Urine)",
+    "investigationList": [
+      {
+        "name": "Osmolality (Urine)",
+        "unitList": [
+          "mOsm/kg Water or miliosmol/kg Water"
+        ],
+        "referenceRange": "The normal 24-hour urine osmolality is, on average, 500-800 mOsm/kg of water. Random urine osmolality should average 300-900 mOsm/kg of water. After 12-14 hours of fluid intake restriction, the urine osmolality should exceed 850 mOsm/kg of water."
+      }
+    ],
+    "investigationId": 188
+  },
+  {
+    "name": "Osmolality (Blood/Urine ratio)",
+    "unitList": [],
+    "referenceRange": "",
+    "investigationId": 189
+  },
+  {
+    "name": "Serum Creatinine",
+    "investigationList": [
+      {
+        "name": "Serum Creatinine",
+        "unitList": [
+          "µmol/L"
+        ],
+        "referenceRange": "50-90 µmol/L"
+      }
+    ],
+    "investigationId": 190
+  },
+  {
+    "name": "BUN",
+    "investigationList": [
+      {
+        "name": "BUN",
+        "unitList": [
+          "µmol/L"
+        ],
+        "referenceRange": "180-420 µmol/L"
+      }
+    ],
+    "investigationId": 191
+  },
+  {
+    "name": "S Urea",
+    "investigationList": [
+      {
+        "name": "S Urea",
+        "unitList": [
+          "mmol/L",
+          "mg/dL"
+        ],
+        "referenceRange": "7 to 20 mg/dL (2.5 to 7.1 mmol/L)"
+      }
+    ],
+    "investigationId": 192
+  },
+  {
+    "name": "Urinary Amylase, 24 hour",
+    "investigationList": [
+      {
+        "name": "Urinary Amylase, 24 hour",
+        "unitList": [
+          "U/L"
+        ],
+        "referenceRange": "24-400 U/L"
+      }
+    ],
+    "investigationId": 193
+  },
+  {
+    "name": "Serum Amylase",
+    "investigationList": [
+      {
+        "name": "Serum Amylase",
+        "unitList": [
+          "U/L"
+        ],
+        "referenceRange": "<40-140 U/L"
+      }
+    ],
+    "investigationId": 194
+  },
+  {
+    "name": "Urinary Inorganic Phosphate, 24 hour",
+    "investigationList": [
+      {
+        "name": "Urinary Inorganic Phosphate, 24 hour",
+        "unitList": [
+          "mg/dL"
+        ],
+        "referenceRange": "400-1300 mg/d"
+      }
+    ],
+    "investigationId": 195
+  },
+  {
+    "name": "Urinary Inorganic Phosphate",
+    "investigationList": [
+      {
+        "name": "Urinary Inorganic Phosphate",
+        "unitList": [
+          "mg/dL"
+        ],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 196
+  },
+  {
+    "name": "Urinary Microalbumin, 24 hour",
+    "investigationList": [
+      {
+        "name": "Urinary Microalbumin, 24 hour",
+        "unitList": [
+          "mg"
+        ],
+        "referenceRange": "<30 mg of per 24 hours"
+      }
+    ],
+    "investigationId": 197
+  },
+  {
+    "name": "Urinary Microalbumin",
+    "investigationList": [
+      {
+        "name": "Urinary Microalbumin",
+        "unitList": [],
+        "referenceRange": "30 mcg/mg creatinine"
+      }
+    ],
+    "investigationId": 198
+  },
+  {
+    "name": "Urinary Urea, 24 hour",
+    "investigationList": [
+      {
+        "name": "Urinary Urea, 24 hour",
+        "unitList": [
+          "g"
+        ],
+        "referenceRange": "0-35 g/24 hours"
+      }
+    ],
+    "investigationId": 199
+  },
+  {
+    "name": "Urinary Creatinine 24 hour",
+    "investigationList": [
+      {
+        "name": "Urinary Creatinine 24 hour",
+        "unitList": [
+          "mg/day"
+        ],
+        "referenceRange": "500 to 2000 mg/day"
+      }
+    ],
+    "investigationId": 200
+  },
+  {
+    "name": "Urinary Uric Acid",
+    "investigationList": [
+      {
+        "name": "Urinary Uric Acid",
+        "unitList": [
+          "mg/d"
+        ],
+        "referenceRange": "250 to 750 milligrams per 24 hours."
+      }
+    ],
+    "investigationId": 201
+  },
+  {
+    "name": "Urine Calcium Creatinine Ratio",
+    "investigationList": [
+      {
+        "name": "Urine Calcium Creatinine Ratio",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 202
+  },
+  {
+    "name": "Urine Microalbumin Creatinine Ratio (MCR)",
+    "investigationList": [
+      {
+        "name": "Urine Microalbumin Creatinine Ratio (MCR)",
+        "unitList": [],
+        "referenceRange": "<30 mcg/mg creatinine"
+      }
+    ],
+    "investigationId": 203
+  },
+  {
+    "name": "Urine Protein Creatinine Ratio (ACR), Spot",
+    "investigationList": [
+      {
+        "name": "Urine Protein Creatinine Ratio (ACR), Spot",
+        "unitList": [
+          "mg"
+        ],
+        "referenceRange": "Normal daily (24 hour) urine albumin excretion is less than 30 mg in adults. If the 24 hour urine albumin excretion results are between 30-300 mg it becomes defined as microalbuminuria (MAU)"
+      }
+    ],
+    "investigationId": 204
+  },
+  {
+    "name": "UTP, 24 hour",
+    "investigationList": [
+      {
+        "name": "UTP, 24 hour",
+        "unitList": [
+          "mg",
+          "mg/dL"
+        ],
+        "referenceRange": "The normal value is less than 100 milligrams per day or less than 10 milligrams per deciliter of urine."
+      }
+    ],
+    "investigationId": 205
+  },
+  {
+    "name": "Faecal Fat Estination ",
+    "investigationList": [
+      {
+        "name": "Faecal Fat Estination ",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 206
+  },
+  {
+    "name": "G6PDH",
+    "investigationList": [
+      {
+        "name": "G6PDH",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 207
+  },
+  {
+    "name": "G6PDH",
+    "investigationList": [
+      {
+        "name": "G6PDH",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 208
+  },
+  {
+    "name": "HbA1c ",
+    "investigationList": [
+      {
+        "name": "HbA1c ",
+        "unitList": [
+          "%"
+        ],
+        "referenceRange": "4-5.6%"
+      }
+    ],
+    "investigationId": 209
+  },
+  {
+    "name": "Hepatitis Profile ",
+    "investigationList": [
+      {
+        "name": "Hepatitis Profile ",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 210
+  },
+  {
+    "name": "Albumin Globulin Ratio",
+    "investigationList": [
+      {
+        "name": "Albumin Globulin Ratio",
+        "unitList": [],
+        "referenceRange": "The normal A/G ratio is 0.8-2.0. The A/G ratio can be decreased in response to a low albumin or to elevated globulins."
+      }
+    ],
+    "investigationId": 211
+  },
+  {
+    "name": "Albumin",
+    "investigationList": [
+      {
+        "name": "Albumin",
+        "unitList": [
+          "g/dL",
+          "g/L"
+        ],
+        "referenceRange": "3.5 to 5.5 g/dL or 35-55 g/liter"
+      }
+    ],
+    "investigationId": 212
+  },
+  {
+    "name": "Alkaline Phosphatase",
+    "investigationList": [
+      {
+        "name": "Alkaline Phosphatase",
+        "unitList": [
+          "IU/L"
+        ],
+        "referenceRange": "44 to 147 IU/L"
+      }
+    ],
+    "investigationId": 213
+  },
+  {
+    "name": "GGT",
+    "investigationList": [
+      {
+        "name": "GGT",
+        "unitList": [
+          "U/L"
+        ],
+        "referenceRange": "0-45 U/L"
+      }
+    ],
+    "investigationId": 214
+  },
+  {
+    "name": "Globulin",
+    "investigationList": [
+      {
+        "name": "Globulin",
+        "unitList": [
+          "g/dL"
+        ],
+        "referenceRange": "Normal value ranges are: Serum globulin: 2.0 to 3.5 g/dL (grams per deciliter) IgM component: 75 to 300 mg/dL (milligrams per deciliter) IgG component: 650 to 1850 mg/dL"
+      }
+    ],
+    "investigationId": 215
+  },
+  {
+    "name": "LDH",
+    "investigationList": [
+      {
+        "name": "LDH",
+        "unitList": [
+          "U/L",
+          "mkat/L"
+        ],
+        "referenceRange": "Normal LDH levels range from 140 units per liter (U/L) to 280 U/L or 2.34 mkat/L to 4.68 mkat/L."
+      }
+    ],
+    "investigationId": 216
+  },
+  {
+    "name": "S. Bilirubin (Direct)",
+    "investigationList": [
+      {
+        "name": "S. Bilirubin (Direct)",
+        "unitList": [],
+        "referenceRange": "0 to 0.3 mg/dL"
+      }
+    ],
+    "investigationId": 217
+  },
+  {
+    "name": "S. Bilirubin (Indirect)",
+    "investigationList": [
+      {
+        "name": "S. Bilirubin (Indirect)",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 218
+  },
+  {
+    "name": "S. Bilirubin (Total)",
+    "investigationList": [
+      {
+        "name": "S. Bilirubin (Total)",
+        "unitList": [
+          "mg/dL"
+        ],
+        "referenceRange": "0.3 to 1.9 mg/dL"
+      }
+    ],
+    "investigationId": 219
+  },
+  {
+    "name": "SGOT (old AST)",
+    "investigationList": [
+      {
+        "name": "SGOT (AST)",
+        "unitList": [
+          "U/L"
+        ],
+        "referenceRange": "10 to 40 U/L"
+      }
+    ],
+    "investigationId": 220
+  },
+  {
+    "name": "SGPT (old ALT)",
+    "investigationList": [
+      {
+        "name": "SGPT (ALT)",
+        "unitList": [
+          "U/L"
+        ],
+        "referenceRange": "7-56 U/L"
+      }
+    ],
+    "investigationId": 221
+  },
+  {
+    "name": "S Total Protein",
+    "investigationList": [
+      {
+        "name": "S Total Protein",
+        "unitList": [
+          "g/dL",
+          "g/L"
+        ],
+        "referenceRange": "6.4-8.3 grams per deciliter (g/dL) or 64-83 grams per liter (g/L)"
+      }
+    ],
+    "investigationId": 222
+  },
+  {
+    "name": "HBV-DNA (PcR)",
+    "investigationList": [
+      {
+        "name": "HBV-DNA (PcR)",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 223
+  },
+  {
+    "name": "HCV-RNA (Qualititive)",
+    "investigationList": [
+      {
+        "name": "HCV-RNA (Qualititive)",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 224
+  },
+  {
+    "name": "HCV-RNA (Genotyping)",
+    "investigationList": [
+      {
+        "name": "HCV-RNA (Genotyping)",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 225
+  },
+  {
+    "name": "STOOL for Reducing Substance",
+    "investigationList": [
+      {
+        "name": "STOOL for Reducing Substance",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 226
+  },
+  {
+    "name": "CMV IgG",
+    "investigationList": [
+      {
+        "name": "CMV IgG",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 227
+  },
+  {
+    "name": "CMV IgM",
+    "investigationList": [
+      {
+        "name": "CMV IgM",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 228
+  },
+  {
+    "name": "HSV1 IgG",
+    "investigationList": [
+      {
+        "name": "HSV1 IgG",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 229
+  },
+  {
+    "name": "HSV 1 IgM",
+    "investigationList": [
+      {
+        "name": "HSV 1 IgM",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 230
+  },
+  {
+    "name": "HSV 2 IgG",
+    "investigationList": [
+      {
+        "name": "HSV 2 IgG",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 231
+  },
+  {
+    "name": "HSV 2 IgM",
+    "investigationList": [
+      {
+        "name": "HSV 2 IgM",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 232
+  },
+  {
+    "name": "Rubella IgG",
+    "investigationList": [
+      {
+        "name": "Rubella IgG",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 233
+  },
+  {
+    "name": "Rubella Antibody",
+    "investigationList": [
+      {
+        "name": "Rubella Antibody",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 234
+  },
+  {
+    "name": "Rubella IgM",
+    "investigationList": [
+      {
+        "name": "Rubella IgM",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 235
+  },
+  {
+    "name": "Toxo IgM",
+    "investigationList": [
+      {
+        "name": "Toxo IgM",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 236
+  },
+  {
+    "name": "Nipple discharge for R/E",
+    "investigationList": [
+      {
+        "name": "Nipple discharge for R/E",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 237
+  },
+  {
+    "name": "Nipple discharge for Cytology",
+    "investigationList": [
+      {
+        "name": "Nipple discharge for Cytology",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 238
+  },
+  {
+    "name": "Aldolase",
+    "investigationList": [
+      {
+        "name": "Aldolase",
+        "unitList": [
+          "U/L"
+        ],
+        "referenceRange": "The specific ranges for an abnormal test may vary slightly by laboratory, and there are slight differences between normal levels for men and women. In general, normal results range from 1.0 to 7.5 units per liter"
+      }
+    ],
+    "investigationId": 239
+  },
+  {
+    "name": "Lipase",
+    "investigationList": [
+      {
+        "name": "Lipase",
+        "unitList": [
+          "U/L"
+        ],
+        "referenceRange": "0-160 U/L"
+      }
+    ],
+    "investigationId": 240
+  },
+  {
+    "name": "Serum Amylase",
+    "investigationList": [
+      {
+        "name": "Serum Amylase",
+        "unitList": [
+          "U/L"
+        ],
+        "referenceRange": "<23-85 U/L"
+      }
+    ],
+    "investigationId": 241
+  },
+  {
+    "name": "Cholesterol Total",
+    "investigationList": [
+      {
+        "name": "Cholesterol Total",
+        "unitList": [
+          "mmol/L",
+          "mg/dL"
+        ],
+        "referenceRange": "above 240 mg/dL or 6.2 mmol/L"
+      }
+    ],
+    "investigationId": 242
+  },
+  {
+    "name": "HDL Cholesterol",
+    "investigationList": [
+      {
+        "name": "HDL Cholesterol",
+        "unitList": [
+          "mmol/L",
+          "mg/dL"
+        ],
+        "referenceRange": "If HDL-C is less than 40 mg/dL (1.04 mmol/L), there is an increased risk of heart disease that is independent of other risk factors, including the LDL-C level. A level of HDL-C between 40 and 45 mg/dL (1.04-1.17 mmol/L) is borderline"
+      }
+    ],
+    "investigationId": 243
+  },
+  {
+    "name": "LDL Cholesterol",
+    "investigationList": [
+      {
+        "name": "LDL Cholesterol",
+        "unitList": [
+          "mmol/L",
+          "mg/dL"
+        ],
+        "referenceRange": "Less than 100 mg/dL (2.59 mmol/L) — Optimal;  100-129 mg/dL (2.59-3.34 mmol/L) — Near optimal, above optimal; 130-159 mg/dL (3.37-4.12 mmol/L) — Borderline high; 160-189 mg/dL (4.15-4.90 mmol/L) — High; Greater than 189 mg/dL (4.90 mmol/L) — Very high"
+      }
+    ],
+    "investigationId": 244
+  },
+  {
+    "name": "Triglycerides",
+    "investigationList": [
+      {
+        "name": "Triglycerides",
+        "unitList": [
+          "mmol/L",
+          "mg/dL"
+        ],
+        "referenceRange": "Normal — Less than 150 milligrams per deciliter (mg/dL), or less than 1.7 millimoles per liter (mmol/L); Borderline high — 150 to 199 mg/dL (1.8 to 2.2 mmol/L); High — 200 to 499 mg/dL (2.3 to 5.6 mmol/L)"
+      }
+    ],
+    "investigationId": 245
+  },
+  {
+    "name": "Ca (Serum Total)",
+    "investigationList": [
+      {
+        "name": "Ca (Serum Total)",
+        "unitList": [
+          "mmol/L"
+        ],
+        "referenceRange": "2.18-2.58 mmol/L"
+      }
+    ],
+    "investigationId": 246
+  },
+  {
+    "name": "Ca (Serum Ionized)",
+    "investigationList": [
+      {
+        "name": "Ca (Serum Ionized)",
+        "unitList": [
+          "mmol/L"
+        ],
+        "referenceRange": "1.05-1.30 mmol/L"
+      }
+    ],
+    "investigationId": 247
+  },
+  {
+    "name": "Cl",
+    "investigationList": [
+      {
+        "name": "Cl",
+        "unitList": [
+          "mmol/L"
+        ],
+        "referenceRange": "98-106 mmol/L"
+      }
+    ],
+    "investigationId": 248
+  },
+  {
+    "name": "HCO3-",
+    "investigationList": [
+      {
+        "name": "HCO3-",
+        "unitList": [
+          "mmol/L"
+        ],
+        "referenceRange": "24-30 mmol/L"
+      }
+    ],
+    "investigationId": 249
+  },
+  {
+    "name": "Inorganic Phosphate",
+    "investigationList": [
+      {
+        "name": "Inorganic Phosphate",
+        "unitList": [
+          "mmol/L"
+        ],
+        "referenceRange": "0.8-1.5 mmol/L"
+      }
+    ],
+    "investigationId": 250
+  },
+  {
+    "name": "Mg",
+    "investigationList": [
+      {
+        "name": "Mg",
+        "unitList": [
+          "mmol/L"
+        ],
+        "referenceRange": "0.75-0.95 mmol/L"
+      }
+    ],
+    "investigationId": 251
+  },
+  {
+    "name": "Na",
+    "investigationList": [
+      {
+        "name": "Na",
+        "unitList": [
+          "mmol/L"
+        ],
+        "referenceRange": "135-145 mmol/L"
+      }
+    ],
+    "investigationId": 252
+  },
+  {
+    "name": "Stone Analysis",
+    "investigationList": [
+      {
+        "name": "Stone Analysis",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 253
+  },
+  {
+    "name": "Urinary Acid Total (24 hours)",
+    "investigationList": [
+      {
+        "name": "Urinary Acid Total (24 hours)",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 254
+  },
+  {
+    "name": "Urinary Total Oxalate",
+    "investigationList": [
+      {
+        "name": "Urinary Total Oxalate",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 255
+  },
+  {
+    "name": "Urinary Total Calcium",
+    "investigationList": [
+      {
+        "name": "Urinary Total Calcium",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 256
+  },
+  {
+    "name": "24HRS Urinary Total Protein ",
+    "investigationList": [
+      {
+        "name": "24HRS Urinary Total Protein ",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 257
+  },
+  {
+    "name": "ACTH",
+    "investigationList": [
+      {
+        "name": "ACTH",
+        "unitList": [
+          "pg/mL",
+          "pmol/L"
+        ],
+        "referenceRange": "Normal ranges for ACTH are fairly broad and like cortisol levels are time-dependent. They also vary from assay to assay. A typical normal range for an 8AM sample using the new assays is 10 to 50 picograms per milliliter (pg/ml); levels are usually less than 20 pg/ml at 4 PM and less than 5-10 pg/ml at midnight."
+      }
+    ],
+    "investigationId": 258
+  },
+  {
+    "name": "FT3 ( Free T3)",
+    "investigationList": [
+      {
+        "name": "FT3 ( Free T3)",
+        "unitList": [
+          "pmol/L",
+          "pg/dl"
+        ],
+        "referenceRange": "260-480 pg/dL, or 4-7.4 pmol/L in adult. usually not measured in children"
+      }
+    ],
+    "investigationId": 259
+  },
+  {
+    "name": "TT3 ( Total triiodothyronine)",
+    "investigationList": [
+      {
+        "name": "TT3 ( Total triiodothyronine)",
+        "unitList": [
+          "ng/dL"
+        ],
+        "referenceRange": "80-220 ng/dL in adults and 125-250 ng/dL in children"
+      }
+    ],
+    "investigationId": 260
+  },
+  {
+    "name": "Total T3 ( Total triiodothyronine)",
+    "investigationList": [
+      {
+        "name": "Total T3 ( Total triiodothyronine)",
+        "unitList": [
+          "ng/dL"
+        ],
+        "referenceRange": "80-220 ng/dL in adults and 125-250 ng/dL in children"
+      }
+    ],
+    "investigationId": 261
+  },
+  {
+    "name": "ANTI- TG Ab",
+    "investigationList": [
+      {
+        "name": "ANTI- TG Ab",
+        "unitList": [
+          "IU/mL"
+        ],
+        "referenceRange": "116 IU/mL"
+      }
+    ],
+    "investigationId": 262
+  },
+  {
+    "name": "Estradiol",
+    "investigationList": [
+      {
+        "name": "Estradiol",
+        "unitList": [
+          "pg/mL"
+        ],
+        "referenceRange": "The reference range of estradiol in men is 10-40 pg/mL. The reference range estradiol in women varies by menstrual cycle and menopausal status, as follows: Before menopause, estradiol levels are widely variable throughout the menstrual cycle: Mid-follicular phase: 27-123 pg/mL"
+      }
+    ],
+    "investigationId": 263
+  },
+  {
+    "name": "Growth Hormone",
+    "investigationList": [
+      {
+        "name": "Growth Hormone",
+        "unitList": [
+          "pmol/L"
+        ],
+        "referenceRange": "Random growth hormone (GH) levels in a healthy person range as follows: Men: < 5 ng/mL or < 226 pmol/L. Women: < 10 ng/mL or < 452 pmol/L. Children: 0-20 ng/mL or 0-904 pmol/L."
+      }
+    ],
+    "investigationId": 264
+  },
+  {
+    "name": "Progesterone",
+    "investigationList": [
+      {
+        "name": "Progesterone",
+        "unitList": [
+          "ng/mL"
+        ],
+        "referenceRange": "Female (pre-ovulation): less than 1 ng/mL; Female (mid-cycle): 5 to 20 ng/mL; Male: less than 1 ng/mL; Postmenopausal: less than 1 ng/mL; Pregnancy 1st trimester: 11.2 to 90.0 ng/mL; Pregnancy 2nd trimester: 25.6 to 89.4 ng/mL; Pregnancy 3rd trimester: 48 to 150 to 300 or more ng/mL"
+      }
+    ],
+    "investigationId": 265
+  },
+  {
+    "name": "Prolactin",
+    "investigationList": [
+      {
+        "name": "Prolactin",
+        "unitList": [
+          "ng/mL"
+        ],
+        "referenceRange": "Males: 2 to 18 ng/mL. Nonpregnant females: 2 to 29 ng/mL. Pregnant women: 10 to 209 ng/mL"
+      }
+    ],
+    "investigationId": 266
+  },
+  {
+    "name": "PTH",
+    "investigationList": [
+      {
+        "name": "PTH",
+        "unitList": [
+          "pg/mL"
+        ],
+        "referenceRange": "10 to 55 picograms per milliliter (pg/mL)"
+      }
+    ],
+    "investigationId": 267
+  },
+  {
+    "name": "Free T4",
+    "investigationList": [
+      {
+        "name": "Free T4",
+        "unitList": [
+          "ng/dL"
+        ],
+        "referenceRange": "0.8 -2.8 ng/dL"
+      }
+    ],
+    "investigationId": 268
+  },
+  {
+    "name": "F T4 (Free)",
+    "investigationList": [
+      {
+        "name": "F T4 (Free)",
+        "unitList": [
+          "ng/dL"
+        ],
+        "referenceRange": "0.8 -2.8 ng/dL"
+      }
+    ],
+    "investigationId": 269
+  },
+  {
+    "name": "T T4 (Total)",
+    "investigationList": [
+      {
+        "name": "T T4 (Total)",
+        "unitList": [
+          "ug/dL"
+        ],
+        "referenceRange": "4.5 -11.5 ug/dL"
+      }
+    ],
+    "investigationId": 270
+  },
+  {
+    "name": "Total T4",
+    "investigationList": [
+      {
+        "name": "Total T4",
+        "unitList": [
+          "ug/dL"
+        ],
+        "referenceRange": "4.5 -11.5 ug/dL"
+      }
+    ],
+    "investigationId": 271
+  },
+  {
+    "name": "Testosterone",
+    "investigationList": [
+      {
+        "name": "Testosterone",
+        "unitList": [],
+        "referenceRange": "Men: 270-1070 ng/dL (9-38 nmol/L). Women: 15-70 ng/dL (0.52-2.4 nmol/L. Children (depends on sex and age at puberty): 2-20 ng/dL or 0.07-0.7 nmol/L "
+      }
+    ],
+    "investigationId": 272
+  },
+  {
+    "name": "FT4 index (Free)",
+    "investigationList": [
+      {
+        "name": "FT4 index (Free)",
+        "unitList": [
+          "U"
+        ],
+        "referenceRange": "1.0 -4.3 U"
+      }
+    ],
+    "investigationId": 273
+  },
+  {
+    "name": "Free T4 index",
+    "investigationList": [
+      {
+        "name": "Free T4 index",
+        "unitList": [
+          "U"
+        ],
+        "referenceRange": "1.0 -4.3 U"
+      }
+    ],
+    "investigationId": 274
+  },
+  {
+    "name": "VLDL Cholesterol",
+    "investigationList": [
+      {
+        "name": "VLDL Cholesterol",
+        "unitList": [
+          "mmol/L",
+          "mg/dL"
+        ],
+        "referenceRange": "2-30 mg/dl"
+      }
+    ],
+    "investigationId": 275
+  },
+  {
+    "name": "Iron Profile",
+    "investigationList": [
+      {
+        "name": "Iron Profile",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 276
+  },
+  {
+    "name": "FEBRILE ANTIGEN ",
+    "investigationList": [
+      {
+        "name": "FEBRILE ANTIGEN ",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 277
+  },
+  {
+    "name": "FILARIAL ANTIGEN",
+    "investigationList": [
+      {
+        "name": "FILARIAL ANTIGEN",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 278
+  },
+  {
+    "name": "Tracheal Aspirate for AFB",
+    "investigationList": [
+      {
+        "name": "Tracheal Aspirate for AFB",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 279
+  },
+  {
+    "name": "Tracheal Aspirate for Gram Stain",
+    "investigationList": [
+      {
+        "name": "Tracheal Aspirate Gram Stain",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 280
+  },
+  {
+    "name": "Ketone Body",
+    "investigationList": [
+      {
+        "name": "Ketone Body",
+        "unitList": [
+          "mg/dL",
+          [
+            "mmol/L"
+          ]
+        ],
+        "referenceRange": "1 mg/dL (< 0.1 mmol/L"
+      }
+    ],
+    "investigationId": 281
+  },
+  {
+    "name": "CSF Profile",
+    "investigationList": [
+      {
+        "name": "CSF Profile",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 282
+  },
+  {
+    "name": "CSF Cytology",
+    "investigationList": [
+      {
+        "name": "CSF Cytology",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 283
+  },
+  {
+    "name": "Bronchoscopy",
+    "investigationList": [
+      {
+        "name": "Bronchoscopy",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 284
+  },
+  {
+    "name": "CLO Test",
+    "investigationList": [
+      {
+        "name": "CLO Test",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 285
+  },
+  {
+    "name": "Colonoscopy Full",
+    "investigationList": [
+      {
+        "name": "Colonoscopy Full",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 286
+  },
+  {
+    "name": "Colonoscopy Short",
+    "investigationList": [
+      {
+        "name": "Colonoscopy Short",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 287
+  },
+  {
+    "name": "Colonoscopy with Polypectomy",
+    "investigationList": [
+      {
+        "name": "Colonoscopy with Polypectomy",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 288
+  },
+  {
+    "name": "Endoscopy and Band Ligation",
+    "investigationList": [
+      {
+        "name": "Endoscopy and Band Ligation",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 289
+  },
+  {
+    "name": "Endoscopy",
+    "investigationList": [
+      {
+        "name": "Endoscopy",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 290
+  },
+  {
+    "name": "Video Endoscopy with Sedation",
+    "investigationList": [
+      {
+        "name": "Video Endoscopy with Sedation",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 291
+  },
+  {
+    "name": "Video Endoscopy with Anaesthesia",
+    "investigationList": [
+      {
+        "name": "Video Endoscopy with Anaesthesia",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 292
+  },
+  {
+    "name": "ENDOSCOPY GUIDED FEEDING TUBE INTRODUCTION",
+    "investigationList": [
+      {
+        "name": "ENDOSCOPY GUIDED FEEDING TUBE INTRODUCTION",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 293
+  },
+  {
+    "name": "Endoscopy and Oesophageal ballon dilatation",
+    "investigationList": [
+      {
+        "name": "Endoscopy and Oesophageal ballon dilatation",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 294
+  },
+  {
+    "name": "Endoscopy and Oesophageal Stenting",
+    "investigationList": [
+      {
+        "name": "Endoscopy and Oesophageal Stenting",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 295
+  },
+  {
+    "name": "Endoscopy and Polypectomy",
+    "investigationList": [
+      {
+        "name": "Endoscopy and Polypectomy",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 296
+  },
+  {
+    "name": "Endoscopy and Sclero therapy of Oesophageal Varices",
+    "investigationList": [
+      {
+        "name": "Endoscopy and Sclero therapy of Oesophageal Varices",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 297
+  },
+  {
+    "name": "Endoscopy of Upper GIT",
+    "investigationList": [
+      {
+        "name": "Endoscopy of Upper GIT",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 298
+  },
+  {
+    "name": "Endoscopy Under Sedation",
+    "investigationList": [
+      {
+        "name": "Endoscopy Under Sedation",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 299
+  },
+  {
+    "name": "Proctoscopy",
+    "investigationList": [
+      {
+        "name": "Proctoscopy",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 300
+  },
+  {
+    "name": "Sigmoidoscopy",
+    "investigationList": [
+      {
+        "name": "Sigmoidoscopy",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 301
+  },
+  {
+    "name": "AFP (Alpha Feto Protein)",
+    "investigationList": [
+      {
+        "name": "AFP (Alpha Feto Protein)",
+        "unitList": [
+          "µgm/L",
+          "ng/mL"
+        ],
+        "referenceRange": "0-40 ng/mL(nanogram/ml) or µgm/L(microgram/L) (µgm/L) for Men and nonpregnant women;10-150 nanogram/ml or microgram/L (µgm/L) for  Women 15-18 week pregnant;"
+      }
+    ],
+    "investigationId": 302
+  },
+  {
+    "name": "B2-Microglobulin",
+    "investigationList": [
+      {
+        "name": "B2-Microglobulin",
+        "unitList": [
+          "µgm/L"
+        ],
+        "referenceRange": "0-3 µgm/L(microgram/mL)"
+      }
+    ],
+    "investigationId": 303
+  },
+  {
+    "name": "BHCG (Beta-Human Chorionic Gonadotropin)",
+    "investigationList": [
+      {
+        "name": "BHCG (Beta-Human Chorionic Gonadotropin)",
+        "unitList": [
+          "mIU/mL"
+        ],
+        "referenceRange": "0.5-2.9 negative; 2.9-5 Borderline; Positive >5.0; 500-10000 mIU/ml in 3-4 weeks; 1000-50000 mIU/ml in 4-5 weeks; 10000-100000 mIU/ml in 5-6 weeks; 15000-200000 mIU/ml in 6-8 weeks;10000-100000 mIU/ml in 8-12 weeks; intrauterine structure that must be seen : >100 (intrauterine sac), >7200 (Intra-uterine gestation sac with yolk sac), >12,800 (Intra-uterine gestational sac, yolk sac and fetal pole with HEART BEAT)"
+      }
+    ],
+    "investigationId": 304
+  },
+  {
+    "name": "CA 15-3 (Cancer Antigen)",
+    "investigationList": [
+      {
+        "name": "CA 15-3 (Cancer Antigen)",
+        "unitList": [
+          "U/mL"
+        ],
+        "referenceRange": "<30 U/mL"
+      }
+    ],
+    "investigationId": 305
+  },
+  {
+    "name": "CA- 125 (Cancer Antigen)",
+    "investigationList": [
+      {
+        "name": "CA- 125 (Cancer Antigen)",
+        "unitList": [
+          "kU/L",
+          "U/mL"
+        ],
+        "referenceRange": "0-35 units/mL (0-35 kU/L)"
+      }
+    ],
+    "investigationId": 306
+  },
+  {
+    "name": "CA- 19-9 (Cancer Antigen)",
+    "investigationList": [
+      {
+        "name": "CA- 19-9 (Cancer Antigen)",
+        "unitList": [
+          "U/mL"
+        ],
+        "referenceRange": "0-37 U/mL"
+      }
+    ],
+    "investigationId": 307
+  },
+  {
+    "name": "CEA(Carcinoembryonic Antigen Test)",
+    "investigationList": [
+      {
+        "name": "CEA(Carcinoembryonic Antigen Test)",
+        "unitList": [
+          "ng/mL",
+          "µgm/L"
+        ],
+        "referenceRange": "0-3 ng/mL(nanogram/ml) or microgram/L (µgm/L)"
+      }
+    ],
+    "investigationId": 308
+  },
+  {
+    "name": "PSA Free to total ratio",
+    "investigationList": [
+      {
+        "name": "PSA Free to total ratio",
+        "unitList": [
+          "% of PSA or no unit"
+        ],
+        "referenceRange": "interpretation by physician only."
+      }
+    ],
+    "investigationId": 309
+  },
+  {
+    "name": "PSA Total",
+    "investigationList": [
+      {
+        "name": "PSA Total",
+        "unitList": [
+          "ng/mL"
+        ],
+        "referenceRange": "<40 years age: < or =2.0; 40-49 years age:< or =2.5;50-59 years age:< or =3.5; 60-69 years age: < or =4.5; 70-79 years age:< or =6.5>; or 80 years age:< or =7.2"
+      }
+    ],
+    "investigationId": 310
+  },
+  {
+    "name": "24 Hr Ambulatory Blood Pressure",
+    "investigationList": [
+      {
+        "name": "24 Hr Ambulatory Blood Pressure",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 311
+  },
+  {
+    "name": "24 Hr. Ambulatory ECG (Holter Monitoring)",
+    "investigationList": [
+      {
+        "name": "24 Hr. Ambulatory ECG (Holter Monitoring)",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 312
+  },
+  {
+    "name": "COLOUR DOPPLER ECHO",
+    "investigationList": [
+      {
+        "name": "COLOUR DOPPLER ECHO",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 313
+  },
+  {
+    "name": "Echocardiogram",
+    "investigationList": [
+      {
+        "name": "Echocardiogram",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 314
+  },
+  {
+    "name": "ECHO",
+    "investigationList": [
+      {
+        "name": "ECHO",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 315
+  },
+  {
+    "name": "E.C.G",
+    "investigationList": [
+      {
+        "name": "E.C.G",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 316
+  },
+  {
+    "name": "Electrocardiogram",
+    "investigationList": [
+      {
+        "name": "Electrocardiogram",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 317
+  },
+  {
+    "name": "Electrocardiogram",
+    "investigationList": [
+      {
+        "name": "Electrocardiogram",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 318
+  },
+  {
+    "name": "E.T.T-Stress E.C.G",
+    "investigationList": [
+      {
+        "name": "E.T.T-Stress E.C.G",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 319
+  },
+  {
+    "name": "Stress Test E.C.G",
+    "investigationList": [
+      {
+        "name": "Stress Test E.C.G",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 320
+  },
+  {
+    "name": "E.C.G Stress Test",
+    "investigationList": [
+      {
+        "name": "E.C.G Stress Test",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 321
+  },
+  {
+    "name": "ECHOCARDIOGRAM-2D & M-MODE",
+    "investigationList": [
+      {
+        "name": "ECHOCARDIOGRAM-2D & M-MODE",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 322
+  },
+  {
+    "name": "ECHOCARDIOGRAM-2D",
+    "investigationList": [
+      {
+        "name": "ECHOCARDIOGRAM-2D",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 323
+  },
+  {
+    "name": "ECHOCARDIOGRAM M-MODE",
+    "investigationList": [
+      {
+        "name": "ECHOCARDIOGRAM M-MODE",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 324
+  },
+  {
+    "name": "Lymphoscintigraphy",
+    "investigationList": [
+      {
+        "name": "Lymphoscintigraphy",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 325
+  },
+  {
+    "name": "CTG",
+    "investigationList": [
+      {
+        "name": "CTG",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 326
+  },
+  {
+    "name": "EEG",
+    "investigationList": [
+      {
+        "name": "EEG",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 327
+  },
+  {
+    "name": "Endoscopy and Oesophageal ballon dilatation",
+    "investigationList": [
+      {
+        "name": "Endoscopy and Oesophageal ballon dilatation",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 328
+  },
+  {
+    "name": "Endoscopy and Oesophageal Stenting",
+    "investigationList": [
+      {
+        "name": "Endoscopy and Oesophageal Stenting",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 329
+  },
+  {
+    "name": "Endoscopy and Polypectomy",
+    "investigationList": [
+      {
+        "name": "Endoscopy and Polypectomy",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 330
+  },
+  {
+    "name": "Endoscopy and Sclero therapy of Oesophageal Varices",
+    "investigationList": [
+      {
+        "name": "Endoscopy and Sclero therapy of Oesophageal Varices",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 331
+  },
+  {
+    "name": "Endoscopy of Upper GIT",
+    "investigationList": [
+      {
+        "name": "Endoscopy of Upper GIT",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 332
+  },
+  {
+    "name": "Endoscopy Under Sedation",
+    "investigationList": [
+      {
+        "name": "Endoscopy Under Sedation",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 333
+  },
+  {
+    "name": "ENDOSCOPY GUIDED FEEDING TUBE INTRODUCTION",
+    "investigationList": [
+      {
+        "name": "ENDOSCOPY GUIDED FEEDING TUBE INTRODUCTION",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 334
+  },
+  {
+    "name": "Endoscopy GUIDED ESOPHAGEAL STENTING",
+    "investigationList": [
+      {
+        "name": "Endoscopy GUIDED ESOPHAGEAL STENTING",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 335
+  },
+  {
+    "name": "Endoscopy GUIDED PEG Tube Insertion",
+    "investigationList": [
+      {
+        "name": "Endoscopy GUIDED PEG Tube Insertion",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 336
+  },
+  {
+    "name": "Endoscopy GUIDED PEJ Tube Insertion",
+    "investigationList": [
+      {
+        "name": "Endoscopy GUIDED PEJ Tube Insertion",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 337
+  },
+  {
+    "name": "Endoscopy GUIDED EST",
+    "investigationList": [
+      {
+        "name": "Endoscopy GUIDED EST",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 338
+  },
+  {
+    "name": "Endoscopy GUIDED EVL",
+    "investigationList": [
+      {
+        "name": "Endoscopy GUIDED EVL",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 339
+  },
+  {
+    "name": "Endoscopy GUIDED Baloon Dilatation",
+    "investigationList": [
+      {
+        "name": "Endoscopy GUIDED Baloon Dilatation",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 340
+  },
+  {
+    "name": "Endoscopy GUIDED Salivary gland Dilatation",
+    "investigationList": [
+      {
+        "name": "Endoscopy GUIDED Salivary gland Dilatation",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 341
+  },
+  {
+    "name": "Endoscopy GUIDED Foreign Body Removal",
+    "investigationList": [
+      {
+        "name": "Endoscopy GUIDED Foreign Body Removal",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 342
+  },
+  {
+    "name": "Endoscopy GUIDED REMOVAL OF UPPER G.I. POLYP",
+    "investigationList": [
+      {
+        "name": "Endoscopy GUIDED REMOVAL OF UPPER G.I. POLYP",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 343
+  },
+  {
+    "name": "Endoscopy GUIDED HAEMOSTASIS",
+    "investigationList": [
+      {
+        "name": "Endoscopy GUIDED HAEMOSTASIS",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 344
+  },
+  {
+    "name": "Endoscopy GUIDED DUODENAL DILATATION",
+    "investigationList": [
+      {
+        "name": "Endoscopy GUIDED DUODENAL DILATATION",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 345
+  },
+  {
+    "name": "Cervical Swab for Gram Stain, ",
+    "investigationList": [
+      {
+        "name": "Cervical Swab for Gram Stain, ",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 346
+  },
+  {
+    "name": "Cervical Swab for Gram Stain, R/E ",
+    "investigationList": [
+      {
+        "name": "Cervical Swab for Gram Stain, R/E ",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 347
+  },
+  {
+    "name": "Mantoux Test",
+    "investigationList": [
+      {
+        "name": "Mantoux Test",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 348
+  },
+  {
+    "name": "Blood for CP",
+    "investigationList": [
+      {
+        "name": "Blood for CP",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 349
+  },
+  {
+    "name": "Blood for Atypical Cell",
+    "investigationList": [
+      {
+        "name": "Blood for Atypical Cell",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 350
+  },
+  {
+    "name": "Bone Marrow Exam",
+    "investigationList": [
+      {
+        "name": "Bone Marrow Exam",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 351
+  },
+  {
+    "name": "CSF for Cytology",
+    "investigationList": [
+      {
+        "name": "CSF for Cytology",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 352
+  },
+  {
+    "name": "CSF for C/S",
+    "investigationList": [
+      {
+        "name": "CSF for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 353
+  },
+  {
+    "name": "CSF for Gram Stain",
+    "investigationList": [
+      {
+        "name": "CSF for Gram Stain",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 354
+  },
+  {
+    "name": "CSF for R/E",
+    "investigationList": [
+      {
+        "name": "CSF for R/E",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 355
+  },
+  {
+    "name": "Fluide for R/E",
+    "investigationList": [
+      {
+        "name": "Fluide for R/E",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 356
+  },
+  {
+    "name": "HVS GM. Stain, R/E",
+    "investigationList": [
+      {
+        "name": "HVS GM. Stain, R/E",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 357
+  },
+  {
+    "name": "MP",
+    "investigationList": [
+      {
+        "name": "MP",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 358
+  },
+  {
+    "name": "MP Spot",
+    "investigationList": [
+      {
+        "name": "Mp Spot",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 359
+  },
+  {
+    "name": "Nail Scrapping for C/S",
+    "investigationList": [
+      {
+        "name": "Nail Scrapping for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 360
+  },
+  {
+    "name": "Nail Scrapping for R/E",
+    "investigationList": [
+      {
+        "name": "Nail Scrapping for R/E",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 361
+  },
+  {
+    "name": "P/S for R/E",
+    "investigationList": [
+      {
+        "name": "P/S for R/E",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 362
+  },
+  {
+    "name": "P/S for Gram Stain",
+    "investigationList": [
+      {
+        "name": "P/S for Gram Stain",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 363
+  },
+  {
+    "name": "Penile discharge GM Stain",
+    "investigationList": [
+      {
+        "name": "Penile discharge GM Stain",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 364
+  },
+  {
+    "name": "Pleural Fluid for AFB",
+    "investigationList": [
+      {
+        "name": "Pleural Fluid for AFB",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 365
+  },
+  {
+    "name": "Pleural Fluid for Cytology",
+    "investigationList": [
+      {
+        "name": "Pleural Fluid for Cytology",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 366
+  },
+  {
+    "name": "Pleural Fluid for Biochemistry",
+    "investigationList": [
+      {
+        "name": "Pleural Fluid for Biochemistry",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 367
+  },
+  {
+    "name": "Prostatic Smear R/E and M/E",
+    "investigationList": [
+      {
+        "name": "Prostatic Smear R/E and M/E",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 368
+  },
+  {
+    "name": "Reticulocyte Count",
+    "investigationList": [
+      {
+        "name": "Reticulocyte Count",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 369
+  },
+  {
+    "name": "S. Chromosomal Analysis ",
+    "investigationList": [
+      {
+        "name": "S. Chromosomal Analysis ",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 370
+  },
+  {
+    "name": "Skin Scraping for Fungus",
+    "investigationList": [
+      {
+        "name": "Skin Scraping for Fungus",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 371
+  },
+  {
+    "name": "Skin Scraping for R/E",
+    "investigationList": [
+      {
+        "name": "Skin Scraping for R/E",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 372
+  },
+  {
+    "name": "Skin Scraping for Gram Stain",
+    "investigationList": [
+      {
+        "name": "Skin Scraping for Gram Stain",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 373
+  },
+  {
+    "name": "UMB Swab for R/E",
+    "investigationList": [
+      {
+        "name": "UMB Swab for R/E",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 374
+  },
+  {
+    "name": "PTC (PERENTANEOUS TRANS HEPATIC CHOLANGIOGRAM)",
+    "investigationList": [
+      {
+        "name": "PTC (PERENTANEOUS TRANS HEPATIC CHOLANGIOGRAM)",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 375
+  },
+  {
+    "name": "T-TUBE CHOLANGIOGRAM",
+    "investigationList": [
+      {
+        "name": "T-TUBE CHOLANGIOGRAM",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 376
+  },
+  {
+    "name": "LIVER BIOPSY ",
+    "investigationList": [
+      {
+        "name": "LIVER BIOPSY ",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 377
+  },
+  {
+    "name": "Uretheral Smear GM Stain ",
+    "investigationList": [
+      {
+        "name": "Uretheral Smear GM Stain ",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 378
+  },
+  {
+    "name": "Uretheral Smear R/E",
+    "investigationList": [
+      {
+        "name": "Uretheral Smear R/E",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 379
+  },
+  {
+    "name": "Swab for candida",
+    "investigationList": [
+      {
+        "name": "Swab for candida",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 380
+  },
+  {
+    "name": "Wound Swab GM Stain",
+    "investigationList": [
+      {
+        "name": "Wound Swab GM Stain",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 381
+  },
+  {
+    "name": "Wound Swab R/E",
+    "investigationList": [
+      {
+        "name": "Wound Swab R/E",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 382
+  },
+  {
+    "name": "PBF(Peripheral Blood Film)",
+    "investigationList": [
+      {
+        "name": "PBF(Peripheral Blood Film)",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 383
+  },
+  {
+    "name": "CIRCULATORY EOSINOPHIL TOTAL",
+    "investigationList": [
+      {
+        "name": "CIRCULATORY EOSINOPHIL TOTAL",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 384
+  },
+  {
+    "name": "TC,DC",
+    "investigationList": [
+      {
+        "name": "TC,DC",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 385
+  },
+  {
+    "name": "TUBERCULOSIS (TB) IgG",
+    "investigationList": [
+      {
+        "name": "TUBERCULOSIS (TB) IgG",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 386
+  },
+  {
+    "name": "TUBERCULOSIS (TB) IgM",
+    "investigationList": [
+      {
+        "name": "TUBERCULOSIS (TB) IgM",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 387
+  },
+  {
+    "name": "TCE",
+    "investigationList": [
+      {
+        "name": "TCE",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 388
+  },
+  {
+    "name": "P/C ",
+    "investigationList": [
+      {
+        "name": "P/C ",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 389
+  },
+  {
+    "name": "FNAC OF BOTH SIDE THYROID NODULE",
+    "investigationList": [
+      {
+        "name": "FNAC OF BOTH SIDE THYROID NODULE",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 390
+  },
+  {
+    "name": "PAPS SMEAR OF CYTOLOGY",
+    "investigationList": [
+      {
+        "name": "PAPS SMEAR OF CYTOLOGY",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 391
+  },
+  {
+    "name": "PAPS SMEAR",
+    "investigationList": [
+      {
+        "name": "PAPS SMEAR",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 392
+  },
+  {
+    "name": "Blood for C/S",
+    "investigationList": [
+      {
+        "name": "Blood for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 393
+  },
+  {
+    "name": "Aural Swab for C/S",
+    "investigationList": [
+      {
+        "name": "Aural Swab for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 394
+  },
+  {
+    "name": "Conjunctival Swab for C/S",
+    "investigationList": [
+      {
+        "name": "Conjunctival Swab for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 395
+  },
+  {
+    "name": "Prostatic/Urethral Smear for C/S",
+    "investigationList": [
+      {
+        "name": "Prostatic/Urethral Smear for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 396
+  },
+  {
+    "name": "Prostatic/Urethral Smear for Gm Stain",
+    "investigationList": [
+      {
+        "name": "Prostatic/Urethral Smear for Gm Stain",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 397
+  },
+  {
+    "name": "Prostatic/Urethral Smear for RE",
+    "investigationList": [
+      {
+        "name": "Prostatic/Urethral Smear for RE",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 398
+  },
+  {
+    "name": "Pus for C/S",
+    "investigationList": [
+      {
+        "name": "Pus for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 399
+  },
+  {
+    "name": "Pus for Gm Stain",
+    "investigationList": [
+      {
+        "name": "Pus for Gm Stain",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 400
+  },
+  {
+    "name": "Pus for RE",
+    "investigationList": [
+      {
+        "name": "Pus for RE",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 401
+  },
+  {
+    "name": "Sputum  for R/E",
+    "investigationList": [
+      {
+        "name": "Sputum  for R/E",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 402
+  },
+  {
+    "name": "Sputum for AFB",
+    "investigationList": [
+      {
+        "name": "Sputum for AFB",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 403
+  },
+  {
+    "name": "Sputum for C/S",
+    "investigationList": [
+      {
+        "name": "Sputum for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 404
+  },
+  {
+    "name": "Sputum for Cytology",
+    "investigationList": [
+      {
+        "name": "Sputum for Cytology",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 405
+  },
+  {
+    "name": "Sputum for Malignant Cell",
+    "investigationList": [
+      {
+        "name": "Sputum for Cytology",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 406
+  },
+  {
+    "name": "ACTH",
+    "investigationList": [
+      {
+        "name": "ACTH",
+        "unitList": [
+          "pg/mL",
+          "pmol/L"
+        ],
+        "referenceRange": "Normal ranges for ACTH are fairly broad and like cortisol levels are time-dependent. They also vary from assay to assay. A typical normal range for an 8AM sample using the new assays is 10 to 50 picograms per milliliter (pg/ml); levels are usually less than 20 pg/ml at 4 PM and less than 5-10 pg/ml at midnight."
+      }
+    ],
+    "investigationId": 407
+  },
+  {
+    "name": "FT3 ( Free T3)",
+    "investigationList": [
+      {
+        "name": "FT3 ( Free T3)",
+        "unitList": [
+          "pmol/L",
+          "pg/dl"
+        ],
+        "referenceRange": "260-480 pg/dL, or 4-7.4 pmol/L in adult. usually not measured in children"
+      }
+    ],
+    "investigationId": 408
+  },
+  {
+    "name": "TT3 ( Total triiodothyronine)",
+    "investigationList": [
+      {
+        "name": "TT3 ( Total triiodothyronine)",
+        "unitList": [
+          "ng/dL"
+        ],
+        "referenceRange": "80-220 ng/dL in adults and 125-250 ng/dL in children"
+      }
+    ],
+    "investigationId": 409
+  },
+  {
+    "name": "Estradiol",
+    "investigationList": [
+      {
+        "name": "Estradiol",
+        "unitList": [
+          "pg/mL"
+        ],
+        "referenceRange": "The reference range of estradiol in men is 10-40 pg/mL. The reference range estradiol in women varies by menstrual cycle and menopausal status, as follows: Before menopause, estradiol levels are widely variable throughout the menstrual cycle: Mid-follicular phase: 27-123 pg/mL"
+      }
+    ],
+    "investigationId": 410
+  },
+  {
+    "name": "Growth Hormone",
+    "investigationList": [
+      {
+        "name": "Growth Hormone",
+        "unitList": [
+          "pmol/L"
+        ],
+        "referenceRange": "Random growth hormone (GH) levels in a healthy person range as follows: Men: < 5 ng/mL or < 226 pmol/L. Women: < 10 ng/mL or < 452 pmol/L. Children: 0-20 ng/mL or 0-904 pmol/L."
+      }
+    ],
+    "investigationId": 411
+  },
+  {
+    "name": "Progesterone",
+    "investigationList": [
+      {
+        "name": "Progesterone",
+        "unitList": [
+          "ng/mL"
+        ],
+        "referenceRange": "Female (pre-ovulation): less than 1 ng/mL; Female (mid-cycle): 5 to 20 ng/mL; Male: less than 1 ng/mL; Postmenopausal: less than 1 ng/mL; Pregnancy 1st trimester: 11.2 to 90.0 ng/mL; Pregnancy 2nd trimester: 25.6 to 89.4 ng/mL; Pregnancy 3rd trimester: 48 to 150 to 300 or more ng/mL"
+      }
+    ],
+    "investigationId": 412
+  },
+  {
+    "name": "Prolactin",
+    "investigationList": [
+      {
+        "name": "Prolactin",
+        "unitList": [
+          "ng/mL"
+        ],
+        "referenceRange": "Males: 2 to 18 ng/mL. Nonpregnant females: 2 to 29 ng/mL. Pregnant women: 10 to 209 ng/mL"
+      }
+    ],
+    "investigationId": 413
+  },
+  {
+    "name": "PTH",
+    "investigationList": [
+      {
+        "name": "PTH",
+        "unitList": [
+          "pg/mL"
+        ],
+        "referenceRange": "10 to 55 picograms per milliliter (pg/mL)"
+      }
+    ],
+    "investigationId": 414
+  },
+  {
+    "name": "FT4 (Free)",
+    "investigationList": [
+      {
+        "name": "FT4 (Free)",
+        "unitList": [
+          "ng/dL"
+        ],
+        "referenceRange": "0.8 -2.8 ng/dL"
+      }
+    ],
+    "investigationId": 415
+  },
+  {
+    "name": "T T4 (Total)",
+    "investigationList": [
+      {
+        "name": "T T4 (Total)",
+        "unitList": [
+          "ug/dL"
+        ],
+        "referenceRange": "4.5 -11.5 ug/dL"
+      }
+    ],
+    "investigationId": 416
+  },
+  {
+    "name": "Testosterone",
+    "investigationList": [
+      {
+        "name": "Testosterone",
+        "unitList": [],
+        "referenceRange": "Men: 270-1070 ng/dL (9-38 nmol/L). Women: 15-70 ng/dL (0.52-2.4 nmol/L. Children (depends on sex and age at puberty): 2-20 ng/dL or 0.07-0.7 nmol/L "
+      }
+    ],
+    "investigationId": 417
+  },
+  {
+    "name": "F T4 index (Free)",
+    "investigationList": [
+      {
+        "name": "F T4 index (Free)",
+        "unitList": [
+          "U"
+        ],
+        "referenceRange": "1.0 -4.3 U"
+      }
+    ],
+    "investigationId": 418
+  },
+  {
+    "name": "Testosterone Free",
+    "investigationList": [
+      {
+        "name": "Testosterone Free",
+        "unitList": [
+          "ng/dL"
+        ],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 419
+  },
+  {
+    "name": "TSH",
+    "investigationList": [
+      {
+        "name": "TSH",
+        "unitList": [
+          "mIU/L"
+        ],
+        "referenceRange": "0.4 to 4.0 milli-international units per liter. If you're already being treated for a thyroid disorder, the normal range is 0.5 to 3.0 milli-international units per liter."
+      }
+    ],
+    "investigationId": 420
+  },
+  {
+    "name": "Sputum for Gm Stain",
+    "investigationList": [
+      {
+        "name": "Sputum for Gm Stain",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 421
+  },
+  {
+    "name": "Sputum for Fungus",
+    "investigationList": [
+      {
+        "name": "Sputum for Fungus",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 422
+  },
+  {
+    "name": "Stool for C/S",
+    "investigationList": [
+      {
+        "name": "Stool for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 423
+  },
+  {
+    "name": "Throat Swab for C/S",
+    "investigationList": [
+      {
+        "name": "Throat Swab for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 424
+  },
+  {
+    "name": "Throat Swab for KLB",
+    "investigationList": [
+      {
+        "name": "Throat Swab for KLB",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 425
+  },
+  {
+    "name": "Throat Swab for R/E",
+    "investigationList": [
+      {
+        "name": "Throat Swab for R/E",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 426
+  },
+  {
+    "name": "Throat Swab Gm Stain",
+    "investigationList": [
+      {
+        "name": "Throat Swab Gm Stain",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 427
+  },
+  {
+    "name": "Umblical Swab for C/S",
+    "investigationList": [
+      {
+        "name": "Umblical Swab for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 428
+  },
+  {
+    "name": "Vaginal Swab for C/S",
+    "investigationList": [
+      {
+        "name": "Vaginal Swab for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 429
+  },
+  {
+    "name": "Vaginal Swab for Gm Stain",
+    "investigationList": [
+      {
+        "name": "Vaginal Swab for Gm Stain",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 430
+  },
+  {
+    "name": "Vaginal Swab for R/E",
+    "investigationList": [
+      {
+        "name": "Vaginal Swab for R/E",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 431
+  },
+  {
+    "name": "Wound Swab for C/S",
+    "investigationList": [
+      {
+        "name": "Wound Swab for C/S",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 432
+  },
+  {
+    "name": "HBV-DNA (PcR)",
+    "investigationList": [
+      {
+        "name": "HBV-DNA (PcR)",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 433
+  },
+  {
+    "name": "HCV-RNA (Qualititive)",
+    "investigationList": [
+      {
+        "name": "HCV-RNA (Qualititive)",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 434
+  },
+  {
+    "name": "HCV-RNA (Genotypine)",
+    "investigationList": [
+      {
+        "name": "HCV-RNA (Genotypine)",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 435
+  },
+  {
+    "name": "Percardial fluid for Cytology ",
+    "investigationList": [
+      {
+        "name": "Percardial fluid for Cytology ",
+        "unitList": [],
+        "referenceRange": ""
+      }
+    ],
+    "investigationId": 436
+  },
+  {
+    "name": "custom",
+    "investigationList": [],
+    "investigationId": 437
+  },
+  {
+    "name": "@Biochemistry Machine Test",
+    "investigationList": [
+      {
+        "name": "Albumin"
+      },
+      {
+        "name": "Creatinine"
+      },
+      {
+        "name": "HDL"
+      },
+      {
+        "name": "Serum Alkaline Phosphatase"
+      },
+      {
+        "name": "CRP"
+      },
+      {
+        "name": "IgE"
+      },
+      {
+        "name": "SGPT (ALT)"
+      },
+      {
+        "name": "Bilirubin (Direct)"
+      },
+      {
+        "name": "LDH"
+      },
+      {
+        "name": "Amylase"
+      },
+      {
+        "name": "Glucose"
+      },
+      {
+        "name": "LDL"
+      },
+      {
+        "name": "SGOT (AST)"
+      },
+      {
+        "name": "Haemoglobin "
+      },
+      {
+        "name": "Lipase"
+      },
+      {
+        "name": "Calcium"
+      },
+      {
+        "name": "HbA1c"
+      },
+      {
+        "name": "Magnesium"
+      },
+      {
+        "name": "Cholesterol"
+      },
+      {
+        "name": "HbA1c"
+      },
+      {
+        "name": "phpsphatase (Po4)"
+      },
+      {
+        "name": "Bilirubin (Total)"
+      },
+      {
+        "name": "T.Protein"
+      },
+      {
+        "name": "Triglycerides"
+      },
+      {
+        "name": "Uric Acid"
+      },
+      {
+        "name": "Urea"
+      }
+    ],
+    "investigationId": 438
+  },
+  {
+    "name": "@Hormone Machine Test",
+    "investigationList": [
+      {
+        "name": "CA125"
+      },
+      {
+        "name": "CA15-3"
+      },
+      {
+        "name": "FT3"
+      },
+      {
+        "name": "FT4"
+      },
+      {
+        "name": "Ferr"
+      },
+      {
+        "name": "TSH"
+      },
+      {
+        "name": "Testestorane"
+      },
+      {
+        "name": "Prolactin"
+      },
+      {
+        "name": "FSH"
+      },
+      {
+        "name": "LH"
+      },
+      {
+        "name": "CA 19-9"
+      },
+      {
+        "name": "T3"
+      },
+      {
+        "name": "T4"
+      },
+      {
+        "name": "HCG"
+      },
+      {
+        "name": "Beta Human Chorionic Gonadotropin"
+      }
+    ],
+    "investigationId": 439
+  }
+]

@@ -1,0 +1,407 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+
+<dom-module id="page-nwdr-reports">
+  <template>
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        background-color: #fff;
+        font-size: 14px;
+      }
+
+      td,
+      th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        width: auto;
+        padding: 4px 8px;
+        min-width: 160px;
+      }
+
+      tr:nth-child(even) {
+        background-color: #dddddd;
+      }
+
+      .limiting-container {
+        width: 90%;
+        margin: 0 auto;
+        margin-top: 10px;
+      }
+
+      paper-button {
+        background: white;
+      }
+
+      .invoice-card {
+        background: white;
+      }
+
+      paper-card {
+        margin: 4px;
+      }
+
+      .search {
+        background-color: #fafafa;
+        border: 1px solid #dadada;
+        padding: 8px 12px;
+        margin: 4px;
+        margin-left: 0;
+      }
+
+      .results {
+        margin-top: 20px;
+      }
+
+      .results span {
+        color: #333;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      ul {
+        padding: 0;
+        margin: 0;
+      }
+
+      ul>ol {
+        margin: 0;
+        padding: 5px;
+        list-style-type: decimal;
+      }
+
+      .organization-dropdown {
+        width: 210px;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .fixed-controller {
+        /*position: fixed;*/
+        background: #fff;
+        /*border-bottom: 1px solid #eee;*/
+        padding: 16px;
+        /*padding-left: 24px;*/
+      }
+
+      #orgGroup {
+        width: 256px;
+      }
+    </style>
+
+    <div class="tabs-container">
+      <paper-tabs id="tabs" selected="{{selectedPageIndex}}" scrollable noink='true' on-iron-select="onPageChange">
+        <paper-tab>[[$TRANSLATE('Patients with NWDR Records',LANG)]]</paper-tab>
+        <paper-tab>[[$TRANSLATE('All Registered Patients',LANG)]]</paper-tab>
+      </paper-tabs>
+    </div>
+
+    <div>
+      <div class="fixed-controller">
+
+        <div class="search layout horizontal wrap">
+
+          <div id="orgGroup">
+            <vaadin-combo-box class="organization-dropdown m-right-8" label="Organization" items="[[childOrganizationList]]" on-value-changed="organizationSelected"
+              loading="[[organizationLoading]]" disabled="[[!childOrganizationList.length]]"></vaadin-combo-box>
+
+            <div class="type caption-2 secondary">
+              Total: {{childOrganizationCounter}} organization
+            </div>
+          </div>
+
+          <!-- <paper-dropdown-menu label="Filter by Gender" class="m-right-8">
+            <paper-listbox class="dropdown-content" on-iron-activate="genderSelected" selected="0">
+              <paper-item>All</paper-item>
+              <paper-item>Male</paper-item>
+              <paper-item>Female</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu> -->
+
+          <template is="dom-if" if="{{$compareFn(selectedPageIndex, '==', 0)}}">
+            <paper-dropdown-menu label="Filter by Visit type" class="m-right-8">
+              <paper-listbox class="dropdown-content" on-iron-activate="visitTypeSelected" selected="0">
+                <template is="dom-repeat" items="[[visitReasonList]]">
+                  <paper-item>[[item]]</paper-item>
+                </template>
+              </paper-listbox>
+            </paper-dropdown-menu>
+
+
+            <paper-dropdown-menu label="Filter by Age Group" class="m-right-8">
+              <paper-listbox class="dropdown-content" on-iron-activate="ageGroupSelected" selected="0">
+                <template is="dom-repeat" items="[[ageGroupList]]">
+                  <paper-item>[[item]]</paper-item>
+                </template>
+              </paper-listbox>
+            </paper-dropdown-menu>
+
+            <paper-dropdown-menu label="Filter by Salary Range" class="m-right-8">
+              <paper-listbox class="dropdown-content" on-iron-activate="salaryRangeSelected" selected="0">
+                <template is="dom-repeat" items="[[salaryRangeList]]">
+                  <paper-item>[[item]]</paper-item>
+                </template>
+              </paper-listbox>
+            </paper-dropdown-menu>
+
+            <paper-input label="Search by Name" class="m-right-8" value="{{searchString}}"></paper-input>
+          </template>
+
+          <custom-vital-search style="width:210px" on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
+        </div>
+        <div class="layout horizontal end-justified center m-horizontal-4 m-top-16">
+          <paper-button class="btn btn-default" on-tap="resetButtonClicked">Reset</paper-button>
+          <paper-button raised class="btn btn-primary" style="margin: 0" on-tap="searchButtonClicked">Search</paper-button>
+          <paper-button raised on-tap="exportButtonClicked">Export</paper-button>
+        </div>
+      </div>
+      <paper-progress indeterminate hidden="[[!loading]]"></paper-progress>
+    </div>
+
+    <iron-pages selected="{{selectedPageIndex}}">
+
+      <!-- Patients with nwdr Records - start -->
+      <section>
+        <template is="dom-if" if="[[!isEmptyArray(reportResults)]]">
+          <table>
+
+            <tr>
+              <th>Action</th>
+              <th>No.</th>
+              <th>Record ID</th>
+              <th>Visit Date</th>
+              <th>Organization</th>
+              <th>Visit Type</th>
+              <th>Patient ID No.</th>
+              <th>Name</th>
+              <th>Email Address</th>
+              <th>Contact Number</th>
+              <th>Additional Contact Number</th>
+              <th>Date of Birth (mm/dd/yyyy)</th>
+              <th>Age</th>
+              <th>Spouse Name</th>
+              <th>Father's Name</th>
+              <th>Mother's Name</th>
+              <th>Expenditure</th>
+              <th>Profession</th>
+              <th>National ID</th>
+              <th>Division</th>
+              <th>District</th>
+              <th>Area</th>
+              <th>Marital Status</th>
+              <th>Marital Age</th>
+              <th>Number of Family Member</th>
+              <th>Number of children</th>
+              <th>Blood Group</th>
+              <th>Have Allergy?</th>
+
+
+
+              <!-- Diabetes History - start -->
+              <th>Symptomatic?</th>
+              <th>Symptomatic Type</th>
+              <th>Patient Type</th>
+              <th>Diabetes Duration</th>
+              <th>Registration Center</th>
+              <th>Patient Guide Book No.</th>
+              <th>Type of Diabetes</th>
+              <!-- Diabetes History - end -->
+
+              <!-- General Examination - start -->
+              <th>Height</th>
+              <th>Weight</th>
+              <th>Waist</th>
+              <th>Hip</th>
+              <th>SBP</th>
+              <th>DBP</th>
+              <!-- General Examination - end -->
+
+              <!-- Laboratory Investigation - start -->
+              <th>HbA1c</th>
+              <th>FPG</th>
+              <th>2hPG</th>
+              <th>Post Meal</th>
+              <th>Urine Acetone</th>
+              <th>Urine Albumin</th>
+              <th>S. Creatinine</th>
+              <th>SGPT</th>
+              <th>HB</th>
+              <th>ECG</th>
+              <th>T.Chol</th>
+              <th>LDL-C</th>
+              <th>HDL-C</th>
+              <th>Triglycerides</th>
+              <th>Others</th>
+              <!-- Laboratory Investigation - end -->
+
+              <!-- Complication - start -->
+              <th>Hypogycemia</th>
+              <th>DKA</th>
+              <th>HHNS</th>
+              <th>Neuropathy</th>
+              <th>Nephropathy</th>
+              <th>Retinopathy</th>
+              <!-- Laboratory Investigation - end -->
+            </tr>
+
+            <template is="dom-repeat" items="[[reportResults]]" as="record">
+              <tr>
+                <td>
+                  <paper-icon-button icon="delete" on-tap="onItemDeleteBtnPressed"></paper-icon-button>
+                </td>
+                <td>[[$getItemCounter(index)]]</td>
+                <td>[[record.nwdr.serial]]</td>
+                <td>[[$formatDateTime(record.nwdr.createdDatetimeStamp)]]</td>
+                <td>[[record.nwdr.data.visitDate]]</td>
+                <td>[[record.nwdr.data.visitType]]</td>
+                <td>[[record.patientInfo.serial]]</td>
+                <td>[[record.patientInfo.name]]</td>
+                <td>[[record.patientInfo.email]]</td>
+                <td>[[record.patientInfo.phone]]</td>
+                <td>[[record.patientInfo.additionalPhoneNumber]]</td>
+                <td>[[record.patientInfo.dateOfBirth]]</td>
+                <td>[[record.patientInfo.age]]</td>
+                <td>[[record.patientInfo.patientSpouseName]]</td>
+                <td>[[record.patientInfo.patientFatherName]]</td>
+                <td>[[record.patientInfo.patientMotherName]]</td>
+                <td>[[record.patientInfo.expenditure]]</td>
+                <td>[[record.patientInfo.profession]]</td>
+                <td>[[record.patientInfo.nationalIdCardNumber]]</td>
+                <td>[[record.patientInfo.addressDivision]]</td>
+                <td>[[record.patientInfo.addressDistrict]]</td>
+                <td>[[record.patientInfo.addressAreaName]]</td>
+                <td>[[record.patientInfo.maritalStatus]]</td>
+                <td>[[record.patientInfo.maritalAge]]</td>
+                <td>[[record.patientInfo.numberOfFamilyMember]]</td>
+                <td>[[record.patientInfo.numberOfChildren]]</td>
+                <td>[[record.patientInfo.bloodGroup]]</td>
+                <td>[[record.patientInfo.allergy]]</td>
+
+              </tr>
+            </template>
+          </table>
+        </template>
+      </section>
+      <!-- Patients with nwdr Records - end -->
+
+      <!-- All Registered Patients - start -->
+      <section>
+        <template is="dom-if" if="[[!isEmptyArray(matchingPatientList)]]">
+          <table>
+
+            <tr>
+              <th>No.</th>
+              <th>Organization</th>
+              <th>Serial</th>
+              <th>Patient ID</th>
+              <th>Created Date & Time</th>
+              <th>Name</th>
+              <th>Email Address</th>
+              <th>Contact Number</th>
+              <th>Additional Contact Number</th>
+              <th>Date of Birth (mm/dd/yyyy)</th>
+              <th>Age</th>
+              <th>Spouse Name</th>
+              <th>Father's Name</th>
+              <th>Mother's Name</th>
+              <th>Expenditure</th>
+              <th>Profession</th>
+              <th>National ID</th>
+              <th>Division</th>
+              <th>District</th>
+              <th>Area</th>
+              <th>Marital Status</th>
+              <th>Marital Age</th>
+              <th>Number of Family Member</th>
+              <th>Number of children</th>
+              <th>Blood Group</th>
+              <th>Have Allergy?</th>
+            </tr>
+
+            <template is="dom-repeat" items="[[matchingPatientList]]" as="patient">
+
+              <tr>
+                <td>[[$getItemCounter(index)]]</td>
+                <td>[[patient.orgName]]</td>
+                <td>[[patient.serial]]</td>
+                <td>[[patient.nwdrPatientId]]</td>
+                <td>[[$formatDateTime(patient.cratedDatetimeStamp)]]</td>
+                <td>[[patient.name]]</td>
+                <td>[[patient.email]]</td>
+                <td>[[patient.phone]]</td>
+                <td>[[patient.additionalPhoneNumber]]</td>
+                <td>[[patient.dateOfBirth]]</td>
+                <td>[[$computeAge(patient.dateOfBirth)]]</td>
+                <td>[[patient.patientSpouseName]]</td>
+                <td>[[patient.patientFatherName]]</td>
+                <td>[[patient.patientMotherName]]</td>
+                <td>[[patient.expenditure]]</td>
+                <td>[[patient.profession]]</td>
+                <td>[[patient.nationalIdCardNumber]]</td>
+                <td>[[patient.addressDivision]]</td>
+                <td>[[patient.addressDistrict]]</td>
+                <td>[[patient.addressArea]]</td>
+                <td>[[patient.maritalStatus]]</td>
+                <td>[[patient.maritalAge]]</td>
+                <td>[[patient.numberOfFamilyMember]]</td>
+                <td>[[patient.numberOfChildren]]</td>
+                <td>[[patient.bloodGroup]]</td>
+                <td>[[patient.allergy]]</td>
+
+              </tr>
+            </template>
+
+          </table>
+        </template>
+      </section>
+      <!-- All Registered Patients - end -->
+    </iron-pages>
+
+  </template>
+  <script type="text/javascript" src="page-nwdr-reports.js"></script>
+</dom-module>

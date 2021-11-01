@@ -1,0 +1,2324 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower-assets/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-preconception-record">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .patient-info-card-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .patient-info-cards {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+
+      .patient-info-cards .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+
+      .patient-info-cards .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+
+      .patient-info-cards .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+
+      .patient-info-cards .row .modifier.online {
+        background: #757575;
+      }
+
+      .patient-info-cards .row .modifier.local-only {
+        background: #039BE5;
+      }
+
+      .patient-info-cards .row .modifier.locally-updated {
+        background: #009688;
+      }
+
+      .patient-info-cards .row .modifier.imported {
+        background: #4CAF50;
+      }
+
+      /*.info-row {
+        margin-top: 10px;
+      }*/
+
+      .top-info-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      .address1 {
+        margin-right: 10px;
+      }
+
+      .break-on-tablet {
+        @apply(--layout-horizontal);
+      }
+
+      @media screen and (max-width: 740px) {
+        .break-on-tablet {
+          display: block;
+        }
+      }
+
+      .val {
+        text-decoration: underline;
+      }
+
+      .custom-input {
+        width: calc(100% - 26px);
+      }
+
+      @media screen and (min-width: 656px) {
+        .custom-input {
+          width: calc(50% - 26px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .custom-input {
+          width: calc(33.33333% - 26px);
+        }
+      }
+
+      .custom-checkbox {
+        width: calc(100% - 34px);
+      }
+
+      @media screen and (min-width: 656px) {
+        .custom-checkbox {
+          width: calc(50% - 34px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .custom-checkbox {
+          width: calc(33.33333% - 34px);
+        }
+      }
+
+      .paper-custom {
+        background-color: #fff;
+        border: 1px solid #dadada;
+        border-radius: 6px;
+        padding: 0px 8px 12px 8px;
+        margin: 4px;
+        min-width: calc(100% - 26px);
+      }
+
+
+
+      @media screen and (min-width: 656px) {
+        .paper-custom {
+          min-width: calc(50% - 26px);
+        }
+        .paper-custom.full {
+          min-width: calc(100% - 26px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .paper-custom {
+          min-width: calc(33.33333% - 26px);
+        }
+        .paper-custom.full {
+          min-width: calc(100% - 26px);
+        }
+      }
+
+      paper-checkbox.custom-checkbox {
+        background-color: #fff;
+        border: 1px solid #dadada;
+        border-radius: 6px;
+        padding: 8px;
+      }
+
+      /*Print Preview*/
+
+      .document {
+        font-family: 'Times New Roman';
+        background: white;
+      }
+
+      .document-title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .collection {
+        color: red;
+        background: grey;
+      }
+
+      .document-header {
+        /*background-color: #fafafa;*/
+        padding-left: 10px;
+        padding-right: 10px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+
+      .document-header2 .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .patient-details {
+        background-color: #009688;
+        color: #fff;
+      }
+
+      .print-content {
+        border-top: 1px solid #eee;
+        @apply(--layout-horizontal);
+      }
+
+      .print-content .left {
+        width: 34%;
+        border-right: 1px solid #eee;
+      }
+
+      .print-content .right {
+        width: 66%;
+      }
+
+      ol.order-list {
+        margin: 4px 0;
+        padding-left: 16px;
+        list-style-type: lower-alpha;
+      }
+
+      ul.unorderd-list-custom {
+        margin: 4px 0;
+        padding-left: 16px;
+      }
+
+      ol.order-list li {
+        margin: 4px 0;
+      }
+
+      .print-sub-header {
+        font-size: bold;
+        background-color: #fafafa;
+        margin-bottom: 8px;
+      }
+
+      #printPreview {
+        display: none !important;
+      }
+
+      @media print {
+
+        #hideOnPrint {
+          display: none !important;
+        }
+
+        #printPreview {
+          display: block !important;
+          background-color: transparent;
+        }
+      }
+
+      @media print {
+        app-header-layout #contentContainer {
+          overflow-y: unset !important;
+        }
+      }
+
+      .card-custom-header {
+        padding: 8px;
+        /*border-bottom: 1px solid var(--paper-grey-200);*/
+        background-color: var(--paper-grey-50);
+      }
+
+      .deep {
+        background-color: var(--paper-grey-200);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        color: var(--brand-primary-color);
+      }
+
+      vaadin-combo-box ::content paper-input-container {
+        padding: 8px 0;
+      }
+
+
+      .custom-label-2 {
+        background-color: #fafafa;
+        padding: 6px 12px;
+        margin: 4px;
+        width: calc(100% - 36px);
+        border-radius: 6px;
+        border: 2px solid #eee;
+      }
+
+      /*.custom-label-2 .type {
+        font-weight: 500 !important;
+      }*/
+
+      .custom-label-2.normal {
+        border-color: #43A047;
+        color: #43A047 !important;
+      }
+
+      .custom-label-2.warning {
+        border-color: #E65100;
+        color: #E65100 !important;
+      }
+
+      .custom-label-2.danger {
+        border-color: #E53935;
+        color: #E53935 !important;
+      }
+
+      @media screen and (min-width: 656px) {
+        .custom-label-2 {
+          width: calc(50% - 36px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .custom-label-2 {
+          width: calc(33.33333% - 36px);
+        }
+      }
+
+      .custom-radio-button-group.full-width {
+        width: calc(100% - 26px) !important;
+      }
+
+      .custom-label.full-width {
+        width: calc(100% - 26px);
+      }
+
+      .custom-radio-button-group,
+      .custom-label {
+        background-color: #fff;
+        border: 1px solid #dadada;
+        border-radius: 6px;
+        padding: 8px;
+        margin: 4px;
+        width: calc(100% - 26px);
+      }
+
+      @media screen and (min-width: 656px) {
+        .custom-radio-button-group,
+        .custom-label {
+          width: calc(50% - 26px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .custom-radio-button-group,
+        .custom-label {
+          width: calc(33.33333% - 26px);
+        }
+      }
+
+      paper-tab {
+        text-transform: uppercase;
+      }
+
+      .btn-add {
+        min-width: 3em;
+      }
+
+      .custom-item {
+        padding: 6px 12px;
+        border-radius: 6px;
+        margin: 6px 4px;
+        border: 1px solid #dadada;
+        background-color: #fff
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <div id="hideOnPrint">
+      <div class="tabs-container">
+        <paper-tabs selected="{{selectedPatientInfoPage}}" noink='true' scrollable on-iron-select="onPageSelect">
+          <paper-tab>General</paper-tab>
+          <template is="dom-if" if="[[$equals(pcc.visitReason.type, 'Preconception')]]">
+            <paper-tab>Additional</paper-tab>
+          </template>
+          <!-- <template is="dom-if" if="[[$equals(pcc.visitReason.type, 'Preconception')]]"> -->
+          <paper-tab>Medical</paper-tab>
+          <!-- </template> -->
+
+          <paper-tab>Clinical</paper-tab>
+          <template is="dom-if" if="[[$equals(pcc.visitReason.type, 'Preconception')]]">
+            <paper-tab>Questionnaire</paper-tab>
+          </template>
+          <paper-tab>
+            Medication Information
+          </paper-tab>
+          <paper-tab>Complete</paper-tab>
+        </paper-tabs>
+      </div>
+
+      <div class="master-container">
+
+        <div class="limiting-container">
+
+          <iron-pages selected="{{selectedPatientInfoPage}}">
+
+            <!-- Page - General - START -->
+            <section>
+              <paper-card>
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <!-- <paper-icon-button icon="icons:chevron-right"></paper-icon-button> -->
+                    <div class="flex">
+                      <div class="title">
+                        <!-- <div class="type caption-2 secondary"><strong>STEP #1</strong></div> -->
+                        <div>General</div>
+                      </div>
+                    </div>
+
+                    <div class="horizontal layout">
+                      <template is="dom-if" if="[[$equals(pcc.visitReason.type, 'Preconception')]]">
+                        <paper-button class="btn-add colored" on-tap="nextButton" raised>
+                          <iron-icon class="m-right-8" icon="arrow-forward"></iron-icon>Next</paper-button>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="p-8" hidden$="{{!EDIT_RECORD}}">
+
+                  <div class="custom-label full-width">
+                    <strong>Center Name:</strong>
+                    <span>{{organization.name}}</span>
+                  </div>
+
+                  <div class="custom-label full-width type caption-2 horizontal layout wrap">
+                    <div class="m-horizontal-4">
+                      <strong>Record Serial:</strong>
+                      <span>{{pcc.serial}}</span>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <strong>Created on:</strong>
+                      <span>{{$mkDateTime(pcc.createdDatetimeStamp)}}</span>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <strong>Last Modified on:</strong>
+                      <span>{{$mkDateTime(pcc.lastModifiedDatetimeStamp)}}</span>
+                    </div>
+                    <div class="m-horizontal-4">
+                      <strong>Created by:</strong>
+                      <span>{{pcc.createdByUserName}}</span>
+                    </div>
+                  </div>
+
+                  <div class="custom-label full-width">
+                    <strong>Visit Reason:</strong>
+                    <span>{{pcc.visitReason.type}}</span>
+                  </div>
+                </div>
+              </paper-card>
+
+              <paper-card class="m-top-8">
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <div class="flex">
+                      <div class="title">Basic</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="p-8">
+
+                  <div class="horizontal layout">
+                    <!-- <vaadin-combo-box class="flex paper-custom" label="Visit Reason" placeholder="Type/Select Reason" items="{{visitList}}" allow-custom-value="true"
+                      value="{{pcc.visitReason}}"></vaadin-combo-box> -->
+                    <paper-dropdown-menu class="flex paper-custom" label="Visit Reason" placeholder="Type/Select Reason" value="{{pcc.visitReason.type}}"
+                      vertical-align="top" horizontal-align="left" hidden$="{{EDIT_RECORD}}">
+                      <paper-menu class="dropdown-content" on-iron-select="onVisitReasonChange" selected="{{visitReasonIndex}}">
+                        <template is="dom-repeat" items="[[visitReasonList]]">
+                          <paper-item>{{item.value}}</paper-item>
+                        </template>
+                      </paper-menu>
+                    </paper-dropdown-menu>
+                  </div>
+
+                  <div class="horizontal layout wrap">
+                    <!-- <paper-input class="flex paper-custom" value="{{patient.name.honorifics}}" label="Honorifics"></paper-input> -->
+                    <paper-input class="flex paper-custom" value="{{patient.name.first}}" label="First Name*" required auto-validate error-message="First Name is Required!"></paper-input>
+                    <paper-input class="flex paper-custom" value="{{patient.name.middle}}" label="Middle Name"></paper-input>
+                    <paper-input class="flex paper-custom" value="{{patient.name.last}}" label="Last Name"></paper-input>
+                  </div>
+
+
+                  <template is="dom-if" if="[[!EDIT_MODE_ON]]">
+                    <div class="horizontal layout">
+                      <paper-input type="text" class="flex paper-custom" value="{{patient.phone}}" label="Phone Number*" pattern="^[0-9]{11,11}(-[0-9]*){0,1}$"
+                        required auto-validate error-message="Phone Number Must Contain 11 Digit or Further with Extention. Sample: 01712345678 or 01712345678-12"
+                        char-counter minlength="11" maxlength="14">
+                        <div prefix>+88</div>
+                      </paper-input>
+                    </div>
+                  </template>
+
+                  <div class="horizontal layout">
+                    <paper-input class="flex paper-custom" value="{{patient.email}}" label="Email Address" pattern="^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$"
+                      auto-validate error-message="Valid Email Address Required"></paper-input>
+                  </div>
+
+                  <div class="horizontal layout">
+                    <paper-input type="number" class="flex paper-custom" value="{{patient.additionalPhoneNumber}}" label="Additional Phone Number"
+                      pattern="^[0-9]{11,11}(-[0-9]*){0,1}$" auto-validate error-message="Enter a Valid Phone Number!" char-counter
+                      maxlength="11">
+                      <div prefix>+88</div>
+                    </paper-input>
+                  </div>
+
+                  <div class="layout horizontal wrap">
+                    <paper-input class="flex paper-custom" type="date" error-message="Date of Birth is Required!" class="flex paper-custom"
+                      value="{{patient.dateOfBirth}}" label="Date of Birth (mm/dd/yyyy)" on-value-changed="calculateAge"></paper-input>
+
+                    <paper-input class="flex m-left-8 paper-custom" label="Age" type="number" value="{{ageInYears}}" on-change="makeDOBFromYears">
+                      <div class="type secondary" suffix>Years</div>
+                    </paper-input>
+
+                    <!-- <paper-dropdown-menu class="m-left-8 flex paper-custom" label="Gender" value="{{patient.gender}}">
+                      <paper-menu class="dropdown-content" selected="0">
+                        <paper-item>[[$TRANSLATE('Male', LANG)]]</paper-item>
+                        <paper-item>[[$TRANSLATE('Female',LANG)]]</paper-item>
+                        <paper-item>[[$TRANSLATE('Other',LANG)]]</paper-item>
+                      </paper-menu>
+                    </paper-dropdown-menu> -->
+                  </div>
+                  <div class="horizontal layout">
+                    <paper-input class="flex paper-custom" value="{{patient.effectiveRegion}}" label="Effective Region"></paper-input>
+                  </div>
+
+                  <template is="dom-if" if="[[!EDIT_MODE_ON]]">
+                    <div class="horizontal layout">
+                      <paper-input class="flex paper-custom" min="6" value="{{patient.password}}" label="Password" pattern="^.{6,}$" required auto-validate
+                        error-message="Password Must be 6 characters long!"></paper-input>
+                    </div>
+
+                    <div class="horizontal layout">
+                      <paper-input class="flex paper-custom" value="{{patient.doctorAccessPin}}" label="Doctor Access Pin Code" max="4"></paper-input>
+                    </div>
+
+                    <!-- <div class="horizontal layout">
+                      <paper-input class="flex paper-custom" value="{{patient.belongOrganizationList.0.patientIdbyOrganization}}" label="Patient Organization Id/Hospital Id"></paper-input>
+                    </div> -->
+                  </template>
+
+                </div>
+                <template is="dom-if" if="[[$equals(pcc.visitReason.type, 'Preconception')]]">
+                  <div class="card-content">
+                    <div class="type body">
+                      <strong>{{pccOthers.survey.0.question}}</strong>
+                    </div>
+
+                    <paper-radio-group selected="{{pccOthers.survey.0.answer}}" on-iron-select="onSurvery1SelectedValue">
+                      <template is="dom-repeat" items="[[survey1ChoiceList]]" as="choice">
+                        <paper-radio-button name="{{choice}}">{{choice}}</paper-radio-button>
+                      </template>
+                    </paper-radio-group>
+
+
+                    <template is="dom-if" if="[[showSponsorDetails]]">
+                      <paper-input class="flex paper-custom" value="{{pccOthers.sponsor.name}}" label="Name"></paper-input>
+                      <paper-input type="number" class="paper-custom" value="{{pccOthers.sponsor.contactNumber}}" label="Contact Number"></paper-input>
+                    </template>
+                  </div>
+                </template>
+              </paper-card>
+            </section>
+            <!-- Page - General - END -->
+
+            <!-- Page - Personal - START -->
+            <template is="dom-if" if="[[$equals(pcc.visitReason.type, 'Preconception')]]">
+              <section>
+                <paper-card>
+                  <div class="card-custom-header">
+                    <div class="layout horizontal center">
+                      <!-- <paper-icon-button icon="icons:chevron-right"></paper-icon-button> -->
+                      <div class="flex">
+                        <div class="title">
+                          <!-- <div class="type caption-2 secondary"><strong>STEP #2</strong></div> -->
+                          <div>Additional</div>
+                        </div>
+                      </div>
+
+                      <div class="horizontal layout">
+                        <paper-button class="btn-add" on-tap="backButton" raised>
+                          <iron-icon icon="arrow-back"></iron-icon>
+                        </paper-button>
+                        <paper-button class="btn-add colored" on-tap="nextButton" raised>
+                          <iron-icon class="m-right-8" icon="arrow-forward"></iron-icon>Next</paper-button>
+                      </div>
+                    </div>
+                  </div>
+                </paper-card>
+
+                <paper-card class="m-top-8">
+                  <div class="card-custom-header">
+                    <div class="layout horizontal center">
+                      <div class="title flex">Personal</div>
+                    </div>
+                  </div>
+                  <div class="p-8">
+
+                    <div class="horizontal layout wrap">
+                      <paper-dropdown-menu class="paper-custom" label="Blood Group" value="{{patient.bloodGroup}}">
+                        <paper-menu class="dropdown-content" selected="[[bloodGroupIndex]]">
+                          <template is="dom-repeat" items="[[bloodGroupList]]">
+                            <paper-item>{{item}}</paper-item>
+                          </template>
+                        </paper-menu>
+                      </paper-dropdown-menu>
+
+                      <div class="custom-radio-button-group">
+                        <div>
+                          <strong>Have Allergy?</strong>
+                        </div>
+                        <paper-radio-group selected="{{haveAllergy}}">
+                          <paper-radio-button name="yes">Yes</paper-radio-button>
+                          <paper-radio-button name="no">No</paper-radio-button>
+                        </paper-radio-group>
+                      </div>
+
+                      <template is="dom-if" if="[[$equals(haveAllergy, 'yes')]]">
+                        <paper-input type="text" class="flex paper-custom" value="{{patient.allergy}}" label="Type Allergy(s) Names"></paper-input>
+                      </template>
+
+
+                    </div>
+
+                    <div class="horizontal layout wrap">
+                      <paper-input type="text" class="flex paper-custom" value="{{patient.patientSpouseName}}" label="Spouse Name"></paper-input>
+                      <paper-input type="text" class="flex paper-custom" value="{{patient.patientFatherName}}" label="Father's Name"></paper-input>
+                      <paper-input type="text" class="flex paper-custom" value="{{patient.patientMotherName}}" label="Mother's Name"></paper-input>
+                    </div>
+
+                    <div class="info-row break-on-tablet">
+
+                      <paper-dropdown-menu class="paper-custom" label="Expenditure" value="{{patient.expenditure}}">
+                        <paper-menu class="dropdown-content">
+                          <template is="dom-repeat" items="[[expenditureList]]">
+                            <paper-item>{{item}}</paper-item>
+                          </template>
+                        </paper-menu>
+                      </paper-dropdown-menu>
+
+                      <paper-dropdown-menu class="paper-custom" label="Profession" value="{{patient.profession}}">
+                        <paper-menu class="dropdown-content">
+                          <template is="dom-repeat" items="[[professionList]]">
+                            <paper-item>{{item}}</paper-item>
+                          </template>
+                        </paper-menu>
+                      </paper-dropdown-menu>
+
+                    </div>
+
+                    <div class="info-row">
+                      <paper-input class=" paper-custom" type="number" value="{{patient.nationalIdCardNumber}}" label="National ID"></paper-input>
+                    </div>
+
+                    <div class="info-row break-on-tablet" hidden>
+                      <paper-input type="date" class="flex paper-custom" value="{{patient.patientInitialVisitDate}}" label="Initial Visit Date"></paper-input>
+                      <paper-input type="date" class="flex paper-custom" value="{{patient.lastVisitDate}}" label="Last Visit Date"></paper-input>
+                      <paper-input type="date" class="flex paper-custom" value="{{patient.admissionDate}}" label="Admission Date"></paper-input>
+                    </div>
+
+                    <!-- <div class="info-row">
+                      <paper-input class="paper-custom" value="{{patient.doctorQuickNotes}}" label="Quick Notes (Kept Private)"></paper-input>
+                    </div> -->
+
+                  </div>
+                </paper-card>
+                <paper-card heading="Contact Address" class="m-top-8">
+                  <div class="p-8">
+                    <div class="horizontal layout">
+                      <paper-input class="flex paper-custom" value="{{patient.addressList.0.addressLine1}}" label="Address Line 1"></paper-input>
+                    </div>
+                    <div class="horizontal layout">
+                      <paper-input class="flex paper-custom" value="{{patient.addressList.0.addressLine2}}" label="Address Line 2"></paper-input>
+                    </div>
+
+                    <div class="horizontal layout wrap">
+                      <!-- <paper-input class="flex paper-custom" value="{{patient.addressList.0.addressDivision}}" label="Division"></paper-input> -->
+
+                      <paper-dropdown-menu class="paper-custom" label="Division" value="{{patient.addressList.0.addressDivision}}">
+                        <paper-menu class="dropdown-content" on-iron-select="onDivisionChange" selected="{{divisionIndex}}">
+                          <template is="dom-repeat" items="[[divisionList]]">
+                            <paper-item>{{item.divisionName}}</paper-item>
+                          </template>
+                        </paper-menu>
+                      </paper-dropdown-menu>
+
+                      <template is="dom-if" if="[[!_isEmpty(districtList.length)]]">
+                        <paper-dropdown-menu class="paper-custom" label="District" value="{{patient.addressList.0.addressDistrict}}">
+                          <paper-menu class="dropdown-content" selected="[[districtIndex]]">
+                            <template is="dom-repeat" items="[[districtList]]">
+                              <paper-item>{{item}}</paper-item>
+                            </template>
+                          </paper-menu>
+                        </paper-dropdown-menu>
+                      </template>
+
+                      <!-- <paper-input class="flex paper-custom" value="{{patient.addressList.0.addressDistrict}}" label="Disctrict"></paper-input> -->
+                      <paper-input class="flex paper-custom" value="{{patient.addressList.0.subdistrictName}}" label="Thana/Sub Disctrict"></paper-input>
+                      <paper-input class="flex paper-custom" value="{{patient.addressList.0.addressAreaName}}" label="Area"></paper-input>
+                    </div>
+                    <div class="horizontal layout end-justified p-8">
+                      <paper-toggle-button class="m-left-16" checked="{{hideMoreAddressInput}}">More Address options</paper-toggle-button>
+                    </div>
+
+                    <div class="horizontal layout wrap" hidden$="[[!hideMoreAddressInput]]">
+                      <paper-input class="flex paper-custom" value="{{patient.addressList.0.flat}}" label="Flat"></paper-input>
+                      <paper-input class="flex paper-custom" value="{{patient.addressList.0.floor}}" label="Floor"></paper-input>
+                      <paper-input class="flex paper-custom" value="{{patient.addressList.0.plot}}" label="Plot"></paper-input>
+                    </div>
+
+                    <div class="horizontal layout wrap" hidden$="[[!hideMoreAddressInput]]">
+                      <paper-input class="flex paper-custom" value="{{patient.addressList.0.block}}" label="Block"></paper-input>
+                      <paper-input class="flex paper-custom" value="{{patient.addressList.0.road}}" label="Road"></paper-input>
+                      <paper-input class="flex paper-custom" value="{{patient.addressList.0.village}}" label="Village"></paper-input>
+                    </div>
+                    <div class="horizontal layout wrap" hidden$="[[!hideMoreAddressInput]]">
+                      <paper-input class="flex paper-custom" value="{{patient.addressList.0.addressUnion}}" label="Union"></paper-input>
+
+                      <paper-input type="number" class="flex paper-custom" value="{{patient.addressList.0.addressPostalOrZipCode}}" label="Postal/Zip Code"></paper-input>
+                      <paper-input class="flex paper-custom" value="{{patient.addressList.0.addressCityOrTown}}" label="City/Town"></paper-input>
+
+                      <paper-input class="flex paper-custom" value="{{patient.addressList.0.stateOrProvince}}" label="State/Province"></paper-input>
+                    </div>
+
+                    <paper-input readonly="true" class=" paper-custom" value="{{patient.addressList.0.addressCountry}}" label="Country"></paper-input>
+                  </div>
+                </paper-card>
+                <paper-card heading="Marital Status" class="m-top-8">
+                  <div class="p-8">
+                    <div class="horizontal layout wrap">
+
+                      <paper-dropdown-menu class="paper-custom" label="Select Marital Age" value="{{patient.maritalAge}}">
+                        <paper-menu class="dropdown-content">
+                          <template is="dom-repeat" items="[[maritalAgeList]]">
+                            <paper-item>{{item}}</paper-item>
+                          </template>
+                        </paper-menu>
+                      </paper-dropdown-menu>
+
+
+                      <paper-input type="text" class="flex paper-custom" value="{{patient.maritalStatus}}" label="Marital Status"></paper-input>
+
+
+
+                      <paper-input type="number" class="flex paper-custom" value="{{patient.numberOfFamilyMember}}" label="Number of Family Member"></paper-input>
+                      <paper-input type="number" class="flex paper-custom" value="{{patient.numberOfChildren}}" label="Number of children"></paper-input>
+                    </div>
+
+                  </div>
+                </paper-card>
+              </section>
+            </template>
+            <!-- Page - Personal - END -->
+
+            <!-- Page - Medical - START -->
+            <!-- <template is="dom-if" if="[[$equals(pcc.visitReason.type, 'Preconception')]]"> -->
+            <section>
+              <!-- card - Vaccination - start -->
+              <paper-card>
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <!-- <paper-icon-button icon="icons:chevron-right"></paper-icon-button> -->
+                    <div class="flex">
+                      <div class="title">
+                        <!-- <div class="type caption-2 secondary"><strong>STEP #3</strong></div> -->
+                        <div>Medical</div>
+                      </div>
+                    </div>
+                    <div class="horizontal layout">
+                      <template is="dom-if" if="[[$equals(pcc.visitReason.type, 'Preconception')]]">
+                        <paper-button class="btn-add" on-tap="backButton" raised>
+                          <iron-icon icon="arrow-back"></iron-icon>
+                        </paper-button>
+                        <paper-button class="btn-add colored" on-tap="nextButton" raised>
+                          <iron-icon class="m-right-8" icon="arrow-forward"></iron-icon>Next</paper-button>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </paper-card>
+
+              <paper-card class="m-top-8">
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <div class="title flex">Vaccination</div>
+                  </div>
+                </div>
+
+                <div class="p-8">
+
+                  <div class="horizontal layout wrap">
+                    <template is="dom-repeat" items="[[pcc.medicalInfo.vaccinationList]]">
+             
+                      <div class="custom-radio-button-group">
+                        <div id="grpVaccination">
+                          <strong>{{item.name}}:</strong>
+                        </div>
+                        <paper-radio-group aria-labelledby="grpVaccination" selected="{{item.value}}">
+                          <paper-radio-button name="yes">Yes</paper-radio-button>
+                          <paper-radio-button name="no">No</paper-radio-button>
+                          <paper-radio-button name="unknown">Unknown</paper-radio-button>
+                        </paper-radio-group>
+                      </div>
+                      <paper-icon-button icon="delete" on-tap="deleteVaccination" hidden$="{{!item.isCustom}}"></paper-icon-button>
+                  
+                    </template>
+                    <div class="horizontal layout center wrap">
+                      <paper-input type="text" class="paper-custom" value="{{otherVaccine.name}}" label="Other" on-keyup="onKeyUpVaccine">
+                        <div class="type secondary" suffix></div>
+                      </paper-input>
+                      <div>
+                        <paper-button id="addOtherVaccine" class="btn-add" on-tap="addVaccine" raised disabled="{{disableAddVaccineBtn}}">
+                          <iron-icon icon="add" class="m-right-8"></iron-icon>Add</paper-button>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </paper-card>
+              <!-- card - Vaccination - end -->
+
+              <!-- card - Others details - start -->
+              <paper-card class="m-top-8">
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <div class="title flex">Others</div>
+                  </div>
+                </div>
+                <div class="p-8">
+
+                  <div class="horizontal layout wrap">
+                    <div class="custom-radio-button-group">
+                      <div id="grpPreviousPreconception">
+                        <strong>Previous Preconception Care:</strong>
+                      </div>
+                      <paper-radio-group aria-labelledby="grpPreviousPreconception" selected="{{pcc.medicalInfo.didPreviousPreconceptionCare}}">
+                        <paper-radio-button name="yes">Yes</paper-radio-button>
+                        <paper-radio-button name="no">No</paper-radio-button>
+                      </paper-radio-group>
+                    </div>
+                    <div class="custom-radio-button-group">
+                      <div id="grpPreviousPreconception">
+                        <strong>Have Family Planning?:</strong>
+                      </div>
+                      <paper-radio-group aria-labelledby="grpPreviousPreconception" selected="{{pcc.medicalInfo.familyPlanning.haveFamilyPlanning}}">
+                        <paper-radio-button name="yes">Yes</paper-radio-button>
+                        <paper-radio-button name="no">No</paper-radio-button>
+                      </paper-radio-group>
+                    </div>
+
+                    <template is="dom-if" if="[[$equals(pcc.medicalInfo.familyPlanning.haveFamilyPlanning, 'yes')]]">
+                      <vaadin-combo-box class="paper-custom" label="Methods of Family Planning" placeholder="Type/Select Methods" items="{{familyPlanningMethodList}}"
+                        allow-custom-value="true" value="{{pcc.medicalInfo.familyPlanning.methodsOfFamilyPlanning}}"></vaadin-combo-box>
+                    </template>
+
+                  </div>
+
+                </div>
+              </paper-card>
+              <!-- card - Others details - end -->
+
+              <!-- card - Addiction - start -->
+              <paper-card class="m-top-8">
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <div class="title flex">Addiction</div>
+                  </div>
+                </div>
+
+                <div class="p-8">
+
+                  <div class="horizontal layout wrap">
+                    <template is="dom-repeat" items="[[pcc.medicalInfo.drugAddictionList]]">
+                      <div class="custom-radio-button-group">
+                        <div id="grpVaccination">
+                          <strong>{{item.type}}:</strong>
+                        </div>
+                        <paper-radio-group aria-labelledby="grpVaccination" selected="{{item.isYes}}">
+                          <paper-radio-button name="yes">Yes</paper-radio-button>
+                          <paper-radio-button name="no">No</paper-radio-button>
+                        </paper-radio-group>
+                        <template is="dom-if" if="[[$equals(item.isYes, 'yes')]]">
+                          <paper-input label="Amount" value="{{item.amount}}"></paper-input>
+                        </template>
+                      </div>
+                    </template>
+                  </div>
+
+                </div>
+              </paper-card>
+              <!-- card - Addiction - end -->
+
+              <!-- card - physical activity - start -->
+              <paper-card class="m-top-8">
+                <div class="card-custom-header">
+
+                  <div class="horizontal layout wrap center">
+                    <div class="title flex">Physical activity</div>
+                    <paper-radio-group selected="{{pcc.doPhysicalActivity}}">
+                      <paper-radio-button name="yes">Yes</paper-radio-button>
+                      <paper-radio-button name="no">No</paper-radio-button>
+                    </paper-radio-group>
+                  </div>
+
+                </div>
+
+                <div class="p-8" hidden$="[[!$equals(pcc.doPhysicalActivity, 'yes')]]">
+
+                  <div class="horizontal layout center wrap">
+                    <vaadin-combo-box class="flex paper-custom" label="Physical Activity" placeholder="Type/Select Activiy" items="[[physicalActivityPreList]]"
+                      allow-custom-value="true" value="{{physicalActivityObj.name}}"></vaadin-combo-box>
+                    <paper-input type="number" class="paper-custom" value="{{physicalActivityObj.duration}}" label="Duration">
+                      <div class="type secondary" suffix>{{physicalActivityObj.unit}}</div>
+                    </paper-input>
+                    <div>
+                      <paper-button class="btn-add colored" on-tap="addPhysicalActivity" raised>
+                        <iron-icon icon="add" class="m-right-8"></iron-icon>Add</paper-button>
+                    </div>
+                  </div>
+
+                  <div class="horizontal layout wrap">
+                    <template is="dom-repeat" items="[[pcc.physicalActivityList]]">
+                      <div class="custom-label horizontal layout center">
+
+                        <div class="flex">
+                          <strong>{{item.name}}: </strong>
+                          <span>{{item.duration}} {{item.unit}}</span>
+                        </div>
+
+                        <paper-icon-button icon="delete" on-tap="deletePhysicalActivity"></paper-icon-button>
+                      </div>
+                    </template>
+                  </div>
+
+                </div>
+              </paper-card>
+              <!-- card - physical activity - end -->
+
+              <!-- card - other activity - start -->
+              <paper-card class="m-top-8">
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <div class="title flex">Other activity</div>
+                  </div>
+                </div>
+                <div class="p-8">
+                  <div class="horizontal layout wrap">
+                    <template is="dom-repeat" items="[[pcc.medicalInfo.otherActivityList]]">
+                      <paper-input type="number" class="paper-custom" value="{{item.duration}}" label="{{item.name}}">
+                        <div class="type secondary" suffix>{{item.unit}}</div>
+                      </paper-input>
+                    </template>
+                  </div>
+                </div>
+              </paper-card>
+              <!-- card - other activity - end -->
+
+              <!-- card - Dietary history - start -->
+              <paper-card class="m-top-8">
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <div class="title flex">Dietary history</div>
+                  </div>
+                </div>
+                <div>
+                  <template id="dietary-list-repeater" is="dom-repeat" items="[[pcc.medicalInfo.dietaryHistoryList]]" as="dietItem">
+                    <div class="layout horizontal center wrap custom-item">
+                      <div class="type caption secondary m-right-8">[[_returnSerial(index)]]</div>
+                      <div class="type body flex m-right-16">{{dietItem.type}}</div>
+                      <template is="dom-repeat" items="[[dietItem.consumeAmount]]">
+                        <paper-input type="number" class="m-horizontal-8" label="{{item.time}}" value="{{item.value}}" on-change="onDietaryItemValue">
+                          <div class="type secondary" suffix>{{item.unit}}</div>
+                        </paper-input>
+                      </template>
+                      <paper-icon-button icon="delete" on-tap="deleteDietItem" hidden$="{{!dietItem.isCustom}}"></paper-icon-button>
+                    </div>
+                  </template>
+                </div>
+
+                <div class="horizontal layout center wrap">
+                  <paper-input class="paper-custom flex" value="{{otherDietItem.type}}" label="Other Item" on-keyup="onKeyUpDiet">
+                    <div class="type secondary" suffix></div>
+                  </paper-input>
+                  <div>
+                    <paper-button class="btn-add" raised disabled="{{disableAddDietaryHistoryBtn}}" on-tap="addDietItem">
+                      <iron-icon icon="add" class="m-right-8"></iron-icon>Add</paper-button>
+                  </div>
+                </div>
+
+              </paper-card>
+              <!-- card - Dietary history - end -->
+
+              <!-- card - Type of cooking oil - start -->
+              <paper-card class="m-top-8">
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <div class="title flex">Type of cooking oil</div>
+                  </div>
+                </div>
+
+                <div class="p-8">
+
+                  <div class="horizontal layout wrap">
+                    <template is="dom-repeat" items="[[pcc.medicalInfo.typeOfCookingOilList]]">
+                      <div class="custom-radio-button-group">
+                        <div id="grpVaccination">
+                          <strong>{{item.type}}:</strong>
+                        </div>
+                        <paper-radio-group aria-labelledby="grpVaccination" selected="{{item.isYes}}" on-change="">
+                          <paper-radio-button name="yes">Yes</paper-radio-button>
+                          <paper-radio-button name="no">No</paper-radio-button>
+                        </paper-radio-group>
+                        <template is="dom-if" if="[[$equals(item.isYes, 'yes')]]">
+                          <paper-input label="Amount" value="{{item.amount}}">
+                            <div class="type secondary" suffix>{{item.unit}}/{{item.duration}}</div>
+                          </paper-input>
+                        </template>
+                      </div>
+                      <paper-icon-button icon="delete" on-tap="deleteCookingOil" hidden$="{{!item.isCustom}}"></paper-icon-button>
+                    </template>
+                    <div class="horizontal layout center wrap">
+                      <paper-input class="paper-custom" value="{{otherTypeOfCookingOil.type}}" label="Other" on-keyup="onKeyUpCookingOil">
+                        <div class="type secondary" suffix></div>
+                      </paper-input>
+                      <div>
+                        <paper-button class="btn-add" on-tap="addCookingOil" raised disabled="{{disableAddCookingOilBtn}}">
+                          <iron-icon icon="add" class="m-right-8"></iron-icon>Add</paper-button>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </paper-card>
+              <!-- card - Type of cooking oil - end -->
+
+              <!-- card - History of disease(s) - start -->
+              <paper-card class="m-top-8">
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <div class="title flex">History of disease(s)</div>
+                  </div>
+                </div>
+
+                <div class="p-8">
+
+                  <div class="horizontal layout wrap">
+                    <template is="dom-repeat" items="[[pcc.medicalInfo.historyOfDeseaseList]]">
+                      <div class="custom-radio-button-group">
+                        <div id="{{item.diseaseName}}">
+                          <span class="type caption secondary m-right-8">[[_returnSerial(index)]]</span>
+                          <strong>{{item.diseaseName}}:</strong>
+                        </div>
+                        <paper-radio-group aria-labelledby="{{item.diseaseName}}" selected="{{item.value}}">
+                          <paper-radio-button name="yes">Yes</paper-radio-button>
+                          <paper-radio-button name="no">No</paper-radio-button>
+                          <paper-radio-button name="unknown">Unknown</paper-radio-button>
+                        </paper-radio-group>
+                      </div>
+                      <paper-icon-button icon="delete" on-tap="deleteHistoryOfDisease" hidden$="{{!item.isCustom}}"></paper-icon-button>
+                    </template>
+                    <div class="horizontal layout center wrap">
+                      <paper-input class="paper-custom" value="{{historyDisease.diseaseName}}" label="Other" on-keyup="onKeyUpHistoryOfDisease"> 
+                        <div class="type secondary" suffix></div>
+                      </paper-input>
+                      <div>
+                        <paper-button class="btn-add colored" on-tap="addHistoryDisease" raised disabled="{{disableAddHistoryOfDiseaseBtn}}">
+                          <iron-icon icon="add" class="m-right-8"></iron-icon>Add</paper-button>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </paper-card>
+              <!-- card - History of disease(s) - end -->
+
+              <!-- card - History of Medication - start -->
+              <paper-card class="m-top-8">
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <div class="title flex">History of Medication</div>
+                  </div>
+                </div>
+
+                <div class="p-8">
+                  <div class="horizontal layout wrap">
+                    <template is="dom-repeat" items="[[pcc.medicalInfo.historyOfMedicationList]]">
+
+                      <div class="custom-radio-button-group" hidden$="[[!checkForVisitId(item.forVisitReasonIdList)]]">
+                        <div id="{{item.name}}">
+                          <span class="type caption secondary m-right-8">[[_returnSerial(index)]]</span>
+                          <strong>{{item.name}}:</strong>
+                        </div>
+                        <paper-radio-group aria-labelledby="{{item.name}}" selected="{{item.value}}">
+                          <paper-radio-button name="yes">Yes</paper-radio-button>
+                          <paper-radio-button name="no">No</paper-radio-button>
+
+                          <template is="dom-if" if="[[$equals(item.value, 'yes')]]">
+
+                            <template is="dom-if" if="[[$equals(item.name, 'On Insulin')]]">
+                              <vaadin-combo-box class="flex" label="Type of Insulin" placeholder="Type/Select" items="{{onInsulinList}}" allow-custom-value="true"
+                                value="{{item.type}}"></vaadin-combo-box>
+                              <vaadin-combo-box class="flex" label="Type of Device" placeholder="Type/Select" items="{{insulinDeviceList}}" allow-custom-value="true"
+                                value="{{item.typeOfDevice}}"></vaadin-combo-box>
+                            </template>
+
+                            <template is="dom-if" if="[[$equals(item.name, 'OADs')]]">
+                              <vaadin-combo-box class="flex paper-custom" label="Type of OAD" placeholder="Type/Select" items="{{OADList}}" allow-custom-value="true"
+                                value="{{item.type}}"></vaadin-combo-box>
+                            </template>
+
+                            <template is="dom-if" if="[[$equals(item.name, 'Anti HTN')]]">
+                              <vaadin-combo-box class="flex paper-custom" label="Type of Anti HTN" placeholder="Type/Select" items="{{antiHTNList}}" allow-custom-value="true"
+                                value="{{item.type}}"></vaadin-combo-box>
+                            </template>
+                            <template is="dom-if" if="[[$equals(item.name, 'Anti lipids')]]">
+                              <vaadin-combo-box class="flex paper-custom" label="Type of Anti lipids" placeholder="Type/Select" items="{{antiLipidsList}}"
+                                allow-custom-value="true" value="{{item.type}}"></vaadin-combo-box>
+                            </template>
+                          </template>
+                        </paper-radio-group>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </paper-card>
+              <!-- card - History of Medication - end -->
+
+              <!-- card - Family History - start -->
+              <paper-card class="m-top-8">
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <div class="title flex">Family History</div>
+                  </div>
+                </div>
+
+                <div class="p-8">
+
+                  <div class="horizontal layout wrap">
+                    <template is="dom-repeat" items="[[pcc.medicalInfo.familyHistoryList]]">
+                      <div class="custom-radio-button-group">
+                        <div id="{{item.disease}}">
+                          <span class="type caption secondary m-right-8">[[_returnSerial(index)]]</span>
+                          <strong>{{item.disease}}:</strong>
+                        </div>
+                        <paper-radio-group aria-labelledby="{{item.disease}}" selected="{{item.value}}">
+                          <paper-radio-button name="yes">Yes</paper-radio-button>
+                          <paper-radio-button name="no">No</paper-radio-button>
+                          <paper-radio-button name="unknown">Unknown</paper-radio-button>
+                        </paper-radio-group>
+                      </div>
+                      <paper-icon-button icon="delete" on-tap="deleteFamilyHistory" hidden$="{{!item.isCustom}}"></paper-icon-button>
+                    </template>
+
+                    <div class="horizontal layout center wrap">
+                      <paper-input class="paper-custom" value="{{otherFamilyHistoryDisease.disease}}" label="Other" on-keyup="onKeyUpFamilyHistory">
+                        <div class="type secondary" suffix></div>
+                      </paper-input>
+                      <div>
+                        <paper-button class="btn-add colored" on-tap="addFamilyHistoryDisease" raised disabled="{{disableAddOtherFamilyHistoryBtn}}">
+                          <iron-icon icon="add" class="m-right-8"></iron-icon>Add</paper-button>
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+              </paper-card>
+              <!-- card - Family History - end -->
+            </section>
+            <!-- </template> -->
+            <!-- Page - Medical - END -->
+
+            <!-- Page - Clinical - START -->
+            <section>
+
+              <paper-card>
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <!-- <paper-icon-button icon="icons:chevron-right"></paper-icon-button> -->
+                    <div class="flex">
+                      <div class="title">
+                        <!-- <div class="type caption-2 secondary"><strong>STEP #4</strong></div> -->
+                        <div>Clinical</div>
+                      </div>
+                    </div>
+
+                    <div class="horizontal layout">
+                      <template is="dom-if" if="[[$equals(pcc.visitReason.type, 'Preconception')]]">
+                        <paper-button class="btn-add" on-tap="backButton" raised>
+                          <iron-icon class="" icon="arrow-back"></iron-icon>
+                        </paper-button>
+                        <paper-button class="btn-add colored" on-tap="nextButton" raised>
+                          <iron-icon class="m-right-8" icon="arrow-forward"></iron-icon>Next</paper-button>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </paper-card>
+
+
+              <paper-card class="m-top-8" hidden$="[[$equals(pcc.visitReason.type, 'Preconception')]]">
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <div class="title flex">[[pregnancyTitle]]</div>
+                  </div>
+                </div>
+                <div class="p-8">
+                  <div class="horizontal layout wrap">
+                    <vaadin-combo-box class="flex paper-custom" label="Glycemic Status" placeholder="Type/Select Status" items="{{glycemicStatusList}}"
+                      allow-custom-value="true" value="{{pcc.clinical.pregnancyInfo.glycemicStatus}}"></vaadin-combo-box>
+
+                    <template is="dom-if" if="[[$equals(pcc.visitReason.type, '2nd ANC (24 - 28 weeks)')]]">
+                      <paper-input class="flex paper-custom" value="{{pcc.clinical.pregnancyInfo.gestationalWeek}}" label="Gestational Week" float></paper-input>
+                    </template>
+
+                    <template is="dom-if" if="[[$equals(pcc.visitReason.type, '6 weeks after delivery')]]">
+                      <paper-input class="flex paper-custom" value="{{pcc.clinical.pregnancyInfo.weeksAfterDelivery}}" label="Weeks After Delivery"
+                        float></paper-input>
+                    </template>
+
+                    <template is="dom-if" if="[[$equals(pcc.visitReason.type, '1 year after delivery')]]">
+                      <paper-input class="flex paper-custom" value="{{pcc.clinical.pregnancyInfo.monthsAfterDelivery}}" label="Months After Delivery"
+                        float></paper-input>
+                    </template>
+
+                    <template is="dom-if" if="[[$equals(pcc.visitReason.type, '5 years after delivery')]]">
+                      <paper-input class="flex paper-custom" value="{{pcc.clinical.pregnancyInfo.yearsAfterDelivery}}" label="Years After Delivery"
+                        float></paper-input>
+                    </template>
+
+                    <template is="dom-if" if="[[$equals(pcc.visitReason.type, '1st ANC (6 - 14 weeks)')]]">
+
+
+
+                      <vaadin-combo-box class="flex paper-custom" label="Confirm pregnancy?" placeholder="Type/Select Value" items="{{confirmPregnancyList}}"
+                        allow-custom-value="true" value="{{pcc.clinical.pregnancyInfo.confirmPregnancyBy}}"></vaadin-combo-box>
+
+                      <vaadin-date-picker class="flex paper-custom" type="date" value="{{pcc.clinical.pregnancyInfo.lmp}}" label="LMP" on-value-changed="calcEstimateEddDate"></vaadin-date-picker>
+
+                      <vaadin-date-picker class="flex paper-custom" type="date" value="{{pcc.clinical.pregnancyInfo.edd}}" label="EDD" readonly="false"></vaadin-date-picker>
+
+
+                      <vaadin-date-picker class="flex paper-custom" type="date" value="{{pcc.clinical.pregnancyInfo.nextVisitDate}}" label="Next Visit Date"></vaadin-date-picker>
+
+                      <paper-input type="number" class="flex paper-custom" value="{{pcc.clinical.pregnancyInfo.gravida}}" label="Gravida"></paper-input>
+
+
+                      <paper-input type="number" class="flex paper-custom" value="{{pcc.clinical.pregnancyInfo.para}}" label="Para"></paper-input>
+                    </template>
+
+                    <template is="dom-if" if="[[$equals(pcc.visitReason.type, '2nd ANC (24 - 28 weeks)')]]">
+                      <div class="custom-radio-button-group">
+                        <div>
+                          <strong>Abortion</strong>
+                        </div>
+                        <paper-radio-group selected="{{pcc.clinical.pregnancyInfo.haveAbortion}}" on-change="abortionValueChange">
+                          <paper-radio-button name="yes">Yes</paper-radio-button>
+                          <paper-radio-button name="no">No</paper-radio-button>
+                        </paper-radio-group>
+                      </div>
+                    </template>
+
+                    <template is="dom-if" if="[[$equals(pcc.visitReason.type, '2nd ANC (24 - 28 weeks)')]]">
+                      <div class="custom-radio-button-group">
+                        <div>
+                          <strong>Oedema</strong>
+                        </div>
+                        <paper-radio-group selected="{{pcc.clinical.pregnancyInfo.odema}}">
+                          <paper-radio-button name="yes">Yes</paper-radio-button>
+                          <paper-radio-button name="no">No</paper-radio-button>
+                        </paper-radio-group>
+                      </div>
+                    </template>
+
+                  </div>
+                </div>
+              </paper-card>
+
+              <div hidden$="[[$equals(pcc.visitReason.type, 'At Delivery')]]">
+                <paper-card class="m-top-8" hidden$="[[hideClinicalPart]]">
+                  <div class="card-custom-header">
+                    <div class="layout horizontal center">
+                      <div class="title flex">Clinical Examination (Mother)</div>
+                    </div>
+                  </div>
+                  <div class="p-8 horizontal layout wrap">
+                    <template is="dom-if" if="[[_compareFn(bmi.results, '>', 0)]]">
+                      <div class$="custom-label-2 {{bmi.class}} horizontal layout center">
+                        <div class="flex">
+                          <div class="type body-lead">
+                            <strong>BMI: </strong>{{bmi.results}}</div>
+                          <div class="type body">{{bmi.classification}}</div>
+                        </div>
+                        <!-- <paper-icon-button icon="close" on-tap="hideBmiData"></paper-icon-button> -->
+                      </div>
+                    </template>
+                    <template is="dom-if" if="[[_compareFn(idealWeight, '>', 0)]]">
+                      <div class="custom-label-2 normal horizontal layout center">
+                        <div class="flex">
+                          <span class="type body-lead">
+                            <strong>Ideal Weight: </strong>{{idealWeight}}Kg</span>
+                        </div>
+                        <!-- <paper-icon-button icon="close" on-tap="hideIdealWeight"></paper-icon-button> -->
+                      </div>
+                    </template>
+                    <template is="dom-if" if="[[_compareFn(bmi.results, '>', 0)]]">
+                      <template is="dom-if" if="[[_compareFn(estimateCaloriesIntake, '>', 0)]]">
+                        <div class="custom-label-2 normal horizontal layout center">
+                          <div class="flex">
+                            <div class="type body-lead">
+                              <strong>Calorie: </strong>{{estimateCaloriesIntake}}</div>
+                          </div>
+                          <!-- <paper-icon-button icon="close" on-tap="hideHypertension"></paper-icon-button> -->
+                        </div>
+                      </template>
+                    </template>
+                    <template is="dom-if" if="[[_compareFn(bmi.results, '>', 0)]]">
+                      <template is="dom-if" if="[[!_compareFn(foodChartName, '==', '')]]">
+                        <div class="custom-label-2 normal horizontal layout center">
+                          <div class="flex">
+                            <div class="type body-lead">
+                              <strong>Food Chart: </strong>See "{{foodChartName}}"</div>
+                          </div>
+                          <!-- <paper-icon-button icon="close" on-tap="hideHypertension"></paper-icon-button> -->
+                        </div>
+                      </template>
+                    </template>
+                    <template is="dom-if" if="[[_compareFn(patientWaistValue, '>', 0)]]">
+                      <div class$="custom-label-2 {{waistHipRatio.class}} horizontal layout center">
+                        <div class="flex">
+                          <div class="type body-lead">
+                            <strong>Waist-Hip Ratio: </strong>{{waistHipRatio.value}}</div>
+                          <div class="type body">
+                            <strong>Comment: </strong>{{waistHipRatio.comment}}</div>
+                        </div>
+                        <!-- <paper-icon-button icon="close" on-tap="hideWaistHipRatio"></paper-icon-button> -->
+                      </div>
+                    </template>
+
+                    <template is="dom-if" if="[[!_compareFn(hypertension.type, '==', '')]]">
+                      <div class$="custom-label-2 {{hypertension.class}} horizontal layout center">
+                        <div class="flex">
+                          <div class="type body-lead">
+                            <strong>Hypertension Type: </strong>{{hypertension.type}}, </div>
+                          <div class="type body">
+                            <strong>Comment: </strong>{{hypertension.comment}}</div>
+                        </div>
+                        <!-- <paper-icon-button icon="close" on-tap="hideHypertension"></paper-icon-button> -->
+                      </div>
+                    </template>
+
+                  </div>
+                  <div class="p-8">
+                    <div class="horizontal layout wrap">
+                      <template is="dom-repeat" items="[[pcc.clinical.clinicalExaminationList]]">
+                        <paper-input class="flex paper-custom" type="{{item.inputType}}" value="{{item.value}}" label="{{item.type}}" on-change="computeClinicalData">
+                          <div class="type secondary" suffix>{{item.unit}}</div>
+                        </paper-input>
+                      </template>
+
+                      <template is="dom-if" if="[[$equals(pcc.visitReason.type, '1 year after delivery')]]">
+                        <paper-input class="flex paper-custom" type="number" value="{{pcc.clinical.inputType}}" label="MUAC">
+                          <div class="type secondary" suffix></div>
+                        </paper-input>
+                      </template>
+
+                      <template is="dom-if" if="[[$equals(pcc.visitReason.type, '5 years after delivery')]]">
+                        <paper-input class="flex paper-custom" type="number" value="{{pcc.clinical.inputType}}" label="MUAC">
+                          <div class="type secondary" suffix></div>
+                        </paper-input>
+                      </template>
+                    </div>
+                  </div>
+                </paper-card>
+              </div>
+
+              <paper-card class="m-top-8" hidden$="[[hideChildExamination]]">
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <div class="title flex">Child examination</div>
+                  </div>
+                </div>
+                <div class="p-8">
+                  <div class="horizontal layout wrap">
+                    <template is="dom-repeat" items="[[pcc.childExamination.examinationList]]">
+                      <paper-input class="flex paper-custom" type="{{item.inputType}}" value="{{item.value}}" label="{{item.type}}" on-change="computeClinicalData">
+                        <div class="type secondary" suffix>{{item.unit}}</div>
+                      </paper-input>
+                    </template>
+                  </div>
+                </div>
+              </paper-card>
+
+
+
+
+              <!-- <paper-card class="m-top-8" hidden$="[[$equals(pcc.visitReason.type, 'Preconception')]]">
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <div class="title flex">Clinical Examination(child)</div>
+                  </div>
+                </div>
+                <div class="p-8 horizontal layout wrap">
+                  <paper-input class="flex paper-custom" value="" label="Height" float></paper-input>
+                  <paper-input class="flex paper-custom" value="" label="Weight" float></paper-input>
+                  <paper-input class="flex paper-custom" value="" label="MUAC" float></paper-input>
+                </div>
+              </paper-card> -->
+
+              <template is="dom-if" if="[[$equals(pcc.visitReason.type, 'At Delivery')]]">
+                <paper-card class="m-top-8">
+                  <div class="card-custom-header">
+                    <div class="layout horizontal center">
+                      <div class="title flex">Birth information</div>
+                    </div>
+                  </div>
+                  <div class="p-8 horizontal layout wrap">
+
+                    <template is="dom-repeat" items=[[pcc.clinical.birthInfo.list]]>
+
+                      <div class="custom-radio-button-group" hidden$="[[!$equals(item.inputType, 'radio-button-group')]]">
+                        <div>
+                          <strong>{{item.type}}</strong>
+                        </div>
+                        <paper-radio-group selected="{{item.value}}" on-change="computeLabData">
+                          <template is="dom-repeat" items="[[item.preList]]" as="choice">
+                            <paper-radio-button name="{{choice}}">{{choice}}</paper-radio-button>
+                          </template>
+                        </paper-radio-group>
+                      </div>
+
+                      <paper-input class="flex paper-custom" type="{{item.inputType}}" value="{{item.value}}" label="{{item.type}}" on-change="computeLabData"
+                        hidden$="[[!$equals(item.inputType, 'text')]]">
+                        <div class="type secondary" suffix>{{item.unit}}</div>
+                      </paper-input>
+
+                      <vaadin-combo-box class="flex paper-custom" label="Value" placeholder="Type/Select" items="{{item.preList}}" allow-custom-value="true"
+                        value="{{item.value}}" hidden$="[[!$equals(item.inputType, 'combo-box')]]"></vaadin-combo-box>
+                    </template>
+
+                  </div>
+                </paper-card>
+              </template>
+
+              <paper-card class="m-top-8" hidden$="[[$equals(pcc.visitReason.type, 'At Delivery')]]">
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <div class="title flex">Laboratory Reports</div>
+                  </div>
+                </div>
+
+
+                <paper-radio-group selected="{{pcc.clinical.diabeticStatus}}" on-change="onDiabeticStatusChange">
+                  <paper-radio-button name="Diabetic">Diabetic</paper-radio-button>
+                  <paper-radio-button name="Non-Diabetic">Non-Diabetic</paper-radio-button>
+                </paper-radio-group>
+
+                <div class="p-8 horizontal layout wrap">
+
+
+                  <template is="dom-if" if="[[!_compareFn(glycemiaType.value, '==', '')]]">
+                    <div class$="custom-label-2 {{glycemiaType.class}} horizontal layout center" hidden$="[[$equals(pcc.clinical.diabeticStatus, 'Diabetic')]]">
+                      <div class="flex">
+                        <span class="type body-lead">{{glycemiaType.value}}</span>
+                      </div>
+                      <!-- <paper-icon-button icon="close" on-tap="hideAlbuminType"></paper-icon-button> -->
+                    </div>
+                  </template>
+
+                  <template is="dom-if" if="[[!_compareFn(glycemiaTypeAdditionalMsg.value, '==', '')]]">
+                    <div class$="custom-label-2 {{glycemiaTypeAdditionalMsg.class}} horizontal layout center" hidden$="[[!$equals(pcc.clinical.diabeticStatus, 'Diabetic')]]">
+                      <div class="flex">
+                        <span class="type body-lead">{{glycemiaTypeAdditionalMsg.value}}</span>
+                      </div>
+                      <!-- <paper-icon-button icon="close" on-tap="hideAlbuminType"></paper-icon-button> -->
+                    </div>
+                  </template>
+
+                  <template is="dom-if" if="[[!_compareFn(albuminType, '==', '')]]">
+                    <div class="custom-label-2 warning horizontal layout center">
+                      <div class="flex">
+                        <span class="type body-lead">You have {{albuminType}}</span>
+                      </div>
+                    </div>
+                  </template>
+
+                  <template is="dom-if" if="[[!_compareFn(urinePusCellStatus, '==', '')]]">
+                    <div class="custom-label-2 warning horizontal layout center">
+                      <div class="flex">
+                        <span class="type body-lead">You have {{urinePusCellStatus}}</span>
+                      </div>
+                    </div>
+                  </template>
+
+                  <template is="dom-if" if="[[!_compareFn(hbStatus, '==', '')]]">
+                    <div class="custom-label-2 warning horizontal layout center">
+                      <div class="flex">
+                        <span class="type body-lead">You have {{hbStatus}}</span>
+                      </div>
+                    </div>
+                  </template>
+                  <div hidden$="[[$equals(pcc.visitReason.type, '2nd ANC (24 - 28 weeks)')]]">
+                    <template is="dom-if" if="[[!_compareFn(hBsAgStatus, '==', '')]]">
+                      <div class="custom-label-2 warning horizontal layout center">
+                        <div class="flex">
+                          <span class="type body-lead">{{hBsAgStatus}}</span>
+                        </div>
+                      </div>
+                    </template>
+
+                    <template is="dom-if" if="[[!_compareFn(vdrlStatus, '==', '')]]">
+                      <div class="custom-label-2 warning horizontal layout center">
+                        <div class="flex">
+                          <span class="type body-lead">{{vdrlStatus}}</span>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+
+                  <!-- <template is="dom-if" if="[[!_compareFn(usgReport, '==', '')]]">
+                    <div class="custom-label-2 horizontal layout center">
+                      <div class="flex">
+                        <span class="type body-lead">{{usgReport}}</span>
+                      </div>
+                    </div>
+                  </template> -->
+                </div>
+
+                <div class="p-8">
+
+                  <div class="horizontal layout wrap">
+                    <template is="dom-repeat" items="[[pcc.clinical.labReportsList]]">
+
+
+                      <paper-input class="flex paper-custom" type="{{item.inputType}}" value="{{item.value}}" label="{{item.type}}" on-change="computeLabData"
+                        hidden$="[[!$equals(item.inputType, 'number')]]">
+                        <div class="type secondary" suffix>{{item.unit}}</div>
+                      </paper-input>
+
+                      <paper-dropdown-menu class="paper-custom" label="{{item.type}}" value="{{item.value}}" hidden$="[[!$equals(item.inputType, 'drop-down-menu')]]">
+                        <paper-menu class="dropdown-content" selected="[[bloodGroupIndex]]">
+                          <template is="dom-repeat" items="[[bloodGroupList]]">
+                            <paper-item>{{item}}</paper-item>
+                          </template>
+                        </paper-menu>
+                      </paper-dropdown-menu>
+
+                      <div class="custom-radio-button-group" hidden$="[[!$equals(item.inputType, 'radio-button-group')]]">
+                        <div>
+                          <strong>{{item.type}}</strong>
+                        </div>
+                        <paper-radio-group selected="{{item.value}}" on-change="computeLabData">
+                          <template is="dom-repeat" items="[[item.preList]]" as="choice">
+                            <paper-radio-button name="{{choice}}">{{choice}}</paper-radio-button>
+                          </template>
+                        </paper-radio-group>
+                      </div>
+                    </template>
+                  </div>
+
+                  <template is="dom-if" if="[[!$equals(pcc.visitReason.type, 'Preconception')]]">
+                    <div class="horizontal layout wrap">
+                      <template is="dom-repeat" items="[[pcc.clinical.labReportsOtherList]]">
+
+
+                        <paper-input class="flex paper-custom" type="{{item.inputType}}" value="{{item.value}}" label="{{item.type}}" on-change="computeLabData"
+                          hidden$="[[!$equals(item.inputType, 'number')]]">
+                          <div class="type secondary" suffix>{{item.unit}}</div>
+                        </paper-input>
+
+                        <div class="custom-radio-button-group" hidden$="[[!$equals(item.inputType, 'radio-button-group')]]">
+                          <div>
+                            <strong>{{item.type}}</strong>
+                          </div>
+                          <paper-radio-group selected="{{item.value}}" on-change="computeLabData">
+                            <template is="dom-repeat" items="[[item.preList]]" as="choice">
+                              <paper-radio-button name="{{choice}}">{{choice}}</paper-radio-button>
+                            </template>
+                          </paper-radio-group>
+                        </div>
+                      </template>
+                    </div>
+                  </template>
+                  
+
+                  <!-- <div class="horizontal layout wrap" hidden$="[[!$equals(pcc.visitReason.type, '1st ANC (6 - 14 weeks)')]]">
+                    <template is="dom-repeat" items="[[pcc.clinical.labReportsOtherList]]">
+
+
+                      <paper-input class="flex paper-custom" type="{{item.inputType}}" value="{{item.value}}" label="{{item.type}}" on-change="computeLabData"
+                        hidden$="[[!$equals(item.inputType, 'number')]]">
+                        <div class="type secondary" suffix>{{item.unit}}</div>
+                      </paper-input>
+
+                      <div class="custom-radio-button-group" hidden$="[[!$equals(item.inputType, 'radio-button-group')]]">
+                        <div>
+                          <strong>{{item.type}}</strong>
+                        </div>
+                        <paper-radio-group selected="{{item.value}}" on-change="computeLabData">
+                          <template is="dom-repeat" items="[[item.preList]]" as="choice">
+                            <paper-radio-button name="{{choice}}">{{choice}}</paper-radio-button>
+                          </template>
+                        </paper-radio-group>
+                      </div>
+                    </template>
+                  </div> -->
+                </div>
+              </paper-card>
+
+              <template is="dom-if" if="[[$equals(pcc.visitReason.type, 'At Delivery')]]">
+                <paper-card class="m-top-8">
+                  <div class="card-custom-header">
+                    <div class="layout horizontal center">
+                      <div class="title flex">Child History</div>
+                    </div>
+                  </div>
+                  <paper-listbox>
+                    <template is="dom-repeat" items=[[pcc.clinical.childHistory]]>
+                      <paper-item stop-keyboard-event-propagation="true" class="custom layout horizontal center">
+                        <div class="type caption secondary m-right-8">[[_returnSerial(index)]]</div>
+                        <div class="type body flex m-right-16">{{item.type}}</div>
+                        <template is="dom-repeat" items="[[item.atBirthAndComments]]">
+                          <paper-input class="m-horizontal-8" label="{{item.name}}" value="{{item.value}}" on-change="onDietaryItemValue">
+                            <div class="type secondary" suffix></div>
+                          </paper-input>
+                        </template>
+                      </paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-card>
+
+                <paper-card class="m-top-8">
+                  <div class="card-custom-header">
+                    <div class="layout horizontal center">
+                      <div class="title flex">Mother History</div>
+                    </div>
+                  </div>
+                  <div class="p-8 horizontal layout wrap">
+                    <div class="custom-radio-button-group">
+                      <div>
+                        <strong>Preclampsia</strong>
+                      </div>
+                      <paper-radio-group aria-labelledby="Abortion">
+                        <paper-radio-button>Yes</paper-radio-button>
+                        <paper-radio-button>No</paper-radio-button>
+                      </paper-radio-group>
+                    </div>
+
+                    <div class="custom-radio-button-group">
+                      <div>
+                        <strong>Eclampsia</strong>
+                      </div>
+                      <paper-radio-group aria-labelledby="Abortion">
+                        <paper-radio-button>Yes</paper-radio-button>
+                        <paper-radio-button>No</paper-radio-button>
+                      </paper-radio-group>
+                    </div>
+
+                    <div class="custom-radio-button-group">
+                      <div>
+                        <strong>Breast Feeding</strong>
+                      </div>
+                      <paper-radio-group aria-labelledby="Abortion">
+                        <paper-radio-button>Yes</paper-radio-button>
+                        <paper-radio-button>No</paper-radio-button>
+                      </paper-radio-group>
+                    </div>
+
+                    <div class="custom-radio-button-group">
+                      <div>
+                        <strong>PIH</strong>
+                      </div>
+                      <paper-radio-group aria-labelledby="Abortion">
+                        <paper-radio-button>Yes</paper-radio-button>
+                        <paper-radio-button>No</paper-radio-button>
+                      </paper-radio-group>
+                    </div>
+                  </div>
+                </paper-card>
+              </template>
+            </section>
+            <!-- Page - Clinical - END -->
+
+            <!-- Page - Questionnaire - START -->
+            <template is="dom-if" if="[[$equals(pcc.visitReason.type, 'Preconception')]]">
+              <section>
+
+                <!-- card - Questionnaire - start -->
+                <paper-card>
+                  <div class="card-custom-header">
+                    <div class="layout horizontal center">
+                      <!-- <paper-icon-button icon="icons:chevron-right"></paper-icon-button> -->
+                      <div class="flex">
+                        <div class="title">
+                          <!-- <div class="type caption-2 secondary"><strong>STEP #5</strong></div> -->
+                          <div>Questionnaire</div>
+                        </div>
+                      </div>
+                      <div class="horizontal layout">
+                        <template is="dom-if" if="[[$equals(pcc.visitReason.type, 'Preconception')]]">
+                          <paper-button class="btn-add" on-tap="backButton" raised>
+                            <iron-icon class="" icon="arrow-back"></iron-icon>
+                          </paper-button>
+                          <paper-button class="btn-add colored" on-tap="nextButton" raised>
+                            <iron-icon class="m-right-8" icon="arrow-forward"></iron-icon>Next</paper-button>
+                        </template>
+                      </div>
+                    </div>
+                  </div>
+                </paper-card>
+
+                <paper-card class="m-top-8">
+
+                  <div>
+                    <template is="dom-repeat" items="[[pccOthers.questionList]]">
+                      <div class="custom-label full-width horizontal layout center">
+                        <div class="type caption secondary m-right-8">[[_returnSerial(index)]]</div>
+                        <div class="flex">
+                          <div class="type body" style="width: 100%; text-align: justify;">
+                            <div>{{item.question.en}}</div>
+                            <div class="body caption-2">{{item.question.bd}}</div>
+                          </div>
+                          <paper-radio-group selected="{{item.value}}">
+                            <paper-radio-button name="Agree">Agree</paper-radio-button>
+                            <paper-radio-button name="Disagree">Disagree</paper-radio-button>
+                            <paper-radio-button name="Not Sure">Not Sure</paper-radio-button>
+                          </paper-radio-group>
+                        </div>
+                      </div>
+
+                    </template>
+                  </div>
+
+
+                </paper-card>
+                <!-- card - Questionnaire - end -->
+              </section>
+            </template>
+            <!-- Page - Questionnaire - END -->
+
+            <!-- Page - Medical Information - START -->
+            <section>
+
+              <!-- card - Medical Management - start -->
+              <paper-card>
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <!-- <paper-icon-button icon="icons:chevron-right"></paper-icon-button> -->
+                    <div class="flex">
+                      <div class="title">
+                        <!-- <div class="type caption-2 secondary"><strong>STEP #6</strong></div> -->
+                        <div>Medical Information</div>
+                      </div>
+                    </div>
+
+                    <div class="horizontal layout">
+                      <template is="dom-if" if="[[$equals(pcc.visitReason.type, 'Preconception')]]">
+                        <paper-button class="btn-add" on-tap="backButton" raised>
+                          <iron-icon class="" icon="arrow-back"></iron-icon>
+                        </paper-button>
+                        <paper-button class="btn-add colored" on-tap="nextButton" raised>
+                          <iron-icon class="m-right-8" icon="arrow-forward"></iron-icon>Next</paper-button>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </paper-card>
+              <paper-card class="m-top-8">
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <div class="title flex">Medical Management</div>
+                  </div>
+                </div>
+                <div class="p-8">
+                  <div class="custom-radio-button-group">
+                    <paper-radio-group selected="{{pcc.medicalManagement.lifeStyleType}}">
+                      <paper-radio-button name="Lifestyle">Lifestyle</paper-radio-button>
+                      <paper-radio-button name="Medication">Medication</paper-radio-button>
+                    </paper-radio-group>
+                  </div>
+                </div>
+              </paper-card>
+
+              <div hidden$="[[!$equals(pcc.medicalManagement.lifeStyleType, 'Medication')]]">
+                <template is="dom-if" if="[[$equals(pcc.visitReason.type, '1st ANC (6 - 14 weeks)')]]">
+                  <paper-card class="m-top-8">
+                    <div class="card-custom-header">
+                      <div class="layout horizontal center">
+                        <div class="title flex">Medication related to pregnancy</div>
+                      </div>
+                    </div>
+
+                    <div class="p-8 horizontal layout wrap">
+                      <template is="dom-repeat" items="[[pcc.medicalManagement.medicationRelatedToPregnancyFro1stANC]]">
+                        <div class="custom-radio-button-group">
+                          <div>
+                            <strong>{{item.type}}</strong>
+                          </div>
+                          <paper-radio-group selected="{{item.value}}">
+                            <paper-radio-button name="yes">Yes</paper-radio-button>
+                            <paper-radio-button name="no">No</paper-radio-button>
+                          </paper-radio-group>
+                        </div>
+                      </template>
+                    </div>
+                  </paper-card>
+                </template>
+
+                <template is="dom-if" if="[[$equals(pcc.visitReason.type, '2nd ANC (24 - 28 weeks)')]]">
+                  <paper-card class="m-top-8">
+                    <div class="card-custom-header">
+                      <div class="layout horizontal center">
+                        <div class="title flex">Medication related to pregnancy</div>
+                      </div>
+                    </div>
+                    <div class="p-8 horizontal layout wrap">
+                      <template is="dom-repeat" items="[[pcc.medicalManagement.medicationRelatedToPregnancy]]">
+                        <div class="custom-radio-button-group">
+                          <div>
+                            <strong>{{item.type}}</strong>
+                          </div>
+                          <paper-radio-group selected="{{item.value}}">
+                            <paper-radio-button name="yes">Yes</paper-radio-button>
+                            <paper-radio-button name="no">No</paper-radio-button>
+                          </paper-radio-group>
+                        </div>
+                      </template>
+                    </div>
+                  </paper-card>
+                </template>
+              </div>
+
+              <template is="dom-if" if="[[$equals(pcc.visitReason.type, '1st ANC (6 - 14 weeks)')]]">
+                <paper-card class="m-top-8">
+                  <div class="card-custom-header">
+                    <div class="layout horizontal center">
+                      <div class="title flex">Hyperglycemia of pregnancy</div>
+                      <template is="dom-if" if="[[$equals(pcc.medicalManagement.hyperglycemiaOfPregnancy.instruction, 'Both lifestyle change & insulin')]]">
+                        <paper-button on-tap="addAnotherHyperglycemiaDrug" class="btn-add colored" raised>Add Another Drug</paper-button>
+                      </template>
+                    </div>
+                  </div>
+                  <div class="p-8 horizontal layout wrap">
+                    <div class="custom-radio-button-group">
+                      <div>
+                        <strong>Hyperglycemia of pregnancy</strong>
+                      </div>
+                      <paper-radio-group selected="{{pcc.medicalManagement.hyperglycemiaOfPregnancy.instruction}}">
+                        <paper-radio-button name="Only lifestyle change">Only lifestyle change</paper-radio-button>
+                        <paper-radio-button name="Both lifestyle change & insulin">Both lifestyle change & insulin</paper-radio-button>
+                      </paper-radio-group>
+                    </div>
+                    <template is="dom-if" if="[[$equals(pcc.medicalManagement.hyperglycemiaOfPregnancy.instruction, 'Both lifestyle change & insulin')]]">
+                      <template is="dom-repeat" items=[[pcc.medicalManagement.hyperglycemiaOfPregnancy.drugList]]>
+                        <div class="horizontal layout center">
+                          <vaadin-combo-box class="flex paper-custom" label="Add Drug" placeholder="Type/Select" items="{{hyperglycemiaOfPregnancyValueList}}"
+                            allow-custom-value="true" value="{{item.name}}"></vaadin-combo-box>
+                          <paper-icon-button icon="delete" on-tap="deleteHyperglycemiaDrug"></paper-icon-button>
+                        </div>
+
+                      </template>
+                    </template>
+                  </div>
+                </paper-card>
+              </template>
+
+              <template is="dom-if" if="[[$equals(pcc.visitReason.type, '2nd ANC (24 - 28 weeks)')]]">
+                <paper-card class="m-top-8">
+                  <div class="card-custom-header">
+                    <div class="layout horizontal center">
+                      <div class="title flex">Hyperglycemia of pregnancy</div>
+                      <template is="dom-if" if="[[$equals(pcc.medicalManagement.hyperglycemiaOfPregnancy.instruction, 'Both lifestyle change & insulin')]]">
+                        <paper-button on-tap="addAnotherHyperglycemiaDrug" class="btn-add colored" raised>Add Another Drug</paper-button>
+                      </template>
+                    </div>
+                  </div>
+                  <div class="p-8 horizontal layout wrap">
+                    <div class="custom-radio-button-group">
+                      <div>
+                        <strong>Hyperglycemia of pregnancy</strong>
+                      </div>
+                      <paper-radio-group selected="{{pcc.medicalManagement.hyperglycemiaOfPregnancy.instruction}}">
+                        <paper-radio-button name="Only lifestyle change">Only lifestyle change</paper-radio-button>
+                        <paper-radio-button name="Both lifestyle change & insulin">Both lifestyle change & insulin</paper-radio-button>
+                      </paper-radio-group>
+                    </div>
+                    <template is="dom-if" if="[[$equals(pcc.medicalManagement.hyperglycemiaOfPregnancy.instruction, 'Both lifestyle change & insulin')]]">
+                      <template is="dom-repeat" items=[[pcc.medicalManagement.hyperglycemiaOfPregnancy.drugList]]>
+                        <div class="horizontal layout center">
+                          <vaadin-combo-box class="flex paper-custom" label="Add Drug" placeholder="Type/Select" items="{{hyperglycemiaOfPregnancyValueList}}"
+                            allow-custom-value="true" value="{{item.name}}"></vaadin-combo-box>
+                          <paper-icon-button icon="delete" on-tap="deleteHyperglycemiaDrug"></paper-icon-button>
+                        </div>
+
+                      </template>
+                    </template>
+                  </div>
+                </paper-card>
+              </template>
+
+
+
+              <!-- card - Medical Management - end -->
+
+
+              <template is="dom-if" if="[[$equals(pcc.medicalManagement.lifeStyleType, 'Medication')]]">
+                <template is="dom-repeat" items="[[pcc.medicalManagement.medicationList]]" as="medicine">
+                  <paper-card class="m-top-8">
+                    <div class="card-custom-header">
+                      <div class="layout horizontal center">
+                        <div class="title flex">{{medicine.type}}</div>
+                      </div>
+                    </div>
+                    <div class="p-8">
+                      <div class="horizontal layout wrap">
+                        <template is="dom-repeat" items="[[medicine.list]]">
+                          <div class="custom-radio-button-group full-width">
+                            <div class="horizontal layout center">
+                              <div>
+                                <strong>{{item.name}}:</strong>
+                              </div>
+                              <paper-radio-group selected="{{item.isYes}}">
+                                <paper-radio-button name="yes">Yes</paper-radio-button>
+                                <paper-radio-button name="no">No</paper-radio-button>
+                              </paper-radio-group>
+
+                            </div>
+
+                            <div hidden$="[[!$equals(item.isYes, 'yes')]]">
+
+                              <template is="dom-if" if="[[$equals(item.name, 'OADs')]]">
+                                <vaadin-combo-box class="flex" label="Type of OAD" placeholder="Type/Select" items="{{OADList}}" allow-custom-value="true"
+                                  value="{{item.value}}"></vaadin-combo-box>
+                              </template>
+
+                              <template is="dom-if" if="[[$equals(item.name, 'On insulin')]]">
+                                <vaadin-combo-box class="flex" label="Type of Insulin" placeholder="Type/Select" items="{{onInsulinList}}" allow-custom-value="true"
+                                  value="{{item.value}}"></vaadin-combo-box>
+                                <vaadin-combo-box class="flex" label="Type of Device" placeholder="Type/Select" items="{{insulinDeviceList}}" allow-custom-value="true"
+                                  value="{{item.typeOfDevice}}"></vaadin-combo-box>
+                              </template>
+
+                              <div>
+                                <template is="dom-repeat" items="[[item.medicineList]]" as="medicine" index-as="medicineIndex">
+                                  <div class="horizontal layout center">
+                                    <div class="m-right-8 type caption secondary">{{_returnSerial(medicineIndex)}}.</div>
+                                    <paper-input class="flex m-horizontal-8" label="Name" value="{{medicine.name}}"></paper-input>
+                                    <paper-input type="number" class="m-horizontal-8" label="Dose" value="{{medicine.dose}}">
+                                      <div class="type secondary" suffix>{{medicine.unit}}</div>
+                                    </paper-input>
+                                  </div>
+                                </template>
+                              </div>
+
+                              <div class="horizontal layout center end-justified" hidden$="[[item.hideAddButton]]">
+                                <paper-button raised class="btn-add default" on-tap="addMedicine">Add Another Medicine</paper-button>
+                              </div>
+
+
+                              <!-- <template is="dom-if" if="[[$equals(item.name, 'Anti HTN')]]">
+                                <vaadin-combo-box class="flex" label="Type of Anti HTN" placeholder="Type/Select" items="{{antiHTNList}}" allow-custom-value="true"
+                                  value="{{item.value}}"></vaadin-combo-box>
+                              </template> -->
+
+                              <!-- <template is="dom-if" if="[[$equals(item.name, 'Anti lipids')]]">
+                                <vaadin-combo-box class="flex" label="Type of Anti lipids" placeholder="Type/Select" items="{{antiLipidsList}}" allow-custom-value="true"
+                                  value="{{item.value}}"></vaadin-combo-box>
+                              </template> -->
+                            </div>
+                          </div>
+                        </template>
+                      </div>
+                    </div>
+                  </paper-card>
+                </template>
+              </template>
+            </section>
+            <!-- Page - Medical Information - END -->
+
+            <!-- Page - Complete - START -->
+            <section>
+              <paper-card>
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <!-- <paper-icon-button icon="icons:chevron-right"></paper-icon-button> -->
+                    <div class="flex">
+                      <div class="title">
+                        <!-- <div class="type caption-2 secondary"><strong>STEP #Final</strong></div> -->
+                        <div>Complete</div>
+                      </div>
+                    </div>
+
+                    <div class="horizontal layout">
+                      <template is="dom-if" if="[[$equals(pcc.visitReason.type, 'Preconception')]]">
+                        <paper-button class="btn-add" on-tap="backButton" raised>
+                          <iron-icon class="" icon="arrow-back"></iron-icon>
+                        </paper-button>
+                      </template>
+                      <template is="dom-if" if="[[!EDIT_MODE_ON]]">
+                        <paper-button class="btn-add" disabled raised on-tap="pccPatientOfflineSignupPressed">
+                          <iron-icon class="m-right-8" icon="icons:cloud-off"></iron-icon>Submit (offline)
+                        </paper-button>
+
+                        <paper-button class="btn-add btn btn-success" raised on-tap="pccPatientSignupPressed">
+                          <iron-icon class="m-right-8" icon="icons:cloud-queue"></iron-icon>Submit (online)
+                        </paper-button>
+
+                      </template>
+
+                      <!-- <template is="dom-if" if="[[EDIT_MODE_ON]]">
+                        <paper-button class="colored" raised on-tap="updatePatientDetails"><iron-icon class="m-right-8" icon="icons:check"></iron-icon>Update</paper-button>
+                      </template> -->
+
+                      
+                      <paper-button class="colored" raised on-tap="upsertPccRecord"><iron-icon class="m-right-8" icon="icons:save"></iron-icon>Save</paper-button>
+                    </div>
+                  </div>
+
+                  <template is="dom-if" if="[[_compareFn(orgSmsBalance, '==', 0)]]">
+                    <div class="m-top-8 type caption-2 warning" hidden$=""><strong>Your SMS Balance is [[orgSmsBalance]] (zero). Patient will not get any SMS!</strong></div>
+                    <div class="m-top-8 type caption-2" hidden$=""><strong>Instruction:</strong> go to 'My Wallet > Buy Bulk SMS' in order to purchase SMS.</div>
+                  </template>
+                  
+                </div>
+              </paper-card>
+
+              <paper-card class="m-top-8">
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <div class="title flex">Health Results</div>
+                  </div>
+                </div>
+
+                <div class="card-content horizontal layout wrap">
+                  <template is="dom-if" if="[[_compareFn(bmi.results, '>', 0)]]">
+                    <div class$="custom-label-2 {{bmi.class}} horizontal layout center">
+                      <div class="flex">
+                        <div class="type body-lead">
+                          <strong>BMI: </strong>{{bmi.results}}</div>
+                        <div class="type body">{{bmi.classification}}</div>
+                      </div>
+                      <!-- <paper-icon-button icon="close" on-tap="hideBmiData"></paper-icon-button> -->
+                    </div>
+                  </template>
+                  <template is="dom-if" if="[[_compareFn(idealWeight, '>', 0)]]">
+                    <div class="custom-label-2 normal horizontal layout center">
+                      <div class="flex">
+                        <span class="type body-lead">
+                          <strong>Ideal Weight: </strong>{{idealWeight}}Kg</span>
+                      </div>
+                      <!-- <paper-icon-button icon="close" on-tap="hideIdealWeight"></paper-icon-button> -->
+                    </div>
+                  </template>
+                  <template is="dom-if" if="[[_compareFn(bmi.results, '>', 0)]]">
+                    <template is="dom-if" if="[[_compareFn(estimateCaloriesIntake, '>', 0)]]">
+                      <div class="custom-label-2 normal horizontal layout center">
+                        <div class="flex">
+                          <div class="type body-lead">
+                            <strong>Calorie: </strong>{{estimateCaloriesIntake}}</div>
+                        </div>
+                        <!-- <paper-icon-button icon="close" on-tap="hideHypertension"></paper-icon-button> -->
+                      </div>
+                    </template>
+                  </template>
+                  <template is="dom-if" if="[[_compareFn(bmi.results, '>', 0)]]">
+                    <template is="dom-if" if="[[!_compareFn(foodChartName, '==', '')]]">
+                      <div class="custom-label-2 normal horizontal layout center">
+                        <div class="flex">
+                          <div class="type body-lead">
+                            <strong>Food Chart: </strong>See "{{foodChartName}}"</div>
+                        </div>
+                        <!-- <paper-icon-button icon="close" on-tap="hideHypertension"></paper-icon-button> -->
+                      </div>
+                    </template>
+                  </template>
+                  <template is="dom-if" if="[[_compareFn(patientWaistValue, '>', '')]]">
+                    <div class$="custom-label-2 {{waistHipRatio.class}} horizontal layout center">
+                      <div class="flex">
+                        <div class="type body-lead">
+                          <strong>Waist-Hip Ratio: </strong>{{waistHipRatio.value}}</div>
+                        <div class="type body">
+                          <strong>Comment: </strong>{{waistHipRatio.comment}}</div>
+                      </div>
+                      <!-- <paper-icon-button icon="close" on-tap="hideWaistHipRatio"></paper-icon-button> -->
+                    </div>
+                  </template>
+
+                  <template is="dom-if" if="[[!_compareFn(hypertension.type, '==', '')]]">
+                    <div class$="custom-label-2 {{hypertension.class}} horizontal layout center">
+                      <div class="flex">
+                        <div class="type body-lead">
+                          <strong>Hypertension Type: </strong>{{hypertension.type}}</div>
+                        <div class="type body">
+                          <strong>Comment: </strong>{{hypertension.comment}}</div>
+                      </div>
+                      <!-- <paper-icon-button icon="close" on-tap="hideHypertension"></paper-icon-button> -->
+                    </div>
+                  </template>
+
+                  <template is="dom-if" if="[[!_compareFn(glycemiaType.value, '==', '')]]">
+                    <div class$="custom-label-2 {{glycemiaType.class}} horizontal layout center" hidden$="[[$equals(pcc.clinical.diabeticStatus, 'Diabetic')]]">
+                      <div class="flex">
+                        <span class="type body-lead">{{glycemiaType.value}}</span>
+                      </div>
+                      <!-- <paper-icon-button icon="close" on-tap="hideAlbuminType"></paper-icon-button> -->
+                    </div>
+                  </template>
+
+                  <template is="dom-if" if="[[!_compareFn(glycemiaTypeAdditionalMsg.value, '==', '')]]">
+                    <div class$="custom-label-2 {{glycemiaTypeAdditionalMsg.class}} horizontal layout center" hidden$="[[!$equals(pcc.clinical.diabeticStatus, 'Diabetic')]]">
+                      <div class="flex">
+                        <span class="type body-lead">{{glycemiaTypeAdditionalMsg.value}}</span>
+                      </div>
+                      <!-- <paper-icon-button icon="close" on-tap="hideAlbuminType"></paper-icon-button> -->
+                    </div>
+                  </template>
+
+                  <template is="dom-if" if="[[!_compareFn(hbStatus, '==', '')]]">
+                    <div class="custom-label-2 warning horizontal layout center">
+                      <div class="flex">
+                        <span class="type body-lead"> You have {{hbStatus}}</span>
+                      </div>
+                    </div>
+                  </template>
+
+                  <template is="dom-if" if="[[!_compareFn(albuminType, '==', '')]]">
+                    <div class="custom-label-2 warning horizontal layout center">
+                      <div class="flex">
+                        <span class="type body-lead">You have {{albuminType}}</span>
+                      </div>
+                    </div>
+                  </template>
+
+                  <template is="dom-if" if="[[!_compareFn(urinePusCellStatus, '==', '')]]">
+                    <div class="custom-label-2 warning horizontal layout center">
+                      <div class="flex">
+                        <span class="type body-lead">You have {{urinePusCellStatus}}</span>
+                      </div>
+                    </div>
+                  </template>
+
+                  <div hidden$="[[$equals(pcc.visitReason.type, '2nd ANC (24 - 28 weeks)')]]">
+                    <template is="dom-if" if="[[!_compareFn(hBsAgStatus, '==', '')]]">
+                      <div class="custom-label-2 warning horizontal layout center">
+                        <div class="flex">
+                          <span class="type body-lead">{{hBsAgStatus}}</span>
+                        </div>
+                      </div>
+                    </template>
+
+                    <template is="dom-if" if="[[!_compareFn(vdrlStatus, '==', '')]]">
+                      <div class="custom-label-2 warning horizontal layout center">
+                        <div class="flex">
+                          <span class="type body-lead">{{vdrlStatus}}</span>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+
+                  <!-- <template is="dom-if" if="[[!_compareFn(usgReport, '==', '')]]">
+                    <div class="custom-label-2 horizontal layout center">
+                      <div class="flex">
+                        <span class="type body-lead">{{usgReport}}</span>
+                      </div>
+                    </div>
+                  </template> -->
+
+
+                </div>
+              </paper-card>
+
+              <paper-card class="m-top-8" hidden$="[[$equals(addedMedication.type, '')]]">
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <div class="title flex">MEDICATION HISTORY</div>
+                  </div>
+                </div>
+
+                <template is="dom-if" if="[[$equals(addedMedication.type, 'Lifestyle')]]">
+                  <div class="card-content horizontal layout wrap">
+                    <div class="type body-lead custom-label-2 horizontal layout center">
+                      [[addedMedication.type]]
+                    </div>
+                  </div>
+                </template>
+
+                <div class="card-content horizontal layout wrap" hidden$="[[_isEmpty(addedMedication.list.length)]]">
+                  <template is="dom-repeat" items="[[addedMedication.list]]">
+                    <div class="custom-label-2 horizontal layout center">
+                      <div class="flex">
+                        <div class="type body-lead">{{item.name}}:
+                          <span>{{item.value}}</span>
+                        </div>
+                        <div hidden$="[[_isEmpty(item.medicineList.length)]]">
+                          <template is="dom-repeat" items="[[item.medicineList]]">
+                            <div class="horizontal layout center" hidden$="[[$equals(item.name, '')]]">
+                              <div class="type caption secondary m-right-8">{{_returnSerial(index)}}</div>
+                              <div class="type body">{{item.name}}: {{item.dose}} {{item.unit}}</div>
+                            </div>
+                          </template>
+                        </div>
+                        <div class="type body" hidden$="[[_compareFn(item.name, '!=', 'On insulin')]]">
+                          <span>Device Type: </span>{{item.typeOfDevice}}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+
+              </paper-card>
+
+              <paper-card class="m-top-8">
+                <div class="card-custom-header">
+                  <div class="layout horizontal center">
+                    <div class="title flex">Referred to</div>
+                  </div>
+                </div>
+
+                <paper-listbox>
+                  <template is="dom-repeat" items="[[pccOthers.referredList]]">
+                    <paper-item class="custom layout horizontal center">
+                      <paper-checkbox class="flex" checked="{{item.isSelected}}">{{item.value}}</paper-checkbox>
+                    </paper-item>
+                  </template>
+                </paper-listbox>
+
+                <div class="card-content">
+
+                  <div class="partner-logo">
+                    <img src="../../assets/img/preconception/gov-logo.png" alt="">
+                    <img src="../../assets/img/preconception/badas-logo-tab.png" alt="">
+                    <img src="../../assets/img/preconception/endocrine_socity_tab_logo.png" alt="">
+                    <img src="../../assets/img/preconception/safe-pregnancy.png" alt="">
+                  </div>
+
+                  <div class="type body secondary">
+                    A joint community awareness program of diabetic Association of Bangladesh and Law and Justice Division,Ministry of Law,Justice
+                    and Parliamentary Affairs,Government of People's Republic of Bangladesh,funded by World Diabetes Foundation
+                    for strengthening preconception care
+                  </div>
+                </div>
+              </paper-card>
+            </section>
+            <!-- Page - Complete - END -->
+
+          </iron-pages>
+
+
+        </div>
+      </div>
+    </div>
+
+
+  </template>
+  <script src="page-preconception-record.coffee-compiled.js"></script>
+</dom-module>

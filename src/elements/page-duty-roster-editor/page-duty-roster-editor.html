@@ -1,0 +1,108 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box-light.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<dom-module id="page-duty-roster-editor">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+     
+    </style>
+
+    <div id="tabContainer" class="tabs-container">
+      <paper-tabs class="tabs-container" id="tabs" selected="{{selectedPage}}" scrollable noink='true'>
+        <template is="dom-repeat" items="[[slots.list]]">
+          <paper-tab>[[item.name]]</paper-tab>
+        </template>
+      </paper-tabs>
+    </div>
+   
+    <!-- roster table - start -->
+    <template is="dom-if" if="[[$isEmptyArray(roster.members)]]">
+      <div class="type caption-2 secondary" style="text-align: center; width: 100%; background: #fff; padding: 16px;">Please Select Date Range and Press Get Button</div>
+    </template>
+    <template is="dom-if" if="[[!$isEmptyArray(roster.members.length)]]">
+      <vaadin-grid items="{{matchingReports}}" class="grid-table" active-item="{{activeItem}}">
+
+        <vaadin-grid-column width="8em" frozen>
+          <template class="header">
+              
+            <vaadin-grid-filter aria-label="Member Name" path="name" value="[[memberNameString]]">
+              <input is="iron-input" class="filter-input" placeholder="Member Name" value="{{memberNameString}}"></input>
+            </vaadin-grid-filter>
+          
+          </template>
+          <template>
+            <div>{{item.name}}</div>
+            <div class="type caption secondary">{{item.role}}</div>
+          </template>
+        </vaadin-grid-column>
+
+        <!-- <vaadin-grid-column width="8em">
+          <template class="header">Role</template>
+          <template>
+            {{item.role}}
+          </template>
+        </vaadin-grid-column> -->
+
+        <vaadin-grid-column width="4em">
+          <template class="header">Present</template>
+          <template>
+            {{item.presentCount}}
+          </template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column width="4em">
+          <template class="header">Absent</template>
+          <template>
+            {{item.absentCount}}
+          </template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column width="4em">
+          <template class="header">Holiday</template>
+          <template>
+            {{item.holidayCount}}
+          </template>
+        </vaadin-grid-column>
+
+
+      </vaadin-grid>
+    </template>
+    <!-- roster table - start -->
+
+  </template>
+
+  <script src="page-duty-roster-editor.coffee-compiled.js"></script>
+</dom-module>

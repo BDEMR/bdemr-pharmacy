@@ -1,0 +1,286 @@
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-put-patient-to-waitlist">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <paper-progress class="progress" indeterminate hidden$="[[!loading]]"></paper-progress>
+
+        <paper-card>
+          <div class="card-content">
+            <div class="layout vertical">
+              <div><span class="type caption bg-gray">[[organization.idOnServer]]</span></div>
+              <div class="p-vertical-8"><span class="type bold">[[organization.name]]</span></div>
+              <div><span class="type secondary">[[organization.address]]</span></div>
+              <div><span class="type secondary">[[organization.phone]]</span></div>
+            </div>
+          </div>
+        </paper-card>
+
+        <template is='dom-if' if='[[patient]]'>
+          <paper-card class="m-top-8" heading="Patient Info">
+            <div class="card-content">
+              <div class="layout vertical">
+                <div class="p-vertical-8"><span class="type bold">[[$getFullName(patient.name)]]</span></div>
+                <div><span class="type secondary">[[patient.email]]</span></div>
+                <div><span class="type secondary">[[patient.phone]]</span></div>
+              </div>
+            </div>
+          </paper-card>
+        </template>
+
+        <paper-card class="m-top-8">
+          <div class="card-content">
+            <paper-listbox>
+              <template is='dom-repeat' items='[[waitLists]]'>
+                <paper-item>
+                  <div><span class="type caption-2 bg-gray">[[item.patientList.length]]</span></div>
+                  <div class="flex m-left-8">[[item.name]]</div>
+                  <div>
+                    <paper-button hidden$="[[!patient]]" raised class="btn btn-primary btn-sm" on-tap="putPatientToThisWaitListButtonPressed">Put here</paper-button>
+                    <paper-button class="btn btn-default btn-sm" on-tap="viewWaitListButtonPressed">View</paper-button>
+                  </div>
+                </paper-item>
+              </template>
+            </paper-listbox>
+          </div>
+        </paper-card>
+
+      </div>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'page-put-patient-to-waitlist',
+      behaviors: [
+        app.behaviors.translating,
+        app.behaviors.pageLike,
+        app.behaviors.dbUsing,
+        app.behaviors.apiCalling,
+        app.behaviors.commonComputes
+      ],
+
+      properties: {
+        user: {
+          type: Object,
+          value: null
+        },
+
+        patient: {
+          type: Object,
+          value: null
+        },
+
+        organization: {
+          type: Object,
+          value: {}
+        },
+
+        waitLists: {
+          type: Array,
+          value: []
+        },
+
+        currentlySelectedWaitList: {
+          type: Object,
+          value: null
+        },
+
+        selectedSubPageIndex: {
+          type: Number,
+          value: 0
+        }
+
+      },
+
+      navigatedIn() {
+        const params = this.domHost.getPageParams()
+        const organizationId = params['organization'];
+        const patientSerial = params['patient']
+        const fromWaitListId = params['waitlist']
+        this._loadUser();
+        if (organizationId) {
+          this._loadOrganization(organizationId, () => {
+            this._loadWaitLists(organizationId, _ => null);
+          });
+          if (patientSerial) this._loadPatient(patientSerial);
+        } else {
+          this._notifyInvalidOrganization()
+        }
+      },
+
+      _loadUser() {
+        const userList = app.db.find('user');
+        if (userList.length === 1) {
+          return this.user = userList[0];
+        }
+      },
+
+      _loadOrganization(idOnServer, cbfn) {
+        const data = {
+          apiKey: this.user.apiKey,
+          idList: [idOnServer]
+        };
+        this.loading = true;
+        this.callApi('/bdemr-organization-list-organizations-by-ids', data, (err, response) => {
+          this.loading = false;
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (!response.data.matchingOrganizationList.length) return this._notifyInvalidOrganization();
+          this.set('organization', response.data.matchingOrganizationList[0]);
+          return cbfn();
+        });
+      },
+
+      _notifyInvalidOrganization() {
+        return this.domHost.showModalDialog("Invalid Organization");
+      },
+
+      _loadPatient(patientSerial) {
+        console.log('patient loaded')
+        let patient = window.waitListTempPatient;
+        if (patient && patient.serial === patientSerial) {
+          this.set('patient', patient);
+          console.log(patient)
+        }
+      },
+
+      _loadWaitLists(organizationId, cbfn) {
+        const data = {
+          apiKey: this.user.apiKey,
+          organizationId
+        };
+        this.loading = true;
+        this.callApi('/bdemr-organization-get-all-waitlist', data, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          this.set('waitLists', response.data);
+          if (cbfn) cbfn();
+        });
+      },
+
+      _saveWaitList(waitList, cbfn) {
+        let data = {
+          apiKey: this.user.apiKey,
+          waitList
+        }
+        this.loading = true;
+        this.callApi('/bdemr-organization-create-waitlist', data, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          let newWaitList = response.data;
+          cbfn(newWaitList);
+        })
+      },
+
+      _deletePatientFromWaitList(patientId, waitListId, cbfn) {
+        let waitList = this.waitLists.find(list => list._id === waitListId);
+        if (waitList) {
+          let index = waitList.patientList.findIndex(patient => patient.userId === patientId);
+          if (index > -1) {
+            waitList.patientList.splice(index, 1);
+            waitList.lastModifiedDatetimeStamp = Date.now()
+            this._saveWaitList(waitList, cbfn);
+          }
+        }
+      },
+
+      _sendNotification(patient, newWaitList) {
+        console.log(newWaitList)
+        var patientIndex = newWaitList.patientList.findIndex(item => item.userId === patient.idOnServer);
+        patientIndex = parseInt(patientIndex) + 1
+        const notification = {
+          operation: 'notify-single',
+          notificationMessage: "You have been added to " + this.organization.name + "--" + newWaitList.name + ". Serial: " + patientIndex,
+          apiKey: this.user.apiKey,
+          notificationCategory: 'general',
+          notificationTargetId: patient.idOnServer,
+          sender: this.user.name          
+        }
+        this.domHost.socket.emit('message', notification);
+        // return this.callApi('/extern-scheduler-add-notification', notification, (err, response) => {
+        //   if (response.hasError) {
+        //     return this.domHost.showToast(`Notification Error: ${response.error.message}`);
+        //   } else {
+        //     return this.domHost.showToast('Notification Sent');
+        //   }
+        // });
+      },
+
+      _updateWaitList(waitList, cbfn) {
+        waitList.patientList.push({
+          createdDatetimeStamp: Date.now(),
+          createdByUserId: this.user.idOnServer,
+          name: this.$getFullName(this.patient.name),
+          email: this.patient.email || '',
+          phone: this.patient.phone || '',
+          serial: this.patient.serial,
+          userId: this.patient.userId || this.patient.idOnServer,
+          previousWaitListName: this.patient.previousWaitListName,
+          previousWaitListEntryTime: this.patient.previousWaitListEntryTime
+        });
+        waitList.lastModifiedDatetimeStamp = Date.now();
+        console.log('updated waitlist pushed', waitList)
+        this._saveWaitList(waitList, cbfn)
+      },
+
+      putPatientToThisWaitListButtonPressed(e) {
+        let { item, index } = e.model;
+        console.log(item)
+        const params = this.domHost.getPageParams()
+        if (item.patientList.some(patient => patient.serial === this.patient.serial)) {
+          return this.domHost.showModalDialog("Patient Already Added");
+        }
+        this._updateWaitList(item, (newWaitList) => {
+          if (params['waitlist']) {
+            this._deletePatientFromWaitList(this.patient.userId, params['waitlist'], _ => null)
+          }
+          this._sendNotification(this.patient, newWaitList);
+          this.patient = null;
+          window.waitListTempPatient = null
+          this.domHost.navigateToPage(`#/view-single-waitlist/organization:${this.organization.idOnServer}/waitlist:${newWaitList._id}`);
+        });
+      },
+
+      viewWaitListButtonPressed(e) {
+        let { item } = e.model;
+        this.domHost.navigateToPage(`#/view-single-waitlist/organization:${this.organization.idOnServer}/waitlist:${item._id}`);
+      },
+
+      arrowBackButtonPressed(e) {
+        this.domHost.navigateToPreviousPage();
+      }
+
+
+    })
+  </script>
+</dom-module>

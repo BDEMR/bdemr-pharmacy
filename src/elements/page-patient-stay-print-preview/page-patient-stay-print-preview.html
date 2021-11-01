@@ -1,0 +1,366 @@
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-patient-stay-print-preview">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .external-card-title {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .info-card {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+
+      .info-card .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+
+      .info-card .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+
+      .info-card .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+
+      .info-card .row .modifier.online {
+        background: #757575;
+      }
+
+      .info-card .row .modifier.local-only {
+        background: #039BE5;
+      }
+
+      .info-card .row .modifier.locally-updated {
+        background: #009688;
+      }
+
+      .info-card .row .modifier.imported {
+        background: #4CAF50;
+      }
+
+      .info-row {
+        margin-top: 10px;
+      }
+
+      .top-info-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+        display: inline-block;
+        font-size: 14px;
+      }
+
+      .address1 {
+        margin-right: 10px;
+      }
+
+      .name {
+        margin-left: 5px;
+        font-size: 24px;
+      }
+
+      .email {
+        margin-left: 5px;
+        font-size: 14px;
+      }
+
+      .phone {
+        margin-left: 5px;
+      }
+
+      .val {
+        text-decoration: underline;
+      }
+
+      .account-box {
+        --iron-icon-width: 96px;
+        --iron-icon-height: 96px;
+      }
+
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .limiting-container {
+        max-width: 210mm;
+        min-height: 230mm;
+        /*min-height: 297mm;*/
+      }
+
+      .document {
+        font-family: 'Times New Roman';
+        background: white;
+      }
+
+      .document-title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      @media print {
+        .limiting-container {
+          /*margin-top: -60px;*/
+          /*border: 1px solid black;*/
+        }
+      }
+
+      .collection {
+        color: red;
+        background: grey;
+      }
+
+      .document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+      .item {
+        padding: 10px;
+        border: 1px solid grey;
+      }
+
+      .signature-block {
+        width: 250px;
+        height: 60px;
+        border-bottom: 1px dashed #ccc;
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container document">
+
+        <template is="dom-if" if="{{!isPatientStayValid}}">
+          [[$TRANSLATE('Patient Stay invalid', LANG)]]
+        </template>
+
+        <template is="dom-if" if="{{!isPatientValid}}">
+          [[$TRANSLATE('Patient invalid', LANG)]]
+        </template>
+
+        <template is="dom-if" if="{{$and(isPatientStayValid, isPatientValid)}}">
+
+          <div class="document-header horizontal layout center">
+
+            <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+              <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+            </template>
+
+            <div class="leftSide vertical layout">
+              <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+              <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+              <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+            </div>
+            <div class="flex"></div>
+            <div class="rightSide vertical layout end">
+              <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+              <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+              <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+            </div>
+          </div>
+
+          <div class="horiline"></div>
+
+          <p class="type center primary bold title-2">[[$TRANSLATE('Patient Admission Form', LANG)]]</p>
+
+          <div class="layout vertical p-16">
+            <div>
+              <strong>[[$TRANSLATE('Patient Name', LANG)]]</strong>: [[$getFullName(patient.name)]]
+            </div>
+
+            <div><strong>[[$TRANSLATE('Sex', LANG)]]: </strong>[[patient.gender]]</div>
+            <div><strong>[[$TRANSLATE('Age', LANG)]]: </strong>[[$computeAge(patient.dateOfBirth)]]</div>
+
+            <div><strong>[[$TRANSLATE('Marital Status', LANG)]]: </strong>[[patient.maritalStatus]]</div>
+            <div><strong>[[$TRANSLATE('Religion', LANG)]]: </strong>[[patient.religion]]</div>
+
+            <div><strong>[[$TRANSLATE('Blood Group', LANG)]]: </strong>[[patient.bloodGroup]]</div>
+            <div><strong>[[$TRANSLATE('Known Allergy', LANG)]]: </strong>[[patient.allergy]]</div>
+
+            <div><strong>[[$TRANSLATE('Address', LANG)]]: </strong>[[makeAddress(patient.addressList)]]</div>
+
+            <div><strong>[[$TRANSLATE('Contact no.', LANG)]]: </strong>[[patient.phone]]</div>
+
+            <div class="m-top-8">
+              <strong class="type primary">[[$TRANSLATE('Person to be notified other than spouse in case of Emergency', LANG)]]</strong>
+            </div>
+
+            <div><strong>[[$TRANSLATE('Name', LANG)]]: </strong>[[patient.emergencyContact.name]]</div>
+            <div><strong>[[$TRANSLATE('Relationship', LANG)]]: </strong>[[patient.emergencyContact.relation]]</div>
+            <div><strong>[[$TRANSLATE('Address', LANG)]]: </strong>[[patient.emergencyContact.address]]</div>
+            <div><strong>[[$TRANSLATE('Contact no.', LANG)]]: </strong>[[patient.emergencyContact.contact]]</div>
+            <div class="signature-block"></div>
+            <div><strong>[[$TRANSLATE('Patient/Representative Signature', LANG)]]: : </strong></div>
+          </div>
+
+          <!-- Patient Stay - start -->
+          <div class="m-top-8" heading="Patient Stay">
+            <template is="dom-if" if="{{isPatientStayValid}}">
+              <div class="card-content p-16">
+                <div class="layout horizontal">
+                  <span class="type bold"> [[$TRANSLATE('Admission Date', LANG)]]: </span>
+                  <span>&nbsp;[[$mkDate(patientStay.data.admissionDateTimeStamp)]]</span>
+                </div>
+                <div>
+                  <span class="type bold">[[$TRANSLATE('Type', LANG)]]: </span> [[patientStay.data.admissionType]]
+                </div>
+                <div hidden="[[!patientStay.adviseOnly]]">
+                  <span class="type bold">[[$TRANSLATE('Advice', LANG)]]: </span> [[patientStay.data.advise]]
+                </div>
+                <template is="dom-if" if="[[!patientStay.adviseOnly]]">
+                  <div>
+                    <span class="type bold">[[$TRANSLATE('Referred By', LANG)]]: </span> [[patientStay.data.referredByDoctorName]]
+                  </div>
+                  <div>
+                    <span class="type bold">[[$TRANSLATE('Admitted By', LANG)]]: </span> [[patientStay.data.admittedByDoctorName]]
+                  </div>
+                  <template is="dom-if" if="[[patientStay.data.operationName]]">
+                    <div>
+                      <span class="type bold">[[$TRANSLATE('Operation Name', LANG)]]: </span> [[patientStay.data.operationName]]
+                    </div>
+                  </template>
+                  <template is="dom-if" if="[[!patientStay.data.dischargeDatetimeStamp]]">
+                    <div class="type italic">
+                      <strong>BED :</strong>
+                      <span>[[patientStay.data.locationHospitalName]]</span> >
+                      <span>[[patientStay.data.locationDepartment]]</span> >
+                      <span>[[patientStay.data.locationUnit]]</span> >
+                      <span>[[patientStay.data.locationWard]]</span> >
+                      <span>[[patientStay.data.locationBed]]</span>
+                    </div>
+                  </template>
+                </template>
+                <template is="dom-if" if="[[patientStay.data.currentLocation.length]]">
+                  <div>
+                    <span class="type bold"> [[$TRANSLATE('Current Location', LANG)]]:</span>
+                    <span>[[patientStay.data.currentLocation.0.location]]</span>
+                  </div>
+                </template>
+                <template is="dom-if" if="[[patientStay.data.dischargeDatetimeStamp]]">
+                  <div>
+                    <span class="type bold"> [[$TRANSLATE('Discharge Date', LANG)]]:</span>
+                    <span>[[$mkDate(patientStay.data.dischargeDatetimeStamp)]]</span>
+                  </div>
+                  <div>
+                    <span class="type bold">[[$TRANSLATE('Discharged By', LANG)]]: </span> [[patientStay.data.dischargedByDoctorName]]
+                  </div>
+                  <div>
+                    <span class="type bold"> [[$TRANSLATE('Length of Stay', LANG)]]:</span>
+                    <span>[[calculateLengthOfStay(patientStay.data.admissionDateTimeStamp,
+                      patientStay.data.dischargeDatetimeStamp)]] Days
+                    </span>
+                  </div>
+                </template>
+                <template is="dom-if" if="[[patientStay.data.dischargeReason.length]]">
+                  <div>
+                    <span class="type bold">[[$TRANSLATE('Discharge Reason', LANG)]]: </span> [[patientStay.data.dischargeReason]]</div>
+                </template>
+
+                <div>
+                  <template is="dom-if" if="[[patientStay.data.dischargeTo.length]]">
+                    <span class="type bold"> [[$TRANSLATE('Discharged To', LANG)]]:</span> [[patientStay.data.dischargeTo]]
+                  </template>
+                </div>
+              </div> <!-- end of card-content div -->
+            </template>
+          </div>
+          <!-- Patient Stay - end -->
+          <div class="sp-2"></div>
+          <div class="horizontal layout center center-justified p-horizontal-16">
+            <div class="type body italic"><strong>[[$TRANSLATE('printed by', LANG)]]: </strong>[[user.name]]</div>
+          </div>
+
+        </template>
+
+      </div>
+
+    </div>
+
+
+
+
+
+
+  </template>
+  <script src="page-patient-stay-print-preview.coffee-compiled.js"></script>
+</dom-module>

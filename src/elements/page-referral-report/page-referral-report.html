@@ -1,0 +1,406 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<dom-module id="page-referral-report">
+  <template>
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+        width: 90%;
+      }
+
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .header {
+        background-color: var(--paper-grey-100);
+        padding: 15px;
+      }
+
+      .label {
+        background-color: var(--paper-grey-100);
+        padding: 5px;
+      }
+
+      .border-bottom {
+        border-bottom: 1px solid rgb(235, 230, 230);
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td,
+      .table th {
+        vertical-align: left;
+        padding: 10px;
+        border: 1px solid var(--paper-grey-300);
+      }
+
+      .table td.special-td {
+        padding: 0px;
+        margin: 0px;
+        height: 100%;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      /* styles related to print preview */
+      .print-button-style {
+        margin-top: 16px;
+        background: burlywood;
+      }
+
+      #printPreview {
+        display: none !important;
+      }
+
+      @media print {
+
+        #hideOnPrint {
+          display: none !important;
+        }
+
+        #printPreview {
+          display: block !important;
+          background-color: transparent;
+        }
+      }
+
+      /*  */
+      .print-document {
+        font-family: 'Times New Roman';
+        background: white;
+        width: 100%;
+      }
+
+      .print-header {
+        position: relative;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px
+      }
+
+      .print-document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .print-document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+      .print-table {
+        table-layout: fixed;
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .print-table tr {
+        margin-bottom: 15px;
+      }
+
+      .print-table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .print-table td {
+        color: #444;
+      }
+
+      .print-table td,
+      .print-table th {
+        /* vertical-align: middle; */
+        padding-right: 5px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+      .print-table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .pull-div-up {
+        position: relative;
+        top: -10px;
+      }
+    </style>
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <!-- Main Content -->
+        <div id="hideOnPrint">
+          <template is="dom-if" if="[[loadingCounter]]">
+            <div class="layout horizontal center type bold text-center">
+              <paper-progress indeterminate></paper-progress>
+            </div>
+            <h2 class="type center">Please Wait, Loading...</h2>
+          </template>
+
+          <paper-card>
+
+            <div class="card-custom-header">
+              <div class="layout horizontal center">
+                <div class="title flex">Referral Report</div>
+              </div>
+            </div>
+
+            <div class="card-content">
+              <div class="layout horizontal end wrap">
+                <paper-input type="search" class="filter-query m-right-8" label="Filter By Doctor's Mobile" no-label-float
+                  value="{{searchString}}"></paper-input>
+
+                <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked">
+                </custom-vital-search>
+
+                <paper-dropdown-menu label="Select Super Visor" class="m-left-16">
+                  <paper-listbox class="dropdown-content" on-iron-activate="filterBySuperVisorNameChanged">
+                    <template is="dom-repeat" items="[[thirdPartySuperVisorList]]">
+                      <paper-item>[[item.superVisorName]]</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+
+                <paper-button class="btn btn-success" raised on-tap="searchButtonClicked">Search</paper-button>
+                <paper-button raised on-tap="resetButtonClicked">Reset</paper-button>
+                <template is="dom-if" if="[[_isEmptyArray(matchingReferralList)]]">
+                  <paper-button raised class="print-button-style" on-tap="_printButtonPressed">Print the Report
+                  </paper-button>
+                </template>
+
+                <div style="color: rgb(182, 182, 182)" class="m-left-8 m-bottom-8"><strong>Press Search</strong> to
+                  Generate All The Reports</div>
+              </div>
+            </div>
+
+            <div class="card-content">
+            
+              <table class="table">
+                <tr>
+                  <th>Date</th>
+                  <th>#Invoice</th>
+                  <th>Patient's name</th>
+                  <th>Mobile</th>
+                  <th>Doctor's Name</th>
+                  <th>Mobile</th>
+                  <th>Invoice Item(s) Name And Price</th>
+                  <th>Total Amount Received</th>
+                  <th>View</th>
+                </tr>
+            
+                <template is="dom-if" if="[[!matchingReferralList.length]]">
+                  <div class="layout horizontal center center-justified">Empty</div>
+                </template>
+            
+                <template is="dom-repeat" items="[[matchingReferralList]]" sort="_sortByDate">
+                  <tr>
+                    <td>[[$formatDateTime(item.createdDatetimeStamp)]]</td>
+                    <td>
+                      <template is="dom-if" if="[[!item.referenceNumber]]">
+                        <strong class="label">[[item.serial]]</strong>
+                      </template>
+                      <template is="dom-if" if="[[item.referenceNumber]]">
+                        <strong class="label">[[item.referenceNumber]]</strong>
+                      </template>
+                    </td>
+                    <td>[[$getFullName(item.patientName)]]</td>
+                    <td>[[item.patientPhone]]</td>
+                    <td>[[item.referralDoctor.name]]</td>
+                    <td>[[item.referralDoctor.mobile]]</td>
+                    <td class="special-td">
+                      <template is="dom-repeat" items="[[item.data]]" as="invoiceItems">
+                        <paper-item>
+                          <div class="flex">[[invoiceItems.name]]</div>
+                          <div class="p-left-16">[[invoiceItems.price]] BDT</div>
+                        </paper-item>
+                      </template>
+                    </td>
+                    <td>[[$formatCurrency(item.totalAmountReceieved)]]</td>
+                    <td>
+                      <paper-icon-button icon="launch" on-tap="viewReferralInvoiceButtonPressed"></paper-icon-button>
+                    </td>
+                  </tr>
+                </template>
+              </table>
+            </div>
+            <div class="card-actions">
+              <div class="layout horizontal">
+                <div class="flex"></div>
+                <div class="m-right-16"><strong> Total Patients: [[matchingReferralList.length]]</strong></div>
+                <div><strong> Total Amount: [[$formatCurrency(totalReferralCommission)]]</strong></div>
+              </div>
+            
+            </div>
+
+          </paper-card>
+        </div>
+
+        <!-- Print Preview -->
+        <div id="printPreview">
+          <div class="print-document">
+            <template is="dom-if" if="[[settings.printDecoration.headerLine]]">
+              <div class="print-header vertical layout center">[[settings.printDecoration.headerLine]]</div>
+            </template>
+
+            <div class="print-document-header horizontal layout center">
+
+              <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+                <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+              </template>
+
+              <div class="leftSide vertical layout">
+                <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+                <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+                <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+              </div>
+              <div class="flex"></div>
+              <div class="rightSide vertical layout end">
+                <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+                <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+                <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+              </div>
+            </div>
+
+            <div class="horiline"></div>
+            <div style="text-align: center">
+              <h4 class="type secondary">[[$TRANSLATE('Referral Report', LANG)]]</h4>
+            </div>
+
+            <!-- Report Content -->
+            <div>
+              <table class="print-table">
+                <thead>
+                  <tr>
+                    <th>[[$TRANSLATE('Date', LANG)]]</th>
+                    <th>#[[$TRANSLATE('Invoice', LANG)]]</th>
+                    <th>[[$TRANSLATE('Name', LANG)]]</th>
+                    <th>[[$TRANSLATE('Mobile', LANG)]]</th>
+                    <th>[[$TRANSLATE('Invoice Item(s) Name And Price', LANG)]]</th>
+                    <th>[[$TRANSLATE('Total Amount Received', LANG)]]</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template is="dom-repeat" items="[[matchingReferralList]]" sort="_sortByDate">
+                    <tr>
+                      <td>[[$formatDateTime(item.createdDatetimeStamp)]]</td>
+                      <td>
+                        <template is="dom-if" if="[[!item.referenceNumber]]">
+                          <strong class="label">[[item.serial]]</strong>
+                        </template>
+                        <template is="dom-if" if="[[item.referenceNumber]]">
+                          <strong class="label">[[item.referenceNumber]]</strong>
+                        </template>
+                      </td>
+                      <td>[[item.referralDoctor.name]]</td>
+                      <td>[[item.referralDoctor.mobile]]</td>
+                      <td>
+                        <template is="dom-repeat" items="[[item.data]]" as="invoiceItems">
+                          <div class="flex">[[invoiceItems.name]]</div>
+                          <div class="p-left-8"> - [[invoiceItems.price]] [[$TRANSLATE('BDT', LANG)]]</div>
+                          <div class="m-top-16"></div>
+                        </template>
+                      </td>
+                      <td>[[$formatCurrency(item.totalAmountReceieved)]]</td>
+                    </tr>
+                  </template>
+
+                </tbody>
+              </table>
+
+              <div class="m-top-16">
+                <span style="position: relative; float: right;">
+                  <strong> [[$TRANSLATE('Total Patients', LANG)]]: [[matchingReferralList.length]]</strong>
+                  <br>
+                  <strong>[[$TRANSLATE('Total', LANG)]]: [[$formatCurrency(totalReferralCommission)]]</strong>
+                </span>
+              </div>
+
+            </div>
+
+            <br>
+            <template is="dom-if" if="[[settings.printDecoration.footerLine]]">
+              <div class="footer vertical layout">[[settings.printDecoration.footerLine]]</div>
+            </template>
+
+            <div style="text-align: center; margin-top: 16px">
+              <span class="type secondary">[[$TRANSLATE('Report Generation Date & Time', LANG)]] -
+                [[_getFormattedCurrentDateTime(currentDateTime)]]</span>
+            </div>
+
+
+
+            <div class="horizontal layout center center-justified p-horizontal-16">
+              <div class="type body italic"><strong>[[$TRANSLATE('Printed by', LANG)]]: </strong>[[user.name]]</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+  </template>
+  <script src="page-referral-report.coffee-compiled.js"></script>
+</dom-module>

@@ -1,0 +1,37 @@
+<link rel="import" href="../../bower-assets/paper-material/paper-material.html">
+<link rel="import" href="../../styles/common-style.html">
+
+<dom-module id="page-access-denied">
+  <template>
+
+    <style is="custom-style" include="common-style">
+      .containerLevel1 {
+        /*min-width: 600px;*/
+        max-width: 720px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .page {
+        background-color: var(--paper-red-100);
+        padding: 45px;
+        width: 100%;
+      }
+    </style>
+
+    <div class="vertical layout center">
+      <div class="layout horizontal containerLevel1">
+        <paper-material class="page">
+          <h1 class="type danger text-center bold">ACCESS DENIED</h1>
+          <p>You do not have access to this page. Please contact your admin.</p>
+        </paper-material>
+      </div>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'page-access-denied'
+    })
+  </script>
+</dom-module>

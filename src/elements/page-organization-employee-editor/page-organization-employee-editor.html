@@ -1,0 +1,298 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-organization-employee-editor">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+
+    </style>
+
+    <div class="master-container">
+      <div class="limiting-container">
+
+        <paper-card heading="Edit Employee">
+          <paper-progress class="progress" indeterminate hidden="[[!loading]]"></paper-progress>
+          <div class="card-content">
+            <paper-input label="Employee Id" value="{{employee.data.employeeId}}"></paper-input>
+            <paper-input label="Name" value="{{employee.data.name}}"></paper-input>
+            <paper-input label="Mobile" value="{{employee.data.mobile}}"></paper-input>
+            <paper-input label="Email" value="{{employee.data.email}}"></paper-input>
+            <paper-input label="Address" value="{{employee.data.address}}"></paper-input>
+            <paper-input label="NID" value="{{employee.data.nid}}"></paper-input>
+            <div class="layout horizontal">
+              <template is="dom-if" if="[[employee.data.photoDataUri]]">
+                <img class="logo-preview m-right-16" style="height: 100px;" src$="[[employee.data.photoDataUri]]" />
+              </template>
+              <paper-input class="flex" label="Photo" type="file" on-change="photoDataFileInputChanged"></paper-input>
+            </div>
+            <div class="layout horizontal">
+              <paper-dropdown-menu label="Select Department" class="flex m-right-8">
+                <paper-listbox class="dropdown-content" attr-for-selected="value" selected="{{employee.data.departmentId}}"
+                  on-selected-changed="departmentSelected">
+                  <template is="dom-repeat" items="[[departmentList]]">
+                    <paper-item value="[[item._id]]">[[item.name]]</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+
+              <paper-dropdown-menu label="Select designation" class="flex" hidden$="[[!employee.data.departmentId]]">
+                <paper-listbox class="dropdown-content" attr-for-selected="value" selected="{{employee.data.designationId}}">
+                  <template is="dom-repeat" items="[[matchingDesignationList]]">
+                    <paper-item value="[[item._id]]">[[item.name]]</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+            </div>
+            <paper-input label="Joining Date" value="{{employee.data.joiningDate}}" type="date"></paper-input>
+            <paper-input label="Blood Group" value="{{employee.data.bloodGroup}}"></paper-input>
+            <paper-input label="Emergency Contact" value="{{employee.data.emergencyContact}}"></paper-input>
+          </div>
+          <div class="card-actions">
+            <paper-button on-tap="saveButtonPressed" class="btn btn-success">Save</paper-button>
+          </div>
+        </paper-card>
+
+      </div>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'page-organization-employee-editor',
+      behaviors: [
+        app.behaviors.commonComputes,
+        app.behaviors.dbUsing,
+        app.behaviors.pageLike,
+        app.behaviors.apiCalling
+      ],
+      properties: {
+        user: Object,
+        organization: Object,
+        employee: Object,
+        departmentList: Array,
+        designationList: Array,
+        matchingDesignationList: Array
+      },
+      navigatedIn() {
+        const params = this.domHost.getPageParams()
+        this._loadUser();
+        if (params['organization']) {
+          this._loadOrganization(params['organization'], () => {
+            this._loadDepartmentList(this.organization.idOnServer)
+            this._loadDesignationList(this.organization.idOnServer)
+            if (params['employee'] === 'new') {
+              return this._makeNewEmployeeObject()
+            } else {
+              return this._loadEmployee(params['employee']);
+            }
+          })
+        } else {
+          return this.domHost.showModalDialog("Missing Organization params");
+        }
+      },
+
+      _loadUser(cbfn) {
+        const userList = app.db.find('user');
+        if (userList.length === 1) {
+          this.user = userList[0];
+        } else {
+          return this.domHost.showModalDialog('Invalid User');
+        }
+      },
+
+      _loadOrganization(idOnServer, cbfn) {
+        const data = {
+          apiKey: this.user.apiKey,
+          idList: [idOnServer]
+        };
+        this.loading = true;
+        return this.callApi('/bdemr-organization-list-organizations-by-ids', data, (err, response) => {
+          this.loading = false;
+          if (err) {
+            return this.domHost.showModalDialog(err.message);
+          }
+          if (response.hasError) {
+            return this.domHost.showModalDialog(response.error.message);
+          } else {
+            if (!response.data.matchingOrganizationList.length) {
+              this.domHost.showModalDialog("Invalid Organization");
+              return;
+            }
+            this.set('organization', response.data.matchingOrganizationList[0]);
+            cbfn()
+          }
+        });
+      },
+
+      _loadDepartmentList(organizationIdentifier) {
+        const query = {
+          apiKey: this.user.apiKey,
+          organizationId: organizationIdentifier
+        }
+        this.loading = true;
+        this.callApi('/bdemr--organizations-get-department-list', query, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (response.data.length) {
+            this.set('departmentList', response.data);
+          }
+        })
+      },
+
+      _loadDesignationList(organizationIdentifier) {
+        const query = {
+          apiKey: this.user.apiKey,
+          organizationId: organizationIdentifier
+        }
+        this.loading = true;
+        this.callApi('/bdemr--organizations-get-designation-list', query, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (response.data.length) {
+            this.set('designationList', response.data);
+          }
+        })
+      },
+
+      departmentSelected(e) {
+        let selectedDeaprtmentId = e.detail.value
+        let matchingDesignationList = this.designationList.filter((item) => item.departmentId === selectedDeaprtmentId);
+        this.set('matchingDesignationList', matchingDesignationList);
+      },
+
+      _loadEmployee(employeeIdentifier) {
+        const query = {
+          apiKey: this.user.apiKey,
+          serial: employeeIdentifier
+        }
+        this.loading = true;
+        this.callApi('/bdemr-organization-get-employee-details', query, (err, response) => {
+          this.loading = false;
+          if (err) {
+            this._makeNewEmployeeObject()
+            return this.domHost.showModalDialog(err.message);
+          }
+          if (response.hasError) {
+            this._makeNewEmployeeObject()
+            return this.domHost.showModalDialog(response.error.message);
+          } else {
+            let employee = response.data[0];
+            if (employee.data.joiningDate) {
+              let date = new Date(employee.data.joiningDate)
+              employee.data.joiningDate = date.toISOString().split('T')[0];
+            }
+            this.set('employee', employee)
+          }
+        })
+      },
+
+      _makeNewEmployeeObject() {
+        const employee = {
+          serial: '',
+          createdDatetimeStamp: lib.datetime.now(),
+          lastModifiedDatetimeStamp: null,
+          createByUserSerial: this.user.serial,
+          organizationId: this.organization.idOnServer,
+          collection: 'bdemr--organization-employees',
+          data: {
+            employeeId: '',
+            name: '',
+            mobile: '',
+            email: '',
+            address: '',
+            nid: '',
+            photoDataUri: '',
+            departmentId: '',
+            designationId: '',
+            joiningDate: null,
+            bloodGroup: '',
+            emergencyContact: ''
+          }
+        }
+        this.set('employee', employee);
+      },
+
+      _validateEmployeeData(employee) {
+        if (!employee.employeeId) {
+          this.domHost.showModalDialog('EmployeeId is required');
+          return false;
+        }
+        if (!employee.name && !employee.mobile) {
+          this.domHost.showModalDialog('Name and Mobile is required');
+          return false;
+        }
+        if (!employee.deparmentId && !employee.designationId) {
+          this.domHost.showModalDialog('Please select a Department and Designation');
+          return false;
+        }
+        if (!employee.joiningDate) {
+          this.domHost.showModalDialog('Joining Date is required');
+          return false;
+        }
+        return true;
+      },
+
+      saveButtonPressed() {
+        const valid = this._validateEmployeeData(this.employee.data);
+        if (valid) {
+          if (!this.employee.serial) {
+            this.employee.serial = this.generateSerialForNewEmployee(this.organization.idOnServer);
+          }
+          this.employee.lastModifiedDatetimeStamp = lib.datetime.now();
+          if (this.employee.data.joiningDate) this.employee.data.joiningDate = new Date(this.employee.data.joiningDate).getTime()
+
+          const data = Object.assign(this.employee, { apiKey: this.user.apiKey })
+          this.loading = true;
+          this.callApi('/bdemr-organization-set-employee-details', data, (err, response) => {
+            this.loading = false;
+            if (err) return this.domHost.showModalDialog(err.message);
+            if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+            this._makeNewEmployeeObject()
+            return this.domHost.showModalDialog('Employee Saved Successfully');
+          })
+        }
+      },
+
+      photoDataFileInputChanged(e) {
+        const reader = new FileReader;
+        const file = e.target.files[0];
+        if (file.size > 1000000) {
+          this.domHost.showModalDialog('Please provide a file less than 1mb in size.');
+          return;
+        }
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+          const dataUri = reader.result;
+          return this.set('employee.data.photoDataUri', dataUri);
+        };
+      },
+
+      arrowBackButtonPressed() {
+        return this.domHost.navigateToPreviousPage()
+      }
+
+
+
+    })
+  </script>
+</dom-module>

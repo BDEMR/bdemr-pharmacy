@@ -1,0 +1,83 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box-light.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<dom-module id="page-organization-id-scan-report">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">  
+    </style>
+    <div class="master-container">
+
+      <div class="limiting-container">
+        <!-- Reports - start -->
+        <vaadin-grid items="{{reports}}" class="custom-vaadin-grid" active-item="{{activeItem}}">
+    
+          <vaadin-grid-column width="12em" frozen>
+            <template class="header">[[$TRANSLATE('Name', LANG)]]</template>
+            <template>{{$getFullName(item.scannedUserName)}}</template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="8em">
+            <template class="header">[[$TRANSLATE('Date & Time', LANG)]]</template>
+            <template>{{$formatDateTime(item.createdDatetimeStamp)}}</template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="8em">
+            <template class="header">[[$TRANSLATE('Category', LANG)]]</template>
+            <template>{{item.category}}</template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="12em">
+            <template class="header">[[$TRANSLATE('Reason', LANG)]]</template>
+            <template>{{item.reason}}</template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="8em">
+            <template class="header">[[$TRANSLATE('Scanned By', LANG)]]</template>
+            <template>{{$getFullName(item.createdByUserName)}}</template>
+          </vaadin-grid-column>
+
+
+        </vaadin-grid>
+        <!-- Reports - end -->
+      </div>
+    </div>
+    
+    
+
+  </template>
+
+  <script src="page-organization-id-scan-report.coffee-compiled.js"></script>
+</dom-module>

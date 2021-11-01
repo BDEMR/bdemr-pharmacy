@@ -1,0 +1,197 @@
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/paper-spinner/paper-spinner.html">
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- Description :
+  <bdemr-patient-summary-information> shows patient summary information as a separate card.
+  Usage:
+    ....
+      <bdemr-patient-summary-information patient=[[patient]]></bdemr-patient-summary-information>
+    ....
+  Required properties:
+    - patient: contains patient information
+  
+-->
+
+<dom-module id="bdemr-patient-summary-information">
+
+  <template>
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      :host {
+        display: block;
+        /* width: 100%; */
+      }
+
+      .item {
+        padding: 10px;
+        border: 1px solid grey;
+      }
+
+      @media print {
+        app-header-layout #contentContainer {
+          overflow-y: unset !important;
+        }
+      }
+
+      .preview-title {
+        padding-left: 16px;
+        padding-right: 8px;
+        background-color: #fafafa;
+        min-height: 64px;
+        /*border-bottom: 1px solid #eee;*/
+      }
+
+      .custom-content {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+        @apply(--layout-center);
+        padding-left: 12px;
+        padding-right: 8px;
+      }
+
+      .b-top {
+        border-top: 1px solid #eee;
+      }
+
+      .content {
+        padding-top: 8px;
+      }
+
+      .tabColor {
+        background-color: teal !important;
+      }
+
+
+      .type.title-2 {
+        font-size: 18px;
+        line-height: 50px;
+      }
+
+      .action-area {
+        padding: 5px 0 5px 8px;
+      }
+
+      .btn-add {
+        min-width: 0;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+        background-color: #eceff1;
+        color: rgba(0, 0, 0, .87);
+      }
+
+      .profile-image {
+        height: 78px;
+        width: 78px;
+        border-radius: 50%;
+        border: 2px solid #f7f7f7;
+      }
+      
+      .move-right {
+        position: relative;
+        float: right;
+      }
+
+      .patient-card-button {
+        background-color: #436aa8;
+        color: #fff;
+      }
+      
+    </style>
+
+    <!-- patient info -->
+    <paper-card>
+      <div class="card-content">
+        <div class="horizontal layout wrap move-right">
+          <paper-button raised class="btn-add colored" on-tap="editPatientBtnPressed">[[$TRANSLATE('Edit Patient', LANG)]]
+          </paper-button>
+  
+          <paper-button raised class="patient-card-button" on-tap="createPatientCardPressed">[[$TRANSLATE('Print Patient Card', LANG)]]
+          </paper-button>
+        </div>
+
+        <div class="horizontal layout wrap center">
+          <iron-image class="profile-image m-right-8" src$="[[$getProfileImage(patient.profileImage)]]" preload
+            sizing="cover"></iron-image>
+
+          <div class="flex">
+            <div class="m-horizontal-4 horizontal layout">
+              <div class="type body-lead capitalize">{{$getFullName(patient.name)}}</div>
+              <div class="m-left-8 type caption bg-gray">{{patient.serial}}</div>
+            </div>
+
+            <div class="horizontal layout wrap type caption-2 secondary">
+              <div class="m-horizontal-4">
+                <strong>[[$TRANSLATE('Patient Id', LANG)]]: </strong>
+                <span>[[patient.organizationPatientId]]</span>
+              </div>
+              <div class="m-horizontal-4">
+                <strong>[[$TRANSLATE('Registerd Phone Number', LANG)]]: </strong>
+                <span>{{patient.phone}}</span>
+              </div>
+              <div class="m-horizontal-4">
+                <strong>[[$TRANSLATE('Patients Type', LANG)]]: </strong>
+                <span>{{patient.patientType}}</span>
+              </div>
+            </div>
+
+            <div class="horizontal layout wrap type caption-2 secondary">
+
+              <template is="dom-if" if="[[!patient.isForOrganizationOnly]]">
+
+                <div class="m-horizontal-4">
+                  <strong>[[$TRANSLATE('Sex', LANG)]]: </strong>
+                  <span>{{patient.gender}}</span>
+                </div>
+                <div class="m-horizontal-4">
+                  <strong>[[$TRANSLATE('Age', LANG)]]: </strong>
+                  <span>[[$computeAge(patient.dateOfBirth)]]</span>
+                </div>
+                <div class="m-horizontal-4">
+                  <strong>[[$TRANSLATE('Blood Group', LANG)]]: </strong>
+                  <span> [[patient.bloodGroup]]</span>
+                </div>
+                <div class="m-horizontal-4">
+                  <strong>[[$TRANSLATE('Allergy', LANG)]]: </strong>
+                  <span>[[patient.allergy]] </span>
+                </div>
+              </template>
+
+              <template is="dom-if" if="[[patient.isForOrganizationOnly]]">
+                <div class="m-horizontal-4">
+                  <strong>[[$TRANSLATE('Patient Name', LANG)]]: </strong>
+                  <i>[[$TRANSLATE('REDACTED FOR CONFIDENTIALITY', LANG)]]</i>
+                </div>
+                <div class="m-horizontal-4">
+                  <strong>[[$TRANSLATE('Age', LANG)]]: </strong>
+                  <i>[[$TRANSLATE('REDACTED FOR CONFIDENTIALITY', LANG)]]</i>
+                </div>
+                <div class="m-horizontal-4">
+                  <strong>[[$TRANSLATE('Blood Group', LANG)]]: </strong>
+                  <span>[[patient.bloodGroup]]</span>
+                </div>
+                <div class="m-horizontal-4">
+                  <strong>[[$TRANSLATE('Allergy', LANG)]]: </strong>
+                  <span>[[patient.allergy]]</span>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </paper-card>
+    
+  </template>
+
+
+  <script src="bdemr-patient-summary-information.coffee-compiled.js"></script>
+
+</dom-module>

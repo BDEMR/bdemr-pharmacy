@@ -1,0 +1,245 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-organization-employee-salary-editor">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+
+    </style>
+
+    <div class="master-container">
+      <div class="limiting-container">
+
+        <paper-card heading="Edit Salary Template">
+          <paper-progress class="progress" indeterminate hidden="[[!loading]]"></paper-progress>
+          <div class="card-content">
+            <paper-input class="flex m-right-8" label="Basic Salary/Unit" value="{{salary.data.salaryUnitPrice}}" type="number"
+              readonly="[[viewOnlyMode]]"></paper-input>
+            <paper-input class="flex m-right-8" label="Overtime/Unit" value="{{salary.data.overtimeUnitPrice}}" type="number"
+              readonly="[[viewOnlyMode]]"></paper-input>
+            <paper-input class="flex m-right-8" label="Festival Bonus/Unit" value="{{salary.data.festivalBonusUnitPrice}}"
+              type="number" readonly="[[viewOnlyMode]]"></paper-input>
+            <paper-input label="House Rent" value="{{salary.data.houseRent}}" type="number" readonly="[[viewOnlyMode]]"></paper-input>
+            <paper-input label="Conveyance" value="{{salary.data.conveyance}}" type="number" readonly="[[viewOnlyMode]]"></paper-input>
+            <paper-input label="Medical Allowance" value="{{salary.data.medicalAllowance}}" type="number" readonly="[[viewOnlyMode]]"></paper-input>
+            <paper-input label="Education" value="{{salary.data.education}}" type="number" readonly="[[viewOnlyMode]]"></paper-input>
+            <paper-input label="lfc" value="{{salary.data.lfc}}" type="number" readonly="[[viewOnlyMode]]"></paper-input>
+
+            <br>
+            <paper-input label="Tax Deduction" value="{{salary.data.taxDeduction}}" type="number" step="0.1" readonly="[[viewOnlyMode]]"></paper-input>
+            <paper-input label="Insurance" value="{{salary.data.insurance}}" type="number" step="0.1" readonly="[[viewOnlyMode]]"></paper-input>
+            <paper-input label="Provident Fund" value="{{salary.data.providentFund}}" type="number" step="0.1" readonly="[[viewOnlyMode]]"></paper-input>
+            <paper-input label="Gratuity Fund" value="{{salary.data.gratuityFund}}" type="number" step="0.1" readonly="[[viewOnlyMode]]"></paper-input>
+
+          </div>
+          <div class="card-actions" hidden$="[[viewOnlyMode]]">
+            <paper-button class="btn btn-success" on-tap="saveButtonPressed">Save</paper-button>
+          </div>
+        </paper-card>
+
+      </div>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'page-organization-employee-salary-editor',
+      behaviors: [
+        app.behaviors.commonComputes,
+        app.behaviors.dbUsing,
+        app.behaviors.pageLike,
+        app.behaviors.apiCalling
+      ],
+      properties: {
+        user: Object,
+        organization: Object,
+        employee: Object,
+        departmentList: Array,
+        designationList: Array,
+        matchingDesignationList: Array,
+        salary: Object,
+        viewOnlyMode: {
+          type: Boolean,
+          value: false
+        },
+        grossSalary: {
+          type: Number,
+          computed: 'getGrossSalary(salary.data.*)'
+        },
+        salaryDeductibles: {
+          type: Number,
+          computed: 'getSalaryDeductibles(salary.data.*)'
+        },
+        netSalary: {
+          type: Number,
+          computed: 'getNetSalary(grossSalary, salaryDeductibles)'
+        }
+      },
+
+      navigatedIn() {
+        const params = this.domHost.getPageParams()
+        if (params['mode'] === 'view') this.set('viewOnlyMode', true);
+        this._loadUser();
+        if (params['organization']) {
+          this._loadOrganization(params['organization'], () => {
+            this._getEmployeeSalary(params['employee'])
+          })
+        }
+      },
+
+      _loadUser(cbfn) {
+        const userList = app.db.find('user');
+        if (userList.length === 1) {
+          this.user = userList[0];
+        } else {
+          return this.domHost.showModalDialog('Invalid User');
+        }
+      },
+
+      _loadOrganization(idOnServer, cbfn) {
+        const data = {
+          apiKey: this.user.apiKey,
+          idList: [idOnServer]
+        };
+        this.loading = true;
+        return this.callApi('/bdemr-organization-list-organizations-by-ids', data, (err, response) => {
+          this.loading = false;
+          if (err) {
+            return this.domHost.showModalDialog(err.message);
+          }
+          if (response.hasError) {
+            return this.domHost.showModalDialog(response.error.message);
+          } else {
+            if (!response.data.matchingOrganizationList.length) {
+              this.domHost.showModalDialog("Invalid Organization");
+              return;
+            }
+            this.set('organization', response.data.matchingOrganizationList[0]);
+            cbfn()
+          }
+        });
+      },
+
+      _getEmployeeSalary(employeeSerial) {
+        const query = {
+          apiKey: this.user.apiKey,
+          employeeSerial,
+          organizationId: this.organization.idOnServer
+        }
+        this.loading = true;
+        this.callApi('/bdemr-organization-get-employee-salary', query, (err, response) => {
+          this.loading = false;
+          if (err) {
+            return this.domHost.showModalDialog(err.message);
+          }
+          if (response.hasError) {
+            this._makeNewSalary(employeeSerial)
+            return this.domHost.showModalDialog(response.error.message);
+          } else {
+            this.set('salary', response.data[0])
+          }
+        })
+      },
+
+      _makeNewSalary(employeeIdentifier) {
+        const salary = {
+          employeeSerial: employeeIdentifier,
+          createdDatetimeStamp: lib.datetime.now(),
+          lastModifiedDatetimeStamp: null,
+          createByUserSerial: this.user.serial,
+          organizationId: this.organization.idOnServer,
+          collection: 'bdemr--organization-employees-salary-template',
+          data: {
+            salaryUnitPrice: 0,
+            dayCount: 30,
+            overtimeUnitPrice: 0,
+            festivalBonusUnitPrice: 0,
+            houseRent: 0,
+            conveyance: 0,
+            medicalAllowance: 0,
+            education: 0,
+            lfc: 0,
+            taxDeduction: 0,
+            insurance: 0,
+            providentFund: 0,
+            gratuityFund: 0,
+          }
+        }
+        this.set('salary', salary);
+      },
+
+      getTotal(unit = 1, price = 0) {
+        return parseInt(unit ? unit : 0) * parseInt(price ? price : 0)
+      },
+
+      getGrossSalary() {
+        const salary = this.salary.data;
+        const basic = this.getTotal(salary.salaryUnit, salary.salaryUnitPrice);
+        const overtime = this.getTotal(salary.overtimeUnit, salary.overtimeUnitPrice);
+        const festival = this.getTotal(salary.festivalBonusUnit, salary.festivalBonusUnitPrice);
+        const houseRent = salary.houseRent ? parseInt(salary.houseRent) : 0;
+        const conveyance = salary.conveyance ? parseInt(salary.conveyance) : 0;
+        const medicalAllowance = salary.medicalAllowance ? parseInt(salary.medicalAllowance) : 0;
+        const education = salary.education ? parseInt(salary.education) : 0;
+        const lfc = salary.lfc ? parseInt(salary.lfc) : 0;
+        return basic + overtime + festival + houseRent + conveyance + medicalAllowance + education + lfc;
+      },
+
+      getSalaryDeductibles() {
+        const salary = this.salary.data;
+        const taxDeduction = salary.taxDeduction ? parseInt(salary.taxDeduction) : 0;
+        const insurance = salary.insurance ? parseInt(salary.insurance) : 0;
+        const providentFund = salary.providentFund ? parseInt(salary.providentFund) : 0;
+        const gratuityFund = salary.gratuityFund ? parseInt(salary.gratuityFund) : 0;
+        return taxDeduction + insurance + providentFund + gratuityFund
+      },
+
+      getNetSalary(grossSalary, deductibles) {
+        return grossSalary - deductibles;
+      },
+
+      saveButtonPressed() {
+        console.log(this.salary)
+        if (!this.salary.data.salaryUnitPrice) {
+          return this.domHost.showModalDialog('Please input Salary Unit Price')
+        }
+        this.salary.lastModifiedDatetimeStamp = Date.now()
+
+        const data = {
+          apiKey: this.user.apiKey,
+          salaryObject: this.salary
+        }
+        this.loading = true;
+        this.callApi('/bdemr-organization-set-employee-salary', data, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          return this.domHost.showModalDialog(response.data);
+        })
+      },
+
+      arrowBackButtonPressed() {
+        this.domHost.navigateToPreviousPage()
+      }
+
+    })
+  </script>
+</dom-module>

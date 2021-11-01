@@ -1,0 +1,88 @@
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/paper-material/paper-material.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/translating.html">
+
+<!-- Commong Styles -->
+<link rel="import" href="../../styles/common-style.html">
+
+
+<dom-module id="page-print-booking-details">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="iron-flex iron-flex-alignment common-style">
+      .print-area {
+        max-width: 210mm;
+        min-height: 160mm;
+        margin: 0 auto;
+        background-color: white;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        padding: 2%;
+        /*min-height: 297mm;*/
+      }
+
+      .item {
+        border: 1px solid var(--paper-grey-200);
+        padding: 15px;
+      }
+
+      .item>div {
+        padding: 0 10px;
+      }
+
+      .vertiline {
+        height: auto;
+        width: 200px;
+      }      
+    </style>
+
+    <!-- local DOM -->
+
+    <paper-material elevation="1" class="print-area">
+      <section>
+        
+        <div style="text-align: center; font-size: 44px; margin-right: 16px;">Booking Receipt</div>
+        <hr>
+        <div class="layout horizontal">
+          <div style="line-height: 1.8; margin-top: 16px; font-size: 16px; text-align: left;">
+            <h4 class="type info" style="text-decoration: underline;">Doctor Details</h4>
+            <div>[[$TRANSLATE('Name of Doctor',LANG)]]: <strong>[[$getFullName(myBooking.doctorName)]]</strong></div>
+            <!-- <div>[[$TRANSLATE('Specialization',LANG)]]: <strong>[[myBooking.doctorPublicInfo.specializationList]]</strong></div> -->
+            <div>[[$TRANSLATE('Organization',LANG)]]: <strong>[[myBooking.organizationName]]</strong></div>
+          </div>
+          <div class="flex"></div>
+          <div style="line-height: 1.8; margin-left: 16px; font-size: 16px; margin-top: 16px;">
+            <h4 class="type info" style="text-decoration: underline;">Booking Details</h4>
+            <div>[[$TRANSLATE('Booking Date',LANG)]]: <strong>[[myBooking.dateString]]</strong></div>
+            <div>[[$TRANSLATE('Time',LANG)]]: <strong>[[myBooking.timeSlot]]</strong></div>
+            <div>[[$TRANSLATE('Booked On',LANG)]]: <strong>[[$formatDate(myBooking.bookedDatetimeStamp)]]</strong></div>
+            
+          </div>
+        </div>
+
+        <div class="vertica layout m-top-16">
+          <h4 class="type info" style="text-decoration: underline; line-height: 1.8;">Booking Status</h4>
+          <div>[[$TRANSLATE('Status',LANG)]]: <strong>[[myBooking.status]]</strong></div>
+          <div>Payment: <strong>[[myBooking.paymentStatus]]</strong></div>
+          <div class="flex"></div>
+        </div>
+        <div class="horizontal layout m-top-64">
+          <div class="flex"></div>
+          <h1>Appointment Fee: <strong>[[myBooking.paymentAmount]] BDT</strong></h1>
+        </div>
+      </section>
+    </paper-material>
+
+
+  </template>
+  <script src="page-print-booking-details.coffee-compiled.js"></script>
+</dom-module>

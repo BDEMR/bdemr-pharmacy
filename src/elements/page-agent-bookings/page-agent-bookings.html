@@ -1,0 +1,704 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html" />
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html" />
+<link
+  rel="import"
+  href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html"
+/>
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html" />
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html" />
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html" />
+<link rel="import" href="../../bower-assets/app-toast/app-toast.html" />
+
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html" />
+<link
+  rel="import"
+  href="../../bower-assets/paper-checkbox/paper-checkbox.html"
+/>
+<link
+  rel="import"
+  href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html"
+/>
+<link
+  rel="import"
+  href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html"
+/>
+<link
+  rel="import"
+  href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html"
+/>
+<link
+  rel="import"
+  href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html"
+/>
+<link rel="import " href="../../bower-assets/iron-list/iron-list.html" />
+<link
+  rel="import "
+  href="../../bower-assets/iron-list/demo/scroll-threshold.html"
+/>
+<link
+  rel="import"
+  href="../../bower-assets/paper-menu-button/paper-menu-button.html"
+/>
+
+<!-- Custom AutoComplete -->
+<link
+  rel="import"
+  href="../../bower-assets/paper-autocomplete/paper-autocomplete.html"
+/>
+<link
+  rel="import"
+  href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html"
+/>
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html" />
+<link
+  rel="import"
+  href="../../bower-assets/vaadin-grid/vaadin-grid-column.html"
+/>
+<link
+  rel="import"
+  href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html"
+/>
+
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html" />
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html" />
+<link rel="import" href="../page-dashboard/page-icons.html" />
+
+<!-- <link rel="import" href= '@polymer/polymer/polymer-legacy.js'>
+<link rel="import" href= '@polymer/iron-flex-layout/iron-flex-layout.js'>
+<link rel="import" href= '@polymer/iron-scroll-threshold/iron-scroll-threshold.js'>
+<link rel="import" href= '@polymer/iron-image/iron-image.js'>
+<link rel="import" href= '@polymer/paper-styles/color.js'>
+<link rel="import" href= '@polymer/paper-styles/typography.js'>
+<link rel="import" href= '@polymer/app-layout/app-toolbar/app-toolbar.js'>
+<link rel="import" href= '@polymer/paper-spinner/paper-spinner.js'>
+<link rel="import" href= '@polymer/iron-ajax/iron-ajax.js'>
+
+<link rel="import" href=  '@polymer/polymer/lib/legacy/polymer-fn.js'> -->
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html" />
+<link rel="import" href="../../behaviors/translating.html" />
+<link rel="import" href="../../behaviors/page-like.html" />
+<link rel="import" href="../../behaviors/api-calling.html" />
+<link rel="import" href="../../behaviors/common-computes.html" />
+<script src="https://unpkg.com/@webcomponents/webcomponentsjs@^2.0.0/webcomponents-loader.js"></script>
+<dom-module id="page-agent-bookings">
+  <template>
+    <style is="custom-style" include="common-style">
+      app-header-layout ::content #contentContainer {
+        overflow: hidden !important;
+      }
+      :host {
+        /* height: calc(100% - 56px); */
+        position: relative;
+        width: 90%;
+        /* margin: 10px; */
+        margin: 0 auto;
+        display: flex;
+        /* justify-content: space-between; */
+        left: 0;
+        /* right: 0; */
+        /* top: 56px; */
+        border-radius: 10px;
+      }
+
+      /* iron-list {
+      flex: 1 1 auto;
+    } */
+      .container {
+        width: 100%;
+        height: 100%;
+        /* background-color: #fff; */
+      }
+      .colored {
+        background-color: #2f9fe0 !important;
+        /* width: 50%; */
+        margin-top: 7px;
+        padding: 2px 10px 2px 10px;
+      }
+      paper-dialog {
+        min-width: 450px;
+      }
+      /* vaadin-grid {
+        height: auto;
+      } */
+
+      .card-custom-header .title {
+        font-size: 30px;
+      }
+
+      .top-container {
+        /* background-color: #f3f5f7; */
+        box-shadow: rgba(0, 0, 0, 0.54) 0 -10px 6px -10px inset;
+        height: 310px;
+      }
+
+      #filter {
+        /* padding: 8px 8px 16px 8px; */
+
+        position: relative;
+        margin: 10px 0px 0px 0px;
+        background: white;
+        padding: 20px;
+      }
+
+      .filter {
+        padding: 0 6px 1px 6px;
+      }
+
+      .tableSize {
+        position: relative;
+
+        background: white;
+        padding: 20px;
+        width: 100%;
+        margin: 0 auto;
+        border-radius: 10px;
+      }
+
+      .custom-button {
+        padding: 0.4em 2em;
+        font-size: 16px;
+        background-color: rgb(15, 186, 238);
+        color: white;
+      }
+      .filterB {
+        padding: 0.4em 2em;
+        font-size: 16px;
+        background-color: rgb(172, 15, 15);
+        color: white;
+      }
+      .custom-button:hover {
+        transition: 20ms all ease;
+        background-color: rgb(0, 159, 233);
+      }
+      .filterB :hover {
+        transition: 20ms all ease;
+        background-color: rgb(145, 14, 14);
+      }
+
+      .right {
+        width: 100%;
+        height: inherit;
+      }
+
+      @media screen and (max-width: 859px) {
+        .left,
+        .right {
+          width: 100%;
+        }
+      }
+
+      @media screen and (max-width: 479px) {
+        .filter-input {
+          width: 100%;
+        }
+
+        #btnFilter {
+          margin-top: 8px;
+          margin-bottom: 8px;
+        }
+      }
+
+      /* The snackbar - position it at the bottom and in the middle of the screen */
+      app-toast.styled {
+        --app-toast: {
+          color: rgb(255, 255, 255);
+          background-color: var(--app-primary-color);
+        }
+        --app-toast-button: {
+          color: blue;
+        }
+        --app-toast-main-icon: {
+          color: green;
+        }
+        --app-toast-main-icon-stroke-color: orange;
+        --app-toast-cancel-icon: {
+          color: purple;
+        }
+      }
+    </style>
+    <div class="right flex">
+      <app-toast id="toast" class="styled"></app-toast>
+
+      <!-- filter - form - start -->
+      <section class="container tableSize">
+        <div
+          class="horizontal layout center filter"
+          style="padding-bottom: 20px"
+        >
+          <div class="horizontal layout center wrap flex">
+            <vaadin-date-picker
+              class="filter-input m-horizontal-8"
+              type="date"
+              max=""
+              value="{{filterBy.fromDate}}"
+              label="[[$TRANSLATE('From', LANG)]]"
+            ></vaadin-date-picker>
+            <vaadin-date-picker
+              class="filter-input m-horizontal-8"
+              type="date"
+              max=""
+              value="{{filterBy.toDate}}"
+              label="[[$TRANSLATE('To', LANG)]]"
+            ></vaadin-date-picker>
+            <paper-button
+              raised
+              id="btnFilter"
+              on-tap="onFilterTapped"
+              class="custom-button m-top-8"
+              ><iron-icon class="m-right-8" icon="icons:sort"></iron-icon
+              >[[$TRANSLATE('Filter', LANG)]]</paper-button
+            >
+            <paper-button
+              raised
+              id="btnFilter"
+              on-tap="onClearFilterTapped"
+              class="filterB m-top-8"
+              ><iron-icon class="m-right-8" icon="icons:delete"></iron-icon
+              >[[$TRANSLATE('Clear', LANG)]]</paper-button
+            >
+
+            <!-- <paper-button raised class="btn btn-success" on-tap="goToSupplierInvoice">Create Supplier invoice</paper-button> -->
+          </div>
+        </div>
+
+        <!-- filter - form - end -->
+
+        <!-- <x-array-data-provider
+          "
+        ></x-array-data-provider> -->
+
+        <div class="results">
+          <!-- <paper-progress indeterminate hidden="[[!loading]]"></paper-progress> -->
+          <vaadin-grid
+            class="custom-vaadin-grid"
+            id="visitList"
+            items="{{matchingVisitList}}"
+          >
+            <vaadin-grid-column resizable width="150px">
+              <template class="header">
+                <vaadin-grid-sorter path="patientFullName">
+                  <vaadin-grid-filter
+                    aria-label="Patient Serial"
+                    path="patientFullName"
+                    value="[[filterPatientName]]"
+                  >
+                    <paper-input
+                      label="Patient Name"
+                      value="{{filterPatientName}}"
+                      no-label-float
+                    >
+                    </paper-input>
+                  </vaadin-grid-filter>
+                </vaadin-grid-sorter>
+              </template>
+              <template>
+                <div class="horizontal layout flex center">
+                  <div class="m-right-8">
+                    <iron-image
+                      class="patient-picture"
+                      src$="[[$getProfileImage(item.profileImage)]]"
+                      preload
+                      sizing="cover"
+                    >
+                    </iron-image>
+                  </div>
+                  <div class="vertical layout">
+                    <span>[[$getFullName(item.patientFullName)]]</span>
+                    <div
+                      hidden$="[[!item.isOnline]]"
+                      class="status booked label type bg-green m-4"
+                    >
+                      Online
+                    </div>
+                    <div
+                      hidden$="[[item.isOnline]]"
+                      class="status booked label type bg-gray m-4"
+                    >
+                      Offline
+                    </div>
+                    <!-- <div class="m-left-8 type caption bg-gray style-scope">[[item.patientSerial]]</div> -->
+                  </div>
+                </div>
+              </template>
+            </vaadin-grid-column>
+            <vaadin-grid-column resizable width="120px">
+              <template class="header">
+                <vaadin-grid-sorter path="patientPhone">
+                  <vaadin-grid-filter
+                    aria-label="Organization/Hospital"
+                    path="patientPhone"
+                    value="[[filterPatientPhone]]"
+                  >
+                    <paper-input
+                      label="Patient Phone"
+                      value="{{filterPatientPhone}}"
+                      no-label-float
+                    ></paper-input>
+                  </vaadin-grid-filter>
+                </vaadin-grid-sorter>
+              </template>
+              <template>
+                <div>[[item.patientPhone]]</div>
+                <!-- <div class="type caption secondary"> [[item.doctorSpeciality]]</div> -->
+              </template>
+            </vaadin-grid-column>
+            <vaadin-grid-column resizable width="120px">
+              <template class="header">
+                <vaadin-grid-sorter path="chamberName">
+                  <vaadin-grid-filter
+                    aria-label="Chamber Name"
+                    path="chamberName"
+                    value="[[filterChamberName]]"
+                  >
+                    <paper-input
+                      label="Chamber Name"
+                      value="{{filterChamberName}}"
+                      no-label-float
+                    ></paper-input>
+                  </vaadin-grid-filter>
+                </vaadin-grid-sorter>
+              </template>
+              <template>
+                <div>[[item.chamberName]]</div>
+                <!-- <div class="type caption secondary"> [[item.doctorSpeciality]]</div> -->
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column resizable width="130px">
+              <template class="header">
+                <vaadin-grid-sorter path="doctorName">
+                  <vaadin-grid-filter
+                    aria-label="Doctor Name"
+                    path="doctorName"
+                    value="[[filterDoctorName]]"
+                  >
+                    <paper-input
+                      label="Doctor Name"
+                      value="{{filterDoctorName}}"
+                      no-label-float
+                    >
+                    </paper-input>
+                  </vaadin-grid-filter>
+                </vaadin-grid-sorter>
+              </template>
+              <template>
+                <div>[[$getFullName(item.doctorName)]]</div>
+                <div class="type caption secondary">
+                  [[item.doctorSpeciality]]
+                </div>
+              </template>
+            </vaadin-grid-column>
+            <vaadin-grid-column resizable width="140px">
+              <template class="header">
+                <vaadin-grid-sorter path="designation">
+                  <vaadin-grid-filter
+                    aria-label="Doctor Name"
+                    path="designation"
+                    value="[[filterDoctorDesignation]]"
+                  >
+                    <paper-input
+                      label="Doctor Designation"
+                      value="{{filterDesignation}}"
+                      no-label-float
+                    >
+                    </paper-input>
+                  </vaadin-grid-filter>
+                </vaadin-grid-sorter>
+              </template>
+              <template>
+                <div>[[item.designation]]</div>
+                <div class="type caption secondary">
+                  [[item.doctorSpeciality]]
+                </div>
+              </template>
+            </vaadin-grid-column>
+            <vaadin-grid-column resizable>
+              <template class="header">
+                <vaadin-grid-sorter path="bookedDatetimeStamp">
+                  <vaadin-grid-filter
+                    aria-label="Created Date"
+                    path="bookedDatetimeStamp"
+                    value="[[filterVisitCreatedDate]]"
+                  >
+                    <paper-input
+                      label="Created Date"
+                      value="{{filterVisitCreatedDate}}"
+                      no-label-float
+                    >
+                    </paper-input>
+                  </vaadin-grid-filter>
+                </vaadin-grid-sorter>
+              </template>
+              <template>
+                <span>[[$formatDate(item.bookedDatetimeStamp)]]</span>
+              </template>
+            </vaadin-grid-column>
+            <vaadin-grid-column resizable width="200px">
+              <template class="header">
+                <vaadin-grid-sorter path="paymentStatus">
+                  <vaadin-grid-filter
+                    aria-label="Doctor Name"
+                    path="paymentStatus"
+                    value="[[filterPaymentStatus]]"
+                  >
+                    <paper-input
+                      label="Payment Status"
+                      value="{{filterPaymentStatus}}"
+                      no-label-float
+                    >
+                    </paper-input>
+                  </vaadin-grid-filter>
+                </vaadin-grid-sorter>
+              </template>
+              <template>
+                <template
+                  is="dom-if"
+                  if="[[$equals(item.paymentStatus, 'online-pending')]]"
+                >
+                  <div class="type bg-red m-4">[[item.paymentStatus]]</div>
+
+                  <!-- <div class="type caption secondary"> [[item.doctorSpeciality]]</div> -->
+                </template>
+                <template
+                  is="dom-if"
+                  if="[[!$equals(item.paymentStatus, 'online-pending')]]"
+                >
+                  <div class="type bg-book m-4">[[item.paymentStatus]]</div>
+
+                  <!-- <div class="type caption secondary"> [[item.doctorSpeciality]]</div> -->
+                </template>
+              </template>
+            </vaadin-grid-column>
+            <vaadin-grid-column resizable width="140px">
+              <template class="header">
+                <vaadin-grid-sorter path="status">
+                  <vaadin-grid-filter
+                    aria-label="Doctor Name"
+                    path="status"
+                    value="[[filterStatus]]"
+                  >
+                    <paper-input
+                      label="Booking Status"
+                      value="{{filterStatus}}"
+                      no-label-float
+                    >
+                    </paper-input>
+                  </vaadin-grid-filter>
+                </vaadin-grid-sorter>
+              </template>
+              <template>
+                <template
+                  is="dom-if"
+                  if="[[$equals(item.status, 'completed')]]"
+                >
+                  <div class="type bg-green m-4" style="margin: 0 auto">
+                    [[item.status]]
+                  </div>
+
+                  <!-- <div class="type caption secondary"> [[item.doctorSpeciality]]</div> -->
+                </template>
+                <template is="dom-if" if="[[$equals(item.status, 'booked')]]">
+                  <div class="type bg-book m-4">[[item.status]]</div>
+                </template>
+                <template
+                  is="dom-if"
+                  if="[[$equals(item.status, 'require-second-visit')]]"
+                >
+                  <div
+                    class="type bg-book m-4"
+                    style="background-color: purple !important"
+                  >
+                    [[item.status]]
+                  </div>
+                </template>
+                <template is="dom-if" if="[[$equals(item.status, 'canceled')]]">
+                  <div
+                    class="type bg-book m-4"
+                    style="background-color: rgb(172, 24, 24) !important"
+                  >
+                    [[item.status]]
+                  </div>
+                </template>
+                <!-- <div class="type caption secondary"> [[item.doctorSpeciality]]</div> -->
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column resizable width="200px">
+              <template class="header">
+                <div>Action</div>
+              </template>
+              <template>
+                <div
+                  on-click="addAttachmentAgent"
+                  class="type bg-book m-4 colored"
+                  style="cursor: pointer; box-shadow: 1px 1px 2px #979797"
+                >
+                  <iron-icon class="m-right-8" icon="icons:add"></iron-icon>Add
+                  a Attachment
+                </div>
+
+                <template is="dom-if" if="[[item.visitSerial]]">
+                  <div hidden>[[item]]</div>
+
+                  <div
+                    on-click="viewVisitRecord"
+                    class="type bg-book m-4 colored"
+                    style="
+                      box-shadow: 1px 1px 2px #979797;
+                      cursor: pointer;
+                      background: #3ec1af !important;
+                    "
+                  >
+                    View
+                  </div>
+                </template>
+                <template is="dom-if" if="[[!item.visitSerial]]">
+                  <div
+                    class="type bg-book m-4 colored"
+                    style="
+                      box-shadow: 1px 1px 2px #979797;
+                      cursor: pointer;
+                      background: #c3c3c3 !important;
+                    "
+                  >
+                    Not Prescribed
+                  </div>
+                </template>
+
+                <div
+                  on-click="printBookingDetails"
+                  class="type bg-book m-4 colored"
+                  style="box-shadow: 1px 1px 2px #979797; cursor: pointer"
+                >
+                  Booking Details
+                </div>
+
+                <!-- <paper-button class="btn-add colored" style="background-color: #2f9fe0 !important; width: 50%;margin-top: 7px;
+                padding: 2px 10px 2px 10px;"raised on-tap="viewVisitRecord">Pay
+                </paper-button> -->
+              </template>
+            </vaadin-grid-column>
+          </vaadin-grid>
+        </div>
+      </section>
+      <paper-dialog
+        style="width: 50%; border-radius: 20px"
+        id="addAttachment"
+        modal
+        on-iron-overlay-opened="patchOverlay"
+      >
+        <div class="card-custom-header no-margin">
+          <div class="layout horizontal justified center">
+            <div class="title flex">[[$TRANSLATE('Upload',LANG)]]</div>
+            <!-- <paper-checkbox checked on-change="activityLogSyncCheckboxChanged">Sync</paper-checkbox> -->
+          </div>
+        </div>
+        <!--Custom Header-->
+
+        <div class="card-content">
+          <template is="dom-if" if="[[newAttachment]]">
+            <div
+              class="horizontal layout wrap"
+              style="border-bottom: 1px solid #e7e7e7; padding-bottom: 5px"
+            >
+              <div
+                style="width: 50%"
+                class="vertical layout center descriptive-area"
+              >
+                <template is="dom-if" if="[[newAttachment.isImage]]">
+                  <img
+                    style="width: 50%"
+                    class="new-attachment-preview"
+                    src$="[[newAttachment.dataUri]]"
+                  />
+                </template>
+                <template is="dom-if" if="[[!newAttachment.isImage]]">
+                  <img
+                    class="new-attachment-preview"
+                    src="./../../assets/no-preview.png"
+                  />
+                </template>
+                <paper-progress
+                  value="[[newAttachment.progress]]"
+                ></paper-progress>
+              </div>
+              <div class="vertical layout descriptive-area">
+                <paper-input
+                  class="logo-input"
+                  type="file"
+                  accept="*/*"
+                  on-change="fileInputChanged"
+                  no-ink
+                >
+                </paper-input>
+
+                <template is="dom-if" if="[[newAttachment.isLoaded]]">
+                  <paper-input
+                    label="Title"
+                    value="{{newAttachment.title}}"
+                  ></paper-input>
+
+                  <paper-input
+                    label="Description"
+                    value="{{newAttachment.description}}"
+                  ></paper-input>
+
+                  <paper-input
+                    readonly
+                    label="Space Needed"
+                    value="[[$toMega(newAttachment.sizeInChars)]]MB"
+                  >
+                  </paper-input>
+
+                  <paper-dropdown-menu
+                    class="flex combobox-custom-style"
+                    label="[[$TRANSLATE('Attachment Type', LANG)]]"
+                  >
+                    <paper-menu
+                      class="dropdown-content"
+                      selected="0"
+                      on-iron-activate="attachmentType"
+                    >
+                      <paper-item>Test Reports</paper-item>
+                      <paper-item>Prescription</paper-item>
+                    </paper-menu>
+                  </paper-dropdown-menu>
+                  <div class="horizontal layout">
+                    <div
+                      class="layout horizontal center"
+                      hidden$="[[!isUploading]]"
+                    >
+                      <paper-spinner
+                        style="margin-right: 10px"
+                        active
+                      ></paper-spinner>
+                      <paper-button disabled>UPLOADING...</paper-button>
+                    </div>
+                    <paper-button
+                      class="colored"
+                      raised
+                      on-tap="uploadPressed"
+                      hidden$="[[isUploading]]"
+                      >UPLOAD
+                    </paper-button>
+                    <!-- <paper-button raised on-tap="saveLocallyPressed">SAVE LOCALLY</paper-button> -->
+                    <!-- <paper-button raised on-tap="keepUntilBrowserClosedPressed">KEEP UNTIL BROWSER IS CLOSED
+                    </paper-button> -->
+                  </div>
+                </template>
+              </div>
+            </div>
+          </template>
+          <paper-button class="btn" dialog-dismiss style="color: #009688"
+            >Close</paper-button
+          >
+        </div>
+      </paper-dialog>
+    </div>
+  </template>
+
+  <script src="page-agent-bookings.coffee-compiled.js"></script>
+</dom-module>

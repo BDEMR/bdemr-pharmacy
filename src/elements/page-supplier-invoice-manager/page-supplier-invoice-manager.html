@@ -1,0 +1,369 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/paper-material/paper-material.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-supplier-invoice-manager">
+
+  <template>
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        width: 100%;
+        margin: 0;
+      }
+
+      .search {
+        background-color: #fff;
+        border: 1px solid #dadada;
+        padding: 8px;
+        margin: 4px 0;
+      }
+
+      #expenseList {
+        height: 520px;
+      }
+
+      paper-material {
+        background-color: #fff;
+      }
+
+      input {
+        background-color: #dde2e8;
+        border-radius: 6px;
+        height: 36px;
+        font-weight: 500;
+        padding: 0px 8px;
+        box-sizing: border-box;
+      }
+
+      
+    </style>
+
+   
+    <!-- INCOME SECTION -->
+    <div class="master-container">
+      <paper-progress class="progress" indeterminate hidden$="[[!loading]]"></paper-progress>
+
+      <div class="limiting-container custom-input-field">
+
+        <paper-material>
+
+
+          <div class="card-content">
+
+            <paper-progress indeterminate hidden$="[[!loading]]"></paper-progress>
+
+            <div class="search layout horizontal center wrap">
+              <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
+              <paper-toggle-button class="m-left-8" checked="{{searchParameters.includeErrors}}"><span class="type seondary caption">[[$TRANSLATE('Include Errors', LANG)]]</span></paper-toggle-button>
+              <div class="m-left-8">
+                <paper-button raised class="btn btn-success btn-large" on-tap="searchButtonClicked">[[$TRANSLATE('Search', LANG)]]</paper-button>
+              </div>
+              <div class="flex"></div>
+              <paper-button class="btn btn-primary btn-sm" raised on-tap="addNewExpenseButtonClicked">
+                <iron-icon icon="add"></iron-icon>
+                [[$TRANSLATE('Add New Supplier Invoice', LANG)]]
+              </paper-button>
+            </div>
+
+            <vaadin-grid id="expenseList" items="[[matchingExpenseList]]">
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <vaadin-grid-sorter path="createdDatetimeStamp" direction="desc">[[$TRANSLATE('Date', LANG)]]</vaadin-grid-sorter>
+                </template>
+                <template>
+                  <div class="">[[$formatDateTime(item.createdDatetimeStamp)]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>[[$TRANSLATE('Serial', LANG)]]</span>
+                </template>
+                <template>
+                  <div class=""><span class="type caption-2 bg-gray">[[formatExpenseSerial(item.serial)]]</span></div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>[[$TRANSLATE('Category', LANG)]]</span>
+                </template>
+                <template>
+                  <div class="">[[item.category]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <vaadin-grid-filter aria-label="Name" path="customerDetails.name" value="[[customerNameSearchString]]">
+                    <input placeholder="[[$TRANSLATE('Name', LANG)]]" is="iron-input" bind-value="{{customerNameSearchString}}" />
+                  </vaadin-grid-filter>
+                </template>
+                <template>
+                  <div class="">[[item.customerDetails.name]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <vaadin-grid-filter aria-label="Phone" path="customerDetails.phone" value="[[customerPhoneSearchString]]">
+                    <input placeholder="[[$TRANSLATE('Phone', LANG)]]" is="iron-input" bind-value="{{customerPhoneSearchString}}" />
+                  </vaadin-grid-filter>
+                </template>
+                <template>
+                  <div class="">[[item.customerDetails.phone]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>[[$TRANSLATE('Bill', LANG)]]</span>
+                </template>
+                <template>
+                  <div class="">[[item.totalBilled]]</div>
+                </template>
+                <template class="footer">
+                  <span class="type bold">[[$formatCurrency(totalBilled)]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>[[$TRANSLATE('Given', LANG)]]</span>
+                </template>
+                <template>
+                  <div class="">[[item.totalAmountPaid]]</div>
+                </template>
+                <template class="footer">
+                  <span class="type bold">[[$formatCurrency(totalAmountPaid)]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>[[$TRANSLATE('Due', LANG)]]</span>
+                </template>
+                <template>
+                  <div class="">[[calculateDue(item.totalBilled, item.totalAmountPaid)]]</div>
+                </template>
+                <template class="footer">
+                  <span class="type bold">[[$formatCurrency(totalDue)]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>[[$TRANSLATE('Action', LANG)]]</span>
+                </template>
+                <template>
+                  <div hidden$="[[item.flags.flagAsError]]">
+                    <paper-icon-button icon="create" on-tap="editExpenseButtonClicked"></paper-icon-button>
+                    <paper-icon-button icon="print" on-tap="printPreviewButtonClicked"></paper-icon-button>
+                    <paper-icon-button class="type danger" icon="report" on-tap="flagInvoiceAsErrorItemClicked"></paper-icon-button>
+                  </div>
+                  <div hidden$="[[!item.flags.flagAsError]]">
+                    <span class="type danger">[[$TRANSLATE('Flagged As Error', LANG)]]</span>
+                  </div>
+                </template>
+              </vaadin-grid-column>
+
+            </vaadin-grid>
+          </div>
+
+        </paper-material>
+
+
+
+      </div>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'page-supplier-invoice-manager',
+      behaviors: [
+        app.behaviors.translating,
+        app.behaviors.pageLike,
+        app.behaviors.dbUsing,
+        app.behaviors.apiCalling,
+        app.behaviors.commonComputes
+      ],
+
+      properties: {
+        user: {
+          type: Object,
+          notify: true,
+          value: null
+        },
+        organization: {
+          type: Object,
+          value: {}
+        },
+        matchingExpenseList: {
+          type: Array,
+          value: []
+        },
+        searchParameters: {
+          type: Object,
+          value: function () {
+            return {
+              organizationId: '',
+              startDate: null,
+              endDate: null,
+              includeErrors: false
+            }
+          }
+        },
+        totalBilled: Number,
+        totalAmountPaid: Number,
+        totalDue: Number,
+      },
+
+      observers: [
+        'matchingExpenseListChanged(matchingExpenseList)'
+      ],
+
+      navigatedIn() {
+        const params = this.domHost.getPageParams()
+        this._loadUser();
+        this._loadOrganization((organizationIdentifier)=> {
+          return this._loadExpenseReport(this.searchParameters)
+        });
+
+      },
+
+      filterByDateRangeFn(searchParameters) {
+        let { organizationIdentifier, startDate, endDate, includeErrors } = searchParameters;
+        return function (item) {
+          let { createdDatetimeStamp, organizationId, flags } = item;
+          return (startDate ? createdDatetimeStamp >= startDate.getTime() : true) && (endDate ? createdDatetimeStamp <= endDate.getTime() : true) && (organizationIdentifier ? organizationId === organizationIdentifier : false) && (includeErrors ? true : !item.flags.flagAsError)
+        }
+      },
+
+      _loadUser() {
+        const userList = app.db.find('user');
+        if (userList.length === 1) {
+          return this.user = userList[0];
+        }
+      },
+
+      _loadOrganization(cbfn) {
+        var organizationId = this.getCurrentOrganization().idOnServer;
+        if (!organizationId) {
+          this._notifyInvalidOrganization();
+          return;
+        }        
+        const data = {
+          apiKey: this.user.apiKey,
+          idList: [organizationId]
+        };
+        this.loading = true;
+        this.callApi('/bdemr-organization-list-organizations-by-ids', data, (err, response) => {
+          this.loading = false;
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (!response.data.matchingOrganizationList.length) return this._notifyInvalidOrganization();
+          this.set('organization', response.data.matchingOrganizationList[0]);
+          this.searchParameters.organizationIdentifier = this.organization.idOnServer;
+          return cbfn();
+        });
+      },
+
+      _notifyInvalidOrganization() {
+        return this.domHost.showModalDialog("Invalid Organization");
+      },
+
+      _loadExpenseReport(searchParameters = {}) {
+        let list = app.db.find('pharmacy-supplier-invoice', this.filterByDateRangeFn(searchParameters))
+        this.set('matchingExpenseList', list);
+        console.log(this.matchingExpenseList)
+      },
+
+      filterByDateClicked(e) {
+        const startDate = new Date(e.detail.startDate);
+        startDate.setHours(0, 0, 0, 0);
+        this.searchParameters.startDate = startDate;
+        const endDate = new Date(e.detail.endDate);
+        endDate.setHours(23, 59, 59, 999);
+        this.searchParameters.endDate = endDate;
+      },
+
+      filterByDateClearButtonClicked(e) {
+        this.searchParameters.startDate = null;
+        this.searchParameters.endDate = null;
+      },
+
+      searchButtonClicked(e) {
+        this._loadExpenseReport(this.searchParameters);
+      },
+
+      addNewExpenseButtonClicked(e) {
+        this.domHost.navigateToPage('#/supplier-invoice-editor/organization:' + this.organization.idOnServer + '/supplier:new')
+      },
+
+      editExpenseButtonClicked(e) {
+        let item = e.model.item;
+        this.domHost.navigateToPage('#/supplier-invoice-editor/organization:' + this.organization.idOnServer + '/supplier:' + item.serial);
+      },
+
+      printPreviewButtonClicked(e) {
+        let item = e.model.item;
+        this.domHost.navigateToPage('#/supplier-invoice-print-preview/organization:' + this.organization.idOnServer + '/supplier:' + item.serial);
+      },
+
+      formatSerial(serial) {
+        if (!serial) return;
+        let user = serial.charAt(2);
+        let inc = serial.split('PharmaSuppInv')[1]
+        return user + '-psi-' + inc
+      },
+
+      calculateDue(billed, paid) {
+        let due = billed - paid
+        return due > 0 ? due : 0;
+      },
+
+      matchingExpenseListChanged() {
+        const matchingExpenseList = this.matchingExpenseList.filter(item => !item.flags.flagAsError);
+        this.totalBilled = matchingExpenseList.reduce((total, item) => {
+          return total += parseFloat(item.totalBilled);
+        }, 0)
+        this.totalAmountPaid = matchingExpenseList.reduce((total, item) => {
+          return total += parseFloat(item.totalAmountPaid);
+        }, 0)
+        this.totalDue = matchingExpenseList.reduce((total, item) => {
+          return total += this.calculateDue(item.totalBilled, item.totalAmountPaid)
+        }, 0)
+      },
+
+      formatExpenseSerial(serial) {
+        if (!serial) return;
+        let user = serial.charAt(2);
+        let inc = serial.split('PharmaSuppInv')[1]
+        return user + '-psi-' + inc
+      },
+
+      flagInvoiceAsErrorItemClicked(e) {
+        const { item } = e.model;
+        this.domHost.showModalPrompt('Do you want to Mark this Invoice as Error?', (yes) => {
+          if (yes) {
+            item.flags.flagAsError = true;
+            app.db.upsert('pharmacy-supplier-invoice', item, ({ serial }) => item.serial === serial);
+            this._loadExpenseReport(this.searchParameters);
+          }
+        })
+      }
+
+    });
+  </script>
+</dom-module>

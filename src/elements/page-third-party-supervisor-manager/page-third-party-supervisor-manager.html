@@ -1,0 +1,196 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-third-party-supervisor-manager">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      paper-progress {
+        width: 100%;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td,
+      .table th {
+        vertical-align: left;
+        padding: 15px;
+        border: 1px solid var(--paper-grey-500);
+      }
+
+      paper-dialog {
+        width: 700px;
+      }
+
+    </style>
+
+    <!-- local DOM -->
+
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <paper-card>
+          <div class="card-custom-header">
+            <div class="layout horizontal center">
+              <div class="title flex">[[$TRANSLATE('Third Party Supervisor (TPS) Management Table', LANG)]]</div>
+            </div>
+          </div>
+          <div class="card-actions">
+            <paper-button raised class="btn btn-success" on-tap="showSupervisorDialog">+[[$TRANSLATE('Add a New Supervisor', LANG)]]</paper-button>
+          </div>
+
+          <div class="card-content">
+            <table class="table">
+              <tr>
+                <th>[[$TRANSLATE('Supervisor(s) Name', LANG)]]</th>
+                <th>[[$TRANSLATE('Third parties under the Supervisor', LANG)]]</th>
+                <th>[[$TRANSLATE('Actions', LANG)]]</th>
+              </tr>
+              <template is="dom-repeat" items="[[thirdPartySuperVisorList]]">
+                <tr>
+                  <td>[[item.superVisorName]] ([[item.superVisorMobile]])</td>
+                  <td>
+                    <div class="layout vertical">
+                      <template is="dom-repeat" items="[[item.thirdPartyArr]]" as="thirdParty">
+                        <div class="m-bottom-8">
+                          [[thirdParty.thirdPartyName]] ([[thirdParty.thirdPartyMobile]])
+                        </div>
+                      </template>
+                    </div>
+                  </td>
+                  <td>
+                    <paper-button raised class="btn btn-default" on-tap="editButtonPressed">[[$TRANSLATE('Edit', LANG)]]</paper-button>
+                    <paper-button raised class="btn btn-danger" on-tap="deleteButtonPressed">[[$TRANSLATE('Delete', LANG)]]</paper-button>
+                  </td>
+                </tr>
+              </template>
+            </table>
+
+          </div>
+        </paper-card>
+
+      </div>
+      
+    </div>
+
+
+    <!-- Dialog - Third party - start -->
+    <paper-dialog class="custom-input-field" id="addNewSuperVisorObj" no-cancel-on-outside-click>
+      <div class="type title-2 bold text-success">[[$TRANSLATE('New Supervisor to Third Parties', LANG)]]</div>
+      <hr>
+      <div class="card-content">
+        <h3>[[$TRANSLATE('Supervisor', LANG)]]</h3>
+
+        <!-- Super visor -->
+        <div class="layout horizontal">
+          <vaadin-combo-box no-label-float id="userSearch" class="flex"
+            label="[[$TRANSLATE('Search By Name or Mobile', LANG)]]" item-label-path="name" filter="{{supervisorSearchQuery}}"
+            loading="[[fetchingUserSearchResult]]" allow-custom-value value="{{thirdPartySupObj.superVisorName}}"
+            on-selected-item-changed="superVisorSelected">
+            <template>
+              <div><strong>[[item.name]]</strong></div>
+              <div><small>[[item.phone]], [[item.email]]</small></div>
+            </template>
+          </vaadin-combo-box>
+          <paper-input no-label-float class="m-top-8 m-left-8" label="[[$TRANSLATE('Mobile No.', LANG)]]" type="number"
+            value="{{thirdPartySupObj.superVisorMobile}}">
+          </paper-input>
+        </div>
+        <br>
+
+        <!-- Third Parties -->
+        
+        <h3>[[$TRANSLATE('Third Parties', LANG)]]</h3>
+        <div style="color: rgb(182, 182, 182)" class="m-bottom-8">You can add <strong>Multiple Third Parties</strong> by
+          searching and selecting from this box</div>
+        <div class="layout horizontal">
+          <vaadin-combo-box no-label-float id="thirdPartyUserSearch" class="flex"
+            label="[[$TRANSLATE('Search By Name or Mobile', LANG)]]" item-label-path="name" filter="{{thirdPartyUserSearchQuery}}"
+            loading="[[fetchingUserSearchResult]]" allow-custom-value value="{{newThirdParty.thirdPartyName}}"
+            on-selected-item-changed="thirdPartySelected">
+            <template>
+              <div><strong>[[item.name]]</strong>
+              </div>
+              <div><small>[[item.phone]], [[item.email]]</small></div>
+            </template>
+          </vaadin-combo-box>
+        </div>
+
+        <div class="card-content">
+          <template is="dom-repeat" items="{{thirdPartySupObj.thirdPartyArr}}" as="thirdPartyObject">
+            <paper-item>
+              <span>[[_returnSerial(index)]].&nbsp;</span>
+              <div>{{thirdPartyObject.thirdPartyName}}&nbsp;</div>
+              <div>({{thirdPartyObject.thirdPartyMobile}})</div>
+            </paper-item>
+          </template>
+        </div>
+
+          
+      </div>
+
+      <hr>
+      <div class="buttons">
+        <paper-button raised class="btn btn-danger" dialog-dismiss autofocus>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+        <paper-button raised class="btn btn-success" on-tap="addThirdPartyAndSuperVisorBtnPressed">[[$TRANSLATE('Add', LANG)]]</paper-button>
+      </div>
+
+    </paper-dialog>
+    <!-- Dialog - Third party - end -->
+
+
+  </template>
+  <script src="page-third-party-supervisor-manager.coffee-compiled.js"></script>
+</dom-module>

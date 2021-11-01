@@ -1,0 +1,123 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box-light.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<dom-module id="page-my-duty-roster">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+
+    vaadin-grid.grid-table {
+      border-bottom-left-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+
+
+       
+
+
+    </style>
+    <div class="master-container">
+
+      <div class="limiting-container">
+        <paper-card class="p-16">
+          
+          <paper-dropdown-menu label="[[$TRANSLATE('Select month', LANG)]]">
+            <paper-listbox class="dropdown-content" on-iron-select=""
+              selected="{{monthIndex}}">
+              <template is="dom-repeat" items="{{months}}">
+                <paper-item>{{item.name}}</paper-item>
+              </template>
+            </paper-listbox>
+          </paper-dropdown-menu>
+          <template is="dom-if" if="{{stats}}">
+            <div class="horizontal layout end-justified wrap p-vertical-8">
+              <div class="m-horizontal-4"><strong>[[$TRANSLATE('Total Slots', LANG)]]: </strong> {{_computeTotalSlots(stats.absent, stats.present)}}</div>
+              <div class="flex"></div>
+              <div class="m-horizontal-4 type success"><strong>[[$TRANSLATE('Present', LANG)]]: </strong> {{stats.present}}</div>
+              <div class="m-horizontal-4 type danger"><strong>[[$TRANSLATE('Absent', LANG)]]: </strong> {{stats.absent}}</div>
+            </div>
+          </template>
+          
+
+          <!-- roster table - start -->
+          <template is="dom-if" if="[[$isEmptyArray(rosters.length)]]">
+            <div class="type caption-2 secondary" style="text-align: center; background: #fff; padding: 16px;">[[$TRANSLATE('No Roster Available', LANG)]]</div>
+          </template>
+          <template is="dom-if" if="[[!$isEmptyArray(rosters.length)]]">
+            <vaadin-grid items="{{rosters}}" class="grid-table" active-item="{{activeItem}}">
+    
+              <vaadin-grid-column width="8em">
+                <template class="header">[[$TRANSLATE('Date', LANG)]]</template>
+                <template>{{item.date}}</template>
+              </vaadin-grid-column>
+    
+              <vaadin-grid-column width="4em">
+                <template class="header">[[$TRANSLATE('Slot', LANG)]]</template>
+                <template>
+                  <div class="type caption-2 secondary">{{item.slot}}</div>
+                  <div><strong>{{item.startTime}} - {{item.endTime}}</strong></div>
+                </template>
+              </vaadin-grid-column>
+    
+              <vaadin-grid-column width="4em">
+                <template class="header">[[$TRANSLATE('Location', LANG)]]</template>
+                <template>{{item.location}}</template>
+              </vaadin-grid-column>
+    
+              <vaadin-grid-column width="4em">
+                <template class="header"></template>
+                <template>
+                  <div class="horizontal layout">
+                    <div class="type bg-danger" hidden$="{{!item.isAbsent}}">[[$TRANSLATE('Absent', LANG)]]</div>
+                    <div class="type bg-green" hidden$="{{item.isAbsent}}">[[$TRANSLATE('Present', LANG)]]</div>
+                  </div>
+                </template>
+              </vaadin-grid-column>
+    
+    
+            </vaadin-grid>
+          </template>
+          <!-- roster table - start -->
+        </paper-card>
+        <!-- Reports - end -->
+      </div>
+    </div>
+    <!-- Reports - start -->
+    
+
+  </template>
+
+  <script src="page-my-duty-roster.coffee-compiled.js"></script>
+</dom-module>

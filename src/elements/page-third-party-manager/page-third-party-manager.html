@@ -1,0 +1,289 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-third-party-manager">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin: 0;
+        margin-top: 1px;
+        width: 100%;
+        /* max-width: 1200px; */
+      }
+
+      .custom-ordered-list {
+        padding-left: 24px;
+        margin: 0
+      }
+
+      paper-item {
+        border-bottom: 1px solid #eee;
+      }
+
+      paper-progress {
+        width: 100%;
+      }
+
+      .m-right-5 {
+        margin-right: 5px;
+      }
+
+      .custom-button {
+        padding: 4px 8px;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      paper-card {
+        border-radius: 0;
+        padding: 0;
+        /* background-color: #fff; */
+      }
+
+      vaadin-grid {
+        height: 100% !important;
+      }
+
+      #dialogThirdParty {
+        width: 80%;
+      }
+      .custom-dialog-scrollable ::content .scrollable {
+        padding: 0;
+
+      }
+      /* custom-input - start */
+      .custom-input ::content paper-input-container {
+        padding: 6px 4px;
+      }
+
+      .custom-input ::content .underline {
+        display: none;
+      }
+
+      .custom-input paper-input-container ::content .underline {
+        height: 0 !important;
+      }
+
+      .custom-input  {
+        --paper-input-container-label: {
+          font-size: 18px;
+          color: #576374 !important;
+          font-weigh: 500;
+        };
+      }
+
+      .custom-input ::content paper-input-container ::content input {
+        background-color: #dde2e8;
+        border-radius: 6px;
+        height: 36px;
+        margin-top: 4px;
+        font-weight : 500;
+        padding: 0 8px;
+        box-sizing: border-box;
+        /* min-width: 200px; */
+      }
+
+      .custom-input.no-padding {
+        padding: 0;
+      }
+
+      /* cutom-input : end  */
+    </style>
+
+    <!-- local DOM -->
+
+    <paper-tabs class="basic-tabs" id="tabs" selected="{{selectedPageIndex}}" scrollable noink='true'>
+      <paper-tab>[[$TRANSLATE('Members',LANG)]]</paper-tab>
+      <paper-tab>[[$TRANSLATE('Logs',LANG)]]</paper-tab>
+    </paper-tabs>
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+          <iron-pages selected="{{selectedPageIndex}}">
+
+            <section>
+              <paper-card>
+                <div class="p-12 horizontal layout end-justified">
+                  <paper-button raised class="custom-input colored" on-tap="showAddNewThirdPartyDialog">[[$TRANSLATE('add new third party', LANG)]]</paper-button>
+                </div>
+      
+                <div class="">
+                  <template is="dom-if" if="[[!thirdParties.length]]">
+                    <div class="card-content">
+                      <h4 class="type center">- [[$TRANSLATE('No third parties available', LANG)]] -</h4>
+                    </div>
+      
+                  </template>
+      
+                  <template is="dom-if" if="[[thirdParties.length]]">
+                    <vaadin-grid items="[[thirdParties]]">
+                      <!-- <vaadin-grid-column width="40px">
+                        <template class="header">No.</template>
+                        <template>[[_returnSerial(index)]]</template>
+                      </vaadin-grid-column> -->
+      
+                      <vaadin-grid-column width="8em">
+                        <template class="header">[[$TRANSLATE('Third Party', LANG)]]</template>
+                        <template>
+                          <div class="type body"><strong>[[item.data.user.name]]</strong></div>
+                          <div class="type caption secondary"><i>#[[item.serial]]</i></div>
+                          <div class="type caption secondary"><i>[[$TRANSLATE('Added on', LANG)]] [[_formatDate(item.createdDatetimeStamp)]]</i></div>
+                          <div class="type caption-2">[[item.data.user.phone]]</div>
+                          <div class="type caption-2">[[item.data.user.email]]</strong></div>
+                          <div class="type caption-2">[[item.data.user.supervisorId]]</strong></div>
+                        </template>
+                      </vaadin-grid-column>
+      
+                      <vaadin-grid-column width="8em">
+                        <template class="header type success">[[$TRANSLATE('Balance', LANG)]]</template>
+                        <template><div class$="type body-lead text-bold {{_checkBalanceClass(item.data.balance)}}">[[item.data.balance]]</div></template>
+                      </vaadin-grid-column>
+      
+                      <vaadin-grid-column width="8em">
+                        <template class="header type success">[[$TRANSLATE('Give Fund', LANG)]]</template>
+                        <template>
+                          <div class="horizontal layout wrap center">
+                            <paper-input type="number" value="{{item.data.givenAmount}}" class="custom-input no-padding" no-label-float placeholder="[[$TRANSLATE('Amount', LANG)]]"></paper-input>
+                            <paper-button class="custom-button btn btn-success m-4" raised on-tap="_onTapAddFund"><iron-icon icon="add" class="icon small-tiny m-right-5"></iron-icon>[[$TRANSLATE('Give Advance', LANG)]]</paper-button>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+      
+                      <vaadin-grid-column width="2em">
+                        <template class="header"></template>
+                        <template>
+                          <div class="horizontal layout wrap center center-justified">
+                            <paper-icon-button style="color: red;" on-tap="_onTapDeleteThirdParty" icon="delete"></paper-icon-button>
+                            <!-- <paper-button raised class="custom-button btn btn-success m-4" on-tap="_onTapEditThirdParty">Add/Edit Supervisor ID</paper-button> -->
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+                    </vaadin-grid>
+                  </template>
+      
+                </div>
+              </paper-card>
+            </section>
+
+            <section>
+              <paper-card>
+      
+                <div class="">
+                  <template is="dom-if" if="[[!logs.length]]">
+                    <div class="card-content">
+                      <h4 class="type center">- [[$TRANSLATE('No logs available', LANG)]] -</h4>
+                    </div>
+      
+                  </template>
+      
+                  <template is="dom-if" if="[[logs.length]]">
+                    <vaadin-grid items="[[logs]]">
+                      
+
+                      <vaadin-grid-column width="8em">
+                        <template class="header">[[$TRANSLATE('Third Party Name', LANG)]]</template>
+                        <template>[[item.thirdParty.name]]</template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column width="8em">
+                        <template class="header">[[$TRANSLATE('Initiate on', LANG)]]</template>
+                        <template>[[$formatDateTime(item.createdDatetimeStamp)]]</template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column width="8em">
+                        <template class="header">[[$TRANSLATE('Transaction type', LANG)]]</template>
+                        <template>[[item.type]]</template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column width="8em">
+                        <template class="header">[[$TRANSLATE('Amount', LANG)]]</template>
+                        <template>[[item.amount]]</template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column width="8em">
+                        <template class="header">[[$TRANSLATE('by', LANG)]]</template>
+                        <template>[[item.byName]]</template>
+                      </vaadin-grid-column>
+  
+                    </vaadin-grid>
+                  </template>
+      
+                </div>
+              </paper-card>
+            </section>
+            
+          </iron-pages>
+        
+      </div>
+
+    </div>
+
+    <!-- Dialog - Third party - start -->
+    <paper-dialog class="custom-input-field" id="dialogThirdParty">
+      <div class="type title-2 bold text-success">[[$TRANSLATE('+ New Third Party', LANG)]]</div>
+      <!-- <vaadin-combo-box no-label-float id="userSearch" class="flex"
+        label="[[$TRANSLATE('Search By Name/Mobile/Email or Input Name', LANG)]]" item-label-path="name"
+        filter="{{userSearchQuery}}" loading="[[fetchingUserSearchResult]]" on-selected-item-changed="userSelected"
+        value="">
+        <template>
+          <div><strong>[[$getFullName(item.name)]]</strong></div>
+          <div><small>[[item.phone]] | [[item.email]]</small></div>
+        </template>
+      </vaadin-combo-box> -->
+      <paper-autocomplete class="flex" id="userSearch" label="[[$TRANSLATE('Type Mobile/Name and Press Enter',LANG)]]" on-autocomplete-selected="userSelected"
+        on-autocomplete-reset="userSearchCleared" on-keyup="userSearchEnterKeyPressed" error-message="Input Required"
+        text-property="name" value-property="idOnServer" required>
+        <template autocomplete-custom-template>
+          <paper-item on-tap="_onSelect" id$="[[_getSuggestionId(index)]]" role="option" aria-selected="false">
+            <div class="type bold">[[item.name]]</div>
+            <div class="type secondary m-left-8">([[item.phone]])</div>
+            <div class="type secondary m-left-8">[[item.email]]</div>
+            <paper-ripple></paper-ripple>
+          </paper-item>
+        </template>
+      </paper-autocomplete>
+      <div class="buttons">
+        <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+        <paper-button raised class="btn btn-success" on-tap="addBtnPressed">[[$TRANSLATE('Add', LANG)]]</paper-button>
+    </paper-dialog>
+    <!-- Dialog - Third party - end -->
+
+  </template>
+  <script src="page-third-party-manager.js"></script>
+</dom-module>

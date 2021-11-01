@@ -1,0 +1,342 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-internal-inventory-manager">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin: 0;
+        margin-top: 1px;
+        width: 100%;
+        /* max-width: 1200px; */
+      }
+
+      .custom-ordered-list {
+        padding-left: 24px;
+        margin: 0
+      }
+
+      paper-item {
+        border-bottom: 1px solid #eee;
+      }
+
+      paper-progress {
+        width: 100%;
+      }
+
+      .m-right-5 {
+        margin-right: 5px;
+      }
+
+      .custom-button {
+        padding: 4px 8px;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      paper-card {
+        border-radius: 0;
+        padding: 0;
+        /* background-color: #fff; */
+      }
+
+      vaadin-grid {
+        height: 100% !important;
+      }
+
+      #dialogRequestPharmacyItem {
+        width: 80%;
+      }
+      .custom-dialog-scrollable ::content .scrollable {
+        padding: 0;
+
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    
+
+    <div id="tabContainer" class="tabs-container">
+      
+      <paper-tabs selected="{{selectedPage}}" scrollable noink='true'>
+        <template is="dom-repeat" items="[[wardList]]">
+          <paper-tab>
+            <div>
+              <div class="type caption"><i>[[item.deptName]] > [[item.unitName]]</i></div>
+              <div>[[item.name]]</div>
+            </div>
+          </paper-tab>
+        </template>
+      </paper-tabs>
+
+    </div>
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <paper-card>
+          <paper-tabs style="text-decoration: uppercase;" class="basic-tabs" selected="{{selectedSubSection}}" noink='true'>
+            <paper-tab>[[$TRANSLATE('Inventory',LANG)]]</paper-tab>
+            <paper-tab>[[$TRANSLATE('Request Items',LANG)]]</paper-tab>
+          </paper-tabs>
+          <iron-pages selected="{{selectedSubSection}}">
+
+            <!-- Avilable - start -->
+            <section> 
+              
+              <div class="p-12 horizontal layout end-justified">
+                <paper-button raised class="btn btn-success" on-tap="goToPharmacyInvoice">[[$TRANSLATE('Create invoice', LANG)]]</paper-button>
+              </div>
+  
+              <div class="">
+                <template is="dom-if" if="[[!inventoryList.length]]">
+                  <div class="card-content">
+                    <h4 class="type center">[[$TRANSLATE('No Item Added Yet', LANG)]]...</h4>
+                  </div>
+                </template>
+  
+                <template is="dom-if" if="[[inventoryList.length]]">
+                  <vaadin-grid items="[[inventoryList]]">
+                    <vaadin-grid-column resizable>
+                      <template class="header">[[$TRANSLATE('Item', LANG)]]</template>
+                      <template>[[item.data.name]]</template>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column resizable>
+                      <template class="header">[[$TRANSLATE('Qty', LANG)]]</template>
+                      <template>[[item.data.qty]]</template>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column resizable>
+                      <template class="header">[[$TRANSLATE('Buying Price', LANG)]]</template>
+                      <template>[[item.data.buyingPrice]]</template>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column resizable>
+                      <template class="header">[[$TRANSLATE('Selling Price', LANG)]]</template>
+                      <template>[[item.data.sellingPrice]]</template>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column resizable>
+                      <template class="header">[[$TRANSLATE('Batch No', LANG)]].</template>
+                      <template>[[item.data.batch]]</template>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column resizable>
+                      <template class="header">[[$TRANSLATE('Expiry', LANG)]]</template>
+                      <template>[[$formatDate(item.data.expiryDate)]]</template>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column resizable>
+                      <template class="header">[[$TRANSLATE('Actions', LANG)]]</template>
+                      <template>
+                        <div>
+                          <paper-icon-button icon="create" on-tap="editInventoryItemButtonClicked"></paper-icon-button>
+                          <paper-icon-button icon="delete" class="type danger" on-tap="deleteInventoryItemButtonClicked"></paper-icon-button>
+                        </div>
+                      </template>
+                    </vaadin-grid-column>
+                  </vaadin-grid>
+                </template>
+  
+              </div>
+  
+            </section>
+            <!-- Avilable - end -->
+    
+            <!-- Requested - start -->
+            <section>
+      
+              <div class="p-12 horizontal layout end-justified">
+                <paper-button raised class="colored" on-tap="requestAnItemButtonPressed">[[$TRANSLATE('Request An item', LANG)]]</paper-button>
+              </div>
+  
+              <div class="">
+                <template is="dom-if" if="[[!inventoryTransactionList.length]]">
+                  <div class="card-content">
+                    <h4 class="type center">- [[$TRANSLATE('No transaction', LANG)]] -</h4>
+                  </div>
+                  
+                </template>
+  
+                <template is="dom-if" if="[[inventoryTransactionList.length]]">
+                  <vaadin-grid items="[[inventoryTransactionList]]">
+                    <!-- <vaadin-grid-column width="64px">
+                      <template class="header">No.</template>
+                      <template>[[_returnSerial(index)]]</template>
+                    </vaadin-grid-column> -->
+                    <vaadin-grid-column width="80px" resizable>
+                      <template class="header">[[$TRANSLATE('Order Id', LANG)]]</template>
+                      <template>[[item.serial]]</template>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column width="80px" resizable>
+                      <template class="header">[[$TRANSLATE('Order Id', LANG)]]</template>
+                      <template>[[item.serial]]</template>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column resizable>
+                      <template class="header">[[$TRANSLATE('Requested Items', LANG)]]</template>
+                      <template>
+                        <ol class="custom-ordered-list">
+                          <template is="dom-repeat" items="[[item.data]]">
+                            <li class="type caption-2">[[item.name]]: [[item.qty]]</li>
+                          </template>
+                        </ol>
+                      </template>
+                    </vaadin-grid-column>
+
+                    <vaadin-grid-column resizable>
+                      <template class="header">[[$TRANSLATE('Status', LANG)]]</template>
+                      <template>
+                        <div>
+                          <template is="dom-repeat" items="[[item.status]]" as="status" index-as="statusIndex">
+                            <div class$="type caption [[status.class]]" style="text-transform: capitalize;">[[_returnSerial(statusIndex)]]. [[status.type]] by [[status.name]] on [[$formatDateTime(status.createdDatetimeStamp)]]</div>
+                          </template>
+                        </div>
+                        <div class="horizontal layout wrap m-top-8">
+                          <paper-button class="custom-button colored" hidden$="[[item.buttonState.hideRecievedButton]]" raised on-tap="_onTapRecievedButtonPressed">
+                            [[$TRANSLATE('recieved', LANG)]]
+                          </paper-button>
+                          <paper-button class="custom-button btn btn-danger" hidden$="[[item.buttonState.hideCancelButton]]" raised on-tap="_onTapCancelButtonPressed">
+                            [[$TRANSLATE('cancel', LANG)]]
+                          </paper-button>
+                          <paper-button class="custom-button" hidden$="[[item.buttonState.hideEditButton]]" raised on-tap="_onTapEditButtonPressed">
+                            <iron-icon icon="create" class="icon small-tiny m-right-5"></iron-icon>
+                            [[$TRANSLATE('edit', LANG)]]
+                          </paper-button>
+                          <paper-button class="custom-button" hidden$="[[item.buttonState.hidePrintButton]]" raised on-tap="_onTapPrintButtonPressed">
+                            <iron-icon icon="print" class="icon small-tiny m-right-5"></iron-icon> 
+                            [[$TRANSLATE('print', LANG)]]
+                          </paper-button>
+                        </div>
+                      </template>
+                    </vaadin-grid-column>
+
+                    <!-- <vaadin-grid-column resizable>
+                      <template class="header">
+                        <div class="horizontal layout">
+
+                        </div>
+                      </template>
+                      <template>
+                          <paper-checkbox checked="{{item.isSelected}}"></paper-checkbox>
+                      </template>
+                    </vaadin-grid-column> -->
+                  </vaadin-grid>
+                </template>
+  
+              </div>
+            </section>
+            <!-- Requested - end -->
+    
+          </iron-pages>
+        </paper-card>
+
+      </div>
+
+    </div>
+
+    <!-- Dialog - Add new pharmacy item - start -->
+    <paper-dialog class="custom-input-field" id="dialogAddNewPharmacyItem" on-iron-overlay-closed="inventoryEditModalClosed">
+      <h2>
+        <span class="flex type title-2 bold text-success">[[$TRANSLATE('Add Pharmacy Item', LANG)]] : [[organization.name]]</span>
+      </h2>
+      <div>
+        <div class="layout horizontal wrap custom-container">
+          <vaadin-combo-box label="[[$TRANSLATE('Search Item', LANG)]]" value="{{internalInventory.data.name}}" items="[[brandNameSourceDataList]]"
+            required allow-custom-value></vaadin-combo-box>
+
+          <!-- <paper-autocomplete text="{{internalInventory.data.name}}" source="[[brandNameSourceDataList]]" class="m-horizontal-4" label="Item Name"
+            required auto-validate></paper-autocomplete> -->
+          <paper-input class="m-horizontal-4" label="[[$TRANSLATE('Buying Price/Unit', LANG)]]" value="{{internalInventory.data.buyingPrice}}" type="number"
+            required auto-validate></paper-input>
+          <paper-input class="m-horizontal-4" label="[[$TRANSLATE('Selling Price/Unit', LANG)]]" value="{{internalInventory.data.sellingPrice}}" type="number"
+            required auto-validate></paper-input>
+          <paper-input class="m-horizontal-4" label="[[$TRANSLATE('Qty', LANG)]]" value="{{internalInventory.data.qty}}" type="number"></paper-input>
+          <paper-input class="m-horizontal-4" label="[[$TRANSLATE('Batch No.', LANG)]]" value="{{internalInventory.data.batch}}"></paper-input>
+          <vaadin-date-picker label="[[$TRANSLATE('Expiry Date', LANG)]]" value="{{internalInventory.data.expiryDate}}"></vaadin-date-picker>
+        </div>
+      </div>
+      <div class="buttons">
+        <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+        <paper-button class="btn btn-success" on-tap="_addToInventoryButtonClicked">[[$TRANSLATE('Add Item', LANG)]]</paper-button>
+      </div>
+    </paper-dialog>
+    <!-- Dialog - Add new pharmacy item - end -->
+
+    <!-- Dialog - Request pharmacy item - start -->
+    <paper-dialog class="custom-input-field" id="dialogRequestPharmacyItem" vertical-align="top">
+      <div class="p-horizontal-16">
+        <div class="type title-2 bold text-success">[[$TRANSLATE('Order', LANG)]] #[[internalOrder.serial]]</div>
+        <div class="type secondary"><i>{{internalOrder.location.name}}</i></div>
+        <div class="m-top-16 layout horizontal center" style="border-radius: 6px; background-color: #fafafa; padding: 8px 16px;">
+          <vaadin-combo-box class="flex" label="[[$TRANSLATE('Search Pharmacy Item', LANG)]]" value="{{selectedPharmacyItem}}" items="[[pharmacyItemList]]"
+            required></vaadin-combo-box> 
+          <paper-button class="btn btn-default" raised on-tap="addInternalItem"><iron-icon icon="add" class="m-right-8"></iron-icon>[[$TRANSLATE('Add item', LANG)]]</paper-button>
+        </div>
+      </div>
+      
+      <paper-dialog-scrollable class="custom-dialog-scrollable">
+        <template is="dom-if" if="[[ !internalOrder.data.length ]]">
+          <div class="p-16 horizontal layout center center-justified type body">
+            [[$TRANSLATE('add some item here', LANG)]]...
+          </div>
+        </template>
+        <div class="p-0">
+          <paper-listbox>
+            <template is="dom-repeat" items="[[internalOrder.data]]">
+                <paper-item class="custom layout horizontal center">
+                  <div class="m-right-8 type caption secondary">
+                    [[_returnSerial(index)]].
+                  </div>
+                  <div class="type body flex">
+                    [[item.name]]
+                  </div>
+                  <paper-input label="[[$TRANSLATE('Qty', LANG)]]" class="flex" value="{{item.qty}}"></paper-input>
+                  <paper-icon-button icon="delete" on-tap="removeInternalItem"></paper-icon-button>
+
+                </paper-item>
+            </template>
+          </paper-listbox>
+        </div>
+      </paper-dialog-scrollable>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+        <paper-button raised class="btn btn-success" on-tap="sendRequestBtnPressed">[[$TRANSLATE('Send', LANG)]]</paper-button>
+    </paper-dialog>
+    <!-- Dialog - Request pharmacy item - end -->
+
+  </template>
+  <script src="page-internal-inventory-manager.js"></script>
+</dom-module>

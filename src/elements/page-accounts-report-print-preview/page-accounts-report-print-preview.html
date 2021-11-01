@@ -1,0 +1,515 @@
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-accounts-report-print-preview">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      paper-card {
+        background: #fff;
+      }
+
+      .master-container {
+        /*background: #fff;*/
+      }
+
+      .break-on-tablet {
+        @apply(--layout-horizontal);
+      }
+
+      @media screen and (max-width: 740px) {
+        .break-on-tablet {
+          display: block;
+        }
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      .header {
+        position: relative;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px
+      }
+
+      .header .title {
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: #5c4575;
+      }
+
+      .limiting-container {
+        margin-top: 10px;
+        max-width: 210mm;
+      }
+
+      .document {
+        font-family: 'Times New Roman';
+        background: white;
+        width: 100%;
+      }
+
+      .document-title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      @media print {
+        .limiting-container {
+          /*margin-top: -60px;*/
+          /*border: 1px solid black;*/
+          width: 100%;
+        }
+
+        .hideOnPrint {
+          display: none !important;
+        }
+
+        /*.print-container {
+          width: 100%;
+        }*/
+      }
+
+      .document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .vertiline {
+        border-left: 4px solid green;
+        height: auto;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+      .item {
+        padding: 10px;
+        border: 1px solid grey;
+      }
+
+      .table {
+        width: 50%;
+        /* border-collapse: collapse; */
+      }
+
+      .table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td {
+        color: #444;
+      }
+
+      .table td,
+      .table th {
+        vertical-align: middle;
+        padding: 10px 20px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+      .table tr:last-child td {
+        border-bottom: 0;
+      }
+    </style>
+
+    <!-- local DOM -->
+
+
+
+    <div class="master-container">
+      <div class="limiting-container">
+
+        <!-- document - start -->
+        <template is="dom-if" if="[[isReportValid]]">
+          <div class="document">
+
+            <template is="dom-if" if="[[organization.printSettings.headerLine]]">
+              <div class="header vertical layout center">[[organization.printSettings.headerLine]]</div>
+            </template>
+
+            <div class="document-header horizontal layout center">
+
+              <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+                <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+              </template>
+
+              <div class="leftSide vertical layout">
+                <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+                <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+                <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+              </div>
+              <div class="flex"></div>
+              <div class="rightSide vertical layout end">
+                <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+                <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+                <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+              </div>
+            </div>
+
+            <div class="horiline"></div>
+            <div style="text-align: center">
+              <h1>Accounts Report</h1>
+            </div>
+            <br>
+
+            <template is='dom-if' if='[[saveReportToLocalStorageObj]]'>
+
+              <div class="horizontal layout">
+
+                <table class="table flex-1 m-right-8" style="border: 1px solid #eee;;">
+                  <tr>
+                    <th colspan="2">Incomes</th>
+                  </tr>
+
+                  <template is='dom-repeat' items='[[saveReportToLocalStorageObj.incomeByInvoiceCategory]]'>
+                    <template is="dom-if" if="[[$equals(item.category, 'outdoor')]]">
+                      <tr>
+                        <td>Investigation: TK.</td>
+                        <td>[[item.value]]</td>
+                      </tr>
+                    </template>
+                  </template>
+                  <template is='dom-repeat' items='[[saveReportToLocalStorageObj.dueByInvoiceCategory]]'>
+                    <template is="dom-if" if="[[$equals(item.category, 'outdoor')]]">
+                      <tr>
+                        <td>Investigation due collection: TK.</td>
+                        <td>[[item.value]]</td>
+                      </tr>
+                    </template>
+                  </template>
+                  <tr>
+                    <td>Advance Balance</td>
+                    <td width="150px">[[saveReportToLocalStorageObj.totalAdvanceBalanceFromInvoice]]</td>
+                  </tr>
+                  <tr>
+                    <td>ADMISSION FEE: TK.</td>
+                    <td width="150px">[[saveReportToLocalStorageObj.totalIncomeFromAdmissionCategory]]</td>
+                  </tr>
+                  <template is='dom-repeat' items='[[saveReportToLocalStorageObj.incomeByInvoiceCategory]]'>
+                    <template is="dom-if" if="[[$equals(item.category, 'indoor')]]">
+                      <tr>
+                        <td>INDOOR COLLECTION: TK.</td>
+                        <td>[[item.value]]</td>
+                      </tr>
+                    </template>
+                  </template>
+                  <template is='dom-repeat' items='[[saveReportToLocalStorageObj.dueByInvoiceCategory]]'>
+                    <template is="dom-if" if="[[$equals(item.category, 'indoor')]]">
+                      <tr>
+                        <td>INDOOR DUE COLLECTION: TK.</td>
+                        <td>[[item.value]]</td>
+                      </tr>
+                    </template>
+                  </template>
+                  <!-- <tr>
+                    <td>Vat/Tax Collected</td>
+                    <td width="150px">[[saveReportToLocalStorageObj.totalIncomeVatOrTax]]</td>
+                  </tr>
+                  <tr>
+                    <td>Discount Given</td>
+                    <td>-[[saveReportToLocalStorageObj.totalIncomeDiscount]]</td>
+                  </tr> -->
+                  <!-- <tr>
+                    <td>Dues</td>
+                    <td>[[saveReportToLocalStorageObj.totalIncomeDueCombined]]</td>
+                  </tr> -->
+                  <tr>
+                    <th>Total Incomes</th>
+                    <th>[[$formatCurrency(totalIncome)]]</th>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <th>Total Cash</th>
+                    <th>[[$formatCurrency(totalIncome)]]</th>
+                  </tr>
+                  <tr>
+                    <th>Credit</th>
+                    <th>[[$formatCurrency(totalDueOrCredit)]]</th>
+                  </tr>
+                  <tr>
+                    <th>Total Expenditure</th>
+                    <th>[[$formatCurrency(totalExpense)]]</th>
+                  </tr>
+                  <tr>
+                    <th>Net Cash</th>
+                    <th>[[$formatCurrency(profitOrLoss)]]</th>
+                  </tr>
+                </table>
+
+                <div class="vertiline"></div>
+                
+                <table class="table m-left-8 flex-1" style="border: 1px solid #eee;">
+                  <tr>
+                    <th colspan="2">Expenses</th>
+                  </tr>
+                  <template is='dom-repeat' items='[[saveReportToLocalStorageObj.expenseByCategory]]'>
+                    <tr>
+                      <td>[[item.category]]</td>
+                      <td>[[item.value]]</td>
+                    </tr>
+                  </template>
+                  <tr>
+                    <td>Vat/Tax Paid</td>
+                    <td width="150px">[[saveReportToLocalStorageObj.totalExpenseVatOrTax]]</td>
+                  </tr>
+                  <tr>
+                    <td>Discount Received</td>
+                    <td>-[[saveReportToLocalStorageObj.totalExpenseDiscount]]</td>
+                  </tr>
+                  <tr>
+                    <td>Dues</td>
+                    <td>[[saveReportToLocalStorageObj.totalDueFromExpense]]</td>
+                  </tr>
+                  <tr>
+                    <th>Total Expenses</th>
+                    <th>[[$formatCurrency(totalExpense)]]</th>
+                  </tr>
+                </table>
+              </div>
+
+            </template>
+
+            <!-- <template is='dom-if' if='[[saveReportToLocalStorageObj]]'>
+              <table class="table m-top-16">
+                <tr>
+                  <th>Total Cash</th>
+                  <th width="150px">[[$formatCurrency(totalIncome)]]</th>
+                </tr>
+                <tr>
+                  <th>Credit</th>
+                  <th width="150px">[[$formatCurrency(totalDueOrCredit)]]</th>
+                </tr>
+                <tr>
+                  <th>Total Expenditure</th>
+                  <th width="150px">[[$formatCurrency(totalExpense)]]</th>
+                </tr>
+              </table>
+            </template>
+
+            <table class="table m-top-16">
+              <tr>
+                <th>Net Cash</th>
+                <th width="150px">[[$formatCurrency(profitOrLoss)]]</th>
+              </tr>
+            </table> -->
+
+            <br>
+            <template is="dom-if" if="[[settings.printDecoration.footerLine]]">
+              <div class="footer vertical layout" style="white-space: pre-wrap; text-align: center;">
+                [[settings.printDecoration.footerLine]]
+              </div>
+            </template>
+
+            <div style="text-align: center; margin-top: 16px">
+              <span class="type secondary">Report Generation Date & Time - [[_formatDateTime(reportCreatedTime)]]</span>
+            </div>
+          </div>
+        </template>
+        <!-- document - end -->
+
+      </div>
+    </div>
+
+    <div class="horizontal layout center center-justified p-horizontal-16">
+      <div class="type body italic"><strong>Printed by: </strong>[[user.name]]</div>
+    </div>
+
+
+  </template>
+  <script>
+    Polymer({
+
+      is: 'page-accounts-report-print-preview',
+
+      behaviors: [
+        app.behaviors.commonComputes,
+        app.behaviors.dbUsing,
+        app.behaviors.translating,
+        app.behaviors.pageLike,
+        app.behaviors.apiCalling
+      ],
+
+      properties: {
+
+        user: {
+          type: Object,
+          notify: true,
+          value: null
+        },
+
+        saveReportToLocalStorageObj: {
+          type: Object,
+          notify: true,
+          observer: 'calculateTotal',
+          value: null
+        },
+
+        organization: {
+          type: Object,
+          notify: true,
+          value: (app.db.find('organization'))[0]
+        },
+
+        settings: {
+          type: Object,
+          notify: true,
+          value: (app.db.find('settings'))[0]
+        },
+
+        isReportValid: {
+          type: Boolean,
+          value: false
+        },
+
+        totalIncome: Number,
+        totalDueOrCredit: Number,
+        totalExpense: Number,
+        profitOrLoss: Number
+      },
+
+      // _getSettings() {
+      //   const list = app.db.find('settings', ({ serial }) => serial === this.getSerialForSettings());
+      //   if (list.length > 0) {
+      //     this.settings = list[0];
+      //     if ((typeof this.settings.settingsModifiedBy === 'undefined') || (this.settings.settingsModifiedBy === 'organization')) {
+      //       if (this.organization.printSettings) {
+      //         this.settings.printDecoration = this.organization.printSettings;
+      //       }
+      //     }          
+      //   }
+      // },
+
+
+
+      printButtonPressed(e) {
+        return window.print();
+      },
+
+      _formatDateTime(dateTime) {
+        return lib.datetime.format((new Date(dateTime)), 'mmm d, yyyy h:MMTT');
+      },
+
+      _loadUser() {
+        const userList = app.db.find('user');
+        if (userList.length === 1) {
+          return this.user = userList[0];
+        }
+      },
+
+      calculateTotal() {
+        if (!this.saveReportToLocalStorageObj) return;
+        let grossIncome = this.saveReportToLocalStorageObj.incomeByInvoiceCategory.reduce((total, item) => {
+          return total += item.value;
+        }, 0);
+        let grossCollectionFromDue = this.saveReportToLocalStorageObj.dueByInvoiceCategory.reduce((total, item) => {
+          return total += item.value;
+        }, 0);        
+        let grossExpense = this.saveReportToLocalStorageObj.expenseByCategory.reduce((total, item) => {
+          return total += item.value;
+        }, 0);
+        this.totalIncome = grossIncome;
+        this.totalExpense = (grossExpense + this.saveReportToLocalStorageObj.totalExpenseVatOrTax) - this.saveReportToLocalStorageObj.totalExpenseDiscount;
+        this.totalDueOrCredit = this.saveReportToLocalStorageObj.totalDueFromInvoice
+        this.profitOrLoss = this.totalIncome - this.totalExpense;
+      },
+
+      loadAccountsReportFromLocalStorage() {
+        report = localStorage.getItem("saveReportToLocalStorageObj");
+        report = JSON.parse(report);
+        this.reportCreatedTime = lib.datetime.now();
+        if (report) {
+          this.set('isReportValid', true);
+          this.set('saveReportToLocalStorageObj', report);
+        }
+        else {
+          this.set('isReportValid', false);
+          this.domHost.showToast("Invalid Report");
+        }
+      },
+
+      arrowBackButtonPressed() {
+        return this.domHost.navigateToPreviousPage();
+      },
+
+      navigatedIn() {
+        this.organization = this.getCurrentOrganization();
+        if (!this.organization) {
+          return this.domHost.navigateToPage("#/select-organization");
+        }
+        this._loadUser();
+        // this.$getOrganizationSpecificUserSettings(this.user.apiKey, this.organization.idOnServer, (settings) => {
+        //   this.set('settings', settings)
+        // });
+        this.loadAccountsReportFromLocalStorage();
+      },
+
+      navigatedOut() { }
+
+    });
+
+  </script>
+</dom-module>

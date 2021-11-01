@@ -1,0 +1,310 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input-container.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower-assets/paper-radio-button/paper-radio-button.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-login">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+
+      #dialogResetPassword {
+        width: 310px;
+      }
+
+      .form-container {
+        position: relative;
+      }
+
+      .form-topbar {
+        background-color: var(--brand-primary-color);
+        height: 256px;
+        width: 100%;
+        padding-top: 40px;
+        text-align: center;
+        color: #fff;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      }
+
+      .form-card-container {
+        position: absolute;
+        top: 128px;
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+        width: 100%;
+      }
+
+      .form-card {
+        position: relative;
+        width: 600px;
+        background-color: white;
+        padding: 16px 24px;
+        margin: 16px;
+        border-radius: 16px;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      }
+
+      .form-heading {
+        text-align: center;
+      }
+
+      .user-icon {
+        color: var(--brand-primary-color);
+        height: 96px;
+        width: 96px;
+      }
+
+      .footer {
+        width: calc(100% - 32px);
+        padding: 8px 16px;
+        text-align: center;
+      }
+
+      @media screen and (max-width: 640px) {
+        .form-card {
+          width: calc(100% - 80px);
+          padding: 16px;
+        }
+      }
+
+      .flat-back-btn {
+        position: absolute;
+        top: 8px;
+        font-weight: bold;
+        color: var(--brand-primary-color);
+        right: 8px;
+        text-transform: capitalize
+      }
+
+      .btn-submit {
+        padding: 0.7em 4em;
+        font-size: 14px;
+        margin-top: 16px;
+      }
+
+      .full-width {
+        width: 100%;
+      }
+
+      paper-input, vaadin-date-picker {
+        margin-top: 8px;
+        margin-bottom: 8px;
+      }
+
+      #loader {
+        background: rgba(255, 255, 255, 1);
+        position: absolute;
+        left: 0;
+        top: 0;
+        border-radius: 16px;
+        z-index: 1;
+        height: 100%;
+        width: 100%;
+      }
+
+    </style>
+
+    <!-- local DOM -->
+
+
+    <div class="form-container">
+
+      <div class="form-topbar">
+        <div class="type display-regular">[[$TRANSLATE('BDEMR', LANG)]]</div>
+        <div style="letter-spacing: 2px; font-weight: 300px; font-size: 20px;">[[$TRANSLATE('PHARMACY APP', LANG)]]</div>
+      </div>
+
+      <!-- .form-card-container - start -->
+      <div class="form-card-container">
+
+        <div class="form-card">
+          
+          <iron-pages selected="[[selectedPage]]">
+
+            <!-- Form :: Login - Start -->
+            <section>
+              <paper-button class="flat-back-btn" on-tap="_navigateToResetPasswordForm" class="btn btn-sm" style="font-size: 14px;">[[$TRANSLATE('Forgot Password', LANG)]]?</paper-button>
+              <div class="p-16">
+    
+                <div class="form-heading">
+                  <iron-icon class="user-icon" icon="icons:account-circle"></iron-icon>
+                  <div class="type title">[[$TRANSLATE('LOGIN', LANG)]]</div>
+                </div>
+
+                <paper-input id="inputEmailOrPhone" class="flex" label="[[$TRANSLATE('Email/Phone Number', LANG)]]" value="{{formData.emailOrPhone}}" required pattern='^([0-9]{11,11}(-[0-9]*){0,1}|([\w-]+(?:\.[\w-]+)*)+@\w+\.\w{2,3})$' error-message="Please Enter valid Email/Phone. i.e. john@email.com, 01712345678"></paper-input>
+                <paper-input id="inputPassword" class="flex" label="[[$TRANSLATE('Password', LANG)]]" type="password" value="{{formData.password}}" on-keyup="enterKeyPressed" required error-message="Atlest 6 character long Password is Required!" minlength="6" maxlength="30"></paper-input>
+    
+                <div class="horizontal layout center full-width">
+                  <paper-checkbox checked="{{shouldRememberUser}}" class="type caption-2">[[$TRANSLATE('Remember Me', LANG)]]</paper-checkbox>
+                  <div class="flex"></div>
+                  <paper-button  on-tap="_navigateToSingupForm" class="btn btn-sm" style="color: green; font-weight: bold !important;">[[$TRANSLATE('Create account', LANG)]]</paper-button>
+                </div>
+    
+                <div class="horizontal layout center-justified">
+                  <iron-a11y-keys id="a11y" target="[[target]]" keys="enter" on-keys-pressed="onEnter"></iron-a11y-keys>
+                  <paper-button class="btn-submit colored" on-tap="loginButtonPressed" raised>[[$TRANSLATE('Login', LANG)]]</paper-button>
+                </div>
+              </div>
+            </section>
+            <!-- Form :: Login - End -->
+
+            <!-- Form :: Singup - Start -->
+            <section>
+              <paper-button class="flat-back-btn" on-tap="_navigateToLoginForm" class="btn btn-sm" style="font-size: 14px;">[[$TRANSLATE('Back to login', LANG)]]</paper-button>
+              <div class="p-16">
+    
+                <div class="form-heading">
+                  <iron-icon class="user-icon" icon="icons:account-circle"></iron-icon>
+                  <div class="type title">[[$TRANSLATE('Create your BDEMR Account', LANG)]]</div>
+                </div>
+
+                <paper-input class="flex" label="[[$TRANSLATE('Email/Phone Number', LANG)]]" auto-validate value="{{formData.emailOrPhone}}" pattern='^([0-9]{11,11}(-[0-9]*){0,1}|([\w-]+(?:\.[\w-]+)*)+@\w+\.\w{2,3})$' auto-validate error-message="Please Enter valid Email/Phone. i.e. john@email.com, 01712345678"></paper-input>
+                <paper-input class="flex" label="[[$TRANSLATE('Password', LANG)]]" type="password" value="{{formData.password}}" auto-validate error-message="Atlest 6 character long Password is Required!" char-counter minlength="6" maxlength="30"></paper-input>
+                <paper-input class="flex" label="[[$TRANSLATE('Full Name', LANG)]]" value="{{formData.fullName}}" auto-validate error-message="Full Name is Required!" char-counter minlength="2" maxlength="128"></paper-input>
+                <div class="horizontal layout wrap full-width">
+                  <vaadin-date-picker required auto-validate error-message="Date of Birth is Required!" class="flex m-right-16" type="date" max="[[_getTodayDate()]]" value="{{formData.dateOfBirth}}" label="[[$TRANSLATE('Date of Birth', LANG)]]" on-value-changed="calculateAge"></vaadin-date-picker>
+                  <paper-input label="[[$TRANSLATE('Age', LANG)]]" min="0" type="number" value="{{ageInYears}}" on-change="makeDOBFromYears"></paper-input>
+                </div>
+                <div class="type caption secondary m-top-8">[[$TRANSLATE('Gender', LANG)]]</div>
+                <paper-radio-group selected="{{formData.gender}}">
+                  <template is="dom-repeat" items="[[genderTypes]]">
+                    <paper-radio-button name="{{item}}" style="text-transform: capitalize">{{item}}</paper-radio-button>
+                  </template>
+                </paper-radio-group>
+
+                <paper-input class="flex" label="[[$TRANSLATE('Pin Code', LANG)]]" value="{{formData.doctorAccessPin}}" type="text" pattern="[0-9]*" max="[[_getTodayDate()]]" auto-validate error-message="Pin Code must be a 4 digit number!" char-counter minlength="4" maxlength="4"></paper-input>
+
+                <paper-dropdown-menu class="full-width" label="[[$TRANSLATE('Select Role', LANG)]]" vertical-align="bottom">
+                  <paper-menu class="dropdown-content" selected="{{selectedRoleIndex}}">
+                    <template is="dom-repeat" items="[[roles]]">
+                      <paper-item>[[item.roleName]]</paper-item>
+                    </template>
+                  </paper-menu>
+                </paper-dropdown-menu>
+                
+                <template is="dom-repeat" items="{{selectedRole.requiredData}}">
+                  <paper-input class="flex" type="{{item.inputType}}" label="[[$TRANSLATE(item.label, LANG)]]" value="{{item.value}}" required auto-validate error-message="{{item.label}} is required!" minlength="2"></paper-input>
+                </template>
+    
+                <div class="horizontal layout center-justified">
+                  <iron-a11y-keys id="a11y" target="[[target]]" keys="enter" on-keys-pressed="onEnter"></iron-a11y-keys>
+                  <paper-button id="loginBtn" class="btn-submit colored" on-tap="signupButtonPressed" raised>[[$TRANSLATE('Signup', LANG)]]</paper-button>
+                </div>
+              </div>
+            </section>
+            <!-- Form :: Singup - End -->
+
+            <!-- Form :: Reset - Start -->
+            <section>
+              <paper-button class="flat-back-btn" on-tap="_navigateToLoginForm" class="btn btn-sm" style="font-size: 14px;">[[$TRANSLATE('Back to login', LANG)]]</paper-button>
+              <div class="p-16">
+    
+                <div class="form-heading">
+                  <iron-icon class="user-icon" icon="icons:account-circle"></iron-icon>
+                  <div class="type title">[[$TRANSLATE('Reset your Password', LANG)]]</div>
+                </div>
+
+                <paper-input class="flex" label="[[$TRANSLATE('Email/Phone Number', LANG)]]" auto-validate value="{{formData.emailOrPhone}}" pattern='^([0-9]{11,11}(-[0-9]*){0,1}|([\w-]+(?:\.[\w-]+)*)+@\w+\.\w{2,3})$' auto-validate error-message="Please Enter valid Email/Phone. i.e. john@email.com, 01712345678"></paper-input>
+
+                <div class="horizontal layout center-justified">
+                  <iron-a11y-keys id="a11y" target="[[target]]" keys="enter" on-keys-pressed="onEnter"></iron-a11y-keys>
+                  <paper-button class="btn-submit colored" on-tap="_resetPasswordBtnPressed" raised>[[$TRANSLATE('Reset', LANG)]]</paper-button>
+                </div>
+              
+              </div>
+            </section>
+            <!-- Form :: Reset - End -->
+
+            <!-- Form :: Verification - Start -->
+            <section>
+              <div class="p-16">
+    
+                <div class="form-heading">
+                  <iron-icon class="user-icon" icon="icons:account-circle"></iron-icon>
+                  <template is="dom-if" if="[[isItEmail]]">
+                    <div class="type title" style="text-transform: capitalize">[[$TRANSLATE('Verify your email', LANG)]].</div>
+                    <div class="type body info">[[$TRANSLATE('We have sent email with verification code. Please check your inbox', LANG)]].</div>
+                  </template>
+                  <template is="dom-if" if="[[!isItEmail]]">
+                    <div class="type title" style="text-transform: capitalize">[[$TRANSLATE('Verify your phone number', LANG)]].</div>
+                    <div class="type body info">[[$TRANSLATE('Please type "bdemr verify" and send it to 26969 (If your phone number has extension e.g, 01700000000-10, type "bdemr verify 10" instead). After that You will recieve an sms with verificaiton code', LANG)]]</div>
+                  </template>
+                  
+                </div>
+
+                <paper-input id="inputVerification" class="flex" label="[[$TRANSLATE('Verification Code', LANG)]]" value="{{verification.code}}" type="text" pattern="[0-9]*" required error-message="Verification Code must be a 6 character long!" char-counter minlength="6" maxlength="6" ></paper-input>
+                
+                <div class="horizontal layout center-justified">
+                  <iron-a11y-keys id="a11y" target="[[target]]" keys="enter" on-keys-pressed="onEnter"></iron-a11y-keys>
+                  <paper-button class="btn-submit colored" on-tap="verifyButtonPressed" raised>[[$TRANSLATE('Verify', LANG)]]</paper-button>
+                </div>
+              
+              </div>
+            </section>
+            <!-- Form :: Verification - End -->
+
+            <!-- Form :: Success Msg - Start -->
+            <section>
+              <div class="p-16">
+                <div class="form-heading">
+                  <iron-icon class="user-icon" icon="icons:account-circle"></iron-icon>
+                  <div class="type title" style="text-transform: capitalize">[[$TRANSLATE(successMsg, LANG)]]</div>
+                </div>
+
+                <div class="horizontal layout center-justified">
+                  <iron-a11y-keys id="a11y" target="[[target]]" keys="enter" on-keys-pressed="onEnter"></iron-a11y-keys>
+                  <paper-button class="btn-submit colored" on-tap="_navigateToLoginForm" raised>[[$TRANSLATE('Back to Login', LANG)]]</paper-button>
+                </div>
+              
+              </div>
+            </section>
+            <!-- Form :: Success Msg - End -->
+
+          </iron-pages>
+
+          <!-- loader - start -->
+          <div id="loader" class="horizontal layout center center-justified" hidden$="{{!isLoading}}">
+            <div style="text-align: center;">
+              <paper-spinner active></paper-spinner>
+              <div class="type body secondary">[[$TRANSLATE('please wait', LANG)]]...</div>
+            </div>
+          </div>
+          <!-- loader - end -->
+
+        </div>
+        <div class="footer">
+          <span class="type caption">[[$TRANSLATE('All rights reserved 2019 © BDEMR Solutions. Corp.', LANG)]]</span>
+        </div>
+      </div>
+      <!-- .form-card-container - end -->
+
+    </div>
+
+    
+
+
+  </template>
+  <script src="page-login.coffee-compiled.js"></script>
+</dom-module>

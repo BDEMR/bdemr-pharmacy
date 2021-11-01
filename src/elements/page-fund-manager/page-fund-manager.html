@@ -1,0 +1,203 @@
+<!-- Iron elements -->
+<link rel="import" href="../../bower-assets/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+
+<!--Paper Elements-->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+
+<link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<!-- custom-elements -->
+<link rel="import" href="../../elements/html-block/html-block.html">
+
+<!-- element -->
+<dom-module id="page-fund-manager">
+  <template>
+    <style is="custom-style" include="common-style">
+      
+      paper-dialog {
+        min-width: 450px;
+      }
+
+      .top-margin {
+        margin-top: 10px
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table th {
+        padding: 10px;
+        vertical-align: left;
+        text-align: left;
+        background-color: var(--paper-grey-50);
+        border: 1px solid var(--paper-grey-300);
+      }
+
+      .table td {
+        text-align: left;
+        padding: 10px;
+        border: 1px solid var(--paper-grey-300);
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+      }
+
+      .log-box {
+        padding: 10px 0px;
+        border-bottom: solid 1px #eee;
+      }
+
+      paper-dialog-scrollable {
+        --paper-dialog-scrollable: {
+          max-height: 40vh;
+        }
+      }      
+    </style>
+
+    <!-- <module-accounts-top-nav page-name="fund-manager" organization-id="[[organization.idOnServer]]">
+    </module-accounts-top-nav> -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <template is="dom-if" if="[[loadingCounter]]">
+          <div class="layout horizontal center type bold text-center">
+            <paper-progress indeterminate></paper-progress>
+          </div>
+        </template>
+
+        <paper-card heading="Fund Manager">
+          <div class="card-actions">
+            <paper-button class="btn btn-success" raised on-tap="_addNewFundButtonClicked">+ [[$TRANSLATE('Add a New Fund', LANG)]]</paper-button>
+          </div>
+          <div class="card-content">
+
+            <table class="table">
+              <tr>
+                <th>[[$TRANSLATE('Name', LANG)]]</th>
+                <th>[[$TRANSLATE('Amount', LANG)]]</th>
+                <th width="430px">[[$TRANSLATE('Actions', LANG)]]</th>
+              </tr>
+              <template is="dom-if" if="[[!fundList.length]]">
+                <h3 class="type center">[[$TRANSLATE('NO DATA YET', LANG)]]</h3>
+              </template>
+              <template is="dom-repeat" items="[[fundList]]">
+                <tr>
+                  <td>[[item.name]]</td>
+                  <td>[[item.amount]] [[$TRANSLATE('BDT', LANG)]]</td>
+                  <td>
+                    <paper-button class="btn btn-default top-margin" raised on-tap="_editFundButtonClicked">[[$TRANSLATE('Edit Fund', LANG)]]</paper-button>
+                    <paper-button class="btn btn-danger top-margin" raised on-tap="_deleteFundButtonClicked">[[$TRANSLATE('Delete Fund', LANG)]]</paper-button>
+                    <paper-button class="btn btn-success top-margin" on-tap="_viewTransactionLogsButtonClicked">[[$TRANSLATE('Transaction Logs', LANG)]]</paper-button>
+                  </td>
+                </tr>
+              </template>
+            </table>
+          </div>
+        </paper-card>
+
+        <div class="m-top-32"></div>
+
+        <paper-card heading="Activity Logs for All the Funds">
+
+          <template is="dom-if" if="[[!fundList.length]]">
+            <h3 class="type center">[[$TRANSLATE('NO DATA YET', LANG)]]</h3>
+          </template>
+
+          <div class="card-content">
+            <template is="dom-repeat" items="[[fundList]]">
+              <template is="dom-repeat" items="[[item.transactionLogs]]" as="transaction">
+                <div class="log-box">
+                  <div>Date: [[$formatDateTime(transaction.createdDatetimeStamp)]]</div>
+                  <div class="horizontal layout wrap m-top-8"><strong>[[$getFullName(transaction.userName)]]&nbsp;</strong>
+                    <template is="dom-if" if="[[$equals(transaction.type, 'Added')]]"><span class="type success">[[transaction.type]]&nbsp;</span></template>
+                    <template is="dom-if" if="[[$equals(transaction.type, 'Deleted')]]"><span class="type danger">[[transaction.type]]&nbsp;</span></template>
+                    <span>[[transaction.amount]] [[$TRANSLATE('BDT', LANG)]]&nbsp;</span>
+                    <span>To <strong>[[item.name]]</strong> Fund</span>
+                  </div>
+                </div>
+              </template>
+            </template>
+          </div>
+
+        </paper-card>
+
+        <!-- Dialog for - Add New Fund(s) - start -->
+        <paper-dialog class="custom-input-field" id="dialogAddNewFund">
+          <div class="type body-lead" style="color: green;">
+            <iron-icon src="../../images/icons/ico_add_funds_b.png" class="m-right-8"></iron-icon>[[$TRANSLATE('Add a New Fund', LANG)]]
+          </div>
+          <paper-textarea label="[[$TRANSLATE('Name of the Fund', LANG)]]" rows="2" value="{{fund.name}}"></paper-textarea>
+          <div class="horizontal layout">
+            <paper-input type='number' class="flex m-right-8" label="[[$TRANSLATE('Initial Amount', LANG)]]" value="{{fund.amount}}">
+              <div suffix>[[$TRANSLATE('BDT', LANG)]]</div>
+            </paper-input>
+          </div>
+          <div class="buttons">
+            <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+            <paper-button class="colored" on-click="_addFundRequest" autofocus raised>[[$TRANSLATE('Add', LANG)]]</paper-button>
+          </div>
+        </paper-dialog>
+        <!-- Dialog for - Add New Funds - end -->
+
+        <!-- Dialog for - Single Fund Transaction logs - Start -->
+        <paper-dialog class="custom-input-field" id="dialogTransactionLogs">
+          <div class="type body-lead" style="color: green;">
+            <strong>[[$TRANSLATE('Transaction Logs', LANG)]]</strong>
+            <hr>
+          </div>
+          <paper-dialog-scrollable>
+            <div class="card-content">
+              <template is="dom-repeat" items="[[transactionLogObj.transactionLogs]]" as="transaction">
+                <div class="log-box">
+                  <div>[[$TRANSLATE('Date', LANG)]]: [[$formatDateTime(transaction.createdDatetimeStamp)]]</div>
+                  <div class="horizontal layout wrap m-top-8"><strong>[[$getFullName(transaction.userName)]]&nbsp;</strong>
+                    <template is="dom-if" if="[[$equals(transaction.type, 'Added')]]"><span class="type success">[[transaction.type]]&nbsp;</span></template>
+                    <template is="dom-if" if="[[$equals(transaction.type, 'Deleted')]]"><span class="type danger">[[transaction.type]]&nbsp;</span></template>
+                    <span>[[transaction.amount]] [[$TRANSLATE('BDT', LANG)]]</span>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </paper-dialog-scrollable>
+          <div class="buttons">
+            <paper-button class="btn btn-danger" dialog-dismiss>[[$TRANSLATE('Dismiss', LANG)]]</paper-button>
+          </div>
+        </paper-dialog>
+        <!-- Dialog for - Single Fund Transaction logs - End -->
+
+      </div>
+    </div>
+  </template>
+  <script src="page-fund-manager.js"></script>
+</dom-module>

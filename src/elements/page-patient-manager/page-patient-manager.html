@@ -1,0 +1,1518 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/iron-list/iron-list.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+
+<link rel="import" href="../../elements/custom-vital-search/custom-vital-search.html">
+
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+
+<!-- <link rel="import" href="../bdemr-barcode-scanner/bdemr-barcode-scanner.html"> -->
+
+<link rel="import" href="../bdemr-qrcode-reader/bdemr-qrcode-reader.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-patient-manager">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+
+      .custom-img {
+        border-radius: 50%;
+      }
+      
+      .limiting-container {
+        /* min-width: calc(100% - 16px); */
+        margin: 8px;
+        /* max-width: 1340px; */
+      }
+
+      .more-optons {
+        color: #777777;
+      }
+
+
+      .new-patient-fab {
+        position: fixed;
+        right: 24px;
+        bottom: 128px;
+        background-color: #43A047;
+      }
+
+
+      paper-button {
+        margin: 3px;
+      }
+
+
+      .modifier {
+        font-size: 14px;
+        /*background: #000000;*/
+        /*color: #ffffff;*/
+        margin: 0 4px;
+        /*padding: 2px 4px;*/
+        /*border-radius: 3px;*/
+        text-transform: uppercase;
+        font-weight: 500;
+      }
+
+      .modifier.online {
+        color: #757575;
+      }
+
+      .modifier.local-only {
+        color: #039BE5;
+      }
+
+      .modifier.locally-updated {
+        color: #009688;
+      }
+
+      .modifier.imported {
+        color: #4CAF50;
+      }
+
+      #search-tab {
+        background-color: #43A047;
+      }
+
+      #log-tab {
+        background-color: var(--paper-teal-800);
+      }
+
+      .btn-add {
+        min-width: 0;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+        background-color: #eceff1;
+        color: rgba(0, 0, 0, .87);
+      }
+
+
+      .preview-title {
+        padding-left: 12px;
+        padding-right: 12px;
+        background-color: #f7f7f7;
+        min-height: 60px;
+        /*border-bottom: 1px solid #eee;*/
+      }
+
+      .custom-menu-button {
+        position: fixed;
+        right: 16px;
+        bottom: 112px;
+      }
+
+      @media (min-width: 1281px) {
+        .custom-menu-button {
+          right: 36px;
+          bottom: 126px;
+        }
+      }
+
+      .custom-menu-button ::content .dropdown-content {
+        background-color: transparent;
+        bottom: 80px !important;
+        box-shadow: none !important;
+      }
+
+      paper-fab {
+        background-color: #009688;
+      }
+
+      .custom-menu {}
+
+      .p-8 {
+        padding: 8px;
+      }
+
+      .custom-item {
+        padding: 8px 16px;
+        background-color: #5c4575;
+        color: #fff;
+        border-radius: 6px;
+        margin: 8px 0;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 32px;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      }
+
+      .custom-item:hover {
+        cursor: pointer;
+      }
+
+      .custom-img {
+        border-radius: 50%;
+      }
+      .type.display-regular.hack {
+        line-height: 32px;
+        font-weight: bold;
+      }
+
+      .custom-tab-item {
+        background-color: #fafafa;
+        color: var(--paper-teal-600);
+        margin: 0 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+
+      .custom-tab-item ::content .tab-content {
+        @apply(--layout-vertical) !important;
+      }
+
+      .basic-tabs {
+        background-color: #fff;
+        height: 76px;
+        padding-top: 16px;
+      }
+
+      .custom-combo-box {
+        width: 270px;
+        background: #fafafa;
+      }
+
+      paper-progress {
+        width: 100% !important;
+      }
+
+      .title-2 {
+        font-weight: bold;
+      }
+
+      #scanner {
+        height: 120px;
+        width: 120px;
+      }
+
+      .paper-custom-input ::content paper-input-container {
+        padding-bottom: 0;
+      }
+
+      .paper-custom-input {
+        min-width: 256px;
+      }
+
+      .custom-label {
+        min-width: 256px;
+      }
+
+    
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="tabs-container">
+      <paper-tabs id="tabs" selected="{{selectedSearchViewIndex}}" scrollable noink='true' on-iron-select="onPageIndexChange">
+        <paper-tab>[[$TRANSLATE('Search',LANG)]]</paper-tab>
+        <paper-tab>[[$TRANSLATE('Imported/Local Patients',LANG)]]</paper-tab>
+        <paper-tab>[[$TRANSLATE('Logs',LANG)]]</paper-tab>
+        <paper-tab>[[$TRANSLATE('Pending Patients',LANG)]]</paper-tab>
+      </paper-tabs>
+    </div>
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <iron-pages selected="{{selectedSearchViewIndex}}">
+          <!-- Search Patient - start -->
+          <section>
+            <!-- Card - Search - start -->
+            <paper-card style="border-radius:6px 6px 0 0">
+              <!-- <div class="card-content">
+
+                <div class="layout horizontal center">
+                  <paper-input class="flex custom-input-box large" value="{{searchFieldMainInput}}" label="Search Patient"
+                    no-label-float on-keyup="searchOnlineEnterKeyPressed">
+                    <div prefix class="type secondary m-right-8">
+                      <iron-icon icon="search"></iron-icon>
+                    </div>
+                  </paper-input>
+                  <paper-button class="btn btn-success btn-lg" raised on-tap="searchOnlineButtonPressed">
+                    <iron-icon icon="search" class="m-right-8"></iron-icon>SEARCH
+                  </paper-button>
+                  <paper-icon-button src="../../images/icons/barcode.png" on-tap="_showQrCodeDialog"></paper-icon-button>
+                </div>
+
+                <div class="horizontal layout m-top-8">
+                  <paper-toggle-button class="" checked="{{isAdvancedSearchEnabled}}">Advanced Search</paper-toggle-button>
+                </div>
+              </div> -->
+              
+
+              <div class="card-content">
+                <div class="horizontal layout center m-bottom-8 wrap">
+                  <div class="custom-label"><strong>[[$TRANSLATE('Patient Organization ID', LANG)]]: </strong></div>
+                  <paper-input class="paper-custom-input flex" on-keyup="searchOnlineEnterKeyPressed" value="{{searchQuery.patientIdByOrganization}}" no-label-float>
+                    <div prefix>{{organization.serial}}-</div>
+                  </paper-input>
+                </div>
+
+                <div class="horizontal layout center m-bottom-8 wrap">
+                  <div class="custom-label"><strong>[[$TRANSLATE('Patient Name', LANG)]]: </strong></div>
+                  <paper-input class="paper-custom-input flex" value="{{searchQuery.name}}" no-label-float></paper-input>
+                </div>
+
+                <div class="horizontal layout center m-bottom-8 wrap">
+                  <div class="custom-label"><strong>[[$TRANSLATE('Phone Number', LANG)]]: </strong></div>
+                  <paper-input class="paper-custom-input flex" value="{{searchQuery.phoneNumber}}" no-label-float></paper-input>
+                </div>
+
+                <div class="horizontal layout center m-bottom-8 wrap">
+                  <div class="custom-label"><strong>[[$TRANSLATE('Email Address', LANG)]]: </strong></div>
+                  <paper-input class="paper-custom-input flex" value="{{searchQuery.emailAddress}}" no-label-float></paper-input>
+                </div>
+
+                <div class="horizontal layout center m-bottom-8 wrap">
+                  <div class="custom-label"><strong>[[$TRANSLATE('Patient NID', LANG)]]: </strong></div>
+                  <paper-input class="paper-custom-input flex" value="{{searchQuery.nationalIdCardNumber}}" no-label-float></paper-input>
+                </div>
+
+              </div>
+              <!-- advanced search - start -->
+              <template is="dom-if" if="{{isAdvancedSearchEnabled}}">
+                <paper-listbox class="custom-input-field">
+                  <paper-item class="custom">
+                    <div class="layout horizontal center wrap">
+                      <paper-checkbox checked="{{advancedSearchParameters.initialVisitDate.enabled}}">[[$TRANSLATE('Initial Visited date Between', LANG)]] </paper-checkbox>
+                      <paper-input class="m-horizontal-8" type="date" value="{{advancedSearchParameters.initialVisitDate.lowerBound}}"
+                        no-label-float></paper-input>
+                      <div> [[$TRANSLATE('and', LANG)]] </div>
+                      <paper-input class="m-horizontal-8" type="date" value="{{advancedSearchParameters.initialVisitDate.upperBound}}"
+                        no-label-float></paper-input>
+                    </div>
+                  </paper-item>
+                  <paper-item class="custom">
+                    <div class="horizontal layout center wrap">
+                      <paper-checkbox checked="{{advancedSearchParameters.lastVisitDate.enabled}}">[[$TRANSLATE('Last Visited date Between', LANG)]] </paper-checkbox>
+                      <paper-input class="m-horizontal-8" type="date" value="{{advancedSearchParameters.lastVisitDate.lowerBound}}"
+                        no-label-float></paper-input>
+                      <div> [[$TRANSLATE('and', LANG)]] </div>
+                      <paper-input class="m-horizontal-8" type="date" value="{{advancedSearchParameters.lastVisitDate.upperBound}}"
+                        no-label-float></paper-input>
+                    </div>
+                  </paper-item>
+                  <paper-item class="custom">
+                    <div class="horizontal layout center wrap">
+                      <paper-checkbox checked="{{advancedSearchParameters.admissionDate.enabled}}">[[$TRANSLATE('Admission Between', LANG)]]
+                      </paper-checkbox>
+                      <paper-input class="m-horizontal-8" type="date" value="{{advancedSearchParameters.admissionDate.lowerBound}}"
+                        no-label-float></paper-input>
+                      <div> [[$TRANSLATE('and', LANG)]] </div>
+                      <paper-input class="m-horizontal-8" type="date" value="{{advancedSearchParameters.admissionDate.upperBound}}"
+                        no-label-float></paper-input>
+                    </div>
+                  </paper-item>
+                  <paper-item class="custom">
+                    <div class="horizontal layout center wrap">
+                      <paper-checkbox checked="{{advancedSearchParameters.createdDate.enabled}}">[[$TRANSLATE('Created Between', LANG)]]
+                      </paper-checkbox>
+                      <paper-input class="m-horizontal-8" type="date" value="{{advancedSearchParameters.createdDate.lowerBound}}"
+                        no-label-float></paper-input>
+                      <div> [[$TRANSLATE('and', LANG)]] </div>
+                      <paper-input class="m-horizontal-8" type="date" value="{{advancedSearchParameters.createdDate.upperBound}}"
+                        no-label-float></paper-input>
+                    </div>
+                  </paper-item>
+                  <paper-item class="custom">
+                    <div class="horizontal layout center wrap">
+                      <paper-checkbox>[[$TRANSLATE('Handled by me between', LANG)]]</paper-checkbox>
+                      <paper-input class="m-horizontal-8" type="date" value="{{advancedSearchParameters.handledDate.lowerBound}}"
+                        no-label-float></paper-input>
+                      <div>[[$TRANSLATE('and', LANG)]]</div>
+                      <paper-input class="m-horizontal-8" type="date" value="{{advancedSearchParameters.handledDate.upperBound}}"
+                        no-label-float></paper-input>
+                    </div>
+                  </paper-item>
+                  <paper-item class="custom">
+                    <div class="horizontal layout center">
+                      <paper-checkbox>[[$TRANSLATE('Show only patients created by me', LANG)]]</paper-checkbox>
+                    </div>
+                  </paper-item>
+                  <paper-item class="custom">
+                    <div class="horizontal layout center">
+                      <paper-checkbox>[[$TRANSLATE('Show only patients handled by me at least once', LANG)]]</paper-checkbox>
+                    </div>
+                  </paper-item>
+                  <paper-item class="custom">
+                    <div class="horizontal layout center end-justified">
+                      <span class="more-optons" on-tap="moreOptionsPressed">[[$TRANSLATE('more options', LANG)]]?</span>
+                    </div>
+                  </paper-item>
+                </paper-listbox>
+              </template>
+              <!-- advanced search - end -->
+
+              <div class="card-actions horizontal layout end-justified">
+                <paper-button style="background-color: #edeef1;" on-tap="_showQrCodeDialog"> 
+                  <iron-icon class="m-right-8" src="../../images/icons/barcode.png"></iron-icon>
+                  [[$TRANSLATE('Scan Patients Card', LANG)]]
+                </paper-button>
+                <paper-button raised on-tap="searchOnlineButtonPressed" class="colored"><iron-icon icon="search" class="m-right-8"></iron-icon> [[$TRANSLATE('Search', LANG)]]</paper-button>
+              </div>
+
+            </paper-card>
+            <!-- Card - Search - end -->
+
+            <template is="dom-if" if="[[$compareFn(arbitaryCounter, '>', 0)]]">
+              <paper-card class="" style="border-radius: 0">
+                <div class="card-content">
+                  <div class="vertical layout center">
+                    <paper-spinner active></paper-spinner>
+                    <div class="type body secondary">[[$TRANSLATE('please wait for a while', LANG)]]...</div>
+                  </div>
+                </div>
+              </paper-card>
+            </template>
+
+            <!-- Card - Search Results - start -->
+            <template is="dom-if" if="[[$compareFn(arbitaryCounter, '==', 0)]]">
+              <paper-card class="custom-input-field">
+
+                <div class="card-custom-header" style="border-radius: 0">
+                  
+                  <div class="layout horizontal center">
+                    <div class="flex">
+                      <!-- <div class="title">Search Results</div> -->
+                      <div class="type body secondary">[[matchingPatientList.length]] Patient(s) found</div>
+                    </div>
+
+                    <custom-vital-search on-date-select="searchResultFilterByDateClicked" on-clear="searchResultFilterByDateClearButtonClicked"></custom-vital-search>
+
+                    <!-- <paper-icon-button icon="clear" on-tap="clearSearchResultsClicked"></paper-icon-button> -->
+                  </div>
+                </div>
+
+                <div class="p-0">
+                  <paper-listbox>
+
+                    <template id="patient-list-repeater" is="dom-repeat" items="[[matchingPatientList]]" as="patient">
+                      <paper-item class="custom layout horizontal center wrap">
+                        <iron-image class="profile-image m-right-8" src$="[[$getProfileImage(patient.profileImage)]]" preload sizing="cover"></iron-image>
+
+                        <div class="flex m-left-8">
+                          <div class="type body capitalize">[[$getFullName(patient.name)]]</div>
+                          <div class="type caption">[[patient.email]]</div>
+                          <div class="type caption">[[patient.phone]]</div>
+                          <!-- <div class="type caption">[[$mkDate(patient.createdDatetimeStamp)]]</div> -->
+                          <template is="dom-if" if="[[patient.doctorsPrivateNote]]">
+                            <div class="type caption">([[$truncate(patient.doctorsPrivateNote, 20)]])</div>
+                          </template>
+                        </div>
+                        <div class="layout horizontal m-horizontal-4 wrap">
+                          <template is="dom-if" if="[[patient.flags.isOnlineOnly]]">
+                            <div class="modifier online">[[$TRANSLATE('online Only', LANG)]]</div>
+                          </template>
+                          <template is="dom-if" if="[[patient.flags.isImported]]">
+                            <div class="modifier imported">[[$TRANSLATE('imported', LANG)]]</div>
+                          </template>
+                          <template is="dom-if" if="[[patient.flags.isLocalOnly]]">
+                            <div class="modifier local-only">[[$TRANSLATE('local only', LANG)]]</div>
+                          </template>
+                          <!-- <template is="dom-if" if="[[patient.flags.isLocallyUpdated]]">
+                            <div class="modifier locally-updated">locally updated</div>
+                          </template> -->
+                        </div>
+
+                        <!-- <paper-icon-button icon="visibility" on-tap="viewPatientIconPressed" hidden="[[!patient.flags.isImported]]"></paper-icon-button> -->
+
+                        <!-- <paper-button raised class="btn-add colored" on-tap="viewPatient" hidden="[[!patient.flags.isImported]]"><iron-icon icon="icons:visibility" class="m-right-8"></iron-icon>View</paper-button> -->
+
+                        <paper-menu-button horizontal-align="right" no-animations>
+                          <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                          <paper-menu class="dropdown-content">
+                            <template is="dom-if" if="[[$or(patient.flags.isImported, patient.flags.isLocalOnly)]]">
+                              <!-- <paper-item on-tap="viewPatientPressed">View</paper-item> -->
+                              <paper-item on-tap="viewPatient">[[$TRANSLATE('View Patient', LANG)]]</paper-item>
+                              <paper-item on-tap="editPatientPressed">[[$TRANSLATE('Edit Patient Info', LANG)]]</paper-item>
+
+                              <paper-item on-tap="addPatientTemplate">[[$TRANSLATE('Add Template', LANG)]]</paper-item>
+                              <!-- <paper-item on-tap="editPatientPreconceptionRecord">Edit PCC Record <img class="m-left-8" width="24" height="24" src="../../assets/img/partners/badas_logo.png" alt=""></paper-item> -->
+                              <!-- <paper-item on-tap="_shortcutToNewPrescription">New Prescription</paper-item> -->
+                            </template>
+
+                            <!-- export/import start -->
+                            <template is="dom-if" if="[[patient.flags.isOnlineOnly]]">
+                              <paper-item on-tap="importPatientPressed">[[$TRANSLATE('Import from Cloud', LANG)]]</paper-item>
+                            </template>
+                            <template is="dom-if" if="[[$or(patient.flags.isLocalOnly, patient.flags.isImported)]]">
+                              <paper-item on-tap="publishPatientPressed">[[$TRANSLATE('Publish to Cloud', LANG)]]</paper-item>
+                            </template>
+                            <template is="dom-if" if="[[patient.flags.isImported]]">
+                              <paper-item on-tap="importLatestPatientPressed">[[$TRANSLATE('Import Latest from Cloud', LANG)]]</paper-item>
+                            </template>
+                            <template is='dom-if' if="[[$checkUserAccess('C032')]]">
+                              <template is="dom-repeat" items="[[organizationsIBelongToList]]" as="organization">
+                                <paper-item on-tap="putInWaitlistTapped">Put in [[organization.name]]'s Waitlist</paper-item>
+                              </template>
+                            </template>
+
+
+                            <!-- export/import end -->
+
+                            <template is="dom-if" if="[[$or(patient.flags.isImported, patient.flags.isLocalOnly)]]">
+                              <paper-item on-tap="deletePatientPressed">[[$TRANSLATE('Delete local copy', LANG)]]</paper-item>
+                            </template>
+
+                          </paper-menu>
+                        </paper-menu-button>
+
+
+                      </paper-item>
+                    </template>
+
+                  </paper-listbox>
+
+                </div>
+
+                <div class="card-actions">
+                  <paper-button on-tap="newPatientFabPressed" raised class="btn btn-success">
+                    <iron-icon icon="add"></iron-icon>
+                    [[$TRANSLATE('Create New Patient', LANG)]]
+                  </paper-button>
+                </div>
+              </paper-card>
+            </template>
+            <!-- Card - Search Results - end -->
+
+            <!-- Card - Patient Stats - start -->
+            <paper-card class="m-top-8">
+              <div class="card-custom-header">
+                <div class="horizontal layout center center-justified">
+                  <div class="horizontal layout center">
+                    <!-- <img class="custom-img m-right-8" width="48" height="48" src="../../assets/img/partners/badas.jpg"
+                      alt=""> -->
+                    <div class="type display-regular">[[$TRANSLATE('Patients Statistics', LANG)]]</div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="card-content">
+                <paper-progress indeterminate hidden="[[!loading]]"></paper-progress>
+              </div>
+
+              <template is="dom-if" if="[[_isEmptyArray(userPatientList.length)]]">
+                <div class="card-content horizontal layout center center-justified">
+                  <div class="body type secondary">-- [[$TRANSLATE('no data available', LANG)]] --</div>
+                </div>
+              </template>
+
+              <template is="dom-if" if="[[!_isEmptyArray(userPatientList.length)]]">
+
+                <paper-tabs class="basic-tabs" selected="{{selectedDateRangeIndexForUser}}" scrollable>
+                  <template is="dom-repeat" items="[[userPatientStats]]">
+                    <paper-tab class$="custom-tab-item {{item.bgColor}}">
+                      <div class="type title-2">[[item.type]]</div>
+                      <div class="horizontal layout">
+                        <div class="type body m-horizontal-4">[[item.patientCount]] [[item.patientLabel]]</div>
+                      </div>
+
+                    </paper-tab>
+                  </template>
+                </paper-tabs>
+
+
+                <div class="card-content">
+                  <div class="horizontal layout center">
+                    <div class="type body flex secondary">
+                      <strong> [[$TRANSLATE('Patient Found', LANG)]]: {{userPatientCounter}}</strong>
+                    </div>
+
+                    <template is="dom-if" if="{{!$equals(selectedDateRangeIndexForUser, 5)}}">
+                      <div class="type body secondary">
+                        (From [[_formatDateTime(dateCreatedFromForUser)]] to [[_formatDateTime(dateCreatedToForUser)]])
+                      </div>
+                    </template>
+
+
+                    <template is="dom-if" if="{{$equals(selectedDateRangeIndexForUser, 5)}}">
+                      <div class="horizontal layout center">
+                        <custom-vital-search class="bg-border purple m-right-8" style="width:210px" on-date-select="filterByDateClickedForUser"
+                          on-clear="filterByDateClearButtonClickedForUser"></custom-vital-search>
+                        <paper-button class="bg purple" raised on-tap="filterButtonClickedForUser">[[$TRANSLATE('Filter', LANG)]]</paper-button>
+                      </div>
+                    </template>
+
+                  </div>
+                </div>
+
+                <vaadin-grid items="[[userPatientList]]">
+                  <vaadin-grid-column width="50px" flex-grow="0">
+                    <template class="header">
+                      [[$TRANSLATE('SI', LANG)]]
+                    </template>
+                    <template>
+                      <div class="type body">
+                        <div>[[_returnSerial(index)]].</div>
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header layout horizontal">
+                      <!-- <vaadin-grid-filter aria-label="Full Name" path="name" value="[[nameFilter]]">
+                        <paper-input label="Patient Name" value="{{nameFilter}}" no-label-float></paper-input>
+                      </vaadin-grid-filter> -->
+                      [[$TRANSLATE('Patient Name', LANG)]]
+                    </template>
+                    <template>
+                      <div class="type body">
+                        <div>[[$getFullName(item.name)]]</div>
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable width="80px" flex-grow="0">
+                    <template class="header layout horizontal">
+                      <!-- <vaadin-grid-filter aria-label="Full Name" path="name" value="[[nameFilter]]">
+                        <paper-input label="Patient Name" value="{{nameFilter}}" no-label-float></paper-input>
+                      </vaadin-grid-filter> -->
+                      [[$TRANSLATE('Gender', LANG)]]
+                    </template>
+                    <template>
+                      <div class="type body">
+                        <div>[[item.gender]]</div>
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header layout horizontal">
+                      <!-- <vaadin-grid-filter aria-label="Full Name" path="name" value="[[nameFilter]]">
+                        <paper-input label="Patient Name" value="{{nameFilter}}" no-label-float></paper-input>
+                      </vaadin-grid-filter> -->
+                      [[$TRANSLATE('Patient Serial', LANG)]]
+                    </template>
+                    <template>
+                      <div class="type body">
+                        <div>[[item.serial]]</div>
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <!-- <vaadin-grid-column resizable>
+                    <template class="header layout horizontal">
+                      Organization Serial
+                    </template>
+                    <template>
+                      <div class="type body">
+                        <div>[[item.organizationId]]</div>
+                      </div>
+                    </template>
+                  </vaadin-grid-column> -->
+
+                  <vaadin-grid-column resizable>
+                    <template class="header layout horizontal">
+                      [[$TRANSLATE('Organization Name', LANG)]]
+                    </template>
+                    <template>
+                      <div class="type body">
+                        <div>[[item.orgName]]</div>
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable width="180px" flex-grow="0">
+                    <template class="header layout horizontal">
+                      [[$TRANSLATE('Date Registration', LANG)]]
+                    </template>
+                    <template>
+                      <div class="type body">
+                        <div>[[$mkDateTime(item.cratedDatetimeStamp)]]</div>
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable width="180px" flex-grow="0">
+                    <template class="header layout horizontal">
+                      [[$TRANSLATE('Last Visit', LANG)]]
+                    </template>
+                    <template>
+                      <div class="type body">
+                        <div>[[$mkDateTime(item.lastVisit.createdDatetimeStamp)]]</div>
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable width="150px" flex-grow="0">
+                    <template class="header layout horizontal">
+                      [[$TRANSLATE('Last Visit Type', LANG)]]
+                    </template>
+                    <template>
+                      <div class="type body">
+                        <div>[[item.lastVisit.visitType]]</div>
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header layout horizontal">
+                      [[$TRANSLATE('Action', LANG)]]
+                    </template>
+                    <template>
+                      <div>
+                        <paper-button class="btn btn-default" raised on-tap="viewUserPatient">[[$TRANSLATE('View', LANG)]]</paper-button>
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+
+
+              </template>
+            </paper-card>
+            <!-- Card - Patient Stats - end -->
+
+            <!-- Card - NWDR - start -->
+            <template is="dom-if" if="[[organization.markAsNwdrOrganization]]">
+              <template is="dom-if" if="[[$checkUserAccess('C901')]]">
+
+                <paper-card class="m-top-8">
+                  <div class="card-custom-header">
+                    <div class="horizontal layout center center-justified">
+                      <div class="horizontal layout center">
+                        <img class="custom-img m-right-8" width="48" height="48" src="../../assets/img/partners/badas.jpg"
+                          alt="">
+                        <div class="type display-regular">[[$TRANSLATE('Nationwide Diabetes Registry', LANG)]]</div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <div class="card-content">
+                    <paper-progress indeterminate hidden="[[!loadingForNwdr]]"></paper-progress>
+                  </div>
+
+                  <template is="dom-if" if="[[_isEmptyArray(nwdrPatientList.length)]]">
+                    <div class="card-content horizontal layout center center-justified">
+                      <div class="body type secondary">-- [[$TRANSLATE('no data available', LANG)]] --</div>
+                    </div>
+                  </template>
+
+                  <template is="dom-if" if="[[!_isEmptyArray(nwdrPatientList.length)]]">
+
+                    <paper-tabs class="basic-tabs" selected="{{selectedDateRangeIndex}}" scrollable>
+                      <template is="dom-repeat" items="[[dayRangeTypeList]]">
+                        <paper-tab class$="custom-tab-item {{item.bgColor}}">
+                          <div class="type title-2">[[item.type]]</div>
+                          <div class="horizontal layout">
+                            <div class="type body m-horizontal-4">[[item.patientCount]] [[item.patientLabel]]</div>
+                          </div>
+
+                        </paper-tab>
+                      </template>
+                    </paper-tabs>
+
+                    <div class="card-content">
+                      <div class="horizontal layout center">
+                        <div class="type body flex secondary">
+                          <strong>[[$TRANSLATE('Patient Found', LANG)]]: {{nwdrPatientCounter}}</strong>
+                        </div>
+
+                        <template is="dom-if" if="{{!$equals(selectedDateRangeIndex, 5)}}">
+                          <div class="type body secondary">
+                            (From [[_formatDateTime(dateCreatedFrom)]] to [[_formatDateTime(dateCreatedTo)]])
+                          </div>
+                        </template>
+
+
+                        <template is="dom-if" if="{{$equals(selectedDateRangeIndex, 5)}}">
+                          <div class="horizontal layout center">
+                            <custom-vital-search class="bg-border purple m-right-8" style="width:210px" on-date-select="filterByDateClicked"
+                              on-clear="filterByDateClearButtonClicked"></custom-vital-search>
+                            <paper-button class="bg purple" raised on-tap="filterButtonClicked">[[$TRANSLATE('Filter', LANG)]]</paper-button>
+                          </div>
+                        </template>
+
+                      </div>
+                    </div>
+
+                    <vaadin-grid items="[[nwdrPatientList]]">
+                      <vaadin-grid-column width="50px" flex-grow="0">
+                        <template class="header">
+                          [[$TRANSLATE('SI', LANG)]]
+                        </template>
+                        <template>
+                          <div class="type body">
+                            <div>[[_returnSerial(index)]].</div>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column resizable>
+                        <template class="header layout horizontal">
+                          <!-- <vaadin-grid-filter aria-label="Full Name" path="name" value="[[nameFilter]]">
+                          <paper-input label="Patient Name" value="{{nameFilter}}" no-label-float></paper-input>
+                        </vaadin-grid-filter> -->
+                          [[$TRANSLATE('Patient Name', LANG)]]
+                        </template>
+                        <template>
+                          <div class="type body">
+                            <div>[[$getFullName(item.name)]]</div>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column resizable width="80px" flex-grow="0">
+                        <template class="header layout horizontal">
+                          <!-- <vaadin-grid-filter aria-label="Full Name" path="name" value="[[nameFilter]]">
+                          <paper-input label="Patient Name" value="{{nameFilter}}" no-label-float></paper-input>
+                        </vaadin-grid-filter> -->
+                          [[$TRANSLATE('Gender', LANG)]]
+                        </template>
+                        <template>
+                          <div class="type body">
+                            <div>[[item.gender]]</div>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column resizable>
+                        <template class="header layout horizontal">
+                          <!-- <vaadin-grid-filter aria-label="Full Name" path="name" value="[[nameFilter]]">
+                          <paper-input label="Patient Name" value="{{nameFilter}}" no-label-float></paper-input>
+                        </vaadin-grid-filter> -->
+                          [[$TRANSLATE('Patient ID', LANG)]]
+                        </template>
+                        <template>
+                          <div class="type body">
+                            <div>[[item.nwdrPatientId]]</div>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+
+                      <!-- <vaadin-grid-column resizable>
+                      <template class="header layout horizontal">
+                        Organization Serial
+                      </template>
+                      <template>
+                        <div class="type body">
+                          <div>[[item.organizationId]]</div>
+                        </div>
+                      </template>
+                    </vaadin-grid-column> -->
+
+                      <vaadin-grid-column resizable>
+                        <template class="header layout horizontal">
+                          [[$TRANSLATE('Organization Name', LANG)]]
+                        </template>
+                        <template>
+                          <div class="type body">
+                            <div>[[item.orgName]]</div>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column resizable width="180px" flex-grow="0">
+                        <template class="header layout horizontal">
+                          [[$TRANSLATE('Date Registration', LANG)]]
+                        </template>
+                        <template>
+                          <div class="type body">
+                            <div>[[$mkDateTime(item.cratedDatetimeStamp)]]</div>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column resizable width="180px" flex-grow="0">
+                        <template class="header layout horizontal">
+                          [[$TRANSLATE('Last Visit', LANG)]]
+                        </template>
+                        <template>
+                          <div class="type body">
+                            <div>[[$mkDateTime(item.lastVisit.createdDatetimeStamp)]]</div>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column resizable width="150px" flex-grow="0">
+                        <template class="header layout horizontal">
+                          [[$TRANSLATE('Last Visit Type', LANG)]]
+                        </template>
+                        <template>
+                          <div class="type body">
+                            <div>[[item.lastVisit.visitType]]</div>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column resizable>
+                        <template class="header layout horizontal">
+                          [[$TRANSLATE('Action', LANG)]]
+                        </template>
+                        <template>
+                          <div>
+                            <paper-button class="btn btn-default" raised on-tap="viewNdrPatient">[[$TRANSLATE('View', LANG)]]</paper-button>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+
+
+                  </template>
+                </paper-card>
+              </template>
+            </template>
+            <!-- Card - NWDR - end -->
+
+            <!-- Card - PCC - start -->
+            <template is="dom-if" if="[[organization.markAsPccOrganization]]">
+              <template is="dom-if" if="[[$checkUserAccess('C902')]]">
+                <paper-card class="m-top-8">
+                  <div class="card-custom-header">
+                    <div class="horizontal layout center center-justified">
+                      <div class="horizontal layout center">
+                        <img class="custom-img m-right-8" width="48" height="48" src="../../assets/img/partners/badas_logo.png"
+                          alt="">
+                        <div class="type display-regular">[[$TRANSLATE('PCC', LANG)]]</div>
+                      </div>
+                    </div>
+
+                  </div>
+                  <div class="card-content">
+                    <paper-progress indeterminate hidden="[[!loadingForPcc]]"></paper-progress>
+                  </div>
+                  <template is="dom-if" if="[[_isEmptyArray(pccPatientList.length)]]">
+                    <div class="card-content horizontal layout center center-justified">
+                      <div class="body type secondary">-- [[$TRANSLATE('no data available', LANG)]] --</div>
+                    </div>
+                  </template>
+
+                  <template is="dom-if" if="[[!_isEmptyArray(pccPatientList.length)]]">
+
+                    <paper-tabs class="basic-tabs" selected="{{selectedDateRangeIndexForPcc}}" scrollable>
+                      <template is="dom-repeat" items="[[dayRangeTypeListForPcc]]">
+                        <paper-tab class$="custom-tab-item {{item.bgColor}}">
+                          <div class="type title-2">[[item.type]]</div>
+                          <div class="horizontal layout">
+                            <div class="type body m-horizontal-4">[[item.patientCount]] [[item.patientLabel]]</div>
+                          </div>
+
+                        </paper-tab>
+                      </template>
+                    </paper-tabs>
+
+                    <div class="card-content">
+                      <div class="horizontal layout center">
+                        <div class="type body flex secondary">
+                          <strong>[[$TRANSLATE('Patient Found', LANG)]]: {{pccPatientCounter}}</strong>
+                        </div>
+
+                        <!-- <template is="dom-if" if="{{!$equals(selectedDateRangeIndex, 5)}}">
+                        <div class="type body secondary">
+                          (From [[_formatDateTime(dateCreatedFromForPcc)]] to [[_formatDateTime(dateCreatedToForPcc)]])
+                        </div>
+                      </template> -->
+
+
+                        <template is="dom-if" if="{{$equals(selectedDateRangeIndexForPcc, 5)}}">
+                          <div class="horizontal layout center">
+                            <custom-vital-search class="bg-border purple m-right-8" style="width:210px" on-date-select="filterByDateClickedForPcc"
+                              on-clear="filterByDateClearButtonClickedForPcc"></custom-vital-search>
+                            <paper-button class="bg purple" raised on-tap="filterButtonClickedForPcc">[[$TRANSLATE('Filter', LANG)]]</paper-button>
+                          </div>
+                        </template>
+
+                      </div>
+                    </div>
+
+                    <vaadin-grid items="[[pccPatientList]]">
+                      <vaadin-grid-column resizable width="50px">
+                        <template class="header layout horizontal">
+                          [[$TRANSLATE('SI', LANG)]]
+                        </template>
+                        <template>
+                          <div class="type body">
+                            <div>[[_returnSerial(index)]].</div>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column resizable>
+                        <template class="header layout horizontal">
+                          <!-- <vaadin-grid-filter aria-label="Full Name" path="name" value="[[nameFilter]]">
+                          <paper-input label="Patient Name" value="{{nameFilter}}" no-label-float></paper-input>
+                        </vaadin-grid-filter> -->
+                          [[$TRANSLATE('Patient Name', LANG)]]
+                        </template>
+                        <template>
+                          <div class="type body">
+                            <div>[[$getFullName(item.name)]]</div>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column resizable width="100px">
+                        <template class="header layout horizontal">
+                          <!-- <vaadin-grid-filter aria-label="Full Name" path="name" value="[[nameFilter]]">
+                          <paper-input label="Patient Name" value="{{nameFilter}}" no-label-float></paper-input>
+                        </vaadin-grid-filter> -->
+                          [[$TRANSLATE('Gender', LANG)]]
+                        </template>
+                        <template>
+                          <div class="type body">
+                            <div>[[item.gender]]</div>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column resizable>
+                        <template class="header layout horizontal">
+                          <!-- <vaadin-grid-filter aria-label="Full Name" path="name" value="[[nameFilter]]">
+                          <paper-input label="Patient Name" value="{{nameFilter}}" no-label-float></paper-input>
+                        </vaadin-grid-filter> -->
+                          [[$TRANSLATE('Patient ID', LANG)]]
+                        </template>
+                        <template>
+                          <div class="type body">
+                            <div>[[item.pccPatientId]]</div>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column resizable>
+                        <template class="header layout horizontal">
+                          [[$TRANSLATE('Organization Serial', LANG)]]
+                        </template>
+                        <template>
+                          <div class="type body">
+                            <div>[[item.organizationId]]</div>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column resizable>
+                        <template class="header layout horizontal">
+                          [[$TRANSLATE('Organization Name', LANG)]]
+                        </template>
+                        <template>
+                          <div class="type body">
+                            <div>[[item.orgName]]</div>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column resizable width="180px">
+                        <template class="header layout horizontal">
+                          [[$TRANSLATE('Date Registration', LANG)]]
+                        </template>
+                        <template>
+                          <div class="type body">
+                            <div>[[$mkDateTime(item.cratedDatetimeStamp)]]</div>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column resizable width="180px">
+                        <template class="header layout horizontal">
+                          [[$TRANSLATE('Last Visit', LANG)]]
+                        </template>
+                        <template>
+                          <div class="type body">
+                            <div>[[$mkDateTime(item.lastVisit.createdDatetimeStamp)]]</div>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column resizable>
+                        <template class="header layout horizontal">
+                          [[$TRANSLATE('Last Visit Type', LANG)]]
+                        </template>
+                        <template>
+                          <div class="type body">
+                            <div>[[item.lastVisit.visitType]]</div>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column resizable>
+                        <template class="header layout horizontal">
+                          [[$TRANSLATE('Payment Status', LANG)]]
+                        </template>
+                        <template>
+                          <div class="type body">
+                            <div><i>--[[$TRANSLATE('work in progress', LANG)]]--</i></div>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+
+                      <vaadin-grid-column resizable>
+                        <template class="header layout horizontal">
+                          [[$TRANSLATE('Action', LANG)]]
+                        </template>
+                        <template>
+                          <div>
+                            <paper-button class="btn btn-default" raised on-tap="viewPccPatient">[[$TRANSLATE('View', LANG)]]</paper-button>
+                          </div>
+                        </template>
+                      </vaadin-grid-column>
+
+
+
+                      <!-- <vaadin-grid-column>
+                      <template class="header layout horizontal">
+                        Action
+                      </template>
+                      <template>
+                        <paper-button style="background: #eee;" on-tap="viewPatientNdrRecordList">View Records</paper-button>
+                      </template>
+                    </vaadin-grid-column> -->
+
+
+                  </template>
+                </paper-card>
+              </template>
+            </template>
+            <!-- Card - PCC - end -->
+
+            <!-- Organization specific Records - start -->
+            <!-- <template is="dom-repeat" items="[[recordStatsList]]" as="feature">
+              <paper-card class="feature-item" on-tap="goToSelectedOrganizationSpecificRecordsPage">
+
+                <div class="horizontal layout center p-horizontal-8">
+                  <iron-icon class="icon medium m-right-8" icon="[[feature.iconUrl]]"></iron-icon>
+                  <div class="type title-2">[[feature.name]]</div>
+                </div>
+
+                <div class="layout horizontal wrap">
+                  <template is="dom-if" if="[[_isEmptyArray(feature.statsList.length)]]">
+                    <div class="card-content horizontal layout center center-justified">
+                      <div class="body type secondary">-- no data available --</div>
+                    </div>
+                  </template>
+                  <template is="dom-repeat" items="[[feature.statsList]]">
+                    <div class="stats-item">
+                      <div class="type body-lead">[[item.title]]</div>
+                      <div class="horizontal layout center center-justified">
+                        <div class="stats-sub-item">
+                          <div class="type display-regular hack">[[item.recordCount]]</div>
+                          <div class="type caption-2">Records</div>
+                        </div>
+                        <div class="stats-sub-item">
+                          <div class="type display-regular hack">[[item.patientCount]]</div>
+                          <div class="type caption-2">Patients</div>
+                        </div>
+                      </div>
+
+
+                    </div>
+                  </template>
+                </div>
+
+                <paper-ripple></paper-ripple>
+              </paper-card>
+            </template> -->
+            <!-- Organization specific Records - end -->
+
+            <!-- Patient Stats - start -->
+            <template is="dom-repeat" items="[[statsList]]" as="stats">
+              <template is="dom-if" if="[[$equals(stats.templateType, 'default')]]">
+                <paper-card class="feature-item" on-tap="goToSelectedPage">
+
+                  <div class="horizontal layout center p-horizontal-8">
+                    <iron-icon class="icon medium m-right-8" icon="[[stats.iconUrl]]"></iron-icon>
+                    <div class="type title-2">[[stats.name]]</div>
+                  </div>
+
+                  <div class="layout horizontal wrap">
+                    <template is="dom-repeat" items="[[stats.list]]">
+                      <div class="stats-item">
+                        <div class="type caption-2">[[item.name]]</div>
+                        <div class="type title-2">[[item.count]]</div>
+                      </div>
+                    </template>
+                  </div>
+
+                  <paper-ripple></paper-ripple>
+                </paper-card>
+              </template>
+
+              <template is="dom-if" if="[[$equals(stats.type, 'organization-chamber-status')]]">
+                <paper-card class="feature-item" on-tap="goToSelectedPage">
+                  <div class="horizontal layout center p-horizontal-8">
+                    <iron-icon class="icon medium m-right-8" icon="[[stats.iconUrl]]"></iron-icon>
+                    <div class="type title-2 flex">[[stats.name]]</div>
+                  </div>
+
+                  <template is="dom-if" if="[[_isEmptyArray(stats.list.length)]]">
+                    <div class="card-content layout horizontal center center-justified">
+                      <div class="type body secondary">-- [[$TRANSLATE('no booking stats available', LANG)]] --</div>
+                    </div>
+                  </template>
+
+                  <div class="layout horizontal wrap">
+                    <template is="dom-repeat" items="[[stats.list]]" as="chamber">
+                      <div class="stats-item">
+                        <div class="type body-lead">[[chamber.chamberName]]</div>
+                        <div class="type display-regular">[[chamber.todayTotalPatientBooked]]</div>
+                        <div class="type body">[[$TRANSLATE('Patients', LANG)]]</div>
+                      </div>
+                    </template>
+                  </div>
+
+                  <paper-ripple></paper-ripple>
+                </paper-card>
+              </template>
+
+            </template>
+            <!-- Patient Stats - end -->
+          </section>
+          <!-- Search Patient - end -->
+
+          <!-- Imported/Offline Patients - start -->
+          <section>
+            <!-- Card - Search - start -->
+            <paper-card>
+              <div class="p-8 preview-title">
+
+                <paper-input class="flex custom-input-box" value="{{searchFieldMainInput}}" label="[[$TRANSLATE('Search Local Patient', LANG)]]"></paper-input>
+
+                <div class="horizontal layout end-justifed center">
+                  <paper-toggle-button class="" checked="{{isAdvancedSearchEnabled}}">[[$TRANSLATE('Advanced Search', LANG)]]</paper-toggle-button>
+                  <div class="flex"></div>
+                  <paper-button class="btn-add colored" raised on-tap="searchOfflineButtonPressed">
+                    <iron-icon icon="search" class="m-right-8"></iron-icon>[[$TRANSLATE('SEARCH', LANG)]]
+                  </paper-button>
+                </div>
+              </div>
+
+              <!-- advanced search - start -->
+              <template is="dom-if" if="{{isAdvancedSearchEnabled}}">
+                <paper-listbox class="custom-input-field">
+                  <paper-item class="custom">
+                    <div class="layout horizontal center wrap">
+                      <paper-checkbox checked="{{advancedSearchParameters.initialVisitDate.enabled}}">[[$TRANSLATE('Initial Visited date Between', LANG)]] </paper-checkbox>
+                      <paper-input class="m-horizontal-8" type="date" value="{{advancedSearchParameters.initialVisitDate.lowerBound}}"
+                        no-label-float></paper-input>
+                      <div> [[$TRANSLATE('and', LANG)]] </div>
+                      <paper-input class="m-horizontal-8" type="date" value="{{advancedSearchParameters.initialVisitDate.upperBound}}"
+                        no-label-float></paper-input>
+                    </div>
+                  </paper-item>
+                  <paper-item class="custom">
+                    <div class="horizontal layout center wrap">
+                      <paper-checkbox checked="{{advancedSearchParameters.lastVisitDate.enabled}}">[[$TRANSLATE('Last Visited date Between', LANG)]] </paper-checkbox>
+                      <paper-input class="m-horizontal-8" type="date" value="{{advancedSearchParameters.lastVisitDate.lowerBound}}"
+                        no-label-float></paper-input>
+                      <div> [[$TRANSLATE('and', LANG)]] </div>
+                      <paper-input class="m-horizontal-8" type="date" value="{{advancedSearchParameters.lastVisitDate.upperBound}}"
+                        no-label-float></paper-input>
+                    </div>
+                  </paper-item>
+                  <paper-item class="custom">
+                    <div class="horizontal layout center wrap">
+                      <paper-checkbox checked="{{advancedSearchParameters.admissionDate.enabled}}">[[$TRANSLATE('Admission Between', LANG)]]
+                      </paper-checkbox>
+                      <paper-input class="m-horizontal-8" type="date" value="{{advancedSearchParameters.admissionDate.lowerBound}}"
+                        no-label-float></paper-input>
+                      <div> [[$TRANSLATE('and', LANG)]] </div>
+                      <paper-input class="m-horizontal-8" type="date" value="{{advancedSearchParameters.admissionDate.upperBound}}"
+                        no-label-float></paper-input>
+                    </div>
+                  </paper-item>
+                  <paper-item class="custom">
+                    <div class="horizontal layout center wrap">
+                      <paper-checkbox checked="{{advancedSearchParameters.createdDate.enabled}}">[[$TRANSLATE('Created Between', LANG)]]
+                      </paper-checkbox>
+                      <paper-input class="m-horizontal-8" type="date" value="{{advancedSearchParameters.createdDate.lowerBound}}"
+                        no-label-float></paper-input>
+                      <div> [[$TRANSLATE('and', LANG)]] </div>
+                      <paper-input class="m-horizontal-8" type="date" value="{{advancedSearchParameters.createdDate.upperBound}}"
+                        no-label-float></paper-input>
+                    </div>
+                  </paper-item>
+                  <paper-item class="custom">
+                    <div class="horizontal layout center wrap">
+                      <paper-checkbox>[[$TRANSLATE('Handled by me between', LANG)]]</paper-checkbox>
+                      <paper-input class="m-horizontal-8" type="date" value="{{advancedSearchParameters.handledDate.lowerBound}}"
+                        no-label-float></paper-input>
+                      <div>[[$TRANSLATE('and', LANG)]]</div>
+                      <paper-input class="m-horizontal-8" type="date" value="{{advancedSearchParameters.handledDate.upperBound}}"
+                        no-label-float></paper-input>
+                    </div>
+                  </paper-item>
+                  <paper-item class="custom">
+                    <div class="horizontal layout center">
+                      <paper-checkbox>[[$TRANSLATE('Show only patients created by me', LANG)]]</paper-checkbox>
+                    </div>
+                  </paper-item>
+                  <paper-item class="custom">
+                    <div class="horizontal layout center">
+                      <paper-checkbox>[[$TRANSLATE('Show only patients handled by me at least once', LANG)]]</paper-checkbox>
+                    </div>
+                  </paper-item>
+                  <paper-item class="custom">
+                    <div class="horizontal layout center end-justified">
+                      <span class="more-optons" on-tap="moreOptionsPressed">[[$TRANSLATE('more options', LANG)]]?</span>
+                    </div>
+                  </paper-item>
+                </paper-listbox>
+              </template>
+              <!-- advanced search - end -->
+
+            </paper-card>
+            <!-- Card - Search - end -->
+
+            <!-- Card - Search Results - start -->
+            <template is="dom-if" if="[[$compareFn(arbitaryCounter, '>', 0)]]">
+              <paper-card class="m-top-8">
+                <div class="card-content">
+                  <div class="vertical layout center">
+                    <paper-spinner active></paper-spinner>
+                    <div class="type body secondary">[[$TRANSLATE('please wait for a while', LANG)]]...</div>
+                  </div>
+                </div>
+              </paper-card>
+            </template>
+            <template is="dom-if" if="[[$compareFn(arbitaryCounter, '==', 0)]]">
+              <paper-card class="m-top-8">
+
+                <div class="card-custom-header custom-input-field">
+                  <div class="layout horizontal center">
+                    <div class="flex">
+                      <!-- <div class="title">Search Results</div> -->
+                      <div class="type body secondary">[[matchingPatientList.length]] Imported/Offline Patient(s) found</div>
+                    </div>
+
+                    <custom-vital-search on-date-select="searchResultFilterByDateClicked" on-clear="searchResultFilterByDateClearButtonClicked"></custom-vital-search>
+
+                    <!-- <paper-icon-button icon="clear" on-tap="clearSearchResultsClicked"></paper-icon-button> -->
+                  </div>
+                </div>
+
+                <div class="p-0">
+                  <paper-listbox>
+
+                    <template id="patient-list-repeater" is="dom-repeat" items="[[matchingPatientList]]" as="patient">
+                      <paper-item class="custom layout horizontal center">
+                        <div class="type caption secondary">[[patient.serial]]</div>
+
+                        <div class="flex m-left-8">
+                          <div class="type body capitalize">[[$getFullName(patient.name)]]</div>
+                          <div class="type caption">[[patient.email]]</div>
+                          <div class="type caption">[[patient.phone]]</div>
+                          <!-- <div class="type caption">[[$mkDate(patient.createdDatetimeStamp)]]</div> -->
+                          <template is="dom-if" if="[[patient.doctorsPrivateNote]]">
+                            <div class="type caption">([[$truncate(patient.doctorsPrivateNote, 20)]])</div>
+                          </template>
+                        </div>
+                        <div class="layout horizontal m-horizontal-4 wrap">
+                          <template is="dom-if" if="[[patient.flags.isOnlineOnly]]">
+                            <div class="modifier online">[[$TRANSLATE('online Only', LANG)]]</div>
+                          </template>
+                          <template is="dom-if" if="[[patient.flags.isImported]]">
+                            <div class="modifier imported">[[$TRANSLATE('imported', LANG)]]</div>
+                          </template>
+                          <template is="dom-if" if="[[patient.flags.isLocalOnly]]">
+                            <div class="modifier local-only">[[$TRANSLATE('local only', LANG)]]</div>
+                          </template>
+                          <!-- <template is="dom-if" if="[[patient.flags.isLocallyUpdated]]">
+                            <div class="modifier locally-updated">locally updated</div>
+                          </template> -->
+                        </div>
+
+                        <!-- <paper-icon-button icon="visibility" on-tap="viewPatientIconPressed" hidden="[[!patient.flags.isImported]]"></paper-icon-button> -->
+
+                        <!-- <paper-button raised class="btn-add colored" on-tap="viewPatientIconPressed" hidden="[[!patient.flags.isImported]]"><iron-icon icon="icons:visibility" class="m-right-8"></iron-icon>View</paper-button> -->
+
+                        <paper-menu-button horizontal-align="right" no-animations>
+                          <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                          <paper-menu class="dropdown-content">
+                            <template is="dom-if" if="[[$or(patient.flags.isImported, patient.flags.isLocalOnly)]]">
+                              <!-- <paper-item on-tap="viewPatientPressed">View</paper-item> -->
+                              <paper-item on-tap="viewPatient">[[$TRANSLATE('View Patient', LANG)]]</paper-item>
+                              <paper-item on-tap="editPatientPressed">[[$TRANSLATE('Edit', LANG)]]</paper-item>
+                              <!-- <paper-item on-tap="editPatientPreconceptionRecord">Edit PCC Record <img class="m-left-8" width="24" height="24" src="../../assets/img/partners/badas_logo.png" alt=""></paper-item> -->
+                              <!-- <paper-item on-tap="_shortcutToNewPrescription">New Prescription</paper-item> -->
+                            </template>
+                            <!-- export/import start -->
+                            <template is="dom-if" if="[[patient.flags.isOnlineOnly]]">
+                              <paper-item on-tap="importPatientPressed">[[$TRANSLATE('Import from Cloud', LANG)]]</paper-item>
+                            </template>
+                            <template is="dom-if" if="[[$or(patient.flags.isLocalOnly, patient.flags.isImported)]]">
+                              <paper-item on-tap="publishPatientPressed">[[$TRANSLATE('Publish to Cloud', LANG)]]</paper-item>
+                            </template>
+                            <template is="dom-if" if="[[patient.flags.isImported]]">
+                              <paper-item on-tap="importLatestPatientPressed">[[$TRANSLATE('Import Latest from Cloud', LANG)]]</paper-item>
+                            </template>
+                            <template is="dom-repeat" items="[[organizationsIBelongToList]]" as="organization">
+                              <paper-item on-tap="putInWaitlistTapped">Put in [[organization.name]]'s Waitlist</paper-item>
+                            </template>
+
+
+                            <!-- export/import end -->
+
+                            <template is="dom-if" if="[[$or(patient.flags.isImported, patient.flags.isLocalOnly)]]">
+                              <paper-item on-tap="deletePatientPressed">[[$TRANSLATE('Delete local copy', LANG)]]</paper-item>
+                            </template>
+
+                          </paper-menu>
+                        </paper-menu-button>
+
+
+                      </paper-item>
+                    </template>
+
+                  </paper-listbox>
+
+                </div>
+
+                <div class="card-actions">
+                  <paper-button on-tap="newPatientFabPressed" raised class="colored">[[$TRANSLATE('Add new patient', LANG)]]</paper-button>
+                </div>
+
+              </paper-card>
+            </template>
+            <!-- Card - Search Results - end -->
+
+          </section>
+          <!-- Imported/Offline Patients - end -->
+
+          <!-- Patient Log - end -->
+          <section>
+            <!-- Card - Visited Patient Log - start -->
+
+            <paper-progress indeterminate hidden="[[!loading]]"></paper-progress>
+            <paper-card>
+              <div class="card-custom-header custom-input-field">
+                <div class="layout vertical center">
+                  <div class="title flex">[[$TRANSLATE('Visited Patient Log', LANG)]]</div>
+                  <div class="layout horizontal center m-top-8">
+                    <paper-input class="flex m-left-8" value="{{filterLogByPatientName}}" label="[[$TRANSLATE('Patient Name', LANG)]]" always-float-label></paper-input>
+                    <paper-input class="flex m-left-8" value="{{filterLogByPatientAge}}" label="[[$TRANSLATE('Age', LANG)]]" always-float-label></paper-input>
+                    <paper-input class="flex m-left-8" value="{{filterLogByPatientAddress}}" label="[[$TRANSLATE('Address', LANG)]]" always-float-label></paper-input>
+                    <custom-vital-search class=" m-left-8" on-date-select="searchResultFilterByDateClickedForPatientLog" on-clear="searchResultFilterByDateClearButtonClickedForPatientLog"></custom-vital-search>
+                    <div class="flex"></div>
+                    <paper-button class="btn btn-success btn-lg" raised on-tap="searchVisitedLog">[[$TRANSLATE('Filter', LANG)]]</paper-button>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <template is="dom-if" if="[[_isEmptyArray(matchingVisitedPatientLogList.length)]]">
+                <div class="card-content layout horizontal center center-justified">
+                  <div class="type body secondary">-- [[$TRANSLATE('no data available', LANG)]] --</div>
+                </div>
+              </template>
+
+              <iron-list items="[[matchingVisitedPatientLogList]]" style="height: 450px">
+                <template id="visited-patient-log-repeater">
+                  <paper-item class="custom layout horizontal center">
+                    <div class="type caption secondary">[[item.patientSerial]]</div>
+                    <div class="flex m-left-8">
+                      <div class="type body capitalize">[[$getFullName(item.patientName)]]</div>
+                      <div class="type caption">
+                        <strong>[[$TRANSLATE('Visited Date', LANG)]]: </strong>
+                        <span>[[$formatDateTime(item.visitedDateTimeStamp)]]</span>
+                      </div>
+                    </div>
+                    <paper-button raised class="btn-add" on-tap="viewPatientPressedFromLog">
+                      <iron-icon icon="visibility" class="m-right-8"></iron-icon>[[$TRANSLATE('view', LANG)]]
+                    </paper-button>
+                </template>
+              </iron-list>
+
+            </paper-card>
+            <!-- Card - Visited Patient Log - end -->
+          </section>
+          <!-- Patient Log - end -->
+
+          <!-- sync - start -->
+          <section>
+            <paper-card>
+              <div class="card-custom-header">
+                <div class="layout horizontal center">
+                  <div class="title flex">[[$TRANSLATE('Conflicted Patients list', LANG)]]</div>
+                  <!-- <paper-button raised class="btn-add colored" on-tap="uploadAllOfflineRegisteredPatient"><iron-icon icon="icons:cloud-upload" class="m-right-8"></iron-icon>Upload All</paper-button> -->
+                </div>
+                <template is="dom-if" if="[[_isEmptyArray(conflictedPatientList.length)]]">
+                  <div class="type body-caption secondary">[[$TRANSLATE('Your offline created patient already exist on our server. your can either change phone/email or provide patients Doctor Access Pin in order to upload all the records related to this patients', LANG)]].</div>
+                </template>
+
+              </div>
+
+              <paper-listbox>
+
+                <template id="conflicted-patient-repeater" is="dom-repeat" items="[[conflictedPatientList]]" as="patient">
+                  <paper-item class="custom layout horizontal center wrap">
+
+                    <div class="flex m-left-8">
+                      <div class="type caption secondary">[[patient.data.serial]]</div>
+                      <div class="type body capitalize">[[$getFullName(patient.data.name)]]</div>
+                      <div class="type caption-2">[[patient.data.phone]]</div>
+                    </div>
+
+                    <paper-input label="Pin" value="{{patient.doctorAccessPin}}"></paper-input>
+
+
+
+
+                    <paper-button raised class="btn-add" on-tap="checkAndUpdateConflictedPatientData">
+                      <iron-icon icon="save" class="m-right-8"></iron-icon>[[$TRANSLATE('save', LANG)]]
+                    </paper-button>
+
+                </template>
+              </paper-listbox>
+          </section>
+          <!-- sync registered - end -->
+
+
+        </iron-pages>
+
+      </div>
+
+    </div>
+
+    <paper-dialog id="dialogShowQrCode">
+      <h2 style="text-align: center;">[[$TRANSLATE('Scan Patients', LANG)]]</h2>
+      <div class="dialog-container">
+        <bdemr-qrcode-reader id="qrCodeReader" active="{{isQrCodeActive}}" result="{{qrCode}}" on-qrcode-change="_onQrCodeChanged"></bdemr-qrcode-reader>
+      </div>
+      <div class="buttons">
+        <paper-button on-tap="_dismissQrcodeDialog">[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+      </div>
+    </paper-dialog>
+
+
+    
+
+
+
+    <paper-fab class="custom-menu-button" icon="add" on-tap="newPatientFabPressed"></paper-fab>
+
+
+
+  </template>
+  <script src="page-patient-manager.coffee-compiled.js"></script>
+</dom-module>

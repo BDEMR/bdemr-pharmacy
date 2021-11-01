@@ -1,0 +1,405 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+
+<link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-covid-fit-test">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+        width: 90%;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      input {
+        background-color: #dde2e8;
+        border-radius: 6px;
+        height: 36px;
+        font-weight: 500;
+        padding: 0px 8px;
+        box-sizing: border-box;
+      }
+
+      .search {
+        background-color: #fff;
+        border: 1px solid #dadada;
+        padding: 0px 8px 12px 8px;
+        margin: 4px;
+        margin-left: 0;
+      }
+
+      /* styles related to print preview */
+      .print-button-style {
+        margin-top: 16px;
+        background: burlywood;
+      }
+
+      @media print {
+
+        #hideOnPrint {
+          display: none !important;
+        }
+      }
+
+      /*  */
+      .print-document {
+        font-family: 'Times New Roman';
+        background: white;
+        width: 100%;
+      }
+
+      .print-header {
+        position: relative;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px
+      }
+
+      .print-document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .print-document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+      .print-table {
+        table-layout: fixed;
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+      }
+
+      .print-table tr {
+        margin-bottom: 15px;
+      }
+
+      .print-table th {
+        background-color: var(--paper-grey-50);
+      }
+
+      .print-table td {
+        color: #444;
+      }
+
+      .print-table thead th {
+        word-wrap: normal;
+        padding: 10px 5px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+      .print-table tbody td,
+      .print-table tfoot th,
+      .print-footer-table th {
+        padding: 10px 5px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+      .print-table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .type.bg-gray {
+        background-color: #eee;
+        padding: 0px 6px;
+        display: inline-block;
+        border-radius: 6px;
+        font-weight: bold;
+        text-align: center;
+      }
+    </style>
+
+    <div class="master-container">
+      <div class="limiting-container">
+
+        <!-- Card - Search - start -->
+        <paper-card id="hideOnPrint" heading="[[$TRANSLATE('COVID Respirator Fit Test', LANG)]]">
+          <paper-progress indeterminate hidden$="[[!getBoolean(loadingCounter)]]"></paper-progress>
+
+          <div class="card-content custom-input-field">
+
+            <div class="layout horizontal">
+              <!-- <paper-input class="m-right-8" id="customRespiratorNameId" autofocus label="[[$TRANSLATE('Name of the Participant', LANG)]]"
+                value="{{covidRespiratorTestObject.data.name}}">
+              </paper-input> -->
+
+              <paper-autocomplete class="flex m-right-8" text="{{covidRespiratorTestObject.data.name}}"
+                id="userNameFieldId"
+                placeholder="[[$TRANSLATE('Type Name of the Participant and Hit ENTER', LANG)]]"
+                on-autocomplete-selected="userSelectedFromList"
+                on-keyup="seachUserFromSystem" error-message="Input Required!"
+                style="position: relative; top: 8px;"
+                required>
+              </paper-autocomplete>
+
+              <vaadin-combo-box id="summaryOrganizationSelector" class="organization-dropdown m-right-8"
+                label="[[$TRANSLATE('Company/Department/Organization', LANG)]]" items="[[childOrganizationList]]"
+                on-selected-item-changed="organizationSelected" loading="[[loading]]"
+                disabled="[[!childOrganizationList.length]]">
+              </vaadin-combo-box>
+
+              <vaadin-combo-box class="organization-dropdown m-right-8 flex" label="Make, model and respirator size"
+                allow-custom-value id="customRespiratorSizeId" items="[[customRespiratorList]]"
+                value="{{covidRespiratorTestObject.data.customRespiratorSize}}">
+              </vaadin-combo-box>
+            </div>
+
+            <div class="layout horizontal">
+              <vaadin-combo-box class="organization-dropdown m-right-8 flex"
+                label="Own facepiece, pool or test model used" id="facepieceModelUsedId"
+                items="[[facepieceModelOptions]]" value="{{covidRespiratorTestObject.data.facepieceModelUsed}}">
+              </vaadin-combo-box>
+
+
+              <vaadin-combo-box class="organization-dropdown m-right-8 flex" label="Kit used" id="kitUsedId"
+                items="[[kitOptions]]" value="{{covidRespiratorTestObject.data.kitUsed}}">
+              </vaadin-combo-box>
+
+
+              <vaadin-combo-box label="[[$TRANSLATE('Test conducted by', LANG)]]"
+                class="organization-dropdown m-right-8" items="[[memberList]]" item-label-path="name"
+                on-selected-item-changed="memberSelected" loading="[[memberListLoading]]">
+                <template>
+                  <div><strong>[[item.name]]</strong></div>
+                  <div><span>[[item.phone]]</span></div>
+                </template>
+              </vaadin-combo-box>
+            </div>
+
+            <div class="layout vertical m-bottom-16">
+              <vaadin-combo-box class="organization-dropdown m-right-8 flex" label="Fit Test Result"
+                id="resultId" items="[[fitTestResultOptions]]"
+                value="{{covidRespiratorTestObject.data.result}}">
+              </vaadin-combo-box>
+
+              <template is="dom-if" if="[[isRetestAndReasonVisible]]">
+                <vaadin-combo-box class="organization-dropdown m-right-8 flex" label="Retests required"
+                  id="retestRequiredId" items="[[retestRequiredOptions]]"
+                  value="{{covidRespiratorTestObject.data.retestRequired}}">
+                </vaadin-combo-box>
+                <paper-textarea max-rows="2" label="If yes, record reasons" value="{{covidRespiratorTestObject.data.retestRequiredReason}}"></paper-textarea>
+              </template>
+            </div>
+
+            <br>
+
+            <div class="layout horizontal m-top-16">
+              <paper-input class="paper-custom-input flex-item flex four" label="Pass achieved on"
+                value="{{covidRespiratorTestObject.data.passAchievedDate}}" type="date"></paper-input>
+
+              <div class="flex"></div>
+              <template is="dom-if" if="[[!loadingCounter]]">
+                <paper-button raised class="btn btn-success btn-large" on-tap="addEntryClicked">[[$TRANSLATE('Add', LANG)]]</paper-button>
+              </template>
+            </div>
+
+            <vaadin-grid items="[[filteredAddedRespiratorTestList]]">
+
+              <!-- name -->
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <input placeholder="[[$TRANSLATE('Name of the Participant', LANG)]]" is="iron-input"
+                    bind-value="{{respiratorTestNameSearchString}}" />
+                </template>
+                <template>
+                  <div>[[item.data.name]]</div>
+                </template>
+                <template class="footer">
+                  <div>Total: [[filteredAddedRespiratorTestList.length]]</div>
+                </template>
+              </vaadin-grid-column>
+
+              <!-- company/department -->
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <input placeholder="[[$TRANSLATE('Company/Department/Organization', LANG)]]" is="iron-input"
+                    bind-value="{{respiratorTestCompanySearchString}}" />
+                </template>
+                <template>
+                  <div>[[item.data.company.name]]</div>
+                </template>
+              </vaadin-grid-column>
+
+              <!-- make, model -->
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <input placeholder="Make, Model, Respirator Size" is="iron-input"
+                    bind-value="{{respiratorTestModelSearchString}}" />
+                </template>
+                <template>
+                  <div>[[item.data.customRespiratorSize]]</div>
+                </template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>[[$TRANSLATE('Model Used', LANG)]]</span>
+                </template>
+                <template>
+                  <div>[[item.data.facepieceModelUsed]]</div>
+                </template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>[[$TRANSLATE('Kit Used', LANG)]]</span>
+                </template>
+                <template>
+                  <div>[[item.data.kitUsed]]</div>
+                </template>
+              </vaadin-grid-column>
+
+              <!-- test conducted by -->
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <input placeholder="[[$TRANSLATE('Test Conducted By', LANG)]]" is="iron-input"
+                    bind-value="{{respiratorTestUserSearchString}}" />
+                </template>
+                <template>
+                  <div>[[item.data.testConductedBy.name]]</div>
+                </template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <!-- <span>[[$TRANSLATE('Fit Test Result', LANG)]]</span> -->
+                  <input placeholder="[[$TRANSLATE('Fit Test Result', LANG)]]" is="iron-input"
+                    bind-value="{{respiratorTestResultSearchString}}" />
+                </template>
+                <template>
+                  <div>[[item.data.result]]</div>
+                </template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>[[$TRANSLATE('Retests Required', LANG)]]</span>
+                </template>
+                <template>
+                  <div>[[item.data.retestRequired]]</div>
+                </template>
+              </vaadin-grid-column>
+
+
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <vaadin-grid-sorter path="createdDatetimeStamp" direction="desc">[[$TRANSLATE('Pass Achieved On', LANG)]]</vaadin-grid-sorter>
+                </template>
+                <template>
+                  <div>[[$formatDate(item.data.passAchievedDate)]]</div>
+                </template>
+              </vaadin-grid-column>
+
+              <!-- <vaadin-grid-column width="120px" flex-grow="0" resizable>
+                <template class="header">
+                  <vaadin-grid-filter aria-label="Name" path="category" value="[[searchString]]" style="margin-top: 6px;">
+                    <paper-input label="[[$TRANSLATE('Category', LANG)]]" value="{{searchString}}" no-label-float></paper-input>
+                  </vaadin-grid-filter>
+                </template>
+                <template>
+                  <div class="type caption-2 bg-gray success">[[item.category]]</div>
+                </template>
+              </vaadin-grid-column> -->
+
+              <!-- patient name -->
+              <!-- <vaadin-grid-column resizable>
+                <template class="header">
+                  <input placeholder="[[$TRANSLATE('Patient Name', LANG)]]" is="iron-input" bind-value="{{patientNameSearchString}}"/>
+                </template>
+                <template>
+                  <div>[[$getFullName(item.patientName)]]</div>
+                </template>
+              </vaadin-grid-column> -->
+
+
+              <vaadin-grid-column resizable>
+                <template class="header">[[$TRANSLATE('Action', LANG)]]
+                  <span></span>
+                </template>
+                <template>
+                  <div class="horizontal layout">
+                    <paper-icon-button icon="print" on-tap="printTestButtonPressed">Print</paper-icon-button>
+                    <!-- <paper-icon-button icon="create" on-tap="editInvoiceButtonPressed"
+                      hidden$="[[!_checkUserAccess('C023')]]"></paper-icon-button>
+                    <paper-icon-button icon="delete" on-tap="deleteInvoiceBtnClicked"
+                      hidden$="[[!_checkUserAccess('C024')]]"></paper-icon-button> -->
+                  </div>
+                </template>
+              </vaadin-grid-column>
+
+            </vaadin-grid>
+
+          </div>
+        </paper-card>
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-covid-fit-test.coffee-compiled.js"></script>
+</dom-module>

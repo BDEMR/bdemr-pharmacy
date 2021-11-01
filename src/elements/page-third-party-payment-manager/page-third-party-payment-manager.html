@@ -1,0 +1,353 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+
+
+<link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-third-party-payment-manager">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+        width: 90%;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .header {
+        background-color: var(--paper-grey-100);
+        padding: 15px;
+      }
+
+      .label {
+        background-color: var(--paper-grey-100);
+        padding: 5px;
+      }
+
+      .border-bottom {
+        border-bottom: 1px solid rgb(235, 230, 230);
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      paper-dialog {
+      min-width: 450px;
+      }
+      
+      .top-margin {
+      margin-top: 10px
+      }
+      
+      .table {
+      width: 100%;
+      border-collapse: collapse;
+      }
+      
+      .table th {
+      text-align: left;
+      background-color: var(--paper-grey-50);
+      }
+      
+      .table td,
+      .table th {
+      vertical-align: left;
+      padding: 10px;
+      border: 1px solid var(--paper-grey-300);
+      }
+      
+      paper-progress {
+      width: 100%;
+      --paper-progress-active-color: var(--paper-orange-500);
+      }
+      
+      .card-custom-header {
+      padding: 15px;
+      border-bottom: 1px solid var(--paper-grey-200);
+      }      
+    </style>
+
+    
+    <!-- <module-accounts-top-nav page-name="third-party-payment-manager" organization-id="[[organization.idOnServer]]"></module-accounts-top-nav> -->
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <template is="dom-if" if="[[isLoading]]">
+          <div class="layout horizontal center type bold text-center">
+            <paper-progress indeterminate></paper-progress>
+          </div>
+          <h2 class="type center">[[$TRANSLATE('Please Wait, Loading', LANG)]]...</h2>
+        </template>
+
+
+        <paper-card heading="[[$TRANSLATE('Third Party Payment Manager', LANG)]]">
+          <div class="card-actions">
+            <paper-button class="btn btn-success" raised on-tap="_addNewPaymentButtonClicked">+ [[$TRANSLATE('Add a New Payment', LANG)]]</paper-button>
+          </div>
+          <div class="card-content custom-input-field">
+
+            <div class="layout horizontal end wrap">
+              <paper-input type="search" class="filter-query m-right-8" label="[[$TRANSLATE('Filter By Name or Mobile', LANG)]]" no-label-float value="{{mobileSearchString}}"></paper-input>
+
+              <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
+
+              <paper-button class="btn btn-success" raised on-tap="searchButtonClicked">[[$TRANSLATE('Search', LANG)]]</paper-button>
+              <paper-button raised on-tap="resetButtonClicked">[[$TRANSLATE('Reset', LANG)]]</paper-button>
+            </div>
+          </div>
+          <div class="card-content">
+            <!-- <template is="dom-if" if="[[!thirdPartyPaymentList.length]]">
+              <h3 class="type center">[[$TRANSLATE('NO DATA YET', LANG)]]</h3>
+            </template> -->
+            
+              <vaadin-grid class="custom-agent-table" id="paymentList" items="[[thirdPartyPaymentList]]">
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <vaadin-grid-sorter path="name">
+                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Name', LANG)]]" path="name"
+                        value="[[filterName]]">
+                        <paper-input label="[[$TRANSLATE('Name', LANG)]]" value="{{filterName}}" no-label-float>
+                        </paper-input>
+                      </vaadin-grid-filter>
+                    </vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[item.name]]
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <vaadin-grid-sorter path="mobile">
+                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Mobile', LANG)]]" path="mobile"
+                        value="[[filterMobile]]">
+                        <paper-input label="[[$TRANSLATE('Mobile', LANG)]]" value="{{filterMobile}}" no-label-float>
+                        </paper-input>
+                      </vaadin-grid-filter>
+                    </vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[item.mobile]]
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <vaadin-grid-sorter path="address">
+                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Address', LANG)]]" path="address"
+                        value="[[filterAddress]]">
+                        <paper-input label="[[$TRANSLATE('Address', LANG)]]" value="{{filterAddress}}" no-label-float>
+                        </paper-input>
+                      </vaadin-grid-filter>
+                    </vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[item.address]]
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <vaadin-grid-sorter path="billedDateFrom">
+                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Billed Date From', LANG)]]" path="billedDateFrom"
+                        value="[[filterBilledDateFrom]]">
+                        <paper-input label="[[$TRANSLATE('Billed Date From', LANG)]]" value="{{filterBilledDateFrom}}" no-label-float>
+                        </paper-input>
+                      </vaadin-grid-filter>
+                    </vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[ $formatDateTime(item.billedDateFrom)]]
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <vaadin-grid-sorter path="billedDateTo">
+                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Billed date to', LANG)]]" path="billedDateTo"
+                        value="[[filterBilledDateTo]]">
+                        <paper-input label="[[$TRANSLATE('Billed date to', LANG)]]" value="{{filterBilledDateTo}}" no-label-float>
+                        </paper-input>
+                      </vaadin-grid-filter>
+                    </vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[$formatDateTime(item.billedDateTo)]]
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <vaadin-grid-sorter path="createdDatetimeStamp">
+                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Payment date', LANG)]]" path="createdDatetimeStamp"
+                        value="[[filterPayDate]]">
+                        <paper-input label="[[$TRANSLATE('Payment date', LANG)]]" value="{{filterPayDate}}" no-label-float>
+                        </paper-input>
+                      </vaadin-grid-filter>
+                    </vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[$formatDateTime(item.createdDatetimeStamp)]]
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <vaadin-grid-sorter path="paymentAmount">
+                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Payment amount', LANG)]]" path="paymentAmount"
+                        value="[[filterPayment]]">
+                        <paper-input label="[[$TRANSLATE('Payment amount', LANG)]]" value="{{filterPayment}}" no-label-float>
+                        </paper-input>
+                      </vaadin-grid-filter>
+                    </vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[item.paymentAmount]]
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    [[$TRANSLATE('Actions', LANG)]]
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      <paper-button raised class="btn btn-danger" on-tap="_deletePayment">[[$TRANSLATE('Delete', LANG)]]</paper-button>
+  
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+                </vaadin-grid>
+            
+            
+
+
+            <!-- <table class="table">
+              <tr>
+                <th>[[$TRANSLATE('Name', LANG)]]</th>
+                <th>[[$TRANSLATE('Mobile', LANG)]]</th>
+                <th>[[$TRANSLATE('Address', LANG)]]</th>
+                <th>[[$TRANSLATE('Billed date from', LANG)]]</th>
+                <th>[[$TRANSLATE('Billed date to', LANG)]]</th>
+                <th>[[$TRANSLATE('Payment date', LANG)]]</th>
+                <th>[[$TRANSLATE('Payment amount', LANG)]]</th>
+                <th>[[$TRANSLATE('Actions', LANG)]]</th>
+              </tr>
+              <template is="dom-if" if="[[!thirdPartyPaymentList.length]]">
+                <h3 class="type center">[[$TRANSLATE('NO DATA YET', LANG)]]</h3>
+              </template>
+              <template is="dom-repeat" items="[[thirdPartyPaymentList]]">
+                <tr>
+                  <td>[[item.name]]</td>
+                  <td>[[item.mobile]]</td>
+                  <td>[[item.address]]</td>
+                  <td>[[ $formatDateTime(item.billedDateFrom)]]</td>
+                  <td>[[ $formatDateTime(item.billedDateTo)]]</td>
+                  <td>[[$formatDateTime(item.createdDatetimeStamp)]]</td>
+                  <td>[[item.paymentAmount]] BDT</td>
+                  <td>
+                    <paper-button raised class="btn btn-danger" on-tap="_deletePayment">[[$TRANSLATE('Delete', LANG)]]</paper-button>
+                  </td>
+                </tr>
+              </template>
+            </table> -->
+          </div>
+        </paper-card>
+
+        <!-- Dialog for - Add New payment - start -->
+        <paper-dialog class="custom-input-field" id="dialogAddNewPayment">
+          <div class="type body-lead" style="color: green;">
+            <iron-icon icon="receipt" class="m-right-8"></iron-icon>[[$TRANSLATE('Add Payment', LANG)]]
+          </div>
+          <paper-input label="[[$TRANSLATE('Name', LANG)]]" value="{{thirdPartyPaymentObject.name}}"></paper-input>
+          <paper-input label="[[$TRANSLATE('Mobile', LANG)]]" value="{{thirdPartyPaymentObject.mobile}}"></paper-input>
+          <paper-input label="[[$TRANSLATE('Address', LANG)]]" value="{{thirdPartyPaymentObject.address}}"></paper-input>
+          <div class="layout horizontal">
+            <h4>[[$TRANSLATE('Billed Date From', LANG)]]:</h4>
+            <div class="flex-3 m-left-16">
+              <vaadin-date-picker-light min="[[today]]">
+                <input is="iron-input" class="custom-input" placeholder="[[$TRANSLATE('MM/DD/YYYY', LANG)]]" bind-value="{{customBilledDateFrom}}" />
+              </vaadin-date-picker-light>
+            </div>
+          </div>
+          <div class="layout horizontal">
+            <h4>[[$TRANSLATE('Billed Date To', LANG)]]:</h4>
+            <div class="flex-3 m-left-16">
+              <vaadin-date-picker-light min="[[today]]">
+                <input is="iron-input" class="custom-input" placeholder="[[$TRANSLATE('MM/DD/YYYY', LANG)]]" bind-value="{{customBilledDateTo}}" />
+              </vaadin-date-picker-light>
+            </div>
+          </div>
+          <paper-input label="[[$TRANSLATE('Payment Amount', LANG)]]" value="{{thirdPartyPaymentObject.paymentAmount}}"></paper-input>
+          <div class="buttons">
+            <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+            <paper-button class="colored" on-click="_addPaymentRequest" autofocus raised>[[$TRANSLATE('Add', LANG)]]</paper-button>
+          </div>
+        </paper-dialog>
+        <!-- Dialog for - Add New Payment - end -->
+
+      </div>
+
+    </div>
+
+
+
+  </template>
+  <script src="page-third-party-payment-manager.coffee-compiled.js"></script>
+</dom-module>

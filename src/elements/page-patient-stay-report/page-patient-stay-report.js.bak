@@ -1,0 +1,107 @@
+Polymer({
+  is: 'page-patient-stay-report',
+  behaviors: [
+    app.behaviors.commonComputes,
+    app.behaviors.dbUsing,
+    app.behaviors.apiCalling,
+    app.behaviors.pageLike
+  ],
+  properties: {
+    user: Object,
+    organization: Object,
+    patientStayObject: Object,
+    matchingSeatList: {
+      type: Array,
+      value: []
+    },
+    unitList: {
+      type: Array,
+      value: []
+    },
+    wardList: {
+      type: Array,
+      value: []
+    },
+    selectedDepartmentName: String,
+    selectedUnitName: String,
+    selectedWardName: String,
+    loadingCounter: {
+      type: Number,
+      value: 0
+    },
+    showVaccantOnly: {
+      type: Boolean,
+      value: false
+    }
+  },
+
+  navigatedIn() {
+    this._loadUser();
+    this._loadOrganization();
+    this._loadPatientStayObject(this.organization.idOnServer);
+  },
+
+  _loadUser() {
+    const userList = app.db.find('user');
+    if (userList.length === 1) {
+      return this.user = userList[0];
+    } else {
+      return this.domHost.showModalDialog('User not found')
+    }
+  },
+
+  _loadOrganization() {
+    const organizationList = app.db.find('organization');
+    if (organizationList.length === 1) {
+      return this.set('organization', organizationList[0]);
+    }
+    else {
+      return this.domHost.showModalDialog('Organization not found')
+    }
+  },
+
+  _loadPatientStayObject(organizationIdentifier) {
+    this.loadingCounter++
+    const data = {
+      apiKey: this.user.apiKey,
+      organizationId: organizationIdentifier
+    };
+    this.callApi('/bdemr-organization-patient-stay-get-object', data, (err, response) => {
+      this.loadingCounter--
+      if (err) {
+        this.domHost.showModalDialog(err.message);
+      } else if (response.hasError) {
+        return this.domHost.showModalDialog(response.error.message);
+      } else {
+        this.set('patientStayObject', response.data.patientStayObject);
+        this.seatList = this.patientStayObject.seatList;
+        this.set('matchingSeatList', this.seatList);
+        this.patientStayObject.locations = this.patientStayObject.locations || [];
+        return console.log(this.patientStayObject);
+      }
+    });
+  },
+
+  departmentDropdownValueChanged(e) {
+    if (!e.detail.value) return;
+    let { name, unitList } = e.detail.value
+    this.set('unitList', unitList);
+    this.set('selectedDepartmentName', name)
+  },
+  unitDropdownValueChanged(e) {
+    if (!e.detail.value) return;
+    let { name, wardList } = e.detail.value;
+    this.set('wardList', wardList)
+    this.set('selectedUnitName', name);
+  },
+  wardDropdownValueChanged(e) {
+    if (!e.detail.value) return;
+    this.set('selectedWardName', e.detail.value.name)
+  },
+
+  searchButtonClicked() {
+    const filterdSeatList = this.seatList.filter(item => (this.selectedDepartmentName ? item.department == this.selectedDepartmentName : true) && (this.selectedUnitName ? item.unit == this.selectedUnitName : true) && (this.selectedWardName ? item.ward == this.selectedWardName : true) && (this.showVaccantOnly ? (item.patientSerial ? false : true) : true));
+    this.set('matchingSeatList', filterdSeatList);
+  }
+
+})

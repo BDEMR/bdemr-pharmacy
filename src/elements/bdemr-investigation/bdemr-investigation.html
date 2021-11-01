@@ -1,0 +1,263 @@
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/paper-spinner/paper-spinner.html">
+<script src="./papaparse.min.js"></script>
+
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<dom-module id="bdemr-investigation">
+
+  <template>
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      :host {
+        display: block;
+        /* width: 100%; */
+      }
+
+      #dialogInvestigationBulkImport {
+        width: 310px;
+      }
+
+      .actions {
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
+      }
+
+      .custom-button {
+        min-width: 0;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+        background-color: #eceff1;
+        color: rgba(0, 0, 0, .87);
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      .search-area {
+        padding: 8px 8px 8px 16px;
+        border-radius: 6px;
+        background-color: #fff;
+      }
+
+      .search-bar {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+
+      #searchInvestigation {
+        @apply(--layout-flex);
+      }
+
+      .btn-search {
+        min-width: 0;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+        background-color: #eceff1;
+        color: rgba(0, 0, 0, .87);
+      }
+
+      .m-right-8 {
+        margin-right: 8px;
+      }
+
+      .m-left-8 {
+        margin-left: 8px;
+      }
+
+      .test-edit-area {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-center-justified);
+        padding: 16px;
+      }
+
+      vaadin-combo-box ::content label {
+        font-size: 18px !important;
+      }
+
+      vaadin-combo-box ::content input {
+        font-size: 18px !important;
+        color: rgba(0, 0, 0, .87) !important;
+      }
+
+      .shift-to-right {
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
+      }
+
+      .custom-item {
+        margin-top: 4px !important;
+        margin-bottom: 4px !important;
+        background-color: #fff;
+        box-sizing: border-box;
+        padding: 4px;
+        border-top: 1px solid #eee;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+
+      .custom-item:first-child {
+        border-top: none !important;
+      }
+
+      #dialogCustomInvestigation {
+        width: 80%;
+        border-radius: 6px;
+      }
+
+      .custom-dialog-content {
+        height: 380px;
+        overflow-y: scroll;
+      }
+
+      .custom-title {
+        font-size: 24px;
+        line-height: 32px;
+        padding: 24px 16px 0 24px;
+        font-weight: 300px;
+      }
+
+      .b-top {
+        border-top: 1px solid #eee;
+      }
+
+      .text-failed {
+        color: red;
+      }
+
+      paper-progress {
+        width: 100%;
+      }
+
+      paper-progress.slow {
+        width: 100%;
+        --paper-progress-indeterminate-cycle-duration: 20s;
+      }
+
+      .text-body {
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+      }
+
+      .text-caption {
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 18px;
+      }
+
+    </style>
+
+    <div>
+      <div class="search-area">
+        <div class="search-bar">
+          <vaadin-combo-box no-label-float id="investigationSearch" items="[[searchResults]]" class="flex" label="Search or type investigation name"
+            item-label-path="name" filter="{{investigationSearchQuery}}" loading="[[fetchingInvestigationSearchResult]]" allow-custom-value on-selected-item-changed="investigationSelected" value="{{inputInvestigationValue}}">
+            <template>
+              <div class="horizontal layout center">
+                <div class="flex">
+                  <div class="text-body">{{item.name}}</div>
+                  <div class="text-caption">{{_formatTestList(item.investigationList)}}</div>
+                </div>
+                <iron-icon icon="favorite" hidden$="{{!item.isFavorite}}"></iron-icon>
+              </div>
+            </template>
+          </vaadin-combo-box>
+          <!-- <paper-menu-button class="p-0" vertical-align="top" horizontal-align="right">
+            <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+            <paper-menu class="dropdown-content">
+              <paper-item on-tap="newInvestigationBtnPressed"><iron-icon class="m-right-8" icon="create"></iron-icon>Create New Investigation</paper-item>
+              <paper-item on-tap="_showBulkImportDialog"><iron-icon class="m-right-8" icon="icons:cloud-upload"></iron-icon>Bulk Import</paper-item>
+              <paper-item on-tap="_downloadDemoTemplateBtnPressed"><iron-icon class="m-right-8" icon="icons:file-download"></iron-icon>Download CSV Template (Demo)</paper-item>
+            </paper-menu>
+          </paper-menu-button> -->
+        </div>
+        <div class="shift-to-right">
+          <template is="dom-if" if="{{_isValueIsCustom(searchResults.length, investigationSearchQuery)}}">
+            <paper-button class="custom-button colored" on-tap="newInvestigationBtnPressed" raised>Create a new investigation</paper-button>
+          </template>
+          <paper-toggle-button checked="{{isFavoriteOnly}}" class="m-horizontal-8">Show my favorites only</paper-toggle-button>
+        </div>
+      </div>
+
+      <!-- <div class="card-content b-top" hidden$="{{!selectedInvestigation}}">
+        <div class="horizontal layout center">
+          <div class="flex">
+            <div class="type body-lead">{{selectedInvestigation.name}}</div>
+            <template is="dom-repeat" items="[[selectedInvestigation.investigationList]]">
+              <div class="type caption-2 m-right-24">[[_returnSerial(index)]]. [[item.name]]</div>
+            </template>
+          </div>
+          <paper-menu-button class="p-0" vertical-align="top" horizontal-align="right">
+            <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+            <paper-menu class="dropdown-content">
+              <paper-item on-tap="_markAsFavorite"><iron-icon class="m-right-8" icon="favorite"></iron-icon>Mark as Favorite</paper-item>
+              <paper-item on-tap="_editInvestigation"><iron-icon class="m-right-8" icon="create"></iron-icon>Edit</paper-item>
+              <paper-item on-tap="_deleteInvestigation"><iron-icon class="m-right-8" icon="delete"></iron-icon>Delete</paper-item>
+            </paper-menu>
+          </paper-menu-button>
+        </div>
+      </div>
+
+      <div class="card-actions"  hidden$="{{!selectedInvestigation}}">
+        <paper-button class="custom-button" on-tap="_cancelInvestigation">Cancel</paper-button>
+        <paper-button class="custom-button colored" on-tap="" raised>Add this investigation</paper-button>
+      </div> -->
+    </div>
+
+
+    <!-- Dialog for - New Investigation - start -->
+    <paper-dialog id="dialogNewInvestigation" vertical-align='top'>
+      <h2 class="custom-title">New Investigation</h2>
+      <div class="custom-dialog-content">
+
+        <paper-input label="Investigation Name" value="{{newInvestigation.name}}"></paper-input>
+        <div class="shift-to-right">
+          <paper-button class="custom-button" on-tap="_addNewTest" raised> Add new test</paper-button>
+        </div>
+
+        <div class="p-0">
+          <template is="dom-repeat" items="{{newInvestigation.investigationList}}">
+            <div class="custom-item">
+              <div class="type caption-2 m-right-8">[[_returnSerial(index)]].</div>
+              <div class="flex">
+                <div class="horizontal layout wrap">
+                  <paper-input class="flex" label="Test Name" value="{{item.name}}"></paper-input>
+                  <paper-input label="Unit" value="{{item.unitList.0}}"></paper-input>
+                </div>
+                <paper-input label="Reference Range" value="{{item.referenceRange}}"></paper-input>
+                <!-- <paper-input type="number" label="Actual Cost" value="{{item.actualCost}}"></paper-input>
+                <paper-input type="number" label="Price" value="{{item.price}}"></paper-input> -->
+              </div>
+
+              <paper-icon-button icon="delete" on-tap="_deleteTest" hidden$={{item.isProtected}}></paper-icon-button>
+
+            </div>
+          </template>
+        </div>
+
+      </div>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button class="btn btn-success" on-click="_saveNewInvestigation" autofocus raised>Save</paper-button>
+      </div>
+    </paper-dialog>
+    <!-- Dialog for - New Investigation - end -->
+
+    <!-- Generic Toast -->
+    <paper-toast id="toast1" duration="2000" text="[[genericToastContents]]" on-tap="genericToastTapped"></paper-toast>
+    <!-- Success Toast -->
+    <paper-toast id="successToast" duration="2000" text="[[genericToastContents]]" on-tap="genericToastTapped"></paper-toast>
+    <!-- Warning Toast -->
+    <paper-toast id="warningToast" duration="2000" text="[[genericToastContents]]" on-tap="genericToastTapped"></paper-toast>
+
+  </template>
+
+
+  <script src="bdemr-investigation.coffee-compiled.js"></script>
+
+</dom-module>

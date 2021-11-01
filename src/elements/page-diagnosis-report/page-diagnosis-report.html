@@ -1,0 +1,221 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- element -->
+<dom-module id="page-diagnosis-report">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        width: 90%;
+        margin: 0 auto;
+        margin-top: 10px;
+      }
+
+      paper-button {
+        background: white;
+      }
+
+      paper-card {
+        margin: 4px;
+      }
+
+      .search {
+        background-color: #fafafa;
+        border: 1px solid #dadada;
+        padding: 0px 8px 12px 8px;
+        margin: 4px;
+        margin-left: 0;
+      }
+
+      .results {
+        margin-top: 20px;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      vaadin-grid {
+        height: 100%;
+      }
+
+      #searchDiagnosisName {
+        width: 20%;
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container custom-input-field">
+
+      <div style="width: 100%; background-color: #fff;">
+
+        <div class="search layout horizontal end wrap">
+
+          <vaadin-combo-box id="summaryOrganizationSelector" class="organization-dropdown m-right-8" items="[[childOrganizationList]]"
+            on-value-changed="organizationSelected" loading="[[loading]]" disabled="[[!childOrganizationList.length]]"></vaadin-combo-box>
+
+          <paper-input id="searchDiagnosisName" label="Search by Diagnosis Name" value="{{searchString}}" class="m-right-16"></paper-input>
+
+          <custom-vital-search class="" on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
+
+          <div class="flex"></div>
+          <paper-button class="btn btn-primary btn-large" on-tap="searchButtonClicked" raised>Search</paper-button>
+          <paper-button on-tap="resetButtonClicked" raised>Reset</paper-button>
+
+        </div>
+
+        <div class="results">
+          <paper-progress indeterminate hidden="[[!loading]]"></paper-progress>
+          <vaadin-grid items="[[reportResults]]">
+            <vaadin-grid-column resizable>
+              <template class="header layout horizontal">
+                <span>Serial</span>
+              </template>
+              <template>
+                <div>[[item.serial]]</div>
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column resizable>
+              <template class="header layout horizontal">
+                <span>Created on</span>
+              </template>
+              <template>
+                <div>[[$formatDateTime(item.createdDatetimeStamp)]]</div>
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column resizable>
+              <template class="header layout horizontal">
+                <span>Diagnosis Name</span>
+              </template>
+              <template>
+                <div>[[item.diagnosisName]]</div>
+              </template>
+            </vaadin-grid-column>
+            
+            <vaadin-grid-column resizable>
+              <template class="header layout horizontal">
+                <span>Patient Id</span>
+              </template>
+              <template>
+                <div>[[item.patientSerial]]</div>
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column resizable>
+              <template class="header layout horizontal">
+                <span>Patient Name</span>
+              </template>
+              <template>
+                <div>[[item.patientName]]</div>
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column resizable>
+              <template class="header layout horizontal">
+                <span>Age</span>
+              </template>
+              <template>
+                <div>[[item.patientAge]]</div>
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column resizable>
+              <template class="header layout horizontal">
+                <span>Gender</span>
+              </template>
+              <template>
+                <div>[[item.patientGender]]</div>
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column resizable>
+              <template class="header layout horizontal">
+                <span>Ward</span>
+              </template>
+              <template>
+                <div>[[$formatDateTime(item.admittedDatetimeStamp)]]</div>
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column resizable>
+              <template class="header layout horizontal">
+                <span>Location</span>
+              </template>
+              <template>
+                <div>[[item.patientLocation]]</div>
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column resizable>
+              <template class="header layout horizontal">
+                <span>Department</span>
+              </template>
+              <template>
+                <div>[[item.department]]</div>
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column resizable>
+              <template class="header layout horizontal">
+                <span>Unit</span>
+              </template>
+              <template>
+                <div>[[item.unit]]</div>
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column resizable>
+              <template class="header layout horizontal">
+                <span>Ward</span>
+              </template>
+              <template>
+                <div>[[item.ward]]</div>
+              </template>
+            </vaadin-grid-column>
+
+          </vaadin-grid>
+
+        </div>
+
+      </div>
+
+       
+      <!--Limiting Container Ends-->
+
+    </div>
+    <!--Master Container Ends-->
+
+  </template>
+  <script src="page-diagnosis-report.coffee-compiled.js"></script>
+</dom-module>

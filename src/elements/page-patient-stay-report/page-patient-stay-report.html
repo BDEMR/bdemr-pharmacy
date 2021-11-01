@@ -1,0 +1,345 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-patient-stay-report">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        width: 90%;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-teal-500);
+      }
+
+      .search-area {
+        background-color: var(--paper-grey-100);
+        border-radius: 5px;
+        padding: 10px;
+      }
+      .checkbox-padding {
+        padding: 5px;
+      }
+      .actions {
+        /* border-top: 1px solid #eee; */
+        padding-top: 10px;
+      }
+      .seat-list {
+        margin-top: 10px;
+      }
+
+      /* .seat-list>paper-item {
+        border-top: 1px solid #eee;
+      } */
+
+      .pull-date-down {
+        position: relative;
+        top: 8px;
+      }
+
+      vaadin-grid {
+        --vaadin-grid-cell: {
+          border: 1px solid black;
+        };
+
+        --vaadin-grid-footer-cell: {
+          border-top: 1px solid black;
+          border-left: 0px;
+          border-right: 0px;
+          border-bottom: 0px;
+        };
+      }
+
+      /* vaadin-grid {
+        --vaadin-grid-cell: {
+          border-left: 1px solid black;
+        };
+
+        --vaadin-grid-header-cell: {
+          border: 1px solid black;
+        };
+
+        --vaadin-grid-footer-cell: {
+          border: 0px;
+        };
+      } */
+
+    </style>
+
+    <div id="tabContainer" class="tabs-container">
+      <paper-tabs selected="{{selectedPage}}" scrollable noink='true'>
+        <paper-tab>Current Patient Report</paper-tab>
+        <paper-tab>Discharge Report</paper-tab>  
+      </paper-tabs>
+    </div>
+
+    <div class="master-container">
+      <div class="limiting-container">
+        <paper-progress indeterminate hidden$="[[!loadingCounter]]"></paper-progress>
+        
+        <iron-pages selected="{{selectedPage}}">
+          <!-- Current patient report -->
+          <section id="currentPatientReport">
+            <paper-card heading="Current Patient Report">
+              <div class="card-content custom-input-field">
+                <div class="search-area">
+                  <div class="layout horizontal">
+                    <custom-vital-search class="pull-date-down m-left-8" on-date-select="filterByDateClickedCurrentReport" on-clear="filterByDateClearButtonClickedCurrentReport"></custom-vital-search>
+
+                    <vaadin-combo-box class="m-left-8" label="Department" items="[[patientStayObject.departmentList]]"
+                      on-selected-item-changed="departmentDropdownValueChanged" item-label-path="name">
+                      <template>[[item.name]]</template>
+                    </vaadin-combo-box>
+    
+                    <vaadin-combo-box hidden$="[[!unitList.length]]" class="m-left-8" label="Unit" items="[[unitList]]"
+                      on-selected-item-changed="unitDropdownValueChanged" item-label-path="name">
+                      <template>[[item.name]]</template>
+                    </vaadin-combo-box>
+    
+                    <vaadin-combo-box hidden$="[[!wardList.length]]" class="m-left-8" label="Ward" items="[[wardList]]"
+                      on-selected-item-changed="wardDropdownValueChanged" item-label-path="name">
+                      <template>[[item.name]]</template>
+                    </vaadin-combo-box>
+
+                  </div>
+
+                  <!-- <div class="m-top-8">
+                    <template is="dom-repeat" items="[[patientStayObject.locations]]">
+                      <paper-checkbox class="checkbox-padding" on-tap="locationCheckboxTapped" data-loc="[[item]]">[[item]]</paper-checkbox>
+                    </template>
+                  </div> -->
+    
+                  <div class="m-top-16 layout horizontal">
+                    <paper-checkbox class="checkbox-padding" checked="{{showVaccantOnly}}">Show Only Vacant</paper-checkbox>
+                    <div class="flex"></div>
+                    <paper-button class="btn btn-primary" on-tap="searchButtonClicked">Show Beds</paper-button>
+                  </div>
+                </div>
+    
+                <vaadin-grid class="m-top-8" items="[[matchingSeatList]]">
+                  <vaadin-grid-column resizable>
+                    <template class="header">Seat</template>
+                    <template>[[item.name]]</template>
+                    <template class="footer"></template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable>
+                    <template class="header">Details</template>
+                    <template><span class="type secondary caption">[[item.department]]>[[item.unit]]>[[item.ward]]</span></template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-filter path="patientName" value="[[nameString]]">
+                        <paper-input label="Search By Name" value="{{nameString}}" no-label-float></paper-input>
+                      </vaadin-grid-filter>
+                    </template>
+                    <template>
+                      <div>
+                        <span class="type caption-2 bg-gray">[[item.patientSerial]]</span>
+                        [[item.patientName]]
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-filter path="patientEmailOrPhone" value="[[phoneEmailString]]">
+                        <paper-input label="Search By Phone/Email" value="{{phoneEmailString}}" no-label-float></paper-input>
+                      </vaadin-grid-filter>
+                    </template>
+                    <template>[[item.patientEmailOrPhone]]</template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable>
+                    <template class="header">Location</template>
+                    <template>
+                      <template is='dom-if' if='[[item.location]]'>
+                        <span>[[item.location]]</span>
+                      </template>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-filter path="status" value="[[patientStatusString]]">
+                        <paper-input label="Search By Patient Status" value="{{patientStatusString}}" no-label-float></paper-input>
+                      </vaadin-grid-filter>
+                    </template>
+                    <template>[[item.status]]</template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-filter path="operationName" value="[[operationNameString]]">
+                        <paper-input label="Search By Operation Name" value="{{operationNameString}}" no-label-float></paper-input>
+                      </vaadin-grid-filter>
+                    </template>
+                    <template>[[item.operationName]]</template>
+                  </vaadin-grid-column>
+                  <vaadin-grid-column resizable>
+                    <template class="header">Admitted on</template>
+                    <template>
+                      <template is='dom-if' if='[[item.patientAdmittedDatetimeStamp]]'>
+                        <span>[[$formatDateTime(item.patientAdmittedDatetimeStamp)]]</span>
+                      </template>
+                    </template>
+                  </vaadin-grid-column>
+                  <!-- <vaadin-grid-column>
+                    <template class="header">Status</template>
+                    <template>
+                      <div>
+                        <span hidden="[[!item.patientSerial]]" class="type caption-2 bg-gray success">OCCUPIED</span>
+                        <span hidden="[[!item.isOverflow]]" class="type caption-2 bg-gray danger">OVERFLOW</span>
+                      </div>
+                    </template>
+                  </vaadin-grid-column> -->
+                </vaadin-grid>
+    
+    
+              </div>
+              </paper-card>
+          </section>
+
+          <!-- Discharge report -->
+          <section id="allPatientReport">
+              <paper-card heading="Discharge Report">
+                <div class="card-content custom-input-field">
+                  
+                  <div class="search-area">
+                    <div class="layout horizontal">
+                        <custom-vital-search class="pull-date-down m-left-8" on-date-select="filterByDateClickedDischargeReport" on-clear="filterByDateClearButtonClickedDischargeReport"></custom-vital-search>
+
+                      <vaadin-combo-box class="m-left-8" label="Department" items="[[patientStayObject.departmentList]]"
+                        on-selected-item-changed="departmentDropdownValueChangedForAll" item-label-path="name" item-value-path="name" value="{{selectedDepartmentNameForAll}}">
+                        <template>[[item.name]]</template>
+                      </vaadin-combo-box>
+      
+                      <vaadin-combo-box hidden$="[[!unitListForAll.length]]" class="m-left-8" label="Unit" items="[[unitListForAll]]"
+                        on-selected-item-changed="unitDropdownValueChangedForAll" item-label-path="name" item-value-path="name" value="{{selectedUnitNameForAll}}">
+                        <template>[[item.name]]</template>
+                      </vaadin-combo-box>
+      
+                      <vaadin-combo-box hidden$="[[!wardListForAll.length]]" class="m-left-8" label="Ward" items="[[wardListForAll]]"
+                        on-selected-item-changed="wardDropdownValueChangedForAll" item-label-path="name" item-value-path="name" value="{{selectedWardNameForAll}}">
+                        <template>[[item.name]]</template>
+                      </vaadin-combo-box>
+                    </div>
+      
+                    <div class="m-top-16 layout horizontal">
+                      <div class="flex"></div>
+                      <paper-button class="btn btn-primary" on-tap="showAllPatientStayRecord">Show all stay records</paper-button>
+                    </div>
+                  </div>
+      
+                  <vaadin-grid class="m-top-8" items="[[patientStayRecordList]]">
+                    <vaadin-grid-column resizable>
+                      <template class="header">Seat</template>
+                      <template>[[item.locationBed]]</template>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column resizable>
+                      <template class="header">Details</template>
+                      <template><span class="type secondary caption">[[item.locationDepartment]]>[[item.locationUnit]]>[[item.locationWard]]</span></template>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column resizable>
+                      <template class="header">
+                        <vaadin-grid-filter path="patientName" value="[[nameString]]">
+                          <paper-input label="Search By Name" value="{{nameString}}" no-label-float></paper-input>
+                        </vaadin-grid-filter>
+                      </template>
+                      <template>
+                        <div>
+                          <span class="type caption-2 bg-gray">[[item.patientSerial]]</span>
+                          [[item.patientName]]
+                        </div>
+                      </template>
+                    </vaadin-grid-column>
+
+                    <vaadin-grid-column resizable>
+                      <template class="header">
+                        <vaadin-grid-filter path="patientEmail" value="[[patientEmailString]]">
+                          <paper-input label="Search By Email" value="{{patientEmailString}}" no-label-float></paper-input>
+                        </vaadin-grid-filter>
+                      </template>
+                      <template>[[item.patientEmail]]</template>
+                    </vaadin-grid-column>
+
+                    <vaadin-grid-column resizable>
+                      <template class="header">
+                        <vaadin-grid-filter path="patientPhone" value="[[patientPhoneString]]">
+                          <paper-input label="Search By Phone" value="{{patientPhoneString}}" no-label-float></paper-input>
+                        </vaadin-grid-filter>
+                      </template>
+                      <template>[[item.patientPhone]]</template>
+                    </vaadin-grid-column>
+
+                    <!-- <vaadin-grid-column resizable>
+                      <template class="header">Location</template>
+                      <template>
+                        <template is='dom-if' if='[[item.location]]'>
+                          <span>[[item.location]]</span>
+                        </template>
+                      </template>
+                    </vaadin-grid-column> -->
+
+                    <vaadin-grid-column resizable>
+                      <template class="header">Admitted on</template>
+                      <template>
+                        <template is='dom-if' if='[[item.admissionDateTimeStamp]]'>
+                          <span>[[$formatDateTime(item.admissionDateTimeStamp)]]</span>
+                        </template>
+                      </template>
+                    </vaadin-grid-column>
+
+                    <vaadin-grid-column resizable>
+                      <template class="header">Discharged on</template>
+                      <template>
+                        <template is='dom-if' if='[[item.dischargeDatetimeStamp]]'>
+                          <span>[[$formatDateTime(item.dischargeDatetimeStamp)]]</span>
+                        </template>
+                      </template>
+                    </vaadin-grid-column>
+
+                    <vaadin-grid-column resizable>
+                      <template class="header">Length of stay (in days)</template>
+                      <template>
+                        <span>[[_calculateStayDurationAndFormatResult(item.admissionDateTimeStamp, item.dischargeDatetimeStamp)]]</span>
+                      </template>
+                      <template class="footer">Average stay : [[_calculateAverageStayDurationAndFormatResult(patientStayRecordList)]]</template>
+                    </vaadin-grid-column>
+
+                  </vaadin-grid>
+      
+      
+                </div>
+              </paper-card>
+          </section>
+        </iron-pages>
+      </div>
+    </div>
+
+  </template>
+
+  <script src="./page-patient-stay-report.js"></script>
+
+</dom-module>

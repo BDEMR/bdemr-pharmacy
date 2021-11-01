@@ -1,0 +1,428 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- element -->
+<dom-module id="page-canteen-manager">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      app-header-layout ::content #contentContainer {
+        overflow: hidden !important;
+      }
+
+      :host {
+        height: calc(100% - 56px);
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 56px;
+      }
+
+      .container {
+        width: 100%;
+        height: 100%;
+        /* background-color: #fff; */
+      }
+
+      vaadin-grid#list {
+        height: inherit;
+        font-family: Roboto, sans-serif;
+        --divider-color: rgba(0, 0, 0, var(--dark-divider-opacity));
+
+        /* --vaadin-grid-cell: {
+          padding: 0;
+        }; */
+
+        --vaadin-grid-header-cell: {
+          height: 48px;
+          /* color: rgba(0, 0, 0, var(--dark-secondary-opacity)); */
+          font-size: 16px;
+        };
+
+        --vaadin-grid-body-cell: {
+          /* height: 48px; */
+          color: rgba(0, 0, 0, var(--dark-primary-opacity));
+          font-size: 16px;
+        };
+
+        --vaadin-grid-body-row-hover-cell: {
+          background-color: var(--paper-grey-200);
+        };
+
+        --vaadin-grid-body-row-selected-cell: {
+          background-color: var(--paper-grey-100);
+        };
+
+        --vaadin-grid-focused-cell: {
+          box-shadow: none;
+          font-weight: bold;
+        };
+      }
+
+      .top-container {
+        /* background-color: #f3f5f7; */
+        box-shadow:rgba(0, 0, 0, .54) 0 -10px 6px -10px inset;
+        height: 310px;
+      }
+
+      #filter {
+        /* padding: 8px 8px 16px 8px; */
+        background-color: #f3f5f7;
+        position: relative;
+      }
+
+      .filter {
+        padding: 0 6px 1px 6px;
+      }
+
+      #editor {
+        background-color: #fff;
+        /* border: 1px solid rgba(0, 0, 0, var(--dark-divider-opacity)); */
+        position: relative;
+        height: 100%;
+        box-shadow: -3px -3px 2px rgba(0,0,0, 0.16);
+        
+      }
+
+      .editor-content {
+        margin-top: 64px;
+        padding: 16px;
+        width: calc(100%-32px);
+        height: calc(100% - 161px);
+        overflow-y: auto;
+      }
+
+      .editor-buttons {
+        background-color: #eee;
+        padding: 12px 16px;
+        @apply(--layout-horizontal);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+
+      .custom-input {
+        padding-top: 6px;
+        padding-bottom: 6px;
+      }
+
+      .custom-button {
+        padding: 0.4em 2em;
+        font-size: 16px;
+        background-color: #fff;
+      }
+
+      .custom-flat-button {
+        font-weight: bold;
+        font-size: 14px;
+        text-transform: uppercase;
+      }
+
+      #importResult {
+        overflow-y: scroll;
+        height: 200px;
+        background: white;
+        padding: 12px;
+        margin-top: 16px;
+      }
+
+      .type.capton-2 {
+        line-height: 25px;
+      }
+
+      .left {
+        width: 30%;
+      }
+      .right {
+        width: 100%;
+        height: inherit;
+      }
+
+      @media screen and (max-width: 859px) {
+        .left, .right {
+          width: 100%;
+        }
+      }
+
+      @media screen and (max-width: 479px) {
+        .filter-input {
+          width: 100%;
+        }
+
+        #btnFilter {
+          margin-top: 8px;
+          margin-bottom: 8px;
+        }
+      }
+
+      #editor {
+        position: fixed;
+        right: 0;
+        top: 56px;
+        bottom: 0;
+        z-index: 1;
+        height: calc(100% - 156px);
+        border-left: 1px solid #eee;
+      }
+
+
+      .fixed-title {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 12px 8px 11px 12px;
+        border-bottom: 1px solid #eee;
+        z-index: 1;
+        background-color: #fafafa;
+        width: calc( 100% - 24px);
+      }
+      
+
+    </style>
+
+    <div class="container horizontal layout wrap">
+
+      
+      <!-- Item add/editor form -->
+      <div id="editor" hidden$="{{hideEditForm}}">  
+
+        <div class="editor-content">
+          
+          <div class="fixed-title horizontal layout center">
+            <h2 class="flex"><span hidden$="{{!EDIT_MODE}}">[[$TRANSLATE('Edit', LANG)]]</span>
+              <span hidden$="{{EDIT_MODE}}">[[$TRANSLATE('New', LANG)]]</span> [[$TRANSLATE('Product', LANG)]]</h2>
+            <paper-icon-button icon="close" on-tap="_closeEditForm"></paper-icon-button>
+          </div>
+  
+          <vaadin-combo-box id="productSearch" class="flex" label="[[$TRANSLATE('Type/Search Item', LANG)]]" item-label-path="name" item-label-value="name" 
+            filter="{{itemSearchQuery}}" loading="[[fetchingInventorySearchResult]]" on-selected-item-changed="itemSelected" value="{{product.name}}" 
+            allow-custom-value error-message="Medicine name is required!" required>
+          </vaadin-combo-box>
+          <div class="horizontal layout wrap">
+            <paper-checkbox class="m-8" checked="{{product.flags.isPublic}}">[[$TRANSLATE('Publicly Available', LANG)]]</paper-checkbox>
+            <paper-checkbox class="m-8" checked="{{product.flags.isActive}}">[[$TRANSLATE('Active Product', LANG)]]</paper-checkbox>
+          </div>
+          <paper-input class="custom-input" type="text" id="inputActualCost" label="[[$TRANSLATE('Actual Cost/Unit', LANG)]]" value="{{product.actualCost}}" pattern="^-?\d*[.,]?\d*$" error-message="Actual Cost is required!" required></paper-input>
+          <paper-input type="text" class="custom-input" id="inputPrice" label="[[$TRANSLATE('Price/Unit', LANG)]]" value="{{product.price}}" error-message="Please add product price"  pattern="^-?\d*[.,]?\d*$" required></paper-input>
+          
+          <paper-input class="custom-input" type="number" id="inputQuantity" label="[[$TRANSLATE('Quantity', LANG)]]" value="{{product.quantity}}"></paper-input>
+          <paper-input id="inputBatchNumber" class="custom-input" label="[[$TRANSLATE('Batch', LANG)]]" value="{{product.batch}}" error-message="Input Required" min-length="2" required></paper-input>
+
+        </div>
+  
+        <div class="editor-buttons">
+          <paper-icon-button icon="icons:delete" on-tap="_deleteProduct" hidden$="{{!EDIT_MODE}}">[[$TRANSLATE('Delete', LANG)]]</paper-icon-button>
+  
+          <div class="flex"></div>
+          <paper-button on-click="_clearProduct">[[$TRANSLATE('Clear', LANG)]]</paper-button>
+          <paper-button class="btn btn-success" on-click="_setProduct" autofocus raised>
+            <span hidden$="{{!EDIT_MODE}}">[[$TRANSLATE('Update', LANG)]]</span>
+            <span hidden$="{{EDIT_MODE}}">[[$TRANSLATE('Add', LANG)]]</span>
+          </paper-button>
+        </div>
+
+      </div>
+ 
+
+      <div class="right flex">
+
+        <!-- filter - start -->
+        <div id="filter" >
+      
+      
+          <!-- filter - form - start -->
+          <section hidden$="{{!isBulkImportHidden}}">
+            <div class="horizontal layout center filter" style="padding: 10px;">
+              <div class="horizontal layout center wrap flex">
+                <vaadin-date-picker class="filter-input m-horizontal-8" type="date" max="" value="{{filterBy.fromDate}}" label="[[$TRANSLATE('From', LANG)]]"></vaadin-date-picker>
+                <vaadin-date-picker class="filter-input m-horizontal-8" type="date" max="" value="{{filterBy.toDate}}" label="[[$TRANSLATE('To', LANG)]]"></vaadin-date-picker>
+                <paper-button id="btnFilter" on-tap="onFilterTapped" class="custom-button m-top-8"><iron-icon class="m-right-8" icon="icons:sort"></iron-icon>[[$TRANSLATE('Filter', LANG)]]</paper-button>
+                <div class="flex"></div>
+                <paper-button raised class="btn btn-success" on-tap="goToCanteenInvoice">[[$TRANSLATE('Create invoice', LANG)]]</paper-button>
+              </div>
+
+              <paper-menu-button class="p-0" vertical-align="top" horizontal-align="right">
+                <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+                <paper-menu class="dropdown-content">
+                  <paper-item on-tap="_showNewProductForm"><iron-icon class="m-right-8" icon="icons:add"></iron-icon>[[$TRANSLATE('Add New Item', LANG)]]</paper-item>
+                  <paper-item on-tap="onClearFilterTapped"><iron-icon class="m-right-8" icon="icons:clear"></iron-icon>[[$TRANSLATE('Clear Filter', LANG)]]</paper-item>
+                  <paper-item on-tap="showBulkImportForm"><iron-icon class="m-right-8" icon="icons:cloud-upload"></iron-icon>[[$TRANSLATE('Bulk Import/Export', LANG)]]</iron-icon></paper-item>
+                  <paper-item on-tap="_exportBtnPressed"><iron-icon class="m-right-8" icon="icons:file-download"></iron-icon>[[$TRANSLATE('Export', LANG)]]</paper-item>
+                  <!-- <paper-item on-tap="_downloadDemoTemplate"><iron-icon class="m-right-8" icon="icons:file-download"></iron-icon>Download CSV Template (Demo)</paper-item> -->
+                </paper-menu>
+              </paper-menu-button>
+            </div>
+            
+
+            <!-- <div class="m-top-16 horizontal layout end-justified">
+              <paper-icon-button on-tap="onClearFilterTapped" icon="icons:clear"></paper-icon-button>
+              <paper-button on-tap="onFilterTapped" class="custom-button" raised>Filter</paper-button>
+              <div class="flex"></div>
+              <paper-button on-tap="_showNewProductForm" class="custom-button colored" raised>Add New</paper-button>
+              <paper-menu-button class="p-0" vertical-align="top" horizontal-align="right">
+                <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+                <paper-menu class="dropdown-content">
+                  <paper-item on-tap="_exportBtnPressed"><iron-icon class="m-right-8" icon="icons:file-download"></iron-icon>Export</paper-item>
+                </paper-menu>
+              </paper-menu-button>
+            </div> -->
+    
+          </section>
+          <!-- filter - form - end -->
+  
+          <!-- bulk import - form - start -->
+          <section hidden$="{{isBulkImportHidden}}" style="padding: 8px 8px 16px 8px;">
+            <div class="horizontal layout center">
+              <div class="type caption-2 p-horizontal-8 flex"><iron-icon icon="icons:cloud-upload" class="m-right-8"></iron-icon><strong>[[$TRANSLATE('BULK IMPORT', LANG)]]</strong></div>
+              <paper-button class="custom-flat-button" on-tap="showFilterForm" hidden$="{{isBulkImportHidden}}"><iron-icon  icon="icons:chevron-left" class="m-right-8"></iron-icon>[[$TRANSLATE('Back', LANG)]]</paper-button>
+            </div>
+  
+            <input id="inputCsvFile" class="p-24" type='file' on-change='openFile'>
+    
+            <template is="dom-if" if="{{bulkImportLog}}">
+              <div id="importResult">
+                <div class="type body"><span class="type text-success">[[$TRANSLATE('Success', LANG)]]: {{bulkImportLog.counter.success}}</span>, <span class="type text-success">[[$TRANSLATE('Failed', LANG)]]: {{bulkImportLog.counter.failed}}</span></div>
+                <template is="dom-repeat" items="{{bulkImportLog.stats}}">
+                  <div class="type caption horizontal layout">
+                    <div class="m-right-8">[[$returnSerial(index)]].</div>
+                    <div class$="type text-{{item.status}}">[[item.name]] : [[item.comments]]</div>
+                  </div>
+                </template>
+              </div>
+            </template>
+    
+            <div class="m-top-16">
+              <template is="dom-if" if="{{IMPORT_DONE}}">
+                <paper-button on-tap="onClearImportBulkBtnPressed" class="custom-button">[[$TRANSLATE('Clear', LANG)]]</paper-button>
+              </template>
+              <template is="dom-if" if="{{!IMPORT_DONE}}">
+                <paper-button on-tap="onBulkImportBtnPressed" class="custom-button colored">[[$TRANSLATE('Import', LANG)]]</paper-button>
+              </template>
+            </div>
+          </section>
+          <!-- filter - form - end -->
+          
+        </div>
+        <!-- filter - end -->
+
+        <!-- inventory - start -->
+        <vaadin-grid items="[[inventory]]" id="list" active-item="{{activeItem}}">
+
+          <vaadin-grid-column width="40px" frozen>
+            <template class="header">[[$TRANSLATE('No', LANG)]].</template>
+            <template>[[$returnSerial(index)]]</template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="12em" frozen>
+            <template class="header">
+              <vaadin-grid-sorter path="name" direction="asc">
+                
+                <vaadin-grid-filter aria-label="Name" path="name" value="[[searchString]]">
+                  <paper-input label="[[$TRANSLATE('Search By Name', LANG)]]" value="{{searchString}}" no-label-float></paper-input>
+                </vaadin-grid-filter>
+            
+              </vaadin-grid-sorter>
+            </template>
+            <template>
+              [[item.name]]
+            </template>
+          </vaadin-grid-column>
+    
+          <vaadin-grid-column width="6em">
+            <template class="header">
+              <vaadin-grid-sorter path="actualCost" class="numeric">
+                <div class="header-cell">
+                  [[$TRANSLATE('Actual Cost', LANG)]]
+                </div>
+              </vaadin-grid-sorter>
+            </template>
+            <template>
+              [[item.actualCost]]
+            </template>
+          </vaadin-grid-column>
+    
+          <vaadin-grid-column width="6em">
+            <template class="header">
+              <vaadin-grid-sorter path="price" class="numeric">
+                <div class="header-cell">
+                  [[$TRANSLATE('Price', LANG)]]
+                </div>
+              </vaadin-grid-sorter>
+            </template>
+            <template>
+              <span class="total">[[item.price]]</span>
+            </template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column width="6em">
+              <template class="header">
+                <vaadin-grid-sorter path="quantity" class="numeric">
+                  <div class="header-cell">
+                    [[$TRANSLATE('Quantity', LANG)]]
+                  </div>
+                </vaadin-grid-sorter>
+              </template>
+              <template>
+                <template is="dom-if" if="[[$isGreaterThanZero(item.quantity)]]">
+                  <span class="total" style="color:green">[[item.quantity]]</span>
+                </template>
+                <template is="dom-if" if="[[$islessThanZero(item.quantity)]]">
+                  <span class="total" style="color:red">[[item.quantity]]</span>
+                </template>
+              </template>
+            </vaadin-grid-column>
+
+          <vaadin-grid-column width="12em">
+            <template class="header">
+              <vaadin-grid-sorter path="createdDatetimeStamp">
+                <div class="header-cell">
+                  [[$TRANSLATE('Added on', LANG)]]
+                </div>
+              </vaadin-grid-sorter>
+            </template>
+            <template>
+              <span style="text-transform: capitalize;"></span>[[$formatDateTime(item.createdDatetimeStamp)]]</span>
+            </template>
+          </vaadin-grid-column>
+    
+        </vaadin-grid>
+        <!-- inventory - end -->
+      </div>
+      
+    </div>
+
+  </template>
+  <script src="page-canteen-manager.coffee-compiled.js"></script>
+</dom-module>

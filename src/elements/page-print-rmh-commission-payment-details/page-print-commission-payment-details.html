@@ -1,0 +1,264 @@
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/paper-material/paper-material.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<!-- behavior -->
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/translating.html">
+
+<!-- Commong Styles -->
+<link rel="import" href="../../styles/common-style.html">
+
+
+<dom-module id="page-print-commission-payment-details">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="iron-flex iron-flex-alignment common-style">
+      .print-area {
+        max-width: 90%;
+        min-height: 200mm;
+        margin: 0 auto;
+        background-color: white;
+        margin-top: 10px;
+        padding: 2%;
+        /*min-height: 297mm;*/
+      }
+
+      .item {
+        border: 1px solid var(--paper-grey-200);
+        padding: 15px;
+      }
+
+      .item>div {
+        padding: 0 10px;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td,
+      .table th {
+        vertical-align: left;
+        padding: 10px;
+        border: 1px solid var(--paper-grey-300);
+      }
+
+      .table td.special-td {
+        padding: 0px;
+        margin: 0px;
+        height: 100%;
+      }
+
+      .print-table {
+        table-layout: fixed;
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .print-table tr {
+        margin-bottom: 15px;
+      }
+
+      .print-table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .print-table td {
+        color: #444;
+      }
+
+      .print-table td,
+      .print-table th {
+        vertical-align: middle;
+        border-bottom: 1px solid var(--paper-grey-100);
+        padding-bottom: 10px;
+      }
+
+
+
+      .print-table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .print-table thead tr th:first-child,
+      .print-table tbody tr td:first-child,
+      .print-table tfoot tr th:first-child {
+        width: 20%;
+      }
+
+      @media print {
+        .hideOnPrint {
+          display: none !important;
+        }
+      }
+    </style>
+
+    <!-- local DOM -->
+    <paper-material elevation="1" class="print-area">
+
+      <div style="text-align: center; font-size: 44px;">Payment Details</div>
+      <hr>
+      <div class="layout horizontal">
+        <div class="card-content m-top-24 m-left-8">
+          <h2>{{payment.thirdPartyName}}</h2>
+          <h4>{{payment.thirdPartyPhone}}</h4>
+        </div>
+        <!-- <div class="flex"></div>
+        <div class="card-content m-top-24 m-left-8">
+          <h4>{{payment.patientName}}</h4>
+          <span>{{payment.patientPhone}}</span>
+        </div> -->
+      </div>
+
+      <div class="m-top-16">
+        <table class="table m-top-24">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Name</th>
+              <th>Usg</th>
+              <th>Pathology</th>
+              <th>S Pathology</th>
+              <th>X-ray</th>
+              <th>Ecg</th>
+              <th>Eco</th>
+              <th>FN AC</th>
+              <th>Less</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            <template is="dom-repeat" items="[[finalArr]]">
+              <tr>
+                <td>{{$formatDate(payment.createdDatetimeStamp)}}</td>
+                <td>
+                  [[$getFullName(item.patientName)]]
+                </td>
+                <td>
+                  <template is="dom-if" if="[[item.usg]]">
+                    <span>[[item.usg]]</span>
+                  </template>
+                  <template is="dom-if" if="[[!item.usg]]">
+                    <span>0</span>
+                  </template>
+                </td>
+                <td>
+                  <template is="dom-if" if="[[item.pathology]]">
+                    <span>[[item.pathology]]</span>
+                  </template>
+                  <template is="dom-if" if="[[!item.pathology]]">
+                    <span>0</span>
+                  </template>
+                </td>
+                <td>
+                  <template is="dom-if" if="[[item.spathology]]">
+                    <span>[[item.spathology]]</span>
+                  </template>
+                  <template is="dom-if" if="[[!item.spathology]]">
+                    <span>0</span>
+                  </template>
+                </td>
+                <td>
+                  <template is="dom-if" if="[[item.x-ray]]">
+                    <span>[[item.x-ray]]</span>
+                  </template>
+                  <template is="dom-if" if="[[!item.x-ray]]">
+                    <span>0</span>
+                  </template>
+                </td>
+                <td>
+                  <template is="dom-if" if="[[item.ecg]]">
+                    <span>[[item.ecg]]</span>
+                  </template>
+                  <template is="dom-if" if="[[!item.ecg]]">
+                    <span>0</span>
+                  </template>
+                </td>
+                <td>
+                  <template is="dom-if" if="[[item.eco]]">
+                    <span>[[item.eco]]</span>
+                  </template>
+                  <template is="dom-if" if="[[!item.eco]]">
+                    <span>0</span>
+                  </template>
+                </td>
+                <td>
+                  <template is="dom-if" if="[[item.fnac]]">
+                    <span>[[item.fnac]]</span>
+                  </template>
+                  <template is="dom-if" if="[[!item.fnac]]">
+                    <span>0</span>
+                  </template>
+                </td>
+                <td>
+                  <template is="dom-if" if="[[item.discount]]">
+                    <span>[[item.discount]]</span>
+                  </template>
+                  <template is="dom-if" if="[[!item.discount]]">
+                    <span>0</span>
+                  </template>
+                </td>
+              </tr>
+            </template>
+            
+          </tbody>
+        </table>
+      </div>
+
+      <!-- footer div -->
+      <div class="m-top-16 m-bottom-16 layout vertical">
+        <div>
+          <!-- left -->
+          <div class="layout vertical" style="position: relative; float: left;">
+            <template is="dom-repeat" items="[[percentageCalcArray]]">
+              <div class="m-bottom-8"><strong>[[item.tag]]:</strong> Total price [[item.price]] BDT ([[item.percentage]]% = [[item.percentagePrice]] BDT)</div>
+            </template>
+          </div>
+          <!-- right -->
+          <div class="layout vertical" style="position: relative; float: right;">
+            <div class="m-bottom-8">
+              <span><strong>
+                  Total: [[$formatCurrency(totalAmount)]]
+                </strong></span>
+            </div>
+            <div class="m-bottom-8">
+              <span><strong>
+                  Total Payable with Percentage: [[$formatCurrency(payment.totalCommission)]]
+                </strong></span>
+            </div>
+            <div class="m-bottom-8">
+              <span><strong>
+                  Less: [[$formatCurrency(payment.totalDiscount)]]
+                </strong></span>
+            </div>
+            <div class="m-bottom-8">
+              <span><strong>
+                  Final Amount: [[$formatCurrency(payment.finalAmount)]]
+                </strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 64px">
+        <span class="type secondary">Printed - [[_getFormattedCurrentDateTime(currentDateTime)]]</span>
+        <span class="type secondary">By - [[user.name]]</span>
+      </div>
+
+    </paper-material>
+
+  </template>
+  <script src="page-print-commission-payment-details.coffee-compiled.js"></script>
+</dom-module>

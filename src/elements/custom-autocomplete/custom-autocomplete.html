@@ -1,0 +1,70 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower-assets/iron-icon/iron-icon.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input-container.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-radio-button/paper-radio-button.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- element -->
+<dom-module id="custom-autocomplete">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+    paper-input {
+      color: black;
+    }
+    
+    .projection-item {
+      background: white;
+      margin: 1px;
+      padding: 6px;
+      color: black;
+    }
+    
+    .projection-item.active {
+      background: grey;
+    }
+
+    #nomatch {
+      font-size: 12px;
+      color: var(--paper-red-400);
+    }
+    </style>
+    <!-- local DOM - start -->
+
+    <paper-input label="[[label]]" type="search" value="{{typedValue}}" on-keyup="inputKeyUpped"></paper-input>
+
+    <template is="dom-repeat" items="[[projectedMatchingDataList]]" as="projectedMatchingData" index-as="projectedMatchingDataIndex">
+      <div on-tap="projectedMatchingDataDivPressed" class$="projection-item [[$getProjectionClass(projectedMatchingDataIndex, projectedMatchingDataListSelectedIndex)]]">
+        [[projectedMatchingData.text]]
+      </div>
+    </template>
+    <div id="nomatch"></span>
+
+    <!-- local DOM - end -->
+  </template>
+  <script src="custom-autocomplete.coffee-compiled.js"></script>
+</dom-module>

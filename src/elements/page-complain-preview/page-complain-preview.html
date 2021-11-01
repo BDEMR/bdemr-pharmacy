@@ -1,0 +1,97 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box-light.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<dom-module id="page-complain-preview">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+
+    vaadin-grid.grid-table {
+      border-bottom-left-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+
+
+    </style>
+    <div class="master-container">
+
+      <div class="limiting-container">
+        <paper-card heading="Complain Preview">
+          <div class="card-content">
+            <div class="type body"><strong>Applicants name: </strong> <span>{{complain.name}}</span></div>
+            <div class="type body"><strong>Applicants position: </strong> <span>{{complain.position}}</span></div>
+            <div class="type body"><strong>Organization Name: </strong> <span>{{complain.organization.name}}</span></div>
+            <div class="type body"><strong>Applicants location: </strong> <span>{{complain.location}}</span></div>
+            <div class="type body"><strong>Date of occurrence: </strong> <span>{{complain.dateOfOccurrence}}</span></div>
+            <div class="type body"><strong>Type of complaint: </strong> <span>{{complain.typeOfComplaint}}</span></div>
+            <div class="type body"><strong>Complain against person: </strong> <span>{{complain.complaintAgainstPerson}}</span></div>
+            <div class="type body"><strong>Complain Organization Name: </strong> <span>{{complain.complainAgainstOrganization.name}}</span></div>
+            <div class="type body"><strong>Complain Details: </strong> <span>{{complain.complainDetails}}</span></div>
+
+            <div class="type body"><strong>Attachments:</div>
+            
+            <div class="horizontal layout wrap">
+              <template id="complain-attachment-list-repeater" is="dom-repeat" items="{{complain.attachments}}">
+                <paper-button on-tap="onTapDownloadSelectedAttachment" style="border: 1px solid #eee; background-color: #fafafa;" on-tap=""> 
+                <iron-icon icon="file-download" class="m-right-8"></iron-icon>
+                {{item.name}}</paper-button s>
+              </template>
+            </div>
+
+            <template is="dom-if" if="{{organization.isCurrentUserAnAdmin}}">
+              <vaadin-combo-box  class="flex m-top-16 custom-paper-input" label="Status" items="{{statusList}}" value="{{complain.status}}" allow-custom-value></vaadin-combo-box>
+            </template>
+            
+            <div class="horizontal layout end-justified">
+              
+              <paper-button raised class="colored" on-tap="arrowBackButtonPressed">Back</paper-button>
+              <template is="dom-if" if="{{organization.isCurrentUserAnAdmin}}">
+                <paper-button raised class="colored" on-tap="_updateComplainStatus">Update Status</paper-button>
+              </template>
+              
+              
+            </div>
+
+          </div>
+        </paper-card>
+      </div>
+    </div>
+    
+
+  </template>
+
+  <script src="page-complain-preview.coffee-compiled.js"></script>
+</dom-module>

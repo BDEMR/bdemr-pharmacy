@@ -1,0 +1,370 @@
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+
+<link rel="import" href="../bdemr-qrcode/bdemr-qrcode.html">
+
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-print-patient-card">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      /* .limiting-container {
+        margin-top: 10px;
+      }
+
+      .external-card-title {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+        display: inline-block;
+        font-size: 14px;
+      }
+
+      .address1 {
+        margin-right: 10px;
+      }
+
+      .name {
+        margin-left: 5px;
+        font-size: 24px;
+      }
+
+      .email {
+        margin-left: 5px;
+        font-size: 14px;
+      }
+
+      .phone {
+        margin-left: 5px;
+      }
+
+      .val {
+        text-decoration: underline;
+      }
+
+      .account-box {
+        --iron-icon-width: 96px;
+        --iron-icon-height: 96px;
+      }
+
+      .document {
+        font-family: 'Arial,';
+        background: white;
+        width: 100%;
+        overflow-x: hidden;
+      }
+
+      .document-title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .collection {
+        color: red;
+        background: grey;
+      }
+
+      .document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+
+      .rightSide {
+        text-align: right;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+      .item {
+        padding: 10px;
+        border: 1px solid grey;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        margin: 0;
+        padding: 5px 0;
+      }
+
+      :host([has-scrolling-region]) #wrapper #contentContainer {
+        overflow-y: visible;
+        overflow-x: hidden;
+      }
+
+      @media print {
+        :host([has-scrolling-region]) #wrapper #contentContainer {
+          overflow-y: visible;
+          overflow-x: hidden;
+        }
+      }
+
+      .signature {
+        width: 200px;
+      }
+
+      .signature .underline {
+        border-bottom: 1px dashed #ccc;
+      }
+
+      .header {
+        position: relative;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        font-size: 20px;
+        font-weight: 500;
+        text-align: center;        
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px
+      }
+      .header .title {
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: #009688;
+      }
+
+      .footer{
+       text-align: center;
+      }
+
+      paper-item {
+        --paper-item-min-height: 30px;
+      }
+
+      .align-left {
+        float: left;
+        width: 50%
+      }
+
+      .align-right {
+        float: right;
+        width: 50%
+      }
+
+      .unbolded {
+        font-weight: normal;
+      }
+
+      #totalBillSize {
+        font-size: 150%;
+      } */
+
+      .card-front, .card-back {
+        border: 1px solid black;
+        width: 3.2in !important;
+        height: 2in !important;
+        padding: 10px;
+        margin-bottom: 5px;
+        font-size: 13px;
+        box-sizing: border-box;
+      }
+
+      .card-back-bottom {
+        font-size: 9px;
+      }
+
+      .card-front-top, .card-back-top, .card-back-bottom {
+        text-align: center;
+      }
+
+      .card-front-bottom-left {
+        position: relative;
+        width: 70%;
+        float: left;
+      }
+
+      .card-front-bottom-right {
+        position: relative;
+        width: 30%;
+        float: right;
+      }
+
+      .card-back-bottom-left {
+        position: relative;
+        width: 50%;
+        float: left;
+      }
+
+      .card-back-bottom-right {
+        position: relative;
+        width: 50%;
+        float: right;
+      }
+
+      .footer {
+        font-size: 10px;
+        text-align: center;
+      }
+
+      .p-top-4 {
+        padding-top: 4px !important;
+      }
+
+      .m-top-4 {
+        margin-top: 4px !important;
+      }
+
+      .profile-image {
+        height: 78px !important;
+        width: 78px !important;
+        border-radius: 5%;
+        border: 2px solid #f7f7f7;
+        -webkit-print-color-adjust: exact;
+      }
+
+
+    </style>
+
+    <!-- local DOM -->
+
+
+    <div class="document">
+
+      <!-- <template is="dom-if" if="[[loadingCounter]]">
+        <div class="layout horizontal center type bold text-center">
+          <paper-progress class="progress" indeterminate></paper-progress>
+        </div>
+      </template> -->
+
+      <template is="dom-if" if="{{!isPatientValid}}">
+        Patient invalid
+      </template>
+
+      <!-- Patient Card - start -->
+
+      <!-- card front -->
+      <div class="card-front vertical">
+        <div class="card-front-top">
+          <div class="m-bottom-8">
+            <div><h4>[[organization.name]]</h4></div>
+            <!-- <div><h5>organization slogan</h5></div> -->
+          </div>
+
+          <div class="m-bottom-8">
+            <template is="dom-if" if="[[patient]]">
+              <div><h3>[[$getFullName(patient.name)]] </h3></div>
+              <div><h3>ID: [[patient.organizationPatientId]]</h3></div>
+            </template>
+          </div>
+        </div>
+
+        <div class="horizontal">
+          
+          <div class="card-front-bottom-left">
+            <template is="dom-if" if="[[patient]]">
+              <div class="vertical layout">
+                <span><strong>Gender: </strong>[[patient.gender]]</span>
+                <span class="p-top-4"><strong>Date of Birth: </strong>[[patient.dateOfBirth]]</span>
+                <span class="p-top-4"><strong>Blood Group: </strong>[[_getPatientBloodGroup(patient.bloodGroup)]]</span> 
+                <span class="p-top-4"><strong>Phone: </strong>[[patient.phone]]</span>
+                <span class="p-top-4"><strong>Address: </strong>[[_getpatientAddress(patient.addressList)]]</span>
+                
+              </div>
+            </template>
+          </div>
+
+          
+          <div class="card-front-bottom-right">
+            <iron-image class="profile-image m-right-8" src$="[[$getProfileImage(patient.profileImage)]]" preload 
+              sizing="cover"></iron-image>
+          </div>
+          
+        </div>
+
+      </div>
+      
+      <!-- card back -->
+      <div class="card-back vertical">
+        <div class="card-back-top">
+          <div class="horizontal layout center center-justified m-top-8">
+            <template is="dom-if" if="[[patient.serial]]">
+              <bdemr-qrcode code="{{patient.serial}}" width="90" height="80"></bdemr-qrcode>
+            </template>
+          </div>
+
+          <div class="type body">{{patient.serial}}</div>
+
+        </div>
+
+        <div class="footer m-top-8">
+          <template is="dom-if" if="[[patient]]">
+            <div class="horizontal layout">
+              <div class="flex one"><strong>Issued On: </strong>[[$getTodayDate()]]</span></div>
+              <div class="flex one"><strong>Issued By: </strong>[[organization.name]]</span></div>
+            </div>
+          </template>
+          <div><strong>If found, Please return to the following address:</strong></div>
+          <div>[[organization.address]]</div>
+          <div class="m-top-4"><strong>Powered by BDEMR</strong></div>
+        </div>
+        
+  
+      </div>
+      
+    </div>
+
+  </template>
+  <script src="page-print-patient-card.coffee-compiled.js"></script>
+  
+
+</dom-module>

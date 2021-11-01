@@ -1,0 +1,229 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-material/paper-material.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-accounts-salary-manager">
+
+  <template>
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        width: 100%;
+        margin: 0;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      .search {
+        background-color: #fff;
+        border: 1px solid #dadada;
+        padding: 8px;
+        margin: 4px 0;
+      }
+
+      #salaryList {
+        height: 520px;
+      }
+
+      paper-material {
+        background-color: #fff;
+      }
+
+      paper-tab[link] a {
+        @apply --layout-horizontal;
+        @apply --layout-center-center;
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+
+    <!-- <module-accounts-top-nav page-name="accounts-salary-manager" organization-id="[[organization.idOnServer]]"></module-accounts-top-nav> -->
+
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <paper-material>
+
+
+          <div class="card-content custom-input-field">
+
+            <paper-progress indeterminate hidden$="[[!loading]]"></paper-progress>
+
+            <div class="search layout horizontal center wrap">
+              <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
+              <!-- <div class="m-left-8">
+                  <paper-button raised class="btn btn-success btn-large" on-tap="searchButtonClicked">Search</paper-button>
+                </div> -->
+              <div class="flex"></div>
+              <paper-button class="btn btn-primary btn-sm" raised on-tap="addNewSalaryButtonClicked">
+                <iron-icon icon="add"></iron-icon>
+                [[$TRANSLATE('Add Salary Item', LANG)]]
+              </paper-button>
+            </div>
+
+            <vaadin-grid id="salaryList" items="[[matchingSalaryList]]">
+              <vaadin-grid-column>
+                <template class="header">
+                  <vaadin-grid-sorter path="createdDatetimeStamp" direction="desc">[[$TRANSLATE('Date', LANG)]]</vaadin-grid-sorter>
+                </template>
+                <template>
+                  <div class="">[[$formatDateTime(item.createdDatetimeStamp)]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column>
+                <template class="header">[[$TRANSLATE('Total', LANG)]]</template>
+                <template>[[item.totalSalaryExpense]]</template>
+              </vaadin-grid-column>
+              <vaadin-grid-column flex-grow="0" width="100px">
+                <template class="header">
+                  <span>[[$TRANSLATE('Action', LANG)]]</span>
+                </template>
+                <template>
+                  <div class="">
+                    <paper-icon-button icon="content-copy" on-tap="copySalarySheetButtonClicked"></paper-icon-button>
+                    <paper-icon-button icon="visibility" on-tap="viewSalarySheetButtonClicked"></paper-icon-button>
+                  </div>
+                </template>
+              </vaadin-grid-column>
+
+            </vaadin-grid>
+          </div>
+
+        </paper-material>
+
+
+      </div>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'page-accounts-salary-manager',
+      behaviors: [
+        app.behaviors.translating,
+        app.behaviors.pageLike,
+        app.behaviors.dbUsing,
+        app.behaviors.apiCalling,
+        app.behaviors.commonComputes
+      ],
+
+      properties: {
+        user: {
+          type: Object,
+          notify: true,
+          value: null
+        },
+        organization: {
+          type: Object,
+          value: {}
+        },
+        matchingSalaryList: {
+          type: Array,
+          value: []
+        }
+      },
+
+      navigatedIn() {
+        const params = this.domHost.getPageParams()
+        this._loadUser();
+        const organizationId = params['organization']
+        if (organizationId) {
+          this._loadOrganization(organizationId, () => {
+            this._loadSalarySheetList(organizationId)
+          });
+        } else {
+          this._notifyInvalidOrganization()
+        }
+      },
+
+      _loadUser() {
+        const userList = app.db.find('user');
+        if (userList.length === 1) {
+          return this.user = userList[0];
+        }
+      },
+
+      _loadOrganization(idOnServer, cbfn) {
+        const data = {
+          apiKey: this.user.apiKey,
+          idList: [idOnServer]
+        };
+        this.loading = true;
+        this.callApi('/bdemr-organization-list-organizations-by-ids', data, (err, response) => {
+          this.loading = false;
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (!response.data.matchingOrganizationList.length) return this._notifyInvalidOrganization();
+          this.set('organization', response.data.matchingOrganizationList[0]);
+          return cbfn();
+        });
+      },
+
+      _notifyInvalidOrganization() {
+        return this.domHost.showModalDialog("Invalid Organization");
+      },
+
+      _loadSalarySheetList(organizationId) {
+        this.loading = true;
+        this.callApi('/bdemr-organization-get-all-salary-sheet', { apiKey: this.user.apiKey, organizationId }, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          this.set('matchingSalaryList', response.data)
+        })
+      },
+
+      addNewSalaryButtonClicked() {
+        this.domHost.navigateToPage('#/accounts-salary-creator/organization:' + this.organization.idOnServer + '/salary:new')
+      },
+
+      copySalarySheetButtonClicked(e) {
+        let item = e.model.item;
+        this.domHost.navigateToPage('#/accounts-salary-creator/organization:' + this.organization.idOnServer + '/salary:' + item._id)
+      },
+
+      viewSalarySheetButtonClicked(e) {
+        let item = e.model.item;
+        this.domHost.navigateToPage('#/accounts-view-salary-sheet/organization:' + this.organization.idOnServer + '/salary:' + item._id)
+      },
+
+      filterByDateClicked(e) {
+        const startDate = new Date(e.detail.startDate);
+        startDate.setHours(0, 0, 0, 0);
+        const endDate = new Date(e.detail.endDate);
+        endDate.setHours(23, 59, 59, 999);
+        let filteredSalarySheetList = this.matchingSalaryList.filter(item => item.createdDatetimeStamp >= startDate.getTime() && item.createdDatetimeStamp <= endDate.getTime())
+        this.set('matchingSalaryList', filteredSalarySheetList);
+      },
+
+      filterByDateClearButtonClicked(e) {
+        this._loadSalarySheetList(this.organization.idOnServer)
+      }
+
+
+
+    })
+  </script>
+</dom-module>

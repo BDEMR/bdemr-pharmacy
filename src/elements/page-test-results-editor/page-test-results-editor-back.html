@@ -1,0 +1,499 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../elements/custom-vital-search/custom-vital-search.html">
+
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-spinner/paper-spinner.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+
+
+<dom-module id='page-test-results-editor'>
+  <template>
+    <style is='custom-style' include="common-style">
+      paper-dropdown-menu {
+        width: 100%;
+      }
+      .limiting-container {
+        margin-top: 10px;
+      }
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .custom-card-list-item {
+        padding: 4px 16px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .custom-card-list-item:last-child {
+        border-bottom: none;
+      }
+
+      paper-checkbox {
+        margin: 8px;
+      }
+
+      .card-item {
+        border-radius: 6px;
+        border: 1px solid #eee;
+        margin: 3px;
+      }
+
+      .card-item div {
+        background-color: #fafafa;
+        /*border-right: 1px solid #eee;*/
+      }
+
+      /*Region - Patient Gallary*/
+      .new-attachment-preview {
+        display: block;;
+        width: 256px;
+        height: 256px;
+      }
+      
+      .descriptive-area {
+        padding: 4px;
+      }
+      
+      paper-button {
+        background: white;
+      }
+      
+      .attachment-card {
+        background: white;
+        /*
+        margin: 4px;
+        padding: 4px;
+        */
+      }
+      
+      .image {
+        display: block;
+        max-width: 256px;
+        max-height: 256px;
+        width: 256px;;
+        height: auto;
+      }
+      
+      .footer {
+        margin-top: 4px;
+      }
+      
+      .usage {
+        margin-right: 20px;
+      }
+      .usage .title {
+        font-size: 36px;
+        text-align: left;
+      }
+
+      .attachment-card-list {
+        margin: 10px 0;
+      }
+
+      .attachment-card-list paper-material {
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+
+      .attachment-card .footer {
+        padding: 10px;
+      }
+    </style>
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <!-- Investigation - start -->
+        <paper-card>
+
+          <paper-tabs selected="{{selectedInvestigationPage}}" scrollable>
+            <paper-tab>Doctor Finder</paper-tab>
+            <paper-tab>Reported Doctor List</paper-tab>
+          </paper-tabs>
+
+          <iron-pages selected="{{selectedInvestigationPage}}">
+            <!-- Page - Doctor Finder -->
+            <div>
+            
+              <div class="box-grayed">
+                <paper-input class="flex" value="{{searchFieldMainInput}}" label="Search By Doctor Name, phone, Email, NID or Hospital Number"></paper-input>
+                <div class="horizontal layout end-justified">
+                  <paper-button class="colored" raised on-tap="searchOnlineButtonPressed">Search Doctor</paper-button>
+                </div>
+              </div>
+              <template is="dom-if" if="[[hasSearchBeenPressed]]">
+                <div class="layout horizontal center p-16">
+                  <div class="title flex">Results: [[matchingDoctorList.length]] Doctor(s) found</div>
+                  <paper-icon-button class="m-left-16" icon="clear" on-tap="clearSearchResultsClicked"></paper-icon-button>
+                </div>
+                
+                <div class="p-0">
+                  <paper-listbox>
+                    
+                    <template id="doctor-list-repeater" is="dom-repeat" items="[[matchingDoctorList]]">
+                      <paper-item class="custom layout horizontal center">
+                        <div class="type caption secondary">[[item.serial]]</div>
+                        
+                        <div class="flex m-left-8">
+                          <div class="type body capitalize">[[item.name]]</div>
+                          <div class="type caption">[[item.email]]</div>
+                          <div class="type caption">[[item.phone]]</div>
+                        </div>
+              
+                        <paper-menu-button horizontal-align="right" no-animations>
+                          <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                          <paper-menu class="dropdown-content">
+                            <template is="dom-if" if="[[isThatNewTest]]">
+                              <paper-item on-tap="_onClickAddAsAdvisedDoctor">Add as Advised Doctor</paper-item>
+                            </template>
+
+                            <paper-item on-tap="_onClickAddToReportedDoctor">Add to Reported Doctor</paper-item>
+                          </paper-menu>
+                        </paper-menu-button>
+                      </paper-item>
+                    </template>
+
+                  </paper-listbox>
+                  
+                </div>
+              </template>
+
+            </div>
+            <!-- /Page - Doctor Finder -->
+
+            <!-- Page - Reported Doctor List -->
+            <div>
+              <template is="dom-if" if="[[!_isEmptyArray(matchingUserAddedReportedDoctorList.length)]]">
+                <div class="p-0">
+                  <paper-listbox>
+                    
+                    <template id="user-added-reported-doctor-list-repeater" is="dom-repeat" items="[[matchingUserAddedReportedDoctorList]]">
+                      <paper-item class="custom layout horizontal center">
+                        <div class="type caption secondary">[[item.serial]]</div>
+                        
+                        <div class="flex m-left-8">
+                          <div class="type body capitalize">[[item.data.doctorName]] - [[item.data.specializationList.0.specializationTitle]]</div>
+                        </div>
+              
+                        <paper-icon-button icon="delete" on-click="_onReportedDoctorItemDeleteBtnPressed"></paper-icon-button>
+                    </template>
+
+                  </paper-listbox>
+                  
+                </div>
+              </template>
+
+              <template is="dom-if" if="[[_isEmptyArray(matchingUserAddedReportedDoctorList.length)]]">
+                <div class="card-content layout horizontal center center-justified">
+                  <div class="type body secondary">-- empty --</div>
+                </div>
+              </template>
+              
+            </div>
+            <!-- /Page - Reported Doctor List -->
+
+          </iron-pages>
+          
+
+        </paper-card>
+        <!-- Investigation - end -->
+
+        <!-- Added Investigation Test(s) -->
+        <paper-card class="m-top-16">
+
+          <!--Custom Header-->
+          <div class="card-custom-header">
+            <div class="layout horizontal justified center">
+
+              <template is="dom-if" if="[[!isThatNewTest]]">
+                <div class="title flex">{{advisedTestResults.investigationName}}</div>
+              </template>
+
+              <template is="dom-if" if="[[isThatNewTest]]">
+
+                <template is="dom-if" if="[[_isEmptyString(newInvestigationTestResults.investigationName)]]">
+                   <div class="title flex">Please Select An Investigation!</div>
+                </template>
+                <template is="dom-if" if="[[!_isEmptyString(newInvestigationTestResults.investigationName)]]">
+                  <div class="title flex">{{newInvestigationTestResults.investigationName}}</div>
+                  <!-- <paper-icon-button icon="icons:attachment" on-tap="on"></paper-icon-button> -->
+                </template>
+              </template>
+
+
+            </div>
+          </div>
+
+          <paper-tabs selected="{{selectedResultsPage}}" scrollable>
+            <paper-tab>Results</paper-tab>
+            <paper-tab>Add Attachment</paper-tab>
+            <!-- <paper-tab>Favorite</paper-tab> -->
+          </paper-tabs>
+
+          <iron-pages selected="{{selectedResultsPage}}">
+
+            <!-- Page - Results -->
+            <div>
+              <!-- New Test Result List -->
+              <template is="dom-if" if="[[isThatNewTest]]">
+                <template is="dom-if" if="[[_isEmptyArray(selectedInvestigationTestList.length)]]">
+                  <div class="card-content layout horizontal center center-justified">
+                    <div class="type body secondary">-- empty --</div>
+                  </div>
+                </template>
+                <template is="dom-if" if="[[!_isEmptyArray(selectedInvestigationTestList.length)]]">
+                  <template id="new-test-result-list-repeater" is="dom-repeat" items="[[selectedInvestigationTestList]]">
+                    <div class="custom-card-list-item horizontal layout">
+                      <div class="type body-lead secondary">[[_returnSerial(index)]].</div>
+                      <div class="layout vertical flex m-left-8">
+                        <div class="type body-lead primary">{{item.testName}}</div>
+                        <div class="horizontal layout wrap">
+                          <div class="form-group flex one">
+
+                            <div>
+                              <paper-input label="Result" type="text" value="{{item.testResult}}"></paper-input>
+                            </div>
+                            
+                            <div>
+                              <paper-dropdown-menu label="Unit(s)">
+                                <paper-listbox class="dropdown-content" selected="{{item.unitSelectedIndex}}" on-iron-select="_testUnitSelecttedIndexChanged">
+                                  <template is="dom-repeat" items="{{item.testUnitList}}">
+                                    <paper-item>{{item}}</paper-item>
+                                  </template>
+                                </paper-listbox>
+                              </paper-dropdown-menu>
+                            </div>
+
+
+                          </div>
+
+
+
+                          <div class="form-group flex one">
+                            <div>
+                              <vaadin-date-picker label="Date" value="{{item.datePerform}}"></vaadin-date-picker>
+                            </div>
+                            <div>
+                              <!-- <paper-input label="[[$TRANSLATE('Reported By',LANG)]]" type="text" value="{{item.reportedBy}}"></paper-input> -->
+                              <paper-dropdown-menu label="Reported By">
+                                <paper-listbox class="dropdown-content" selected="{{item.reportedDoctorSelectedIndex}}" on-iron-select="_testReportedDoctorSelectedIndexChanged">
+                                  <template is="dom-repeat" items="{{matchingUserAddedReportedDoctorList}}">
+                                    <paper-item>{{item.data.doctorName}} - {{item.data.specializationList.0.specializationTitle}}</paper-item>
+                                  </template>
+                                </paper-listbox>
+                              </paper-dropdown-menu>
+                            </div>
+
+
+                            
+                          </div>
+                        </div>
+                        <div><strong>Reference:</strong> {{item.referenceRange}}</div>
+                      </div>
+                      
+                     
+                    </div>
+                  </template>
+                </template>
+               
+                <div class="box-grayed">
+                  <div class="type body"><strong>Advised Doctor: </strong> {{newInvestigationTestResults.advisedDoctorName}} - <i>{{newInvestigationTestResults.advisedDoctorSpeciality}}</i></div>
+                </div>   
+              </template>
+              <!-- /New Test Result List -->
+
+              <!-- Advised Test List -->
+              <template is="dom-if" if="[[!isThatNewTest]]">
+              
+                <template id="advised-test-result-list-repeater" is="dom-repeat" items="[[advisedTestResults.data.testList]]">
+                  <div class="custom-card-list-item horizontal layout">
+                    <div class="type body-lead secondary">[[_returnSerial(index)]].</div>
+                    <div class="layout vertical flex m-left-8">
+                     
+                      <div class="type body-lead primary">{{item.testName}}</div>
+                      <div class="horizontal layout wrap">
+                        <div class="form-group flex one">
+
+                          <div><paper-input label="[[$TRANSLATE('Result',LANG)]]" type="text" value="{{item.testResult}}"></paper-input></div>
+                          
+                          <div>
+                              <paper-dropdown-menu label="Unit(s)" id="advisedTestUnitMenu" attr-for-selected="value">
+                                <paper-listbox class="dropdown-content" selected="{{item.unitSelectedIndex}}" on-iron-select="_advisedTestUnitSelecttedIndexChanged">
+                                  <template is="dom-repeat" items="{{item.testUnitList}}">
+                                    <paper-item>{{item}}</paper-item>
+                                  </template>
+                                </paper-listbox>
+                              </paper-dropdown-menu>
+                            </div>
+                          
+                        </div>
+                        <div class="form-group flex one">
+                          <div>
+                            <vaadin-date-picker label="Date" value="{{item.datePerform}}" max="{{currentDate}}"></vaadin-date-picker>
+                          </div>
+                          <!-- <div><paper-input label="[[$TRANSLATE('Reported By',LANG)]]" type="text" value="{{item.reportedBy}}"></paper-input></div> -->
+
+                          <div>
+                            <paper-dropdown-menu label="Reported By">
+                              <paper-listbox class="dropdown-content" selected="{{item.reportedDoctorSelectedIndex}}" on-iron-select="_testReportedDoctorSelectedIndexChanged">
+                                <template is="dom-repeat" items="{{matchingUserAddedReportedDoctorList}}">
+                                  <paper-item>{{item.data.doctorName}} - {{item.data.specializationList.0.specializationTitle}}</paper-item>
+                                </template>
+                              </paper-listbox>
+                            </paper-dropdown-menu>
+                          </div>
+                          
+
+                        </div>
+                      </div>
+                      <div><strong>Reference:</strong> {{item.referenceRange}}</div>
+                    </div>
+                    
+                   
+                  </div>
+                </template>
+                <div class="box-grayed">
+                  <div class="type body"><strong>Advised Doctor: </strong> {{advisedDoctorName.doctorName}} - <i>{{visit.advisedDoctorSpeciality}}</i></div>
+                </div> 
+              </template>
+              <!-- /Advised Test List -->
+            </div>
+            <!-- /Page - Results -->
+
+            <!-- Page - Attachment -->
+            <div>
+              <div class="card-content">
+                <template is="dom-if" if="[[newAttachment]]">
+
+                  <div class="horizontal layout wrap">
+                    <div class="vertical layout center descriptive-area">
+                      <template is="dom-if" if="[[newAttachment.isImage]]">
+                        <img class="new-attachment-preview" src$="[[newAttachment.dataUri]]" />
+                      </template>
+                      <template is="dom-if" if="[[!newAttachment.isImage]]">
+                        <img class="new-attachment-preview" src="../../../assets/no-preview.png" />
+                      </template>
+                      <paper-progress value="[[newAttachment.progress]]"></paper-progress>
+                    </div>
+                    <div class="vertical layout descriptive-area">
+                      <paper-input class="logo-input" type="file" accept="*/*" on-change="fileInputChanged" no-ink></paper-input>
+
+                      <template is="dom-if" if="[[newAttachment.isLoaded]]">
+
+                        <paper-input label="Title" value="{{newAttachment.title}}"></paper-input>
+
+                        <paper-input label="Description" value="{{newAttachment.description}}"></paper-input>
+
+                        <paper-input readonly label="Space Needed" value="[[$toMega(newAttachment.sizeInChars)]]MB"></paper-input>
+
+                        <div class="horizontal layout">
+                          <div class="layout horizontal center" hidden$="[[!isUploading]]">
+                            <paper-spinner style="margin-right: 10px;" active></paper-spinner>
+                            <paper-button disabled>UPLOADING...</paper-button>
+                          </div>
+                          <paper-button raised on-tap="uploadPressed" hidden$="[[isUploading]]">UPLOAD</paper-button>     
+                          <paper-button raised on-tap="saveLocallyPressed">SAVE LOCALLY</paper-button>
+                          <paper-button raised on-tap="keepUntilBrowserClosedPressed">KEEP UNTIL BROWSER IS CLOSED</paper-button>
+                        </div>
+
+                      </template>
+                    </div>
+                  </div>
+
+                </template>
+
+                <div class="layout horizontal center" hidden$="[[!isDownloading]]">
+                  <paper-spinner active></paper-spinner>
+                  <span class="text-muted"> &nbsp; &nbsp; Loading Images...</span>
+                </div>
+                <template is="dom-if" if="[[attachmentList]]">
+                  <div class="attachment-card-list horizontal layout wrap">
+                    
+                    <template is="dom-repeat" items="[[attachmentList]]" as="attachment" index-as="attachmentIndex">
+                      <paper-material elevation="1">
+                        <div class="attachment-card vertical layout">
+                          <img class="image" src$="[[$getImageSrc(attachment)]]" hidden$="[[!attachment.isImage]]"/>
+                          <div class="footer">
+                            <div class="title horizontal layout center">
+                              <div class="flex">[[attachment.title]]</div>
+                              <paper-icon-button on-tap="downloadPressed" icon="file-download"></paper-icon-button>
+                              <paper-icon-button on-tap="deletePressed" icon="delete"></paper-icon-button>
+                            </div>
+                          </div>
+                        </div>
+                      </paper-material>
+                    </template>
+
+                  </div>
+                </template>
+              </div>
+            </div>
+            <!-- /Page - Attachment -->
+
+          </iron-pages>
+
+          <div class="card-actions">
+            <template is="dom-if" if="[[isThatNewTest]]">
+
+              <paper-checkbox checked="[[newInvestigationTestResults.availableToPatient]]" on-change="testResultsAvailableToPatientCheckBoxChanged">Available to Patient</paper-checkbox>
+
+              <paper-button class="" on-tap="cancelButtonClicked">Cancel</paper-button>
+              <!-- <paper-button class="" on-tap="tempButtonClearSelectedInvestigationList">Clear</paper-button> -->
+              <paper-button class="colored" raised on-tap="addNewTestResultsButtonClicked">SAVE</paper-button>
+            </template>
+            <template is="dom-if" if="[[!isThatNewTest]]">
+              <paper-button class="btn btn-success" on-click="addTestsForAdvsiedTestButtonClicked" raised>SAVE</paper-button>
+            </template>
+          </div>
+          
+        </paper-card>
+        <!-- Added Investigation Test(s) -->
+
+
+      </div>
+    </div>
+
+  </template>
+  <script src='page-test-results-editor.coffee-compiled.js'></script>
+</dom-module>
+

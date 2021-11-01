@@ -1,0 +1,422 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../elements/custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+<dom-module id="page-operation-theater-management">
+  <template>
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        width: 100%;
+        margin-top: 10px;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table th {
+        width: 50px;
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td,
+      .table th {
+        padding: 15px;
+        border: 1px solid var(--paper-grey-500);
+      }
+
+      paper-button {
+        margin: 3px;
+      }
+
+      .paper-custom {
+        padding: 0px 8px 12px 8px;
+        margin: 4px;
+        margin-left: 0;
+      }
+
+      .filter-query {
+        --paper-input-container: {
+          width: 250px;
+          padding: 0;
+        }
+
+        --paper-input-container-input: {
+          font-size: 13px;
+        }
+      }
+    </style>
+
+    <div class="master-container">
+
+      <div class="limiting-container ">
+        <div class="limiting-container custom-input-field">
+
+          <paper-card>
+            <div class="card-custom-header">
+              <div class="layout horizontal center">
+                <div class="title flex">[[$TRANSLATE('Operation Theater(OT) Management Table', LANG)]]</div>
+                <paper-button raised style="background-color: teal; color: white;" on-tap="createOtListTapped">
+                  [[$TRANSLATE('Create OT list', LANG)]]</paper-button>
+              </div>
+            </div>
+
+            <div class="card-content">
+              <div class="layout horizontal paper-custom end wrap">
+                <vaadin-combo-box id="summaryOrganizationSelector" class="organization-dropdown m-right-8"
+                  label="[[$TRANSLATE('Organization', LANG)]]" items="[[childOrganizationList]]"
+                  on-value-changed="organizationSelected" loading="[[loading]]"
+                  disabled="[[!childOrganizationList.length]]">
+                </vaadin-combo-box>
+              </div>
+              <div class="layout horizontal paper-custom end wrap">
+
+
+                <paper-input type="search" class="filter-query m-right-16"
+                  label="[[$TRANSLATE('Filter By Theater Name', LANG)]]" no-label-float value="{{searchString}}">
+                </paper-input>
+                <paper-input type="search" class="filter-query m-right-16"
+                  label="[[$TRANSLATE('Filter By Department Name', LANG)]]" no-label-float
+                  value="{{departmentSearchString}}"></paper-input>
+
+                <custom-vital-search class="filter-query m-right-8" on-date-select="filterByDateClicked"
+                  on-clear="filterByDateClearButtonClicked"></custom-vital-search>
+
+                <paper-button class="btn btn-success" raised on-tap="searchButtonClicked">[[$TRANSLATE('Search', LANG)]]
+                </paper-button>
+                <paper-button raised on-tap="resetButtonClicked">[[$TRANSLATE('Reset', LANG)]]</paper-button>
+                <div style="color: rgb(182, 182, 182)" class="m-left-8 m-bottom-8">[[$TRANSLATE('Press Search to Generate The Operation List', LANG)]]</div>
+              </div>
+            </div>
+
+            <div class="card-content">
+              <vaadin-grid class="custom-agent-table" id="visitList" items="[[matchingOtManagementList]]">
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <vaadin-grid-sorter path="data.theaterName">
+                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Theater Name', LANG)]]" path="data.theaterName"
+                        value="[[filterTheaterName]]">
+                        <paper-input label="[[$TRANSLATE('Theater Name', LANG)]]" value="{{filterTheaterName}}" no-label-float>
+                        </paper-input>
+                      </vaadin-grid-filter>
+                    </vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[item.data.theaterName]]
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column resizable width="180px">
+                  <template class="header">
+                    <vaadin-grid-sorter path="data.nameOfThePatient">
+                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Patient Details', LANG)]]" path="data.nameOfThePatient"
+                        value="[[filterPatientName]]">
+                        <paper-input label="[[$TRANSLATE('Patient Details', LANG)]]" value="{{filterPatientName}}" no-label-float>
+                        </paper-input>
+                      </vaadin-grid-filter>
+                    </vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                        <div class="m-bottom-8">
+                          <span>[[$getFullName(item.data.nameOfThePatient)]]</span></div>
+                        <div class="m-bottom-8">
+                          <span class="type secondary">([[item.data.patientId]])</span></div>
+                      </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    [[$TRANSLATE('Operation info', LANG)]]
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      <div class="m-bottom-8">
+                        <span class="type secondary">[[$TRANSLATE('Operation Name', LANG)]]:
+                        </span>[[item.data.operationName]]</div>
+                      <div class="m-bottom-8">
+                        <span class="type secondary">[[$TRANSLATE('Institution Name', LANG)]]:
+                        </span>[[item.data.nameOfTheInstitution]]</div>
+                      <div class="m-bottom-8">
+                        <span class="type secondary">[[$TRANSLATE('Organization Name', LANG)]]:
+                        </span>[[item.data.nameOfTheOrganization]]
+                      </div>
+                      <div class="m-bottom-8">
+                        <span class="type secondary">[[$TRANSLATE('Department Name', LANG)]]:
+                        </span>[[item.data.nameOfTheDepartment]]</div>
+                      <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Surgeon', LANG)]]:
+                        </span>[[item.data.surgeon.name]]</div>
+                      <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Anaesthesist', LANG)]]:
+                        </span>[[item.data.anaesthesist.name]]</div>
+                      <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Pediatrician', LANG)]]:
+                        </span>[[item.data.pediatrician.name]]</div>
+                      <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Assistant Surgeon #1', LANG)]]:
+                        </span>[[item.data.assistantSurgeon1.name]]</div>
+                      <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Assistant Surgeon #2', LANG)]]:
+                        </span>[[item.data.assistantSurgeon2.name]]</div>
+                      <div><span class="type secondary">[[$TRANSLATE('Assistant Surgeon #3', LANG)]]:
+                        </span>[[item.data.assistantSurgeon3.name]]</div>
+                      <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Assistant Anaesthesist #1', LANG)]]:
+                        </span>[[item.data.assistantAnaesthesist1.name]]</div>
+                      <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Assistant Anaesthesist #2', LANG)]]:
+                        </span>[[item.data.assistantAnaesthesist2.name]]</div>
+                      <div><span class="type secondary">[[$TRANSLATE('Assistant Anaesthesist #3', LANG)]]:
+                        </span>[[item.data.assistantAnaesthesist3.name]]</div>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                  <template class="header">
+                    <vaadin-grid-sorter path="data.startTime">
+                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Operation Date', LANG)]]" path="data.startTime"
+                        value="[[filterDates]]">
+                        <paper-input label="[[$TRANSLATE('Operation Date', LANG)]]" value="{{filterDates}}" no-label-float>
+                        </paper-input>
+                      </vaadin-grid-filter>
+                    </vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      <div class="m-bottom-8">
+                        <span class="type secondary">[[$TRANSLATE('Start Time', LANG)]]:
+                        </span>[[$formatTimeString(item.data.startTime)]]
+                      </div>
+                      <div class="m-bottom-8">
+                        <span class="type secondary">[[$TRANSLATE('End Time', LANG)]]:
+                        </span>[[$formatTimeString(item.data.endTime)]]</div>
+                      <div class="m-bottom-8">
+                        <span class="type secondary">[[$TRANSLATE('Expected Time', LANG)]]:
+                        </span>[[item.data.expectedTime]]</div>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable >
+                  <template class="header">
+                    <vaadin-grid-sorter path="data.operationDate">
+                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Operation Timings', LANG)]]" path="data.operationDate"
+                        value="[[filterDate]]">
+                        <paper-input label="[[$TRANSLATE('Operation Timings', LANG)]]" value="{{filterDate}}" no-label-float>
+                        </paper-input>
+                      </vaadin-grid-filter>
+                    </vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[$formatDate(item.data.operationDate)]]
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable >
+                  <template class="header">
+                    <vaadin-grid-sorter path="data.otStatus">
+                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Status', LANG)]]" path="data.otStatus"
+                        value="[[filterStatus]]">
+                        <paper-input label="[[$TRANSLATE('Status', LANG)]]" value="{{filterStatus}}" no-label-float>
+                        </paper-input>
+                      </vaadin-grid-filter>
+                    </vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      <paper-dropdown-menu label="[[$TRANSLATE('Status', LANG)]]">
+                        <paper-listbox class="dropdown-content" on-iron-activate="otManagementStatusChanged"
+                          selected="[[getOtStatusListIndex(item.data.otStatus)]]">
+                          <template is="dom-repeat" items="[[otStatusList]]">
+                            <paper-item>[[item]]</paper-item>
+                          </template>
+                        </paper-listbox>
+                      </paper-dropdown-menu>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable >
+                  <template class="header">
+                    [[$TRANSLATE('Surgery Priority', LANG)]]
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      <paper-dropdown-menu label="[[$TRANSLATE('Surgery Priority', LANG)]]">
+                        <paper-listbox class="dropdown-content" on-iron-activate="surgeryPriorityChangedFromTheTable"
+                          selected="[[getSurgeryPriorityListIndex(item.data.surgeryPriorityStatus)]]">
+                          <template is="dom-repeat" items="[[surgeryPriorityList]]">
+                            <paper-item>[[item]]</paper-item>
+                          </template>
+                        </paper-listbox>
+                      </paper-dropdown-menu>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable >
+                  <template class="header">
+                    <vaadin-grid-sorter path="data.specialNotes">
+                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Special Notes', LANG)]]" path="data.specialNotes"
+                        value="[[filterSpecialNotes]]">
+                        <paper-input label="[[$TRANSLATE('Special Notes', LANG)]]" value="{{filterSpecialNotes}}" no-label-float>
+                        </paper-input>
+                      </vaadin-grid-filter>
+                    </vaadin-grid-sorter>
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      [[item.data.specialNotes]]
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable >
+                  <template class="header">
+                    [[$TRANSLATE('Actions', LANG)]]
+                   
+                  </template>
+                  <template>
+                    <div class="layout vertical">
+                      <paper-button raised class="btn btn-success" class="btn btn-default"
+                        on-tap="sendNotificationPressed">[[$TRANSLATE('Send Notification', LANG)]]</paper-button>
+                      <paper-button raised class="btn btn-default" on-tap="editOtButtonPressed">[[$TRANSLATE('Edit', LANG)]]</paper-button>
+                      <paper-button raised class="btn btn-danger" on-tap="deleteOtButtonPressed">[[$TRANSLATE('Delete', LANG)]]</paper-button>
+                   
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+                </vaadin-grid>
+                <!-- <table class="table">
+                  <tr>
+                    <th>[[$TRANSLATE('Theater Name', LANG)]]</th>
+                    <th>[[$TRANSLATE('Patient Details', LANG)]]</th>
+                    <th>[[$TRANSLATE('Operation info', LANG)]]</th>
+                    <th>[[$TRANSLATE('Operation Date', LANG)]]</th>
+                    <th>[[$TRANSLATE('Operation Timings', LANG)]]</th>
+                    <th>[[$TRANSLATE('Status', LANG)]]</th>
+                    <th>[[$TRANSLATE('Surgery Priority', LANG)]]</th>
+                    <th>[[$TRANSLATE('Special Notes', LANG)]]</th>
+                    <th>[[$TRANSLATE('Actions', LANG)]]</th>
+                  </tr>
+                  <template is="dom-repeat" items="[[matchingOtManagementList]]">
+                    <tr>
+                      <td>[[item.data.theaterName]]</td>
+                      <td>
+                        <div class="layout vertical">
+                          <div class="m-bottom-8">
+                            <span>[[$getFullName(item.data.nameOfThePatient)]]</span></div>
+                          <div class="m-bottom-8">
+                            <span class="type secondary">([[item.data.patientId]])</span></div>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="layout vertical">
+                          <div class="m-bottom-8">
+                            <span class="type secondary">[[$TRANSLATE('Operation Name', LANG)]]:
+                            </span>[[item.data.operationName]]</div>
+                          <div class="m-bottom-8">
+                            <span class="type secondary">[[$TRANSLATE('Institution Name', LANG)]]:
+                            </span>[[item.data.nameOfTheInstitution]]</div>
+                          <div class="m-bottom-8">
+                            <span class="type secondary">[[$TRANSLATE('Organization Name', LANG)]]:
+                            </span>[[item.data.nameOfTheOrganization]]
+                          </div>
+                          <div class="m-bottom-8">
+                            <span class="type secondary">[[$TRANSLATE('Department Name', LANG)]]:
+                            </span>[[item.data.nameOfTheDepartment]]</div>
+                          <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Surgeon', LANG)]]:
+                            </span>[[item.data.surgeon.name]]</div>
+                          <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Anaesthesist', LANG)]]:
+                            </span>[[item.data.anaesthesist.name]]</div>
+                          <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Pediatrician', LANG)]]:
+                            </span>[[item.data.pediatrician.name]]</div>
+                          <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Assistant Surgeon #1', LANG)]]:
+                            </span>[[item.data.assistantSurgeon1.name]]</div>
+                          <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Assistant Surgeon #2', LANG)]]:
+                            </span>[[item.data.assistantSurgeon2.name]]</div>
+                          <div><span class="type secondary">[[$TRANSLATE('Assistant Surgeon #3', LANG)]]:
+                            </span>[[item.data.assistantSurgeon3.name]]</div>
+                          <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Assistant Anaesthesist #1', LANG)]]:
+                            </span>[[item.data.assistantAnaesthesist1.name]]</div>
+                          <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Assistant Anaesthesist #2', LANG)]]:
+                            </span>[[item.data.assistantAnaesthesist2.name]]</div>
+                          <div><span class="type secondary">[[$TRANSLATE('Assistant Anaesthesist #3', LANG)]]:
+                            </span>[[item.data.assistantAnaesthesist3.name]]</div>
+                        </div>
+                      </td>
+                      <td>[[$formatDate(item.data.operationDate)]]</td>
+                      <td>
+                        <div class="layout vertical">
+                          <div class="m-bottom-8">
+                            <span class="type secondary">[[$TRANSLATE('Start Time', LANG)]]:
+                            </span>[[$formatTimeString(item.data.startTime)]]
+                          </div>
+                          <div class="m-bottom-8">
+                            <span class="type secondary">[[$TRANSLATE('End Time', LANG)]]:
+                            </span>[[$formatTimeString(item.data.endTime)]]</div>
+                          <div class="m-bottom-8">
+                            <span class="type secondary">[[$TRANSLATE('Expected Time', LANG)]]:
+                            </span>[[item.data.expectedTime]]</div>
+                        </div>
+                      </td>
+                      <td>
+                        <paper-dropdown-menu label="[[$TRANSLATE('Status', LANG)]]">
+                          <paper-listbox class="dropdown-content" on-iron-activate="otManagementStatusChanged"
+                            selected="[[getOtStatusListIndex(item.data.otStatus)]]">
+                            <template is="dom-repeat" items="[[otStatusList]]">
+                              <paper-item>[[item]]</paper-item>
+                            </template>
+                          </paper-listbox>
+                        </paper-dropdown-menu>
+                      </td>
+                      <td>
+                        <paper-dropdown-menu label="[[$TRANSLATE('Surgery Priority', LANG)]]">
+                          <paper-listbox class="dropdown-content" on-iron-activate="surgeryPriorityChangedFromTheTable"
+                            selected="[[getSurgeryPriorityListIndex(item.data.surgeryPriorityStatus)]]">
+                            <template is="dom-repeat" items="[[surgeryPriorityList]]">
+                              <paper-item>[[item]]</paper-item>
+                            </template>
+                          </paper-listbox>
+                        </paper-dropdown-menu>
+                      </td>
+                      <td>[[item.data.specialNotes]]</td>
+                      <td>
+                        <paper-button raised class="btn btn-success" class="btn btn-default"
+                          on-tap="sendNotificationPressed">[[$TRANSLATE('Send Notification', LANG)]]</paper-button>
+                        <paper-button raised class="btn btn-default" on-tap="editOtButtonPressed">[[$TRANSLATE('Edit', LANG)]]</paper-button>
+                        <paper-button raised class="btn btn-danger" on-tap="deleteOtButtonPressed">[[$TRANSLATE('Delete', LANG)]]</paper-button>
+                      </td>
+                    </tr>
+                  </template>
+                </table> -->
+
+            </div>
+          </paper-card>
+
+        </div>
+
+      </div>
+  </template>
+  <script src="page-operation-theater-management.coffee-compiled.js"></script>
+</dom-module>

@@ -1,0 +1,837 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<dom-module id="page-manage-unit-price">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      app-header-layout ::content #contentContainer {
+        overflow: hidden !important;
+      }
+
+      .group-test-container {
+        border: 1px solid #eee;
+        border-radius: 6px;
+        margin-left: 32px;
+      }
+
+      :host {
+        height: 100%;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 56px;
+      }
+
+      .container {
+        width: 100%;
+        height: inherit;
+        position: relative;
+        /* background-color: #fff; */
+      }
+
+      .group-test {
+        background-color: #eee;
+        border-radius: 6px;
+        padding-right: 8px;
+        margin-top: 8px;
+      }
+
+      .group-test-item {
+        background-color: #fff;
+        margin-top: 8px;
+        border-radius: 6px;
+        border-top: 1px solid #eee;
+        padding: 12px;
+      }
+
+      .group-test-item:first-child {
+        border-top: none;
+      }
+
+      vaadin-grid.custom-vaadin-grid {
+        height: auto;
+        font-family: Roboto, sans-serif;
+        --divider-color: rgba(0, 0, 0, .40);
+
+        /* --vaadin-grid-cell: {
+          padding: 0;
+        }; */
+
+        --vaadin-grid-header-cell: {
+          height: 40px;
+          /* color: rgba(0, 0, 0, var(--dark-secondary-opacity)); */
+          font-size: 16px;
+          border-right: 1px solid rgba(0, 0, 0, .40) !important;
+          border-bottom: 1px solid rgba(0, 0, 0, .40) !important;
+        };
+
+        --vaadin-grid-body-cell: {
+          /* height: 48px; */
+          color: rgba(0, 0, 0, var(--dark-primary-opacity));
+          font-size: 16px;
+          border-right: 1px solid rgba(0, 0, 0, .40) !important;
+          border-bottom: 1px solid rgba(0, 0, 0, .40) !important;
+        };
+
+        --vaadin-grid-body-row-hover-cell: {
+          background-color: var(--paper-grey-200);
+        };
+
+        --vaadin-grid-body-row-selected-cell: {
+          background-color: var(--paper-grey-100);
+        };
+
+        --vaadin-grid-focused-cell: {
+          box-shadow: none;
+          font-weight: bold;
+        };
+      }
+
+      .top-container {
+        /* background-color: #f3f5f7; */
+        box-shadow:rgba(0, 0, 0, .54) 0 -10px 6px -10px inset;
+        height: 310px;
+      }
+
+      .filter {
+        background-color: #f3f5f7;
+        position: relative;
+        box-shadow: inset 0px 3px 3px rgba(0,0,0, .26);
+        padding: 0 6px 12px 6px;
+      }
+
+      #editor {
+        background-color: #fff;
+        /* border: 1px solid rgba(0, 0, 0, var(--dark-divider-opacity)); */
+        position: relative;
+        height: 100%;
+        box-shadow: -3px -3px 2px rgba(0,0,0, 0.16);
+        
+      }
+
+      .editor-content {
+        margin-top: 0 !important;
+        padding: 16px;
+        overflow-y: auto;
+      }
+
+      .editor-container {
+        margin-top: 64px;
+        width: calc(100%-32px);
+        height: calc(100% - 161px);
+        overflow-y: auto;
+      }
+
+      .editor-buttons {
+        background-color: #eee;
+        padding: 12px 16px;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        @apply(--layout-horizontal);
+      }
+
+      .custom-input {
+        padding-top: 6px;
+        padding-bottom: 6px;
+      }
+
+      .custom-button {
+        padding: 0.4em 1em;
+        font-size: 16px;
+        line-height: 24px;
+        background-color: #fff;
+      }
+
+      .custom-flat-button {
+        font-weight: bold;
+        font-size: 14px;
+        text-transform: uppercase;
+      }
+
+      #importResult {
+        overflow-y: scroll;
+        height: fit-content;
+        background: white;
+        padding: 12px;
+        margin-top: 16px;
+      }
+
+      .type.capton-2 {
+        line-height: 25px;
+      }
+
+      .custom-paper-input {
+        width: 100%;
+      }
+
+      .custom-paper-input ::content .underline {
+        display: none;
+      }
+
+      .custom-paper-input ::content paper-input-container {
+        padding-bottom: 0;
+      }
+      .custom-paper-input ::content input {
+        font-weight: bold !important;
+        background-color: #f7f7f7 !important;
+        padding: 4px 6px;
+        box-sizing: border-box !important;
+        border-radius: 6px !important;
+      }
+
+      .custom-paper-input ::content input::placeholder {
+        color: rgba(0, 0, 0, .87) !important;
+      }
+
+      @media screen and (max-width: 859px) {
+        .left, .right {
+          width: 100%;
+        }
+
+        #editor {
+          width: 100% !important;
+        }
+      }
+
+      @media screen and (max-width: 479px) {
+        .filter-input {
+          width: 100%;
+        }
+
+        #btnFilter {
+          margin-top: 8px;
+          margin-bottom: 8px;
+        }
+      }
+
+      .container {
+        width: 100%;
+        height: 100%;
+        /* background-color: #fff; */
+      }
+
+      #editor {
+        position: fixed;
+        right: 0;
+        top: 56px;
+        bottom: 0;
+        z-index: 1;
+        width: 50%;
+        height: calc(100% - 156px);
+        border-left: 1px solid #eee;
+      }
+
+      .fixed-title {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 12px 8px 11px 12px;
+        border-bottom: 1px solid #eee;
+        z-index: 1;
+        background-color: #fafafa;
+        width: calc( 100% - 21px);
+      }
+
+      #addNewQuantity {
+        border-radius: 6px;
+        border: 1px solid rgba(0, 0, 0, .54);
+        padding: 8px;
+      }
+
+      #logsTable {
+        table-layout: fixed;
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+      }
+
+      #logsTable tr {
+        margin-bottom: 5px;
+      }
+
+      #logsTable th,
+      #logsTable td {
+        word-wrap: normal;
+        padding: 5px;
+        border: 1px solid var(--paper-grey-300);
+      }
+
+      #logsTable tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .m-top-20 {
+        margin-top: 20px;
+      }
+
+      .hide-on-mobile {
+        display: block;
+      }
+
+      @media screen and (max-width: 640px) {
+        .paper-custom-input {
+          width: 100% !important;
+        }
+      }
+
+      @media screen and (max-width: 959px) {
+        .hide-on-mobile {
+          display: none !important;
+        }
+      }
+
+      #dialogBulkImport {
+        width: 80%;
+        height: fit-content;
+      }
+
+      #inputCsvFile {
+        background-color: #fafafa;
+        width: calc(100% - 48px);
+      }
+      
+
+    </style>
+
+    <!-- <div class="tabs-container horizontal layout">
+      <paper-tabs class="flex main-tabs" selected="{{selectedSubViewIndex}}" scrollable noink='true'>
+        <paper-tab><iron-icon class="m-right-8" icon="icons:sort"></iron-icon>Filter Product</iron-icon></paper-tab>
+
+        <paper-tab><iron-icon class="m-right-8" icon="icons:cloud-upload"></iron-icon>Add Multiple Product</iron-icon></paper-tab>
+
+        <paper-tab><iron-icon class="m-right-8" icon="icons:file-download"></iron-icon>Download Template</paper-tab>
+      </paper-tabs>
+    </div> -->
+
+    <div class="container">
+
+      <!-- editor - start -->
+      <div id="editor" hidden$="{{hideEditForm}}"> 
+
+        <div class="editor-container">
+          <div class="fixed-title horizontal layout center">
+            <h2 class="flex" hidden$="{{EDIT_MODE}}">New Product</h2>
+  
+            <div class="flex" hidden$="{{!EDIT_MODE}}">
+              <h2>{{product.name}}</h2>
+            </div>
+  
+            <paper-icon-button icon="close" on-tap="_closeEditForm"></paper-icon-button>
+            
+          </div>
+  
+          <paper-tabs style="font-size: 18px; background-color: #fafafa;" class="basic-tabs" selected="{{productPage}}">
+            <paper-tab>
+              Details
+            </paper-tab>
+            <paper-tab>
+              Logs
+            </paper-tab>
+          </paper-tabs>
+  
+          <iron-pages selected="{{productPage}}">
+            <section class="editor-content">
+            
+              <vaadin-combo-box style="text-transform: capitalize;" class="paper-custom-input" id="inputCategory" label="Select Category" class="full-width" items="[[categories]]" value="{{product.category}}"
+                  on-selected-item-changed="categorySelected" item-label-path='name' item-value-path='name' allow-custom-value error-message="Category is Required" required></vaadin-combo-box>
+      
+              <!-- <vaadin-combo-box type="text" hidden$="{{$equals(selectedCategory, 'packages')}}" id="productSearch" class="paper-custom-input" label="Type/Search Item" item-label-path="name" item-label-value="name" filter="{{itemSearchQuery}}" loading="[[fetchingInventorySearchResult]]" on-selected-item-changed="itemSelected" value="{{product.name}}" allow-custom-value error-message="Item name is required!" required></vaadin-combo-box> -->
+              <paper-input type="text" hidden$="{{$equals(product.category, 'packages')}}" label="Product Name" id="productSearch" class="paper-custom-input" value="{{product.name}}" error-message="Item name is required!" required></paper-input>
+    
+              <paper-input id="productSearch" hidden$="{{!$equals(product.category, 'packages')}}" class="paper-custom-input" type="text" label="Package Name" value="{{product.name}}"></paper-input>
+              <div class="horizontal layout wrap">
+                <paper-checkbox class="m-8" checked="[[product.isPublic]]">Publicly Available</paper-checkbox>
+                <paper-checkbox class="m-8" checked="[[product.isActive]]">Active Product</paper-checkbox>
+              </div>
+    
+              <vaadin-combo-box type="text" class="paper-custom-input" label="Tag" items="{{tags}}" value="{{product.tag}}" allow-custom-value></vaadin-combo-box>
+    
+              <!-- for category - packages - start -->
+              <div hidden$="{{!$equals(product.category, 'packages')}}">
+                <div class="horizontal layout center">
+                  <div class="flex">{{product.packageItems.length}} Items Added.</div>
+                  <paper-button raised on-tap="_addItemOnPackage">Add Item</paper-button>
+                </div>
+                
+                
+                <div class="p-0">
+                  <vaadin-grid class="custom-vaadin-grid m-top-16" items="{{product.packageItems}}">
+    
+                    <vaadin-grid-column width="16em" frozen>
+                      <template class="header">Name</template>
+                      <template>
+                        <vaadin-combo-box class="flex" allow-custom-value item-label-path="name" item-label-value="name" on-keyup="_onKeyUpSearchOrganizationProduct" loading="[[fetchingInventorySearchResult]]" items="{{organizationMatchingResults}}" on-selected-item-changed="itemForPackageSelected" value="{{item.name}}"></vaadin-combo-box>
+                      </template>
+                      <template class="footer">
+                        <span class="type bold">Total</span>
+                      </template>
+                    </vaadin-grid-column>
+                    <!-- <vaadin-grid-column>
+                      <template class="header" width="40px">Actual Cost</template>
+                      <template>[[item.actualCost]]</template>
+                      <template class="footer">
+                        <span class="type bold">{{product.actualCost}}</span>
+                      </template>
+                    </vaadin-grid-column> -->
+                    <vaadin-grid-column>
+                      <template class="header" width="40px">Price</template>
+                      <template>
+                        [[item.price]]
+                      </template>
+                      <template class="footer">
+                        <span class="type bold">{{product.actualCost}}</span>
+                      </template>
+                    </vaadin-grid-column>
+
+                    <vaadin-grid-column>
+                      <template class="header" width="1em"></template>
+                      <template>
+                        <paper-icon-button icon="delete" on-tap="_deletePackageItem"></paper-icon-button>
+                      </template>
+                    </vaadin-grid-column>
+    
+                  </vaadin-grid>
+                  
+                </div>
+              </div>
+              <!-- for category - packages - start -->
+    
+              <paper-input type="text" class="paper-custom-input" id="inputActualCost" label="Actual Cost" value="{{product.actualCost}}" error-message="Please add actual cost" pattern="^-?\d*[.,]?\d*$" required></paper-input>
+              <!-- <div class="type body m-vertical-8" hidden$="{{!$equals(selectedCategory, 'packages')}}"><strong>Total Cost: {{_computeTotalPackageCost(product.packageItems)}} </strong></div> -->
+    
+              <paper-input type="text" class="paper-custom-input" id="inputPrice" label="Price" value="{{product.price}}" error-message="Please add product price" pattern="^-?\d*[.,]?\d*$" required></paper-input>
+
+              <div class="horizontal layout wrap center">
+                <vaadin-combo-box class="paper-custom-input m-horizontal-4" label="Discount Type" items="[[discountTypes]]" value="{{product.discountType}}"></vaadin-combo-box>
+                <paper-input type="number" class="flex paper-custom-input m-horizontal-4" id="inputDiscountAmount" label="Discount" value="{{product.discountAmount}}"></paper-input>
+              </div>
+              
+    
+              <paper-input class="paper-custom-input flex" type="text" id="inputQuantity" label="Author Name" value="{{product.authorName}}"></paper-input>
+              
+              <div>
+                <paper-checkbox class="m-horizontal-4 m-top-16" checked="{{product.hasQuantity}}">Quantifiable</paper-checkbox>
+                <template is="dom-if" if="{{product.hasQuantity}}">
+  
+                  <div id="addNewQuantity" class="m-top-8">
+                    <div class="horizontal layout center center-justified">
+                      <paper-input class="paper-custom-input flex" type="number" label="Quantity"
+                        value="{{qtyTransaction.quantity}}"></paper-input>
+                      <paper-button raised on-tap="_addNewQuantity" class="m-left-16">Add</paper-button>
+                    </div>
+                    <div class="horizontal layout center m-top-8">
+                      <div class="type body"><strong>Quantity available:</strong><span class="m-horizontal-8">{{product.quantity}}</span></div>
+                      <div class="flex"></div>
+                      <paper-checkbox class="m-left-8" checked="{{product.showQuantityPublicly}}">Public</paper-checkbox>
+                    </div>
+                  </div>
+  
+                  
+                </template>
+                
+              </div>
+    
+              <!-- for category - medicine only - start -->
+              <template is="dom-if" if="{{$equals(product.category, 'medicine')}}">
+    
+                <!-- <paper-input id="inputBatchNumber" class="custom-input" label="Batch" value="{{product.batch}}" error-message="Input Required" min-length="2" required></paper-input> -->
+
+    
+                <paper-input id="inputGenericName" class="paper-custom-input" label="Generic Name" value="{{product.genericName}}" error-message="Input Required" min-length="2" required></paper-input>
+                <paper-input  id="inputManufacturer" class="paper-custom-input" label="Manufacturer" value="{{product.manufacturer}}" 
+                error-message="Input Required" min-length="2" required></paper-input>
+
+                <vaadin-combo-box class="paper-custom-input" label="Form" items="[[medicineFormList]]" allow-custom-value="true" value="{{product.form}}"></vaadin-combo-box>
+                
+                <vaadin-combo-box class="paper-custom-input" label="Dose" items="[[doseList]]" allow-custom-value="true" value="{{product.doseDirection}}"></vaadin-combo-box>
+                <vaadin-combo-box class="paper-custom-input" label="Route" items="[[routeList]]" allow-custom-value="true" value="{{product.route}}"></vaadin-combo-box>
+                <vaadin-combo-box class="paper-custom-input" label="Direction" items="[[directionList]]" allow-custom-value="true" value="{{product.direction}}"></vaadin-combo-box>
+              </template>
+              <!-- for category - medicine only - start -->
+    
+              
+              <div class="horizontal layout center">
+                <paper-input class="paper-custom-input flex" label="Shelf/Location" value="{{product.location}}"></paper-input>
+                <paper-checkbox class="m-left-8" checked="{{product.showLocationPublicly}}">Public</paper-checkbox>
+              </div>
+    
+              <paper-textarea class="paper-custom-input" rows="4" placeholder="Description" value="{{product.description}}" max="1000"></paper-textarea>
+              <paper-input  class="paper-custom-input" label="Batch Number" value="{{product.batchNumber}}"></paper-input>
+              <paper-input  class="paper-custom-input" label="Supplier/Vendor" value="{{product.vendorName}}"></paper-input>
+              <vaadin-date-picker class="paper-custom-input" type="date" max="" value="{{product.manufacturDate}}" label="Manufacture Date"></vaadin-date-picker>
+              <vaadin-date-picker class="paper-custom-input" type="date" max="" value="{{product.expiredDate}}" label="Expire Date/Valid Until"></vaadin-date-picker>
+
+              <paper-input id="inputExpireAlertDays" class="paper-custom-input" type="number" label="Expire Alert Days" value="{{product.expireAlertDays}}"></paper-input>
+
+              <paper-input  class="paper-custom-input" type="number" label="Contact Number" value="{{product.contactNumber}}"></paper-input>
+              <paper-input  class="paper-custom-input" label="Url" value="{{product.url}}"></paper-input>
+              <paper-input  class="paper-custom-input" label="Deal" value="{{product.dealDetails}}"></paper-input>
+    
+              
+    
+              <template is="dom-repeat" items="{{product.otherFields}}">
+                <div class="horizontal layout center">
+                  <paper-input  class="paper-custom-input flex" label="Label" value="{{item.label}}"></paper-input>
+                  <paper-input  class="paper-custom-input m-left-16" label="Value" value="{{item.value}}"></paper-input>
+                </div>
+              </template>
+    
+              <div class="horizontal layout end-justified center">
+                <paper-button class="custom-button" raised on-tap="_addMoreFields">Add More Fields</paper-button>
+              </div>
+    
+    
+    
+              
+    
+              <!-- <paper-input  class="custom-input" label="Location" value="{{product.location}}"></paper-input>
+              <paper-input  class="custom-input" label="Location" value="{{product.location}}"></paper-input> -->
+    
+              <!-- <template is="dom-if" if="{{$equals(selectedCategory, 'doctor-visit')}}">
+                <vaadin-combo-box label="Doctor Name" items="[[visitTypeList]]" allow-custom-value="true" value="{{product.doctorVisitType}}"></vaadin-combo-box>
+                <vaadin-combo-box label="Visit Type" items="[[visitTypeList]]" allow-custom-value="true" value="{{product.doctorName}}"></vaadin-combo-box>
+              </template> -->
+    
+              <!-- for category - investigation - start -->
+              <template is="dom-if" if="{{$equals(product.category, 'investigation')}}">
+    
+                <div class="type body m-top-16 horizontal layout">
+                  <div class="flex"><strong>Test List: </strong></div>
+                  <paper-checkbox checked="{{product.hasGroupTest}}">Group Test</paper-checkbox>
+                </div>
+         
+                <div hidden$="[[product.hasGroupTest]]">
+                  <div class="p-0">
+                    <template is="dom-repeat" items="{{product.investigationList}}">
+                      <div class="horizontal layout center">
+                        <div class="type caption-2 m-right-8">[[$returnSerial(index)]].</div>
+                        <div class="flex">
+                          <div class="horizontal layout wrap">
+                            <paper-input class="paper-custom-input flex" label="Test Name" value="{{item.name}}"></paper-input>
+                            <!-- <paper-input class="paper-custom-input m-left-16 flex" label="Test Value" value="{{item.value}}"></paper-input> -->
+                            <paper-input class="paper-custom-input m-left-16" label="Unit" value="{{item.unitList.0}}"></paper-input>
+                          </div>
+                          <paper-input class="paper-custom-input" label="Reference Range" value="{{item.referenceRange}}"></paper-input>
+                        </div>
+          
+                        <paper-icon-button icon="delete" on-tap="_deleteTest" hidden$={{item.isProtected}}></paper-icon-button>
+          
+                      </div>
+                    </template>
+                  </div>
+                  <div class="horizontal layout end-justified">
+                    <paper-button class="custom-button" on-tap="_addNewTest" raised> Add new test</paper-button>
+                  </div>
+                </div>
+    
+                <div hidden$="[[!product.hasGroupTest]]">
+                  <div class="p-0">
+                    <template is="dom-repeat" items="{{product.testGroupList}}" as="group" index-as="groupIndex">
+    
+                      <div class="group-test">
+                        <div class="horizontal layout center-justified p-12 center center-justified">
+                          <div class="type caption-2 m-right-8">[[$returnSerial(groupIndex)]].</div>
+                          <paper-input class="paper-custom-input flex" label="Test Group Name" value="{{group.testGroupName}}"></paper-input>
+                          <paper-icon-button icon="delete" on-tap="_deleteGroup"></paper-icon-button>
+                        </div>
+      
+                        <div class="group-test-container">
+                          <template is="dom-repeat" items="{{group.investigaitonList}}" >
+                            <div class="horizontal layout center group-test-item">
+                              <div class="type caption-2 m-right-8">[[$returnSerial(index)]].</div>
+                              <div class="flex">
+                                <div class="horizontal layout wrap">
+                                  <paper-input class="paper-custom-input flex" label="Test Name" value="{{item.name}}"></paper-input>
+                                  <paper-input class="paper-custom-input m-left-16 flex" label="Test Value" value="{{item.value}}"></paper-input>
+                                  <paper-input class="paper-custom-input m-left-16" label="Unit" value="{{item.unitList.0}}"></paper-input>
+                                </div>
+                                <paper-input class="paper-custom-input" label="Reference Range" value="{{item.referenceRange}}" groupIndex="{{groupIndex}}"></paper-input>
+                              </div>
+                
+                              <paper-icon-button icon="delete" on-tap="_deleteTestFromGroup"></paper-icon-button>
+                
+                            </div>
+                          </template>
+      
+                          <div class="horizontal layout end-justified p-12">
+                            <paper-button class="custom-button" on-tap="_addNewTestToGroup" raised> Add new test</paper-button>
+                          </div>
+                        </div>
+                      </div>
+                      
+    
+                      
+                    </template>
+                    
+                  </div>
+                  <div class="horizontal layout end-justified m-top-16">
+                    <paper-button class="custom-button" on-tap="_addNewGroup" raised> Add new Group</paper-button>
+                  </div>
+                </div>
+               
+              </template>
+              <!-- for category - investigation - start -->
+      
+            </section>
+            <section>
+              <template is="dom-if" if="{{!product.logs.length}}">
+                <div class="horizontal layout center center-justified p-16"><i>-- no data available--</i></div>
+              </template>
+              <template is="dom-if" if="{{product.logs.length}}">
+                <table id="logsTable">
+                  <thead>
+                    <tr>
+                      <th>Quantity</th>
+                      <th>Remarks</th>
+                      <th>Date</th>
+                      <th>By</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template is="dom-repeat" items="[[product.logs]]">
+                      <tr>
+                        <td>[[item.quantity]]</td>
+                        <td>[[item.remarks]]</td>
+                        <td>[[$formatDateTime(item.addedAt)]]</td>
+                        <td>[[item.addedByUserName]]</td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </template>
+  
+            </section>
+          </iron-pages>
+        </div>
+
+        <div class="editor-buttons horizontal layout">
+          <paper-icon-button icon="icons:delete" on-tap="_deleteProduct" hidden$="{{!EDIT_MODE}}">Delete</paper-icon-button>
+  
+          <div class="flex"></div>
+          <paper-button on-click="_clearProduct">Clear</paper-button>
+          <paper-button class="btn btn-success" on-click="_setProduct" autofocus raised>
+            <span hidden$="{{!EDIT_MODE}}">Update</span>
+            <span hidden$="{{EDIT_MODE}}">Add</span>
+          </paper-button>
+        </div>
+
+      </div>
+      <!-- editor - end -->
+
+      <!-- filter - start -->
+      <div id="filter" class="filter">
+        <div class="horizontal layout center wrap flex center">
+          <vaadin-combo-box class="paper-custom-input m-horizontal-4" id="filterByCategory" label="Category" items="[[categories]]" value="{{filterBy.category}}" item-label-path='name' item-value-path='name'></vaadin-combo-box>
+          <vaadin-date-picker class="paper-custom-input m-horizontal-4" type="date" max="" value="{{filterBy.fromDate}}" label="From"></vaadin-date-picker>
+          <vaadin-date-picker class="paper-custom-input m-horizontal-4" type="date" max="" value="{{filterBy.toDate}}" label="To"></vaadin-date-picker>   
+        </div>
+        <div class="horizontal layout wrap center m-top-16">
+          <paper-button id="btnFilter" on-tap="onFilterTapped" class="custom-button colored" raised><iron-icon class="m-right-8" icon="icons:sort"></iron-icon>Filter</paper-button>
+          <paper-button on-tap="onClearFilterTapped" class="custom-button hide-on-mobile"><iron-icon class="m-right-8" icon="icons:clear"></iron-icon>Clear</paper-button> 
+          <div class="flex"></div>
+          <paper-button class="custom-button hide-on-mobile" on-tap="showBulkImportForm" raised><iron-icon icon="icons:cloud-upload" class="m-right-8"></iron-icon>Import Multiple Product</paper-button>
+          <paper-button raised on-tap="_showNewProductForm" class="custom-button colored hide-on-mobile"><iron-icon class="m-right-8" icon="icons:add"></iron-icon>Add Single Product</paper-button riased>
+          <paper-menu-button class="p-0" vertical-align="top" horizontal-align="right">
+            <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+            <paper-menu class="dropdown-content">
+              <paper-item on-tap="_showNewProductForm"><iron-icon class="m-right-8" icon="icons:add"></iron-icon>Add New Item</paper-item>
+              <paper-item on-tap="onClearFilterTapped"><iron-icon class="m-right-8" icon="icons:clear"></iron-icon>Clear Filter</paper-item>
+              <paper-item on-tap="_deleteAllSelectedInvestigation"><iron-icon class="m-right-8" icon="icons:delete"></iron-icon>Delete Selected</paper-item>
+              <paper-item on-tap="showBulkImportForm"><iron-icon class="m-right-8" icon="icons:cloud-upload"></iron-icon>Import Multiple Product</iron-icon></paper-item>
+              <paper-item on-tap="_exportBtnPressed"><iron-icon class="m-right-8" icon="icons:file-download"></iron-icon>Export Products to CSV</paper-item>
+              <paper-item on-tap="_downloadDemoTemplate"><iron-icon class="m-right-8" icon="icons:file-download"></iron-icon>Download CSV Template</paper-item>
+            </paper-menu>
+          </paper-menu-button>
+        </div>
+      </div>
+      <!-- filter - end -->
+
+      <!-- inventory - start -->
+      <vaadin-grid class="custom-vaadin-grid" items="{{inventory}}" id="list" active-item="{{activeItem}}" selected="{{ARBITARY_PRODUCT_INDEX}}">
+
+        <!-- <vaadin-grid-column width=".3em" frozen>
+          <template class="header">
+            <paper-checkbox checked="{{hasAllSelected}}"></paper-checkbox>
+          </template>
+          <template>
+            <paper-checkbox checked={{item.isSelected}}></paper-checkbox>
+          </template>
+        </vaadin-grid-column> -->
+
+        <!-- <vaadin-grid-column width=".3em" frozen>
+          <template class="header">No.</template>
+          <template>[[$returnSerial(index)]]</template>
+        </vaadin-grid-column> -->
+
+        <vaadin-grid-column width="12em" frozen>
+          <template class="header">
+            <vaadin-grid-sorter path="name" direction="asc">
+              <div class="horizontal layout center">
+                <paper-checkbox checked="{{hasAllSelected}}"></paper-checkbox>
+                <vaadin-grid-filter class="flex" aria-label="Name" path="name" value="[[searchString]]">
+                  <paper-input class="custom-paper-input" placeholder="Product Name" value="{{searchString}}" no-label-float></paper-input>
+                </vaadin-grid-filter>
+              </div>
+            </vaadin-grid-sorter>
+          </template>
+          <template>
+            <div class="horizontal layout center">
+              <paper-checkbox checked={{item.isSelected}}></paper-checkbox>
+              <div>[[item.name]]</div>
+            </div>
+          </template>
+        </vaadin-grid-column>
+  
+        <vaadin-grid-column width="6em">
+          <template class="header">
+            Actual Cost
+          </template>
+          <template>
+            [[item.actualCost]]
+          </template>
+        </vaadin-grid-column>
+  
+        <vaadin-grid-column width="6em">
+          <template class="header">
+            Price
+          </template>
+          <template>
+            <span class="total">[[item.price]]</span>
+          </template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column width="8em">
+          <template class="header">
+            Discounted Price
+          </template>
+          <template>
+            <span class="total">[[_getDiscountedPrice(item.discountAmount, item.discountType, item.price)]]</span>
+          </template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column width="6em">
+          <template class="header">
+            Quantity
+          </template>
+          <template>
+            <span class="total">[[item.quantity]]</span>
+          </template>
+        </vaadin-grid-column>
+  
+        <vaadin-grid-column width="8em">
+          <template class="header">
+            Category
+          </template>
+          <template>
+            <span style="text-transform: capitalize;"></span>[[item.category]]</span>
+          </template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column width="12em">
+          <template class="header">
+            Added on
+          </template>
+          <template>
+            <span style="text-transform: capitalize;"></span>[[$formatDateTime(item.createdDatetimeStamp)]]</span>
+          </template>
+        </vaadin-grid-column>
+  
+      </vaadin-grid>
+      <!-- inventory - end -->
+      
+    </div>
+
+    <!-- dialog - bulk import - start -->
+    <paper-dialog id="dialogBulkImport">
+      
+
+      <div class="p-16">
+        <h2>Bulk Import</h2>
+        <div class="type body">You can import multiple products* from here. 
+          <ol>
+            <li>
+              <paper-button raised on-tap="_downloadDemoTemplate" class="custom-button m-top-8"><iron-icon class="m-right-8" icon="icons:file-download"></iron-icon>Download Our CSV Template</paper-button>
+            </li>
+            <li>Open it on Google Sheets</li>
+            <li>List your products there</li>
+            <li>Then Downlaod it as a CSV file format</li>
+            <li>Come back here and Choose your csv file and Click 'Import' Button in order to import</li>
+          </ol>
+
+          <div class="type caption-2"><i>*maximum 500 products allowed to upload at a time</i></div>
+          <div class="type caption-2"><i>**CSV is a simple file format used to store tabular data, such as a spreadsheet or database.</i></div>
+      
+        </div>
+
+
+        <div class="layout horizontal">
+          <input id="inputCsvFile" class="p-24 m-top-16" type='file' on-change='openFile'>
+        </div>
+        <div class="buttons">
+          <paper-button dialog-dismiss class="custom-button">Close</paper-button>
+          <template is="dom-if" if="{{IMPORT_DONE}}">
+            <paper-button on-tap="onClearImportBulkBtnPressed" class="custom-button">Clear</paper-button>
+          </template>
+          <template is="dom-if" if="{{!IMPORT_DONE}}">
+            <paper-button on-tap="onBulkImportBtnPressed" raised class="custom-button colored">Import</paper-button>
+          </template>
+        </div>
+
+        
+        <div id="importResult">
+          <template is="dom-if" if="{{bulkImportLog}}">
+            <div class="type body"><span class="type text-success">Success: {{bulkImportLog.counter.success}}</span>, <span class="type text-success">Failed: {{bulkImportLog.counter.failed}}</span></div>
+            <template is="dom-repeat" items="{{bulkImportLog.stats}}">
+              <div class="type caption horizontal layout">
+                <div class="m-right-8">[[$returnSerial(index)]].</div>
+                <div class$="type text-{{item.status}}">[[item.name]] : [[item.comments]]</div>
+              </div>
+            </template>
+          </template>
+        </div>
+        
+
+
+        
+      </div>
+    </paper-dialog>
+    <!-- dialog - bulk import - end -->
+
+  </template>
+
+  <script src="page-manage-unit-price.coffee-compiled.js"></script>
+</dom-module>

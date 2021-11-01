@@ -1,0 +1,618 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+
+<link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-invoice-report">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+        width: 90%;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      input {
+        background-color: #dde2e8;
+        border-radius: 6px;
+        height: 36px;
+        font-weight: 500;
+        padding: 0px 8px;
+        box-sizing: border-box;
+      }
+
+      .search {
+        background-color: #fff;
+        border: 1px solid #dadada;
+        padding: 0px 8px 12px 8px;
+        margin: 4px;
+        margin-left: 0;
+      }
+
+      /* styles related to print preview */
+      .print-button-style {
+        margin-top: 16px;
+        background: burlywood;
+      }
+
+      #printPreview {
+        display: none !important;
+      }
+
+      @media print {
+
+        #hideOnPrint {
+          display: none !important;
+        }
+
+        #printPreview {
+          display: block !important;
+          background-color: transparent;
+        }
+      }
+
+      /*  */
+      .print-document {
+        font-family: 'Times New Roman';
+        background: white;
+        width: 100%;
+      }
+
+      .print-header {
+        position: relative;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px
+      }
+
+      .print-document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .print-document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+      .print-table {
+        table-layout: fixed;
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+      }
+
+      .print-table tr {
+        margin-bottom: 15px;
+      }
+
+      .print-table th {
+        background-color: var(--paper-grey-50);
+      }
+
+      .print-table td {
+        color: #444;
+      }
+
+      .print-table thead th {
+        word-wrap: normal;
+        padding: 10px 5px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+      .print-table tbody td,
+      .print-table tfoot th,
+      .print-footer-table th {
+        padding: 10px 5px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+      .print-table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .type.bg-gray {
+        background-color: #eee;
+        padding: 0px 6px;
+        display: inline-block;
+        border-radius: 6px;
+        font-weight: bold;
+        text-align: center;
+      }
+    </style>
+
+    <!-- <module-accounts-top-nav page-name="invoice-report" organization-id="[[organization.idOnServer]]">
+    </module-accounts-top-nav> -->
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <!-- Card - Search - start -->
+        <paper-card id="hideOnPrint" heading="Invoice Report">
+
+          <paper-progress indeterminate hidden$="[[!getBoolean(loadingCounter)]]"></paper-progress>
+
+          <div class="card-content custom-input-field">
+
+            <div class="search layout horizontal end wrap">
+
+              <vaadin-combo-box id="summaryOrganizationSelector" class="organization-dropdown m-right-8"
+                items="[[childOrganizationList]]" on-value-changed="organizationSelected" loading="[[loading]]"
+                disabled="[[!childOrganizationList.length]]">
+              </vaadin-combo-box>
+
+              <!-- <paper-dropdown-menu id="categoryFilter" label="Filter by Category" no-label-float>
+                  <paper-listbox class="dropdown-content" on-iron-activate="categorySelected">
+                    <template is="dom-repeat" items="[[categoryList]]">
+                      <paper-item>[[item]]</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu> -->
+
+              <vaadin-combo-box label="Search By User" class="organization-dropdown m-right-8" items="[[memberList]]"
+                item-label-path="name" on-selected-item-changed="memberSelected" loading="[[memberListLoading]]">
+                <template>
+                  <div><strong>[[item.name]]</strong></div>
+                  <div><span>[[item.phone]]</span></div>
+                </template>
+              </vaadin-combo-box>
+
+              <vaadin-combo-box label="Patient Status" id="patientStatus" items="[[patientStatusArray]]"
+                value="{{patientStatus}}">
+              </vaadin-combo-box>
+
+              <div class="m-left-8"></div>
+              <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked">
+              </custom-vital-search>
+
+              <div class="m-left-8 m-bottom-16">
+                <paper-checkbox checked="{{showDuesOnly}}">Show Only Dues</paper-checkbox>
+              </div>
+
+              <div class="m-left-8 m-bottom-16">
+                <paper-checkbox checked="{{showFreeOnly}}">Show Only Free Patient</paper-checkbox>
+              </div>
+
+              <div class="flex"></div>
+              <template is="dom-if" if="[[!loadingCounter]]">
+                <paper-button raised class="btn btn-success btn-large" on-tap="searchButtonClicked">Search
+                </paper-button>
+              </template>
+              <paper-button raised on-tap="resetButtonClicked">Reset</paper-button>
+              <template is="dom-if" if="[[_isEmptyArray(invoiceList)]]">
+                <paper-button raised class="print-button-style" on-tap="_printButtonPressed">Print the Report
+                </paper-button>
+              </template>
+
+              <paper-button raised on-tap="_exportButtonClicked">Export</paper-button>
+
+            </div>
+
+            <vaadin-grid items="[[filteredInvoiceList]]">
+              <vaadin-grid-column width="180px" flex-grow="0">
+                <template class="header">
+                  <vaadin-grid-sorter path="serial">Serial</vaadin-grid-sorter>
+                </template>
+                <template class="footer"><strong>Total Patients : [[filteredInvoiceList.length]]</strong></template>
+                <template>
+                  <template is="dom-if" if="[[!item.referenceNumber]]">
+                    <strong class="label">[[item.serial]]</strong>
+                  </template>
+                  <template is="dom-if" if="[[item.referenceNumber]]">
+                    <strong class="label">[[item.referenceNumber]]</strong>
+                  </template>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <vaadin-grid-sorter path="createdDatetimeStamp" direction="desc">Date</vaadin-grid-sorter>
+                </template>
+                <template>
+                  <div>[[$formatDateTime(item.createdDatetimeStamp)]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column width="120px" flex-grow="0" resizable>
+                <template class="header">
+                  <vaadin-grid-filter aria-label="Name" path="category" value="[[searchString]]"
+                    style="margin-top: 6px;">
+                    <paper-input label="Category" value="{{searchString}}" no-label-float></paper-input>
+                  </vaadin-grid-filter>
+                </template>
+                <template>
+                  <div class="type caption-2 bg-gray success">[[item.category]]</div>
+                </template>
+              </vaadin-grid-column>
+
+              <!-- patient name -->
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <!-- <vaadin-grid-filter aria-label="Patient Name" path="" value="[[patientNameSearchString]]">
+                    <input placeholder="Patient Name" is="iron-input" bind-value="{{patientNameSearchString}}" />
+                  </vaadin-grid-filter> -->
+                  <input placeholder="Patient Name" is="iron-input" bind-value="{{patientNameSearchString}}" />
+                </template>
+                <template>
+                  <div>[[$getFullName(item.patientName)]]</div>
+                </template>
+              </vaadin-grid-column>
+
+              <!-- patient phone -->
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <!-- <vaadin-grid-filter aria-label="Patient Mobile" path="patientPhone" value="[[patientPhoneSearchString]]">
+                    <input placeholder="Patient Mobile" is="iron-input" bind-value="{{patientPhoneSearchString}}" />
+                  </vaadin-grid-filter> -->
+                  <input placeholder="Patient Mobile" is="iron-input" bind-value="{{patientPhoneSearchString}}" />
+                </template>
+                <template>
+                  <div>[[item.patientPhone]]</div>
+                </template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>Referred Doctor</span>
+                </template>
+                <template>
+                  <div>[[item.referralDoctor.name]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>Discount</span>
+                </template>
+                <template>
+                  <div>
+                    <span>[[item.discount]]</span><br>
+                    <template is='dom-if' if='[[item.discountFromFund.serial]]'>
+                      <span class="type caption-2 secondary">
+                        [[item.discountFromFund.name]]: [[item.discountFromFund.amount]]
+                      </span>
+                    </template>
+                  </div>
+                </template>
+                <template class="footer"><strong>[[$formatCurrency(totalDiscount)]]</strong></template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>Vat/Tax</span>
+                </template>
+                <template>
+                  <div>[[item.vatOrTax]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>Received</span>
+                </template>
+                <template>
+                  <div>[[item.paid]]</div>
+                </template>
+                <template class="footer"><strong>[[$formatCurrency(totalInvoiceIncome)]]</strong></template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>Billed</span>
+                </template>
+                <template>
+                  <div>[[item.totalBilled]]
+                    <template is='dom-if' if='[[item.freePatient]]'>
+                      <span class="type bg-gray caption-2">FREE</span></template>
+                  </div>
+                </template>
+                <template class="footer"><strong>[[$formatCurrency(totalInvoiceBilled)]]</strong></template>
+              </vaadin-grid-column>
+              
+              <!-- <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>Remaining Balance</span>
+                </template>
+                <template>
+                  <div>[[item.remainingBalance]]</div>
+                </template>
+              </vaadin-grid-column> -->
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>Due</span>
+                </template>
+                <template class="footer">
+                  <strong>BDT [[totalAvailableDue]]</strong>
+                  
+                </template>
+                <template>
+                  <div>[[calculateDue(item.totalBilled, item.paid, item.previouseDue, item)]]</div>
+                </template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>Advance Balance</span>
+                </template>
+                <template>
+                  <div>[[_calculateAdvance(item.totalBilled, item.paid, item.previouseDue, item.cashBackPaid)]]</div>
+                </template>
+                <template class="footer">
+                  <strong>[[$formatCurrency(totalAdvanceBalance)]]</strong>
+                </template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>Available Balance</span>
+                </template>
+                <template>
+                  <div>[[_calculateAvailableBalance(item.totalBilled, item.paid, item.availableBalance, item.cashBackPaid, item.previouseDue)]]</div>
+                </template>
+                <template class="footer">
+                  <strong>[[$formatCurrency(totalAvailableBalance)]]</strong>
+                </template>
+              </vaadin-grid-column>
+
+              <!-- <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>Total Due</span>
+                </template>
+                <template>
+                  <div>[[totalAvailableDue]]</div>
+                </template>
+              </vaadin-grid-column> -->
+
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>Refund/Cash Back</span>
+                </template>
+                <template>
+                  <div>[[item.cashBackPaid]]</div>
+                </template>
+
+                <template class="footer">
+                  <strong>[[$formatCurrency(totalCashback)]]</strong>
+                </template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>Next Payment Date</span>
+                </template>
+                <template>
+                  <div>[[$formatDate(item.nextPaymentDate)]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Action
+                  <span></span>
+                </template>
+                <template>
+                  <div class="horizontal layout">
+                    <paper-icon-button icon="launch" on-tap="viewInvoiceButtonPressed"></paper-icon-button>
+                    <paper-icon-button icon="create" on-tap="editInvoiceButtonPressed"
+                      hidden$="[[!$checkUserAccess('C023')]]"></paper-icon-button>
+                    <paper-icon-button icon="delete" on-tap="deleteInvoiceBtnClicked"
+                      hidden$="[[!$checkUserAccess('C024')]]"></paper-icon-button>
+                  </div>
+                </template>
+              </vaadin-grid-column>
+            </vaadin-grid>
+
+            <!-- <div class="p-12 type body-lead"><strong>Advance Balance: [[totalAvailableBalance]] BDT</strong></div> -->
+
+          </div>
+        </paper-card>
+
+        <!-- Print Preview -->
+        <div id="printPreview">
+          <div class="print-document">
+            <template is="dom-if" if="[[organization.printSettings.headerLine]]">
+              <div class="print-header vertical layout center">[[organization.printSettings.headerLine]]</div>
+            </template>
+
+            <div class="print-document-header horizontal layout center">
+
+              <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+                <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+              </template>
+
+              <div class="leftSide vertical layout">
+                <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+                <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+                <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+              </div>
+              <div class="flex"></div>
+              <div class="rightSide vertical layout end">
+                <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+                <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+                <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+              </div>
+            </div>
+
+            <div class="horiline"></div>
+            <div style="text-align: center">
+              <h4 class="type secondary">Invoice Report</h4>
+            </div>
+
+            <!-- Report Content -->
+            <div>
+              <table class="print-table">
+                <thead>
+                  <tr>
+                    <th>Serial</th>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Patient Name</th>
+                    <th>Patient Mobile</th>
+                    <th>Referred Doctor</th>
+                    <th>Discount</th>
+                    <th>Vat/Tax</th>
+                    <th>Billed</th>
+                    <th>Received</th>
+                    <th>Due</th>
+                    <th>Next Payment Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template is="dom-repeat" items="[[filteredInvoiceList]]" sort="_sortByDate">
+                    <tr>
+                      <td>
+                        <template is="dom-if" if="[[!item.referenceNumber]]">
+                          <strong>[[item.serial]]</strong>
+                        </template>
+                        <template is="dom-if" if="[[item.referenceNumber]]">
+                          <strong>[[item.referenceNumber]]</strong>
+                        </template>
+                      </td>
+                      <td>[[$formatDate(item.createdDatetimeStamp)]]</td>
+                      <td>[[item.category]]</td>
+                      <td>[[$getFullName(item.patientName)]]</td>
+                      <td>[[item.patientPhone]]</td>
+                      <td>[[item.referralDoctor.name]]</td>
+                      <td>
+                        <div>
+                          <span>[[item.discount]]</span><br>
+                          <template is='dom-if' if='[[item.discountFromFund.serial]]'>
+                            <span class="type caption-2 secondary">
+                              [[item.discountFromFund.name]]: [[item.discountFromFund.amount]]
+                            </span>
+                          </template>
+                        </div>
+                      </td>
+                      <td>[[item.vatOrTax]]</td>
+                      <td>
+                        <div>[[item.totalBilled]]
+                          <template is='dom-if' if='[[item.freePatient]]'>
+                            <span class="type bg-gray caption-2">FREE</span>
+                          </template>
+                        </div>
+                      </td>
+                      <td>[[item.totalAmountReceieved]]</td>
+                      <td>[[calculateDue(item.totalBilled, item.totalAmountReceieved, item.previouseDue, item)]]</td>
+                      <td>[[$formatDate(item.nextPaymentDate)]]</td>
+                    </tr>
+                  </template>
+
+                </tbody>
+
+
+              </table>
+
+              <!-- footer div -->
+              <div class="m-top-16 m-bottom-16 layout vertical">
+                <div>
+                  <!-- left -->
+                  <div style="position: relative; float: left;">
+                    <span><strong>
+                        Total Invoice: [[filteredInvoiceList.length]]
+                      </strong></span>
+                  </div>
+
+                  <!-- right -->
+                  <div class="layout vertical" style="position: relative; float: right;">
+                    <div class="m-bottom-8">
+                      <span><strong>
+                          Total Billed: [[$formatCurrency(totalInvoiceBilled)]]
+                        </strong></span>
+                    </div>
+                    <div class="m-bottom-8">
+                      <span><strong>
+                          Total Amount Received: [[$formatCurrency(totalInvoiceIncome)]]
+                        </strong></span>
+                    </div>
+                    <div class="m-bottom-8">
+                      <span><strong>
+                          Total Due: [[$formatCurrency(totalDue)]]
+                        </strong></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <template is="dom-if" if="[[organization.printSettings.footerLine]]">
+                    <div class="footer vertical layout">[[organization.printSettings.footerLine]]</div>
+                  </template>
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div style="text-align: center; margin-top: 16px">
+              <span class="type secondary">Report Generation Date & Time -
+                [[_getFormattedCurrentDateTime(currentDateTime)]]</span>
+            </div>
+          </div>
+
+          <div class="horizontal layout center center-justified p-horizontal-16">
+            <div class="type body italic"><strong>Printed by: </strong>[[user.name]]</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+  </template>
+  <script src="page-invoice-report.coffee-compiled.js"></script>
+</dom-module>

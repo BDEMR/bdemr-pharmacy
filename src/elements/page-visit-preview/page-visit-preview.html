@@ -1,0 +1,1985 @@
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower-assets/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower-assets/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower-assets/iron-list/iron-list.html">
+<link rel="import" href="../../bower-assets/iron-icons/communication-icons.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../../bower-assets/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower-assets/paper-radio-button/paper-radio-button.html">
+
+
+<!-- 3rd party elements -->
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+
+
+<!-- custom-elements -->
+<link rel="import" href="../html-block/html-block.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-visit-preview">
+  <template>
+
+    <style is="custom-style" include="common-style">
+      app-header-layout ::content #contentContainer {
+        overflow: hidden !important;
+      }
+      /* :host {
+        height: calc(100% - 56px);
+    position: relative;
+    width: 90%;
+    margin: 10px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    left: 0;
+    right: 0;
+    top: 56px;
+    border-radius: 10px;
+      } */
+
+      .limiting-container {
+        margin-top: 8px;
+      }
+
+      .external-card-title {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .b-radius paper-listbox {
+        border-radius: 6px;
+      }
+
+      .info-card {
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+
+      .info-card .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+
+      .info-card .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+
+      .info-card .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+
+      .info-card .row .modifier.online {
+        background: #757575;
+      }
+
+      .info-card .row .modifier.local-only {
+        background: #039BE5;
+      }
+
+      .info-card .row .modifier.locally-updated {
+        background: #009688;
+      }
+
+      .info-card .row .modifier.imported {
+        background: #4CAF50;
+      }
+
+      .info-row {
+        margin-top: 10px;
+      }
+
+      .top-info-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+        display: inline-block;
+        font-size: 14px;
+      }
+
+      .address1 {
+        margin-right: 10px;
+      }
+
+      .name {
+        margin-left: 5px;
+        font-size: 24px;
+      }
+
+      .email {
+        margin-left: 5px;
+        font-size: 14px;
+      }
+
+      .phone {
+        margin-left: 5px;
+      }
+
+      .val {
+        text-decoration: underline;
+      }
+
+      .account-box {
+        --iron-icon-width: 96px;
+        --iron-icon-height: 96px;
+      }
+
+      .list-item {
+        margin-top: 8px;
+        margin-bottom: 8px;
+      }
+
+      .copy-button {
+        background-color: #1FAE0B;
+      }
+
+      .paste-button {
+        background-color: #f44336;
+        color: white;
+      }
+
+      .table {
+        width: 100%;
+      }
+
+      .table th {
+        text-align: left;
+      }
+
+
+
+      .item-action {
+        border-top: 1px solid #e8e8e8;
+        padding: 5px 16px;
+        position: relative;
+        padding: 15px;
+        text-align: right;
+      }
+
+      paper-dropdown-menu {
+        width: 100%;
+      }
+
+
+      paper-checkbox.remind {
+        padding: 15px 25px;
+      }
+
+      paper-checkbox.guideline-checkbox {
+        --paper-checkbox-size: 14px;
+      }
+
+      .guideline {
+        margin-left: 10px;
+        margin-top: 70px;
+        height: 90%;
+        overflow: auto;
+      }
+
+      .guideline h1 {
+        text-align: left;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--paper-green-500);
+        color: var(--brand-primary-color);
+      }
+
+      .guideline .dose {
+        margin: 10px 0;
+        padding: 10px;
+      }
+
+      .guideline .subDose {
+        padding: 10px;
+        margin: 5px 0;
+        border: 1px solid #e0e0e0;
+        border-radius: 3px;
+        /*background-color: var(--paper-grey-50);*/
+      }
+
+      .guideline .age-group {
+        border-bottom: 1px solid #ccc;
+      }
+
+      .disclaimer p {
+        color: red;
+      }
+
+      app-drawer {
+        --app-drawer-width: 400px;
+        --app-drawer-scrim-background: rgba(0, 0, 0, 0.1);
+        --app-drawer-content-container: {
+          border-left: 1px solid #ccc;
+          padding-left: 10px;
+        }
+        text-align: left;
+      }
+
+      paper-material {
+        border: 1px solid var(--paper-grey-200);
+      }
+
+      paper-fab {
+        float: right;
+        margin-right: 10px;
+        margin-top: 30px;
+      }
+
+      .indication-group {
+        border: 1px solid var(--paper-blue-grey-100);
+        padding: 15px;
+        border-radius: 3px;
+      }
+
+      .indication-group paper-dropdown-menu {
+        --paper-input-container-color: var(--paper-orange-500);
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        color: var(--brand-primary-color);
+      }
+
+      @media screen and (max-width: 480px) {
+        app-drawer {
+          --app-drawer-width: 95%;
+        }
+
+        .btn-add.m-vert {
+          margin: 0.29em;
+        }
+      }
+
+      .card-item-2 {
+        border-radius: 2px;
+        margin: 8px 4px;
+        border: 2px solid #eee;
+        background-color: #fff;
+      }
+
+      .card-item {
+        border-radius: 6px;
+        border: 1px solid #eee;
+        margin: 3px;
+      }
+
+      .custom-card-content {
+        background-color: #f7f7f7;
+      }
+
+
+
+      .card-item div {
+        background-color: #fafafa;
+        /*border-right: 1px solid #eee;*/
+      }
+
+      paper-checkbox {
+        margin: 8px;
+      }
+
+      .btn-custom {
+        background-color: #fafafa !important;
+        border: 1px solid #eee;
+        margin: 3px;
+      }
+
+      .btn-custom-2 {
+        background-color: #fafafa !important;
+        border-radius-top-left: 0;
+        border-radius-bottom-left: 0;
+        margin: 0 !important;
+      }
+
+      .combobox-custom {
+        padding: 8px 16px;
+        background-color: #f7f7f7;
+        border-bottom: 1px solid #eee;
+      }
+
+      /*Full Visit Preview - start*/
+
+      .document {
+        font-family: 'Times New Roman';
+        background: white;
+      }
+
+      .document-title {
+        font-size: 16px;
+        text-decoration: underline;
+        font-weight: bold;
+        @apply(--layout-center);
+      }
+
+
+
+      .external-card-title {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .info-card {
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+
+      .info-card .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+
+      .info-card .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+
+      .info-card .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+
+      .info-card .row .modifier.online {
+        background: #757575;
+      }
+
+      .info-card .row .modifier.local-only {
+        background: #039BE5;
+      }
+
+      .info-card .row .modifier.locally-updated {
+        background: #009688;
+      }
+
+      .info-card .row .modifier.imported {
+        background: #4CAF50;
+      }
+
+      .info-row {
+        margin-top: 10px;
+      }
+
+      .top-info-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+        display: inline-block;
+        font-size: 14px;
+      }
+
+      .address1 {
+        margin-right: 10px;
+      }
+
+      .name {
+        margin-left: 5px;
+        font-size: 24px;
+      }
+
+      .email {
+        margin-left: 5px;
+        font-size: 14px;
+      }
+
+      .phone {
+        margin-left: 5px;
+      }
+
+      .val {
+        text-decoration: underline;
+      }
+
+      .account-box {
+        --iron-icon-width: 96px;
+        --iron-icon-height: 96px;
+      }
+
+      .document {
+        font-family: 'Times New Roman';
+        background: white;
+      }
+
+      .document-title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .collection {
+        color: red;
+        background: grey;
+      }
+
+      .document-header {
+        /*background-color: #fafafa;*/
+        padding-left: 10px;
+        padding-right: 10px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+
+      .document-header2 .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+
+      .item {
+        padding: 10px;
+        border: 1px solid grey;
+      }
+
+      #printPreview {
+        word-break: break-word;
+        display: none !important;
+
+      }
+
+      @media print {
+
+        #printButton {
+          display: none !important;
+        }
+        #mainPreview {
+          display: none !important;
+        }
+
+        #printPreview {
+          display: block !important;
+          background-color: transparent;
+        }
+      }
+
+      @media print {
+        app-header-layout #contentContainer {
+          overflow-y: unset !important;
+        }
+      }
+
+      .preview-title {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        padding-left: 12px;
+        padding-right: 8px;
+        background-color: #fff;
+        min-height: 60px;
+        /*border-bottom: 1px solid #eee;*/
+      }
+
+      .custom-content {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+        @apply(--layout-center);
+        padding-left: 12px;
+        padding-right: 8px;
+      }
+
+      .b-top {
+        border-top: 1px solid #eee;
+      }
+      
+      .content.left {
+        width: 40%;
+      }
+
+      .content.right {
+        width: 60%;
+      }
+
+      @media screen and (max-width: 639px) {
+        .content.left {
+          /*margin-top: 8px;*/
+          width: 100%;
+          /*padding: 0;*/
+        }
+
+        .content.right {
+          width: 100%;
+          /*padding: 0;*/
+          /*margin-top: 8px;*/
+        }
+      }
+
+      .tabColor {
+        background-color: teal !important;
+      }
+
+      vaadin-combo-box.combobox-custom-style {
+        padding: 2px;
+      }
+
+      vaadin-combo-box.combobox-custom-style ::content paper-input-container {
+        padding: 4px 0;
+      }
+
+      vaadin-combo-box.combobox-custom-style ::content label {
+        font-size: 18px !important;
+        /*color: rgba(0, 0, 0, .87) !important;*/
+      }
+
+      /*vaadin-combo-box.combobox-custom-style ::content .unfocused-line {
+        border-bottom: none;
+      }*/
+
+      vaadin-combo-box.combobox-custom-style ::content input {
+        font-size: 18px !important;
+        color: rgba(0, 0, 0, .87) !important;
+      }
+
+      .paper-input-custom ::content input {
+        font-size: 18px !important;
+        color: rgba(0, 0, 0, .87) !important;
+      }
+
+      .paper-input-custom ::content label {
+        font-size: 18px !important;
+        color: #737373 !important;
+      }
+
+
+      paper-textarea.textarea-custom-style ::content label {
+        font-size: 18px !important;
+      }
+
+      paper-textarea.textarea-custom-style ::content iron-autogrow-textarea {
+        font-size: 18px !important;
+      }
+
+      /*paper-textarea ::content .unfocused-line{
+        border-bottom: none;
+      }*/
+
+      .type.title-2 {
+        font-size: 18px;
+        line-height: 50px;
+      }
+
+      vaadin-date-picker.date-picker-custom-style ::content paper-input-container {
+        padding: 0;
+      }
+
+      /*vaadin-date-picker.date-picker-custom-style ::content .unfocused-line {
+        border-bottom: none;
+      }*/
+
+      vaadin-date-picker.date-picker-custom-style ::content label {
+        font-size: 18px !important;
+      }
+
+      vaadin-date-picker.date-picker-custom-style ::content input {
+        font-size: 18px !important;
+      }
+
+      vaadin-date-picker.date-picker-custom-style ::content .floated-label-placeholder {
+        display: none;
+      }
+
+      vaadin-date-picker.date-picker-custom-style {
+        padding: 8px 8px 8px 0;
+      }
+
+      paper-dropdown-menu.dropdown-menu-custom-style ::content label {
+        font-size: 18px !important;
+      }
+
+      paper-dropdown-menu.dropdown-menu-custom-style ::content input {
+        font-size: 18px !important;
+      }
+
+      .border-top {
+        border-top: 1px solid #eee;
+      }
+
+      .action-area {
+        padding: 5px 0 5px 8px;
+      }
+
+      .btn-add {
+        min-width: 0;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+        background-color: #eceff1;
+        color: rgba(0, 0, 0, .87);
+      }
+
+      .btn-add.small {
+        margin: 3px;
+        font-size: 14px;
+      }
+
+
+      paper-tabs.custom-tabs {
+        background-color: #f7f7f7;
+        height: 56px;
+      }
+
+      /*Print Preview*/
+
+      .patient-details {
+        background-color: #5c4575;
+        color: #fff;
+      }
+
+      .print-content {
+        border-top: 1px solid #eee;
+        @apply(--layout-horizontal);
+      }
+
+      .print-content .left {
+        width: 34%;
+        border-right: 1px solid #eee;
+      }
+
+      .print-content .right {
+        width: 66%;
+      }
+
+      ol.order-list {
+        margin: 4px 0;
+        padding-left: 16px;
+        list-style-type: lower-alpha;
+      }
+
+      ul.unorderd-list-custom {
+        margin: 4px 0;
+        padding-left: 16px;
+      }
+
+      ol.order-list li {
+        margin: 4px 0;
+      }
+
+      .print-sub-header {
+        font-size: bold;
+        background-color: #fafafa;
+        margin-bottom: 8px;
+      }
+      .profile-image {
+        height: 78px;
+        width: 78px;
+        border-radius: 50%;
+        border: 2px solid #f7f7f7;
+      }
+
+      .btn-add {
+        min-width: 0;
+        padding: 0.3em 1em;
+        background-color: #eceff1;
+        color: rgba(0, 0, 0, .87);
+      }
+    </style>
+
+    <!-- local DOM -->
+    <!-- <template is="dom-if" if="{{!isVisitValid}}">
+      Visit invalid
+    </template>
+
+    <template is="dom-if" if="{{!isPatientValid}}">
+      Patient invalid
+    </template> -->
+
+    <div class="master-container" style="margin: 0 auto;
+    width: 100%;">
+      
+        <!-- Print Preview Area - start -->
+        <paper-card id="mainPreview" elevation="0" style="margin: 0 auto;padding: 20px;
+        width: 960px;">
+          <div class="horizontal layout center end-justified">
+            <paper-button class="btn-add" raised on-tap="printButtonPressed" id="printButton">
+              <iron-icon icon="icons:print" class="m-right-8"></iron-icon>
+            </paper-button>
+            <!-- <paper-button class="btn-add" raised on-tap="exportRecordPressed">Export</paper-button>
+            <paper-button class="btn-add colored" raised on-tap="editVisitRecord">Edit</paper-button> -->
+          </div>
+          <div class="print-header horizontal layout center center-justified">
+            <h1>[[doctorOrganizationDetails.printDecoration.headerLine]]</h1>
+          </div>
+
+          <!-- Print Header - Main - start -->
+          <div class="document-header horizontal layout center">
+            <template is="dom-if" if="[[doctorOrganizationDetails.printDecoration.headerLogoDataUri]]">
+              <img class="logo" src="[[doctorOrganizationDetails.printDecoration.headerLogoDataUri]]" alt="">
+            </template>
+
+            <div class="leftSide">
+              <div class="leftSideLine1">[[doctorOrganizationDetails.printDecoration.leftSideLine1]]</div>
+              <div class="leftSideLine2">[[doctorOrganizationDetails.printDecoration.leftSideLine2]]</div>
+              <div class="leftSideLine3">[[doctorOrganizationDetails.printDecoration.leftSideLine3]]</div>
+            </div>
+            <div class="flex"></div>
+            <div class="rightSide layout end-justified">
+              <div class="rightSideLine1">[[doctorOrganizationDetails.printDecoration.rightSideLine1]]</div>
+              <div class="rightSideLine2">[[doctorOrganizationDetails.printDecoration.rightSideLine2]]</div>
+              <div class="rightSideLine3">[[doctorOrganizationDetails.printDecoration.rightSideLine3]]</div>
+            </div>
+          </div>
+          <!-- Print Header - Main - end -->
+
+          <!-- Print Header - Patient Details - start -->
+          <div class="document-header horizontal layout center p-vertical-8">
+            <!-- <template is="dom-if" if="[[!patient.isForOrganizationOnly]]"> -->
+            <div class="m-horizontal-4">
+              <strong>Patient Serial: </strong>
+              <span>{{patient.serial}}</span>
+            </div>
+            <div class="m-horizontal-4">
+              <strong>Patient Name: </strong>
+              <span>{{$getFullName(patient.name)}}</span>
+            </div>
+            <div class="m-horizontal-4">
+              <strong>Sex: </strong>
+              <span>{{patient.gender}}</span>
+            </div>
+            <div class="m-horizontal-4">
+              <strong>Age: </strong>
+              <span>[[_computeAge(patient.dateOfBirth)]] years </span>
+            </div>
+            <div class="m-horizontal-4">
+              <strong>Blood Group: </strong>
+              <span>[[patient.bloodGroup]]</span>
+            </div>
+            <div class="m-horizontal-4">
+              <strong>Allergy: </strong>
+              <span>[[patient.allergy]]</span>
+            </div>
+            <!-- </template> -->
+
+            <!-- <template is="dom-if" if="[[patient.isForOrganizationOnly]]">
+              <div class="m-horizontal-4">
+                <strong>Patient Name: </strong>
+                <i></i>
+              </div>
+              <div class="m-horizontal-4">
+                <strong>Age: </strong>
+                <i>REDACTED FOR CONFIDENTIALITY</i>
+              </div>
+              <div class="m-horizontal-4">
+                <strong>Blood Group: [[patient.bloodGroup]]</strong>
+                <span> </span>
+              </div>
+              <div class="m-horizontal-4">
+                <strong>Allergy: [[patient.allergy]]</strong>
+                <span> </span>
+              </div>
+            </template> -->
+          </div>
+          <!-- Print Header - Patient Details - end -->
+
+          <!-- Print Header - record Title - start -->
+          <div class="p-16 horizontal layout center center-justified">
+            <div class="type headline">{{visit.recordTitle}}</div>
+          </div>
+          <!-- Print Header - record Title - start -->
+
+          <!-- Print Content [FULL] - start -->
+          <div class="print-content">
+            <!-- Print Content - Left - start -->
+            <div class="left">
+
+              <!-- Print - Symptoms - start -->
+              <template is="dom-if" if="[[!_isEmpty(suggestedData.symptomsList.length)]]">
+                <div class="horizontal layout center print-sub-header">
+                  <div class="type body">Symptoms</div>
+                </div>
+                <template is="dom-repeat" items="[[suggestedData.symptomsList]]">
+                  <div class="type caption-2">
+                    <span class="type secondary">[[_returnSerial(index)]]. </span>
+                    <span>{{item.name}}</span>
+                    <template is="dom-if" if="[[_compareFn(item.possibleValueList.length, '>', 0)]]">
+                      (
+                      <template is="dom-repeat" items="[[item.possibleValueList]]">
+                        <span>{{item}}, </span>
+                      </template>)
+                    </template>
+                  </div>
+                </template>
+                <div class="b-top m-top-8"></div>
+              </template>
+              <!-- Print - Symptoms - end -->
+
+              <!-- Print - Examination - start -->
+              <template is="dom-if" if="[[!_isEmpty(suggestedData.examinationDataList.length)]]">
+                <div class="horizontal layout center print-sub-header">
+                  <div class="type body">Examination</div>
+                </div>
+                <template is="dom-repeat" items="[[suggestedData.examinationDataList]]" as="examination">
+                  <div class="type caption-2">
+                    <span class="type secondary">[[_returnSerial(index)]]. </span>
+                    <span>{{examination.name}}</span>
+                    (<template is="dom-repeat" items="[[examination.examinationDataList]]" as="examItem">
+                      <span hidden$="{{!examItem.checked}}">{{examItem.value}}, </span>
+                    </template>)
+                  </div>
+                </template>
+                <div class="b-top m-top-8 "></div>
+              </template>
+              <!-- Print - Examination - end -->
+              <!-- Print - Cheif ComplainList - Start -->
+              <template is="dom-if" if="{{!_isEmpty(suggestedData.chiefComplaintList.length)}}">
+                <br>
+                <div class="horizontal layout center print-sub-header">
+                  <div class="bold-text">Chief Complaints</div>
+                </div>
+                <template is="dom-repeat" items="[[suggestedData.chiefComplaintList]]">
+                  <div class="type caption-2">
+                    <span class="type secondary">[[_returnSerial(index)]]. </span>
+                    <span>{{item.name}}</span>
+                    <template is="dom-if" if="[[_compareFn(item.possibleValueList.length, '>', 0)]]">
+                      (
+                      <template is="dom-repeat" items="[[item.possibleValueList]]">
+                        <span>{{item}}, </span>
+                      </template>)
+                    </template>
+                  </div>
+                </template>
+                <div class="b-top m-top-8 "></div>
+              </template>
+              <!-- Print - Cheif ComplainList - end -->
+
+
+
+              <!-- Print - Child History - start -->
+              <template is="dom-if" if="[[!_isEmpty(suggestedData.childHistoryList.length)]]">
+                <div class="horizontal layout center print-sub-header">
+                  <div class="type body header-print">[[$TRANSLATE('Child History', LANG)]]</div>
+                </div>
+                <template is="dom-repeat" items="[[suggestedData.childHistoryList]]" as="examination">
+                  <div class="type caption-2">
+                    <span class="type secondary">[[_returnSerial(index)]]. </span>
+                    <span>{{examination.name}}</span>
+                    (
+                    <template is="dom-repeat" items="[[examination.examinationDataList]]" as="examItem">
+                      <span hidden$="{{!examItem.checked}}">{{examItem.value}}, </span>
+                    </template>)
+                  </div>
+                </template>
+                <div class="b-top m-top-8 "></div>
+              </template>
+              <!-- Print - Child History - end -->
+
+
+              <!-- Print - Birth History - start -->
+              <template is="dom-if" if="[[!_isEmpty(suggestedData.birthHistoryList.length)]]">
+                <div class="horizontal layout center print-sub-header">
+                  <div class="type body header-print">[[$TRANSLATE('Birth History', LANG)]]</div>
+                </div>
+                <template is="dom-repeat" items="[[suggestedData.birthHistoryList]]" as="examination">
+                  <div class="type caption-2">
+                    <span class="type secondary">[[_returnSerial(index)]]. </span>
+                    <span>{{examination.name}}</span>
+                    (
+                    <template is="dom-repeat" items="[[examination.examinationDataList]]" as="examItem">
+                      <span hidden$="{{!examItem.checked}}">{{examItem.value}}, </span>
+                    </template>)
+                  </div>
+                </template>
+                <div class="b-top m-top-8 "></div>
+              </template>
+              <!-- Print - Birth History - end -->
+
+
+              <!-- Print - Family History - start -->
+              <template is="dom-if" if="{{!_isEmpty(suggestedData.familyHistoryDataList.length)}}">
+                <div class="horizontal layout center print-sub-header">
+                  <div class="type body header-print">[[$TRANSLATE('Family History', LANG)]]</div>
+                </div>
+                
+                <template is="dom-repeat" items="[[suggestedData.familyHistoryDataList]]">
+                  <div class="type caption-2">
+                    <span class="type secondary">[[_returnSerial(index)]]. </span>
+                    <span>{{item.name}} ([[item.relation]])</span>
+                  </div>
+                </template>
+                <div class="b-top m-top-8 "></div>
+              </template>
+              <!-- Print - Family History - end -->
+
+
+
+              <!-- Print - Vitals - start -->
+              <template is="dom-if" if="[[!_isEmpty(suggestedData.addedVitalList.length)]]">
+                <div class="horizontal layout center print-sub-header">
+                  <div class="type body">Vitals</div>
+                </div>
+                <template is="dom-repeat" items="[[suggestedData.addedVitalList]]">
+                  <div class="type caption-2">
+                    <strong>[[item.vitalType]]: </strong>
+                    <span>[[_pritifyVitalData(item)]]</span>
+                  </div>
+                </template>
+                <div class="b-top m-top-8"></div>
+              </template>
+              <!-- Print - Vitals - end -->
+
+              <!-- Print - Test Advised - start -->
+              <template is="dom-if" if="[[!_isEmpty(suggestedData.investigationList.length)]]">
+                <div class="horizontal layout center print-sub-header">
+                  <div class="type body">Advised Test</div>
+                </div>
+                <template is="dom-repeat" items="[[suggestedData.investigationList]]">
+                  <div class="type caption-2 layout horizontal">
+                    <div class="type secondary m-right-8">[[_returnSerial(index)]]. </div>
+                    <div class="flex vertical layout">
+                      <div>{{item.investigationName}}</div>
+                      <template is="dom-if" if="[[!isCBCTest(item.investigationName)]]">
+                        <template is="dom-if" if="[[_compareFn(item.testList.length, '>', 1)]]">
+                          <ol class="order-list">
+                            <template is="dom-repeat" items="[[item.testList]]">
+                              <li>{{item.name}}</li>
+                            </template>
+                          </ol>
+                        </template>
+                      </template>
+                      <template is="dom-if" if="[[_compareFn(item.testList.length, '>', 1)]]">
+                        <ol class="order-list">
+                          <template is="dom-repeat" items="[[item.testList]]">
+                            <li>{{item.name}}</li>
+                          </template>
+                        </ol>
+                      </template>
+                    </div>
+                  </div>
+                  <template is="dom-if" if="[[item.suggestedInstitutionName]]">
+                    <div class="type caption secondary m-left-16">
+                      <strong>Suggested Institution: </strong>
+                      <span class="flex">{{item.suggestedInstitutionName}}</span>
+                    </div>
+                  </template>
+                  
+                </template>
+                <div class="b-top"></div>
+              </template>
+              <!-- Print - Test Advised - end -->
+
+              <!-- Print - Diagnosis - start -->
+              <template is="dom-if" if="{{!_isEmpty(suggestedData.diagnosisList.length)}}">
+                <div class="horizontal layout center print-sub-header">
+                  <div class="type body">Diagnosis</div>
+                </div>
+                <template is="dom-repeat" items="[[suggestedData.diagnosisList]]">
+                  <div class="type caption-2">
+                    <span class="type secondary">[[_returnSerial(index)]]. </span>
+                    <span>{{item.name}}</span>
+                    <template is="dom-if" if="[[_compareFn(item.possibleValueList.length, '>', 0)]]">
+                      (
+                      <template is="dom-repeat" items="[[item.possibleValueList]]">
+                        <span>{{item}}, </span>
+                      </template>)
+                    </template>
+                  </div>
+                </template>
+                <div class="b-top m-top-8"></div>
+              </template>
+              <!-- Print - Diagnosis - end -->
+
+              
+              <!-- Print - Provisional Diagnosis - start -->
+              <template is="dom-if" if="{{!_isEmpty(suggestedData.provisionalDiagnosis.length)}}">
+                <div class="horizontal layout center print-sub-header">
+                  <div class="type body header-print">[[$TRANSLATE('Provisional Diagnosis', LANG)]]</div>
+                </div>
+                <template is="dom-repeat" items="[[suggestedData.provisionalDiagnosis]]">
+                  <div class="type caption-2">
+                    <span class="type secondary">[[_returnSerial(index)]]. </span>
+                    <span>{{item.name}}</span>
+                    <template is="dom-if" if="[[_compareFn(item.possibleValueList.length, '>', 0)]]">
+                      (
+                      <template is="dom-repeat" items="[[item.possibleValueList]]">
+                        <span>{{item}}, </span>
+                      </template>)
+                    </template>
+                  </div>
+                </template>
+                <div class="b-top m-top-8"></div>
+              </template>
+              <!-- Print - Provisional Diagnosis - end -->
+
+
+              <!-- Print - Differential Diagnosis - start -->
+              <template is="dom-if" if="{{!_isEmpty(suggestedData.differentialDiagnosis.length)}}">
+                <div class="horizontal layout center print-sub-header">
+                  <div class="type body header-print">[[$TRANSLATE('Differential Diagnosis', LANG)]]</div>
+                </div>
+                <template is="dom-repeat" items="[[suggestedData.differentialDiagnosis]]">
+                  <div class="type caption-2">
+                    <span class="type secondary">[[_returnSerial(index)]]. </span>
+                    <span>{{item.name}}</span>
+                    <template is="dom-if" if="[[_compareFn(item.possibleValueList.length, '>', 0)]]">
+                      (
+                      <template is="dom-repeat" items="[[item.possibleValueList]]">
+                        <span>{{item}}, </span>
+                      </template>)
+                    </template>
+                  </div>
+                </template>
+                <div class="b-top m-top-8"></div>
+              </template>
+              <!-- Print - Differential Diagnosis - end -->
+
+              <!-- Print - Physiotherapy - start -->
+              <template is="dom-if" if="{{!_isEmpty(suggestedData.physiotherapyList.length)}}">
+                <div class="horizontal layout center print-sub-header">
+                  <div class="type body header-print">[[$TRANSLATE('Physiotherapy', LANG)]]</div>
+                </div>
+                <template is="dom-repeat" items="[[suggestedData.physiotherapyList]]">
+                  <div class="type caption-2">
+                    <span class="type secondary">[[_returnSerial(index)]]. </span>
+                    <span>{{item.name}}</span>
+                    <template is="dom-if" if="[[_compareFn(item.possibleValueList.length, '>', 0)]]">
+                      (
+                      <template is="dom-repeat" items="[[item.possibleValueList]]">
+                        <span>{{item}}, </span>
+                      </template>)
+                    </template>
+                  </div>
+                </template>
+                <div class="b-top m-top-8"></div>
+              </template>
+              <!-- Print - Physiotherapy - end -->
+
+
+              <!-- Print - Notes - start -->
+              <template is="dom-if" if="{{!_isEmpty(suggestedData.doctorNotes.length)}}">
+                <div class="horizontal layout center print-sub-header">
+                  <div class="type body">Doctor Advised/Notes</div>
+                </div>
+                <ul class="unorderd-list-custom">
+                  <template is="dom-repeat" items="[[suggestedData.doctorNotes]]">
+                    <li class="type caption-2" style="word-break: break-word; margin-right: 4px;">{{item}}</li>
+                  </template>
+                </ul>
+                <div class="b-top m-top-8"></div>
+              </template>
+              <!-- Print - Notes - end -->
+
+              <!-- Print - Referral Doctor - start -->
+              <template is="dom-if" if="{{!_isEmpty(suggestedData.referralDoctor.length)}}">
+                <div class="horizontal layout center print-sub-header">
+                  <div class="type body header-print">[[$TRANSLATE('Referred To', LANG)]]</div>
+                </div>
+                <ul class="unorderd-list-custom">
+                  <template is="dom-repeat" items="[[suggestedData.referralDoctor]]">
+                    <span>{{item.name}}</span>
+                  </template>
+                </ul>
+                <div class="b-top m-top-8"></div>
+              </template>
+              <!-- Print - Referral Doctor - end -->
+
+              <!-- Print - Referred Organization - start -->
+              <template is="dom-if" if="{{!_isEmpty(suggestedData.referralOrganization.length)}}">
+                <div class="horizontal layout center print-sub-header">
+                  <div class="type body header-print">[[$TRANSLATE('Referred To', LANG)]]</div>
+                </div>
+                <ul class="unorderd-list-custom">
+                  
+                    <span>{{suggestedData.referralOrganization.name}}</span>
+                  
+                </ul>
+                <div class="b-top m-top-8"></div>
+              </template>
+              <!-- Print - Referred Organization - end -->
+
+              <!-- Print - Next Visit - start -->
+              <template is="dom-if" if="[[!_isEmptyString(suggestedData.nextVisit.nextVisitDateTimestamp)]]">
+                <div class="horizontal layout center print-sub-header">
+                  <div class="type body">Next Visit</div>
+                </div>
+                <div class="type caption-2">
+                  <div>
+                    <strong>Date: </strong>
+                    <span>[[$mkDate(suggestedData.nextVisit.nextVisitDateTimestamp)]]</span>
+                  </div>
+                  <div>{{suggestedData.nextVisit.priorityType}}</div>
+                </div>
+                <div class="b-top m-top-8"></div>
+              </template>
+              <!-- Print - Next Visit - end -->
+            </div>
+            <!-- Print Content - Left - end -->
+
+            <!-- Print Content - right - start -->
+            <div class="right">
+
+              <!-- Print - History And Physical - start -->
+              <template is="dom-if" if="[[shouldRender]]">
+                <div class="horizontal layout center">
+                  <div class="type body print-sub-header">[[recordPartTitle]]</div>
+                </div>
+                <div class="p-horizontal-16">
+                  <html-block html="[[recordPartHtmlContent]]"></html-block>
+                </div>
+                <div class="b-top m-top-8"></div>
+              </template>
+              <!-- Print - History And Physical - end -->
+
+              <br>
+              <br>
+
+              <!-- Print - Prescription - start -->
+              <template is="dom-if" if="[[!_isEmpty(suggestedData.medicineList.length)]]">
+                <div class="horizontal layout center print-sub-header">
+                  <div class="type body p-left-16">Prescription</div>
+                </div>
+
+                <template is="dom-repeat" items="[[suggestedData.medicineList]]">
+                  <div class="m-vertical-8 p-left-16 horizontal layout center">
+                    <div class="type caption secondary m-right-8">[[_returnSerial(index)]].</div>
+                    <div>
+                      <div>
+                        <span class="type caption-2 text-bold">{{item.brandName}}</span>
+                        <span class="type caption bg-gray">[[item.data.manufacturer]]</span>
+                        <span class="type caption italic">{{item.data.genericName}} {{item.data.strength}}</span>
+                      </div>
+
+
+                      <div class="type caption">
+                        <strong>Instruction: </strong>
+                        <span>[[$TRANSLATE_NUMBER(item.data.doseDirection, LANG)]] [[$TRANSLATE('for', LANG)]] [[_computeTotalDaysCount(item.data.endDateTimeStamp,item.data.startDateTimeStamp)]]
+                          <span hidden$="[[!item.data.endDateTimeStamp]]">[[$TRANSLATE('Days',LANG)]]</span>
+                        </span>
+                        <span>[[$TRANSLATE('By', LANG)]] </span>
+                        <span>[[$TRANSLATE(item.data.route, LANG)]]</span>
+                        <span>[[$TRANSLATE(item.data.direction, LANG)]] </span>
+                      </div>
+                      <div class="type caption">[[item.data.comments]]</div>
+                    </div>
+                  </div>
+                </template>
+
+              </template>
+              <!-- Print - Prescription - end -->
+              <br>
+              <!-- Patient Stay Preview -->
+              <template is="dom-if" if="[[suggestedData.patientStay.data]]">
+                <div class="horizontal layout center print-sub-header">
+                  <div class="type body p-left-16">Patient Stay</div>
+                </div>
+                <div class="p-horizontal-16">
+                  <div class="layout horizontal">
+                    <span class="type bold"> Admission Date: </span>
+                    <span>&nbsp;[[$mkDate(suggestedData.patientStay.data.admissionDateTimeStamp)]]</span>
+                  </div>
+                  <div>
+                    <span class="type bold">Type: </span> [[suggestedData.patientStay.data.admissionType]]
+                  </div>
+                  <template is="dom-if" if="[[suggestedData.patientStay.adviseOnly]]">
+                    <div>
+                      <span class="type bold">Advice: </span> [[suggestedData.patientStay.data.advise]]
+                    </div>
+                  </template>
+                  <template is="dom-if" if="[[!suggestedData.patientStay.adviseOnly]]">
+                    <div>
+                      <span class="type bold">Referred By: </span> [[suggestedData.patientStay.data.referredByDoctorName]]
+                    </div>
+                    <div>
+                      <span class="type bold">Admitted By: </span> [[suggestedData.patientStay.data.admittedByDoctorName]]
+                    </div>
+                    <div class="type italic">
+                      <span>[[suggestedData.patientStay.data.locationHospitalName]]</span> 
+                      <span>[[suggestedData.patientStay.data.locationDepartment]]</span> 
+                      <span>[[suggestedData.patientStay.data.locationUnit]]</span> 
+                      <span>[[suggestedData.patientStay.data.locationWard]]</span> 
+                      <span>[[suggestedData.patientStay.data.locationBed]]</span>
+                    </div>
+                  </template>
+                  <template is="dom-if" if="[[suggestedData.patientStay.data.currentLocation.length]]">
+                    <div>
+                      <span class="type bold"> Current Location:</span>
+                      <span>[[suggestedData.patientStay.data.currentLocation.0.location]]</span>
+                    </div>
+                  </template>
+                  <template is="dom-if" if="[[suggestedData.patientStay.data.dischargeDatetimeStamp]]">
+                    <div>
+                      <span class="type bold"> Discharge Date:</span>
+                      <span>[[$mkDate(suggestedData.patientStay.data.dischargeDatetimeStamp)]]</span>
+                    </div>
+                    <div>
+                      <span class="type bold">Discharged By: </span> [[suggestedData.patientStay.data.dischargedByDoctorName]]
+                    </div>
+                    <div>
+                      <span class="type bold"> Length of Stay:</span>
+                      <span>[[calculateLengthOfStay(suggestedData.patientStay.data.admissionDateTimeStamp, suggestedData.patientStay.data.dischargeDatetimeStamp)]]
+                        Days
+                      </span>
+                    </div>
+                  </template>
+                  <template is="dom-if" if="[[suggestedData.patientStay.data.dischargeReason.length]]">
+                    <div>
+                      <span class="type bold">Discharge Reason: </span> [[suggestedData.patientStay.data.dischargeReason]]</div>
+                  </template>
+                  <template is="dom-if" if="[[suggestedData.patientStay.data.dischargeTo.length]]">
+                    <div><span class="type bold"> Discharged To:</span> [[suggestedData.patientStay.data.dischargeTo]]</div>
+                  </template>
+                </div>
+              </template>
+              <!-- Patient Stay Preview End -->
+            </div>
+            <!-- Print Content - right - end -->
+          </div>
+          <!-- Print Content [FULL] - end -->
+
+          <div>
+            <div class="horizontal layout end-justified center">
+              <template is="dom-if" if="[[doctorOrganizationDetails.printDecoration.signatureDataUri]]">
+                <img height="96" width="128" class="logo" src="[[doctorOrganizationDetails.printDecoration.signatureDataUri]]" alt="signature">
+              </template>
+            </div>
+
+            <template is="dom-if" if="[[doctorOrganizationDetails.flags.showUserNameOnPrintPreview]]">
+              <div class="type caption secondary" style="text-align: center; padding: 8px;">
+                <div><i><strong>prepared by: </strong>{{user.name}}</i></div>
+              </div>
+            </template>
+            
+            <template is="dom-if" if="[[doctorOrganizationDetails.flags.showFooterLine]]">
+              <div class="b-top">
+                <div class="type caption secondary">[[doctorOrganizationDetails.printDecoration.footerLine]]</div>
+              </div>
+            </template>
+          </div>
+        </paper-card>
+        <!-- Print Preview Area - end -->
+      
+    </div>
+    <div id="printPreview">
+
+      <div class="print-header horizontal layout center center-justified">
+        <h1>[[doctorOrganizationDetails.printDecoration.headerLine]]</h1>
+      </div>
+
+      <!-- Print Header - Main - start -->
+      <div class="document-header horizontal layout center">
+        <template is="dom-if" if="[[doctorOrganizationDetails.printDecoration.headerLogoDataUri]]">
+          <img class="logo" src="[[doctorOrganizationDetails.printDecoration.headerLogoDataUri]]" alt="">
+        </template>
+
+        <div class="leftSide">
+          <div class="leftSideLine1">[[doctorOrganizationDetails.printDecoration.leftSideLine1]]</div>
+          <div class="leftSideLine2">[[doctorOrganizationDetails.printDecoration.leftSideLine2]]</div>
+          <div class="leftSideLine3">[[doctorOrganizationDetails.printDecoration.leftSideLine3]]</div>
+        </div>
+        <div class="flex"></div>
+        <div class="rightSide layout end-justified">
+          <div class="rightSideLine1">[[doctorOrganizationDetails.printDecoration.rightSideLine1]]</div>
+          <div class="rightSideLine2">[[doctorOrganizationDetails.printDecoration.rightSideLine2]]</div>
+          <div class="rightSideLine3">[[doctorOrganizationDetails.printDecoration.rightSideLine3]]</div>
+        </div>
+      </div>
+      <!-- Print Header - Main - end -->
+
+      <!-- Print Header - Patient Details - start -->
+      <div class="document-header horizontal layout center p-vertical-8">
+        <template is="dom-if" if="[[!patient.isForOrganizationOnly]]">
+          <div class="m-horizontal-4">
+            <strong>[[$TRANSLATE('Patient Serial', LANG)]]: </strong>
+            <span>{{patient.serial}}</span>
+          </div>
+          <div class="m-horizontal-4">
+            <strong>[[$TRANSLATE('Patient Name', LANG)]]: </strong>
+            <span>{{$getFullName(patient.name)}}</span>
+          </div>
+          <div class="m-horizontal-4">
+            <strong>[[$TRANSLATE('Sex', LANG)]]: </strong>
+            <span>{{patient.gender}}</span>
+          </div>
+          <div class="m-horizontal-4">
+            <strong>[[$TRANSLATE('Age', LANG)]]: </strong>
+            <span>[[_computeAge(patient.dateOfBirth)]] years </span>
+          </div>
+          <div class="m-horizontal-4">
+            <strong>[[$TRANSLATE('Blood Group', LANG)]]: </strong>
+            <span>[[patient.bloodGroup]]</span>
+          </div>
+          <div class="m-horizontal-4">
+            <strong>[[$TRANSLATE('Allergy', LANG)]]: </strong>
+            <span>[[patient.allergy]]</span>
+          </div>
+        </template>
+
+        <template is="dom-if" if="[[patient.isForOrganizationOnly]]">
+          <div class="m-horizontal-4">
+            <strong>Patient Name: </strong>
+            <i></i>
+          </div>
+          <div class="m-horizontal-4">
+            <strong>Age: </strong>
+            <i>REDACTED FOR CONFIDENTIALITY</i>
+          </div>
+          <div class="m-horizontal-4">
+            <strong>Blood Group: [[patient.bloodGroup]]</strong>
+            <span> </span>
+          </div>
+          <div class="m-horizontal-4">
+            <strong>Allergy: [[patient.allergy]]</strong>
+            <span> </span>
+          </div>
+        </template>
+      </div>
+      <!-- Print Header - Patient Details - end -->
+
+      <!-- Print Header - record Title - start -->
+      <div class="p-16 horizontal layout center center-justified">
+        <div class="type headline">{{patient.recordTitle}}</div>
+      </div>
+      <!-- Print Header - record Title - start -->
+
+      <!-- Print Content [FULL] - start -->
+      <div class="print-content" >
+        <!-- Print Content - Left - start -->
+        <div class="left">
+
+          <!-- Print - Symptoms - start -->
+          <template is="dom-if" if="[[!_isEmpty(suggestedData.symptomsList.length)]]">
+            <div class="horizontal layout center print-sub-header">
+              <div class="type body header-print">[[$TRANSLATE('Symptoms', LANG)]]</div>
+            </div>
+            <template is="dom-repeat" items="[[suggestedData.symptomsList]]">
+              <div class="type caption-2">
+                <span class="type secondary">[[_returnSerial(index)]]. </span>
+                <span>{{item.name}}</span>
+                <template is="dom-if" if="[[_compareFn(item.possibleValueList.length, '>', 0)]]">
+                  (
+                  <template is="dom-repeat" items="[[item.possibleValueList]]">
+                    <span>{{item}}, </span>
+                  </template>)
+                </template>
+              </div>
+            </template>
+            <div class="b-top m-top-8"></div>
+          </template>
+          <!-- Print - Symptoms - end -->
+
+          <!-- Print - Chief Complaints - start -->
+          <template is="dom-if" if="{{!_isEmpty(suggestedData.chiefComplaintList.length)}}">
+            <br>
+            <div class="horizontal layout center print-sub-header">
+              <div class="bold-text">Chief Complaints</div>
+            </div>
+            <template is="dom-repeat" items="[[suggestedData.chiefComplaintList]]">
+              <div class="type caption-2">
+                <span class="type secondary">[[_returnSerial(index)]]. </span>
+                <span>{{item.name}}</span>
+                <template is="dom-if" if="[[_compareFn(item.possibleValueList.length, '>', 0)]]">
+                  (
+                  <template is="dom-repeat" items="[[item.possibleValueList]]">
+                    <span>{{item}}, </span>
+                  </template>)
+                </template>
+              </div>
+            </template>
+            <div class="b-top m-top-8 "></div>
+          </template>
+          <!-- Print - Chief Complaints - end -->
+
+          <!-- Print - Examination - start -->
+          <template is="dom-if" if="[[!_isEmpty(suggestedData.examinationDataList.length)]]">
+            <div class="horizontal layout center print-sub-header">
+              <div class="type body header-print">[[$TRANSLATE('Examination', LANG)]]</div>
+            </div>
+            <template is="dom-repeat" items="[[suggestedData.examinationDataList]]" as="examination">
+              <div class="type caption-2">
+                <span class="type secondary">[[_returnSerial(index)]]. </span>
+                <span>{{examination.name}}</span>
+                (
+                <template is="dom-repeat" items="[[examination.examinationDataList]]" as="examItem">
+                  <span hidden$="{{!examItem.checked}}">{{examItem.value}}, </span>
+                </template>)
+              </div>
+            </template>
+            <div class="b-top m-top-8 "></div>
+          </template>
+          <!-- Print - Examination - end -->
+
+          <!-- Print - Child History - start -->
+          <template is="dom-if" if="[[!_isEmpty(suggestedData.childHistoryList.length)]]">
+            <div class="horizontal layout center print-sub-header">
+              <div class="type body header-print">[[$TRANSLATE('Child History', LANG)]]</div>
+            </div>
+            <template is="dom-repeat" items="[[suggestedData.childHistoryList]]" as="examination">
+              <div class="type caption-2">
+                <span class="type secondary">[[_returnSerial(index)]]. </span>
+                <span>{{examination.name}}</span>
+                (
+                <template is="dom-repeat" items="[[examination.examinationDataList]]" as="examItem">
+                  <span hidden$="{{!examItem.checked}}">{{examItem.value}}, </span>
+                </template>)
+              </div>
+            </template>
+            <div class="b-top m-top-8 "></div>
+          </template>
+          <!-- Print - Child History - end -->
+
+
+          <!-- Print - Birth History - start -->
+          <template is="dom-if" if="[[!_isEmpty(suggestedData.birthHistoryList.length)]]">
+            <div class="horizontal layout center print-sub-header">
+              <div class="type body header-print">[[$TRANSLATE('Birth History', LANG)]]</div>
+            </div>
+            <template is="dom-repeat" items="[[suggestedData.birthHistoryList]]" as="examination">
+              <div class="type caption-2">
+                <span class="type secondary">[[_returnSerial(index)]]. </span>
+                <span>{{examination.name}}</span>
+                (
+                <template is="dom-repeat" items="[[examination.examinationDataList]]" as="examItem">
+                  <span hidden$="{{!examItem.checked}}">{{examItem.value}}, </span>
+                </template>)
+              </div>
+            </template>
+            <div class="b-top m-top-8 "></div>
+          </template>
+          <!-- Print - Birth History - end -->
+
+
+          <!-- Print - Family History - start -->
+          <template is="dom-if" if="{{!_isEmpty(suggestedData.familyHistoryDataList.length)}}">
+            <div class="horizontal layout center print-sub-header">
+              <div class="type body header-print">[[$TRANSLATE('Family History', LANG)]]</div>
+            </div>
+            
+            <template is="dom-repeat" items="[[suggestedData.familyHistoryDataList]]">
+              <div class="type caption-2">
+                <span class="type secondary">[[_returnSerial(index)]]. </span>
+                <span>{{item.name}} ([[item.relation]])</span>
+              </div>
+            </template>
+            <div class="b-top m-top-8 "></div>
+          </template>
+          <!-- Print - Family History - end -->
+
+          
+          <!-- Print - Vitals - start -->
+          <template is="dom-if" if="[[!_isEmpty(suggestedData.addedVitalList.length)]]">
+            <div class="horizontal layout center print-sub-header">
+              <div class="type body header-print">[[$TRANSLATE('Vitals', LANG)]]</div>
+            </div>
+            <template is="dom-repeat" items="[[suggestedData.addedVitalList]]">
+              <div class="type caption-2">
+                <strong>{{item.vitalType}}: </strong>
+                <span>[[_pritifyVitalData(item)]]</span>
+              </div>
+            </template>
+            <div class="b-top m-top-8"></div>
+          </template>
+          <!-- Print - Vitals - end -->
+
+          <!-- Print - Test Advised - start -->
+          <template is="dom-if" if="[[!_isEmpty(suggestedData.investigationList.length)]]">
+            <div class="horizontal layout center print-sub-header">
+              <div class="type body">Advised Test</div>
+            </div>
+            <template is="dom-repeat" items="[[suggestedData.investigationList]]">
+              <div class="type caption-2 layout horizontal">
+                <div class="type secondary m-right-8">[[_returnSerial(index)]]. </div>
+                <div class="flex vertical layout">
+                  <div>{{item.investigationName}}</div>
+                  <template is="dom-if" if="[[!isCBCTest(item.investigationName)]]">
+                    <template is="dom-if" if="[[_compareFn(item.testList.length, '>', 1)]]">
+                      <ol class="order-list">
+                        <template is="dom-repeat" items="[[item.testList]]">
+                          <li>{{item.name}}</li>
+                        </template>
+                      </ol>
+                    </template>
+                  </template>
+                  <template is="dom-if" if="[[_compareFn(item.testList.length, '>', 1)]]">
+                    <ol class="order-list">
+                      <template is="dom-repeat" items="[[item.testList]]">
+                        <li>{{item.name}}</li>
+                      </template>
+                    </ol>
+                  </template>
+                </div>
+              </div>
+              <template is="dom-if" if="[[item.suggestedInstitutionName]]">
+                <div class="type caption secondary m-left-16">
+                  <strong>Suggested Institution: </strong>
+                  <span class="flex">{{item.suggestedInstitutionName}}</span>
+                </div>
+              </template>
+              
+            </template>
+            <div class="b-top"></div>
+          </template>
+          <!-- Print - Test Advised - end -->
+
+          <!-- Print - Diagnosis - start -->
+          <template is="dom-if" if="{{!_isEmpty(suggestedData.diagnosisList.length)}}">
+            <div class="horizontal layout center print-sub-header">
+              <div class="type body header-print">[[$TRANSLATE('Diagnosis', LANG)]]</div>
+            </div>
+            <template is="dom-repeat" items="[[suggestedData.diagnosisList]]">
+              <div class="type caption-2">
+                <span class="type secondary">[[_returnSerial(index)]]. </span>
+                <span>{{item.name}}</span>
+                <template is="dom-if" if="[[_compareFn(item.possibleValueList.length, '>', 0)]]">
+                  (
+                  <template is="dom-repeat" items="[[item.possibleValueList]]">
+                    <span>{{item}}, </span>
+                  </template>)
+                </template>
+              </div>
+            </template>
+            <div class="b-top m-top-8"></div>
+          </template>
+          <!-- Print - Diagnosis - end -->
+
+          <!-- Print - Provisional Diagnosis - start -->
+          <template is="dom-if" if="{{!_isEmpty(suggestedData.provisionalDiagnosis.length)}}">
+            <div class="horizontal layout center print-sub-header">
+              <div class="type body header-print">[[$TRANSLATE('Provisional Diagnosis', LANG)]]</div>
+            </div>
+            <template is="dom-repeat" items="[[suggestedData.provisionalDiagnosis]]">
+              <div class="type caption-2">
+                <span class="type secondary">[[_returnSerial(index)]]. </span>
+                <span>{{item.name}}</span>
+                <template is="dom-if" if="[[_compareFn(item.possibleValueList.length, '>', 0)]]">
+                  (
+                  <template is="dom-repeat" items="[[item.possibleValueList]]">
+                    <span>{{item}}, </span>
+                  </template>)
+                </template>
+              </div>
+            </template>
+            <div class="b-top m-top-8"></div>
+          </template>
+          <!-- Print - Provisional Diagnosis - end -->
+
+
+          <!-- Print - Differential Diagnosis - start -->
+          <template is="dom-if" if="{{!_isEmpty(suggestedData.differentialDiagnosis.length)}}">
+            <div class="horizontal layout center print-sub-header">
+              <div class="type body header-print">[[$TRANSLATE('Differential Diagnosis', LANG)]]</div>
+            </div>
+            <template is="dom-repeat" items="[[suggestedData.differentialDiagnosis]]">
+              <div class="type caption-2">
+                <span class="type secondary">[[_returnSerial(index)]]. </span>
+                <span>{{item.name}}</span>
+                <template is="dom-if" if="[[_compareFn(item.possibleValueList.length, '>', 0)]]">
+                  (
+                  <template is="dom-repeat" items="[[item.possibleValueList]]">
+                    <span>{{item}}, </span>
+                  </template>)
+                </template>
+              </div>
+            </template>
+            <div class="b-top m-top-8"></div>
+          </template>
+          <!-- Print - Differential Diagnosis - end -->
+
+
+          <!-- Print - Physiotherapy - start -->
+          <template is="dom-if" if="{{!_isEmpty(suggestedData.physiotherapyList.length)}}">
+            <div class="horizontal layout center print-sub-header">
+              <div class="type body header-print">[[$TRANSLATE('Physiotherapy', LANG)]]</div>
+            </div>
+            <template is="dom-repeat" items="[[suggestedData.physiotherapyList]]">
+              <div class="type caption-2">
+                <span class="type secondary">[[_returnSerial(index)]]. </span>
+                <span>{{item.name}}</span>
+                <template is="dom-if" if="[[_compareFn(item.possibleValueList.length, '>', 0)]]">
+                  (
+                  <template is="dom-repeat" items="[[item.possibleValueList]]">
+                    <span>{{item}}, </span>
+                  </template>)
+                </template>
+              </div>
+            </template>
+            <div class="b-top m-top-8"></div>
+          </template>
+          <!-- Print - Physiotherapy - end -->
+
+
+          <!-- Print - Notes - start -->
+          <template is="dom-if" if="{{!_isEmpty(suggestedData.doctorNotes.length)}}">
+            <div class="horizontal layout center print-sub-header">
+              <div class="type body header-print">[[$TRANSLATE('Doctor Advised/Notes', LANG)]]</div>
+            </div>
+            <ul class="unorderd-list-custom">
+              <template is="dom-repeat" items="[[suggestedData.doctorNotes]]">
+                <li class="type caption-2" style="word-break: break-word; margin-right: 4px;">{{item}}</li>
+              </template>
+            </ul>
+            <div class="b-top m-top-8"></div>
+          </template>
+          <!-- Print - Notes - end -->
+
+          <!-- Print - Referral Doctor - start -->
+          <template is="dom-if" if="{{!_isEmpty(suggestedData.referralDoctor.length)}}">
+            <div class="horizontal layout center print-sub-header">
+              <div class="type body header-print">[[$TRANSLATE('Referred To', LANG)]]</div>
+            </div>
+            <ul class="unorderd-list-custom">
+              <template is="dom-repeat" items="[[suggestedData.referralDoctor]]">
+                <span>{{item.name}}</span>
+              </template>
+            </ul>
+            <div class="b-top m-top-8"></div>
+          </template>
+          <!-- Print - Referral Doctor - end -->
+
+          <!-- Print - Referred Organization - start -->
+          <template is="dom-if" if="{{!_isEmpty(suggestedData.referralOrganization.length)}}">
+            <div class="horizontal layout center print-sub-header">
+              <div class="type body header-print">[[$TRANSLATE('Referred To', LANG)]]</div>
+            </div>
+            <ul class="unorderd-list-custom">
+             
+                <span>{{suggestedData.referralOrganization.name}}</span>
+              
+            </ul>
+            <div class="b-top m-top-8"></div>
+          </template>
+          <!-- Print - Referred Organization - end -->
+
+          <!-- Print - Next Visit - start -->
+          <template is="dom-if" if="[[!_isEmptyString(suggestedData.nextVisit.nextVisitDateTimestamp)]]">
+            <div class="horizontal layout center print-sub-header">
+              <div class="type body header-print">[[$TRANSLATE('Next Visit', LANG)]]</div>
+            </div>
+            <div class="type caption-2">
+              <div>
+                <strong>Date: </strong>
+                <span>[[$mkDate(suggestedData.nextVisit.nextVisitDateTimestamp)]]</span>
+              </div>
+              <div>{{suggestedData.nextVisit.priorityType}}</div>
+            </div>
+            <div class="b-top m-top-8"></div>
+          </template>
+          <!-- Print - Next Visit - end -->
+        </div>
+        <!-- Print Content - Left - end -->
+
+        <!-- Print Content - right - start -->
+        <div class="right">
+
+          <!-- Print - History And Physical - start -->
+          <template is="dom-if" if="[[shouldRender]]">
+            <div class="horizontal layout center">
+              <div class="type body print-sub-header">[[recordPartTitle]]</div>
+            </div>
+            <div class="p-horizontal-16">
+              <html-block html="[[recordPartHtmlContent]]"></html-block>
+            </div>
+            <div class="b-top m-top-8"></div>
+          </template>
+          <!-- Print - History And Physical - end -->
+
+          <br>
+          <br>
+
+          <!-- Print - Prescription - start -->
+          <div >
+            <template is="dom-if" if="[[!_isEmpty(suggestedData.medicineList.length)]]">
+              <div class="horizontal layout center print-sub-header">
+                <div class="medium-data-header">Rx: </div>
+              </div>
+
+              <div class="layout vertical">
+                <template is="dom-repeat" items="[[suggestedData.medicineList]]">
+                  <div class="layout vertical m-left-8">
+                    <div class="type caption-2 text-bold">
+                      <!-- [[_returnSerial(index)]]. <strong>{{item.data.brandName}}</strong> -->
+                      [[_returnSerial(index)]]. <strong>[[_getBrandNameOrGenericName(item.data)]]</strong>
+                    </div>
+                    <template is="dom-repeat" items="[[_extractMedicineDoseList(item.data.doseDirection)]]">
+                      <div class="type caption m-left-16">
+                        <span>[[item]]</span>
+                      </div>
+                    </template>
+                    <!-- <div>
+                      <span>[[$TRANSLATE(item.data.doseDirection, LANG)]]</span>
+                    </div> -->
+                    <div class="type caption">
+                      [[item.data.comments]]
+                    </div>
+                  </div>
+                </template>
+              </div>
+
+              <!-- authorized signature -->
+              
+
+            </template>
+          </div>
+          
+          <!-- Print - Prescription - end -->
+          <br>
+          <!-- Patient Stay Preview -->
+          <template is="dom-if" if="[[suggestedData.patientStay.data]]">
+            <div class="horizontal layout center print-sub-header">
+              <div class="type body p-left-16 header-print">[[$TRANSLATE('Patient Stay', LANG)]]</div>
+            </div>
+            <div class="p-horizontal-16">
+              <div class="layout horizontal">
+                <span class="type bold"> Admission Date: </span>
+                <span>&nbsp;[[$mkDate(suggestedData.patientStay.data.admissionDateTimeStamp)]]</span>
+              </div>
+              <div>
+                <span class="type bold">Type: </span> [[suggestedData.patientStay.data.admissionType]]
+              </div>
+              <template is="dom-if" if="[[suggestedData.patientStay.adviseOnly]]">
+                <div>
+                  <span class="type bold">Advice: </span> [[suggestedData.patientStay.data.advise]]
+                </div>
+              </template>
+              <template is="dom-if" if="[[!suggestedData.patientStay.adviseOnly]]">
+                <div>
+                  <span class="type bold">Referred By: </span> [[suggestedData.patientStay.data.referredByDoctorName]]
+                </div>
+                <div>
+                  <span class="type bold">Admitted By: </span> [[suggestedData.patientStay.data.admittedByDoctorName]]
+                </div>
+                <div class="type italic">
+                  <span>[[suggestedData.patientStay.data.locationHospitalName]]</span> 
+                  <span>[[suggestedData.patientStay.data.locationDepartment]]</span> 
+                  <span>[[suggestedData.patientStay.data.locationUnit]]</span> 
+                  <span>[[suggestedData.patientStay.data.locationWard]]</span> 
+                  <span>[[suggestedData.patientStay.data.locationBed]]</span>
+                </div>
+              </template>
+              <template is="dom-if" if="[[suggestedData.patientStay.data.currentLocation.length]]">
+                <div>
+                  <span class="type bold"> Current Location:</span>
+                  <span>[[suggestedData.patientStay.data.currentLocation.0.location]]</span>
+                </div>
+              </template>
+              <template is="dom-if" if="[[suggestedData.patientStay.data.dischargeDatetimeStamp]]">
+                <div>
+                  <span class="type bold"> Discharge Date:</span>
+                  <span>[[$mkDate(suggestedData.patientStay.data.dischargeDatetimeStamp)]]</span>
+                </div>
+                <div>
+                  <span class="type bold">Discharged By: </span> [[suggestedData.patientStay.data.dischargedByDoctorName]]
+                </div>
+                <div>
+                  <span class="type bold"> Length of Stay:</span>
+                  <span>[[calculateLengthOfStay(suggestedData.patientStay.data.admissionDateTimeStamp, suggestedData.patientStay.data.dischargeDatetimeStamp)]]
+                    Days
+                  </span>
+                </div>
+              </template>
+              <template is="dom-if" if="[[suggestedData.patientStay.data.dischargeReason.length]]">
+                <div>
+                  <span class="type bold">Discharge Reason: </span> [[suggestedData.patientStay.data.dischargeReason]]</div>
+              </template>
+              <template is="dom-if" if="[[suggestedData.patientStay.data.dischargeTo.length]]">
+                <div>
+                  <span class="type bold"> Discharged To:</span> [[suggestedData.patientStay.data.dischargeTo]]</div>
+              </template>
+            </div>
+          </template>
+          <!-- Patient Stay Preview End -->
+        </div>
+        <!-- Print Content - right - end -->
+      </div>
+      <!-- Print Content [FULL] - end -->
+
+      <!-- Print Content - [Prescripton only] - start -->
+      <!-- <div hidden$="{{!printPrescriptionOnly}}">
+        <template is="dom-if" if="[[!_isEmpty(suggestedData.medicineList.length)]]">
+          <div class="horizontal layout center print-sub-header">
+            <div class="medium-data-header">Rx: </div>
+          </div>
+
+          <div class="layout vertical">
+            <template is="dom-repeat" items="[[suggestedData.medicineList]]">
+              <div class="layout vertical m-left-8">
+                <div class="type caption-2 text-bold">
+                  
+                  [[_returnSerial(index)]]. <strong>[[_getBrandNameOrGenericName(item.data)]]</strong>
+                </div>
+                <template is="dom-repeat" items="[[_extractMedicineDoseList(item.data.doseDirection)]]">
+                  <div class="type caption m-left-16">
+                    <span>[[item]]</span>
+                  </div>
+                </template>
+                
+                <div class="type caption">
+                  [[item.data.comments]]
+                </div>
+              </div>
+            </template>
+          </div>
+
+          
+          <div class="layout horizontal m-top-40" style="position: relative; left: 50%;">
+            <div class="signature">
+              <div class="underline"></div>
+              <div>Authorized Signature</div>
+            </div>
+          </div>
+
+        </template>
+      </div> -->
+      <!-- Print Content - [Prescripton only] - end -->
+
+      <div>
+        
+        <div class="horizontal layout end-justified center">
+          <template is="dom-if" if="[[doctorOrganizationDetails.printDecoration.signatureDataUri]]">
+            <img height="96" width="128" class="logo" src="[[doctorOrganizationDetails.printDecoration.signatureDataUri]]" alt="signature">
+          </template>
+        </div>
+        <div class="layout horizontal m-top-40" style="position: relative; left: 70%;">
+          <div class="signature">
+            <div class="underline"></div>
+            <div>Authorized Signature</div>
+          </div>
+        </div>
+
+        <template is="dom-if" if="[[doctorOrganizationDetails.flags.showFooterLine]]">
+          <div class="b-top m-left-8">
+            <div class="type caption" style="white-space: pre-wrap;">[[doctorOrganizationDetails.printDecoration.footerLine]]</div>
+          </div>
+        </template>
+        
+        <center>
+          <template is="dom-if" if="[[doctorOrganizationDetails.printDecoration.footerLogoDataUri]]">
+            <img class="logo-footer" src="[[doctorOrganizationDetails.printDecoration.footerLogoDataUri]]" alt="">
+          </template>
+        </center>
+        
+        <template is="dom-if" if="[[doctorOrganizationDetails.flags.showUserNameOnPrintPreview]]">
+          <div class="type caption secondary" style="text-align: center; padding: 8px;">
+            <div>
+              <i>
+                <strong>Electronically prepared by: </strong>{{user.name}}</i>
+            </div>
+          </div>
+        </template>
+
+      </div>
+
+
+    </div>
+
+    
+    
+
+    <!-- local DOM -->
+  </template>
+  <script src="page-visit-preview.coffee-compiled.js "></script>
+</dom-module>

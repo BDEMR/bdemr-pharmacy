@@ -1,0 +1,383 @@
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+
+<link rel="import" href="../bdemr-qrcode/bdemr-qrcode.html">
+
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-print-patient-card-new">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+
+      /* .card-front, .card-back {
+        border: 1px solid black;
+        width: 3.5in !important;
+        height: 2.5in !important;
+        font-size: 10px;
+        box-sizing: border-box;
+        background-color: white;
+      } */
+
+      .card-front {
+        border: 1px solid black;
+        width: 2.5in !important;
+        height: 3.5in !important;
+        font-size: 10px;
+        box-sizing: border-box;
+        background-color: white;
+      }
+      
+      .card-back {
+        border: 1px solid black;
+        width: 3.5in !important;
+        height: 2.5in !important;
+        font-size: 10px;
+        box-sizing: border-box;
+        background-color: white;
+      }
+
+      .card-front {
+        /* transform: rotate(-90deg); */
+      }
+
+      .front-back-padding {
+        padding: 8px;
+      }
+
+      .card-back-bottom {
+        padding: 0px !important;
+      }
+
+      .card-front-top {
+        text-align: center;
+      }
+
+      .card-back-3rd-left {
+        position: relative;
+        width: 40%;
+        float: left;
+      }
+
+      .card-back-3rd-right {
+        position: relative;
+        width: 60%;
+        float: right;
+      }
+
+      .footer {
+        font-size: 10px;
+        text-align: center;
+      }
+
+      .p-top-4 {
+        padding-top: 4px !important;
+      }
+
+      .m-top-4 {
+        margin-top: 4px !important;
+      }
+
+      .profile-image {
+        width: 100% !important;
+        height: 150px !important;
+        border: 2px solid #f7f7f7;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .align-right {
+        text-align: right;
+      }
+
+      .align-center {
+        text-align: center;
+      }
+
+      .bold-style {
+        font-weight: bold;
+      }
+
+      .color-blue {
+        color: blue;
+      }
+
+      .color-red {
+        color: red;
+      }
+
+      .cap-all {
+        text-transform: uppercase;
+      }
+
+      .header-font {
+        font-size: 11px;
+      }
+
+      .footer-style {
+        color: white;
+        background-color: #624aff;
+        min-height: 12px;
+        position: relative;
+        bottom: 5px;
+      }
+
+      .header-style {
+        color: white;
+        background-color: var(--brand-primary-color);
+        min-height: 20px;
+        padding-top: 4px;
+      }
+
+      .sub-header-style {
+        /* color: white; */
+        background-color: var(--brand-primary-color);
+        min-height: 20px;
+
+      }
+
+      .header-style, .sub-header-style {
+        font-size: 13px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      .vertical-separator {
+        width: 0px;
+        height: 80px;
+        border: 1px solid #624aff;
+        margin: 2px 8px;
+      }
+
+      tr.fix-left td:nth-child(2) {
+        padding-left: 6px;
+      }
+
+
+      @media print {
+        .card-back, .card-front {
+          -webkit-print-color-adjust: exact;
+        }
+      }
+
+      .organization-logo {
+        width: 80px;
+        height: 60px;
+      }
+
+      .organization-logo-back {
+        width: 90px;
+        height: 60px;
+        position: relative;
+        left: 30%;
+      }
+
+    </style>
+
+    <!-- local DOM -->
+
+
+    <div class="document m-top-40">
+
+      <!-- <template is="dom-if" if="[[loadingCounter]]">
+        <div class="layout horizontal center type bold text-center">
+          <paper-progress class="progress" indeterminate></paper-progress>
+        </div>
+      </template> -->
+
+      <template is="dom-if" if="{{!isPatientValid}}">
+        Patient invalid
+      </template>
+
+      <!-- card front -->
+      <div class="card-front layout vertical">
+
+        <!-- part 1 -->
+        <div class="header-font header-style align-center">
+          <span>patient identification card</span>
+        </div>
+
+        <!-- part 2 -->
+        <div class="header-font sub-header-style align-center p-top-8">
+          <span>[[organization.name]]</span>
+        </div>
+
+        <!-- part 3 -->
+        <div class="front-back-padding layout horizontal">
+          <div>
+            <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+              <img class="organization-logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+            </template>
+          </div>
+
+          <div class="layout vertical m-left-24">
+            <span>UHID: [[patient.organizationPatientId]]</span>
+            <span>[[$getFullName(patient.name)]]</span>
+            <span>Reg. Date: [[$getFormattedDate(patient.createdDatetimeStamp)]]</span>
+          </div>
+
+        </div>
+
+        <!-- part 4 -->
+        <div class="front-back-padding">
+          <iron-image class="profile-image" src$="[[$getProfileImage(patient.profileImage)]]" preload 
+            sizing="cover"></iron-image>
+        </div>
+
+        <!-- part 5 -->
+        <div class="layout vertical">
+          <div class="horizontal layout center center-justified m-top-8">
+            <template is="dom-if" if="[[patient.serial]]">
+              <bdemr-qrcode code="{{patient.serial}}" width="40" height="30"></bdemr-qrcode>
+            </template>
+          </div>
+          <div class="type body center center-justified m-top-4">{{patient.serial}}</div>
+        </div>
+
+
+        <!-- <div class="card-front-top">
+          <div class="m-bottom-8">
+            <div><h4>[[organization.name]]</h4></div>
+          </div>
+          <div class="m-bottom-8">
+            <template is="dom-if" if="[[patient]]">
+              <div><h3>[[$getFullName(patient.name)]] </h3></div>
+              <div><h3>ID: [[patient.organizationPatientId]]</h3></div>
+            </template>
+          </div>
+        </div>
+        <div class="horizontal">
+          <div class="card-front-bottom-left">
+            <template is="dom-if" if="[[patient]]">
+              <div class="vertical layout">
+                <span><strong>Gender: </strong>[[patient.gender]]</span>
+                <span class="p-top-4"><strong>Date of Birth: </strong>[[patient.dateOfBirth]]</span>
+                <span class="p-top-4"><strong>Blood Group: </strong>[[_getPatientBloodGroup(patient.bloodGroup)]]</span> 
+                <span class="p-top-4"><strong>Phone: </strong>[[patient.phone]]</span>
+                <span class="p-top-4"><strong>Address: </strong>[[_getpatientAddress(patient.addressList)]]</span>
+                
+              </div>
+            </template>
+          </div>
+        </div> -->
+
+      </div>
+      
+      <!-- card back -->
+      <div class="card-back layout vertical">
+        <div class="layout vertical front-back-padding">
+          <!-- part 1 -->
+          <div>
+            <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+              <img class="organization-logo-back" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+            </template>
+          </div>
+
+          <!-- part 2 -->
+          <div class="cap-all color-red align-center header-font">
+            <span>dhaka specialized pain management & research centre ltd</span>
+          </div>
+
+          <!-- part 3 -->
+          <div class="layout horizontal m-top-4">
+            <div class="layout vertical card-back-3rd-left">
+              <span class="bold-style">Rupayan Prime</span>
+              <span>Level-5, House No. 2</span>
+              <span>Road No. 7, Green Road</span>
+              <span>Dhanmondi R/A</span>
+              <span>Dhaka-1205</span>
+            </div>
+
+            <div class="vertical-separator"></div>
+
+
+            <div class="layout vertical card-back-3rd-right">
+              <table>
+                <tbody>
+                  <tr>
+                    <td class="bold-style align-right">Appointment</td>
+                    <td>: +88 02 9614511</td>
+                  </tr>
+                  <tr class="fix-left">
+                    <td></td>
+                    <td>+88 01785853632</td>
+                  </tr>
+                  <tr class="fix-left">
+                    <td></td>
+                    <td>+88 01815 754345</td>
+                  </tr>
+                  <tr>
+                    <td class="bold-style align-right">Email</td>
+                    <td>: dpmc.bd.01@gmail.com</td>
+                  </tr>
+                  <tr class="fix-left">
+                    <td></td>
+                    <td>paindhaka.bd@gmail.com</td>
+                  </tr>
+                </tbody>
+              </table>
+              
+              <!-- appointment -->
+              <!-- <div class="layout horizontal">
+                <div>
+                  Appointment:
+                </div>
+
+                <div>
+                  <span>+88 02 9614511</span>
+                  <span>+88 01785853632</span>
+                  <span>+88 01815 754345</span>
+                </div>
+              </div> -->
+              
+            </div>
+
+          </div>
+        </div>
+
+        <!-- part 4 -->
+        <div class="footer-style align-center card-back-bottom">
+          <span>Visit us @ www.dpmcbd.com, www.paindoctor.com.bd</span>
+        </div>
+
+        <!-- part 4 -->
+        <div class="align-center">
+          <span>Please bring this card whenever you come for treatment. Kindly quote your UHID number whenever you write to or call the hospital.</span>
+        </div>
+
+
+        <!-- <div class="footer m-top-8">
+          <template is="dom-if" if="[[patient]]">
+            <div class="horizontal layout">
+              <div class="flex one"><strong>Issued On: </strong>[[$getTodayDate()]]</span></div>
+              <div class="flex one"><strong>Issued By: </strong>[[organization.name]]</span></div>
+            </div>
+          </template>
+          <div><strong>If found, Please return to the following address:</strong></div>
+          <div>[[organization.address]]</div>
+          <div class="m-top-4"><strong>Powered by BDEMR</strong></div>
+        </div> -->
+        
+  
+      </div>
+      
+    </div>
+
+  </template>
+  <script src="page-print-patient-card-new.coffee-compiled.js"></script>
+  
+
+</dom-module>

@@ -1,0 +1,584 @@
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-blank-prescription">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .external-card-title {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+        display: inline-block;
+        font-size: 14px;
+      }
+
+      .address1 {
+        margin-right: 10px;
+      }
+
+      .name {
+        margin-left: 5px;
+        font-size: 24px;
+      }
+
+      .email {
+        margin-left: 5px;
+        font-size: 14px;
+      }
+
+      .phone {
+        margin-left: 5px;
+      }
+
+      .val {
+        text-decoration: underline;
+      }
+
+      .account-box {
+        --iron-icon-width: 96px;
+        --iron-icon-height: 96px;
+      }
+
+      .document {
+        font-family: 'Arial,';
+        background: white;
+        width: 100%;
+        overflow-x: hidden;
+      }
+
+      .document-title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .collection {
+        color: red;
+        background: grey;
+      }
+
+      .document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+        height: inherit;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+
+      .rightSide {
+        text-align: right;
+        /* width: 49%; */
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+      .item {
+        padding: 10px;
+        border: 1px solid grey;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        margin: 0;
+        padding: 5px 0;
+      }
+
+      :host([has-scrolling-region]) #wrapper #contentContainer {
+        overflow-y: visible;
+        overflow-x: hidden;
+      }
+
+      @media print {
+        :host([has-scrolling-region]) #wrapper #contentContainer {
+          overflow-y: visible;
+          overflow-x: hidden;
+        }
+
+        .hide-on-print {
+          display: none;
+        }
+
+      }
+
+      .signature {
+        width: 200px;
+      }
+
+      .signature .underline {
+        border-bottom: 1px dashed #ccc;
+      }
+
+      .header {
+        position: relative;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        font-size: 20px;
+        font-weight: 500;
+        text-align: center;
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px
+      }
+
+      .header .title {
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: #009688;
+      }
+
+      .footer {
+        text-align: center;
+      }
+
+      .page-footer {
+        position: relative;
+        /* font-size: 14px; */
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        border-top: 1px solid black;
+      }
+
+      paper-item {
+        --paper-item-min-height: 30px;
+      }
+
+      .align-left {
+        float: left;
+        width: 50%
+      }
+
+      .align-right {
+        float: right;
+        width: 50%
+      }
+
+      .unbolded {
+        font-weight: normal;
+      }
+
+      #totalBillSize {
+        font-size: 150%;
+      }
+
+      #mediaPrintOnly {
+        display: none;
+      }
+
+      #printPreview {
+        display: block;
+      }
+
+      @media print {
+        #mediaPrintOnly {
+          display: block;
+        }
+
+        #printPreview {
+          display: none;
+        }
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td {
+        vertical-align: left;
+        padding: 10px;
+        height: 300px;
+        border-right: black 1px solid;
+      }
+      .table th {
+        vertical-align: left;
+        padding: 10px;
+        border: 1px solid black;
+      }
+
+      .table td.special-td {
+        padding: 0px;
+        margin: 0px;
+        height: 100%;
+      }
+
+    .patient-table {
+      margin: 8px;
+      width: calc(100% - 14px);
+    }
+
+    .patient-table th, .patient-table td {
+      padding: 4px 8px;
+    }        
+    </style>
+
+
+    <!-- local DOM -->
+    <div class="document" id="printPreview">
+
+      <template is="dom-if" if="[[loadingCounter]]">
+        <div class="layout horizontal center type bold text-center">
+          <paper-progress class="progress" indeterminate></paper-progress>
+        </div>
+      </template>
+
+      <!-- <template is="dom-if" if="{{!isPatientValid}}">
+        Patient invalid
+      </template> -->
+
+      <!-- editing visit - start -->
+      <template is="dom-if" if="[[organization.printSettings.headerLine]]">
+        <div class="header vertical layout">[[organization.printSettings.headerLine]]</div>
+      </template>
+
+
+      <div class="document-header horizontal layout center">
+
+        <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+          <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+        </template>
+
+        <div class="leftSide vertical layout">
+          <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+          <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+          <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+        </div>
+        <div class="flex"></div>
+        <div class="rightSide vertical layout end">
+          <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+          <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+          <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+        </div>
+      </div>
+
+      <div class="horiline"></div>
+
+      <div class="document-header horizontal layout">
+        <table class="m-top-8 patient-table">
+          <tbody>
+            <tr>
+              <td><strong>Name:</strong></td>
+              <td>{{$getFullName(patient.name)}}</td>
+              <td><strong>Age:</strong></td>
+              <td>[[$computeAge(patient.dateOfBirth)]]</td>
+              <td><strong>Sex:</strong></td>
+              <td>{{patient.gender}}</td>
+            </tr>
+            <tr>
+              <td><strong>Number:</strong></td>
+              <td>{{patient.phone}}</td>
+              <td><strong>ID:</strong></td>
+              <td>{{patient.organizationPatientId}}</td>
+              <td><strong>Address:</strong></td>
+              <td>{{address}}</td>
+            </tr>
+            <tr hidden$=[[!doctorName]]>
+              <td><strong>Doctor Name:</strong></td>
+              <td>{{doctorName}}</td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- <div class="layout vertical">
+          <div class="layout horizontal">
+            <div>Patient's Name: [[$getFullName(patient.name)]]<span
+                class="type caption-2 bg-gray m-left-8">[[patient.serial]]</span>
+            </div>
+            <div class="m-right-16">ID: [[patient.organizationPatientId]]</div>
+            <div class="m-right-16">Number: [[patient.phone]]</div>
+          </div>
+          <div class="layout horizontal">
+            <div class="m-right-16">Age: [[$computeAge(patient.dateOfBirth)]]</div>
+            <div class="m-right-16" hidden$="[[!invoice.referralDoctor.name]]">Referred Doctor: [[invoice.referralDoctor.name]]</div>
+            <span class="m-right-16" hidden$="[[!address]]">Address: [[address]]</span>
+          </div>
+
+          <div>Allergy: [[patient.allergy]]</div>
+          <div>Blood Group: [[patient.bloodGroup]]</div>
+          <div>Serial: <span class="type caption-2 bg-gray">[[patient.serial]]</span></div>
+
+        </div> -->
+
+        <!-- <div class="flex"></div> -->
+
+        <!-- <div class="rightSide">
+          <div hidden$=[[!doctorName]]><strong>Doctor Name:</strong> [[doctorName]]</div>
+        </div> -->
+
+      </div>
+      
+      
+      <table class="table m-top-16">
+        <tr>
+          <th style="width: 60px;">Date</th>
+          <th style="width: 200px;">Clinical Evaluation and Assement</th>
+          <th style="width: 200px;">Treatment</th>
+        </tr>
+        <tr>
+          <td>
+            <div class="layout vertical" style="font-size: 14px;">
+              <span>Height-----------CM</span>
+              <span>Weight-----------KG</span>
+              <span>BP---------------MM of HG</span>
+              <span>Pulse------------Min</span>
+              <span>Category---------</span>
+            </div>
+          </td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="layout vertical" style="font-size: 14px;">
+              <span>Height-----------CM</span>
+              <span>Weight-----------KG</span>
+              <span>BP---------------MM of HG</span>
+              <span>Pulse------------Min</span>
+              <span>Category---------</span>
+            </div>
+          </td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+
+    </div>
+
+
+    <div id="mediaPrintOnly">
+      <div class="print-page-header">
+        <template is="dom-if" if="[[organization.printSettings.headerLine]]">
+          <div style="text-align: center;">
+            <h2>[[organization.printSettings.headerLine]]</h2>
+          </div>
+
+        </template>
+
+        <div class="document-header horizontal layout center">
+
+          <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+            <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+          </template>
+
+          <div class="leftSide">
+            <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+            <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+            <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+          </div>
+          <div class="flex"></div>
+          <div class="rightSide layout end">
+            <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+            <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+            <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="print-page-footer">
+        <div style="text-align: center; color: green;" hidden$="[[hideOnBlankPrint]]">
+          <template is="dom-if" if="[[isFullPaid]]">
+            <span style="font-size: 42px; font-weight: bolder;">Full Paid</span>
+          </template>
+        </div>
+        <template is="dom-if" if="[[settings.printDecoration.footerLine]]">
+          <div class="page-footer">
+            <div style="white-space: pre-wrap;">
+              [[settings.printDecoration.footerLine]]
+            </div>
+          </div>
+        </template>
+
+        <template is="dom-if" if="[[isPrintTypeAvailable]]">
+          <div class="footer">
+            <div>
+              <strong>[ [[printType]] Copy ]</strong>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <table class="print-table">
+        <thead>
+          <tr>
+            <td>
+              <!--place holder for the fixed-position header-->
+              <div class="print-page-header-space"></div>
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="page">
+                <div class="document-header horizontal layout justified p-v">
+                  <template is="dom-if" if="[[patient]]">
+                    <table class="patient-table">
+                      <tbody>
+                        <tr>
+                          <td><strong>Name:</strong></td>
+                          <td>{{$getFullName(patient.name)}}</td>
+                          <td><strong>Age:</strong></td>
+                          <td>[[$computeAge(patient.dateOfBirth)]]</td>
+                          <td><strong>Sex:</strong></td>
+                          <td>{{patient.gender}}</td>
+                        </tr>
+                        <tr>
+                          <td><strong>Number:</strong></td>
+                          <td>{{patient.phone}}</td>
+                          <td><strong>ID:</strong></td>
+                          <td>{{patient.organizationPatientId}}</td>
+                          <td><strong>Address:</strong></td>
+                          <td>{{address}}</td>
+                        </tr>
+                        <tr hidden$=[[!doctorName]]>
+                          <td><strong>Doctor Name:</strong></td>
+                          <td>{{doctorName}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <!-- <div class="vertical layout">
+                      <div class="layout horizontal">
+                        <div>Patient's Name: [[$getFullName(patient.name)]]<span
+                            class="type caption-2 bg-gray m-left-8">[[patient.serial]]</span></div>
+                        <div>ID: [[patient.organizationPatientId]]</div>
+                        <div>Number: [[patient.phone]]</div>
+                      </div>
+                      <div>Age: [[$computeAge(patient.dateOfBirth)]]</div>
+                      <span hidden$="[[!invoice.referralDoctor.name]]">Referred Doctor:
+                        [[invoice.referralDoctor.name]]</span>
+                      <span hidden$="[[!address]]">Address: [[address]]</span>
+                      <div>Allergy: [[patient.allergy]]</div>
+                      <div>Blood Group: [[patient.bloodGroup]]</div>
+                      <div>Serial: <span class="type caption-2 bg-gray">[[patient.serial]]</span></div>
+                    </div> -->
+                  </template>
+
+                  <!-- <div class="flex"></div>
+
+                  <div class="rightSide">
+                    <div hidden$=[[!doctorName]]><strong>Doctor Name:</strong> [[doctorName]]</div>
+                  </div> -->
+
+                </div>
+
+                <table class="table m-top-8">
+                  <tr>
+                    <th style="width: 100px;">Date</th>
+                    <th style="width: 200px;">Clinical Evaluation and Assement</th>
+                    <th style="width: 200px;">Treatment</th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="layout vertical" style="font-size: 12px;">
+                        <span>Height-----------CM</span>
+                        <span>Weight-----------KG</span>
+                        <span>BP---------------MM of HG</span>
+                        <span>Pulse------------Min</span>
+                        <span>Category---------</span>
+                      </div>
+                    </td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="layout vertical" style="font-size: 12px;">
+                        <span>Height-----------CM</span>
+                        <span>Weight-----------KG</span>
+                        <span>BP---------------MM of HG</span>
+                        <span>Pulse------------Min</span>
+                        <span>Category---------</span>
+                      </div>
+                    </td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </table>
+
+              </div>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td>
+              <!--place holder for the fixed-position footer-->
+              <div class="print-page-footer-space"></div>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+
+    </div>
+
+  </template>
+  <script src="page-blank-prescription.coffee-compiled.js"></script>
+</dom-module>

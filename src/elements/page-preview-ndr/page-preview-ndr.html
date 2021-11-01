@@ -1,0 +1,511 @@
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-preview-ndr">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .card {
+        background-color: #fff
+      }
+
+      .limiting-container {
+        margin-top: 8px;
+      }
+
+      .sub-header {
+        background-color: #f7f7f7;
+        margin-top: 10px;
+        padding: 4px 16px;
+        border-bottom: 1px solid #eee;
+        font-weight: 500;
+      }
+
+      .patient-details {
+        background-color: #f7f7f7;
+        padding: 8px 0;
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
+      }
+
+      .header-details {
+        padding: 8px 0;
+      }
+
+      .document-header {
+        /*background-color: #fafafa;*/
+        padding-left: 10px;
+        padding-right: 10px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+
+      .document-header2 .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .type.title-2 {
+        font-size: 18px;
+        line-height: 50px;
+      }
+
+      @media print {
+        .hideOnprint {
+          display: none;
+        }
+      }
+    </style>
+
+    <!-- local DOM -->
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <div class="card hideOnprint">
+
+          <div class="card-actions p-16 horizontal layout end-justified center">
+            <!-- <paper-button raised on-tap="createAnotherPatient" class="btn-add"><iron-icon icon="add" class="m-right-8" ></iron-icon>Create New Patient</paper-button> -->
+            <paper-button raised on-tap="goDashboard" class="btn-add">
+              <iron-icon icon="home" class="m-right-8"></iron-icon>Dashboard</paper-button>
+            <!-- <paper-button raised on-tap="editButtonPressed" class="btn-add">
+              <iron-icon icon="create" class="m-right-8"></iron-icon>Edit</paper-button> -->
+            <paper-button raised on-tap="printButtonPressed" class="btn-add colored">
+              <iron-icon icon="print" class="m-right-8"></iron-icon>Print</paper-button>
+          </div>
+
+        </div>
+
+        <div class="card m-top-8">
+
+          <div class="print-header horizontal layout center center-justified">
+            <h1>[[settings.printDecoration.headerLine]]</h1>
+          </div>
+
+          <!-- Print Header - Main - start -->
+          <div class="document-header horizontal layout center">
+            <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+              <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+            </template>
+
+            <div class="leftSide">
+              <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+              <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+              <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+            </div>
+            <div class="flex"></div>
+            <div class="rightSide layout end-justified">
+              <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+              <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+              <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+            </div>
+          </div>
+          <!-- Print Header - Main - end -->
+
+          <div class="p-16 horizontal layout center center-justified">
+            <div class="type headline">National Diabetic Registration</div>
+          </div>
+          <!-- Demography - start -->
+          <div class="type body">
+
+            <div class="flex">
+              <div class="type body-lead sub-header">Basic Details</div>
+              <div class="vertical layout wrap p-12">
+                <div class="type body-lead capitalize">Name: {{$getFullName(patient.name)}}</div>
+                <div class="m-horizontal-4">Patient Serial: {{patient.serial}}</div>
+              </div>
+              <div class="horizontal layout p-12">
+
+                <!-- <template is="dom-if" if="[[!patient.isForOrganizationOnly]]"> -->
+
+                <div class="m-horizontal-4">
+                  <span>Sex: </span>
+                  <span>{{patient.gender}}</span>
+                </div>
+                <div class="m-horizontal-4">
+                  <span>Age: </span>
+                  <span>[[$computeAge(patient.dateOfBirth)]] </span>
+                </div>
+                <div class="m-horizontal-4">
+                  <span>Blood Group: </span>
+                  <span> [[patient.bloodGroup]]</span>
+                </div>
+                <div class="m-horizontal-4">
+                  <span>Allergy: </span>
+                  <span>[[patient.allergy]] </span>
+                </div>
+                <!-- </template>
+
+                <template is="dom-if" if="[[patient.isForOrganizationOnly]]">
+                  <div class="m-horizontal-4">
+                    <span>Patient Name: </span>
+                    <i>REDACTED FOR CONFIDENTIALITY</i>
+                  </div>
+                  <div class="m-horizontal-4">
+                    <span>Age: </span>
+                    <i>REDACTED FOR CONFIDENTIALITY</i>
+                  </div>
+                  <div class="m-horizontal-4">
+                    <span>Blood Group: </span>
+                    <span>[[patient.bloodGroup]]</span>
+                  </div>
+                  <div class="m-horizontal-4">
+                    <span>Allergy: </span>
+                    <span>[[patient.allergy]]</span>
+                  </div>
+                </template> -->
+              </div>
+            </div>
+
+            <!-- Demography - end -->
+
+            <!-- Visit Details - start -->
+
+            <div class="type body-lead sub-header">Visit Details</div>
+            <div class="horizontal layout wrap p-12">
+              <div class="m-horizontal-4">
+                <span>
+                  <strong>Visit Type: </strong>[[ndr.data.visitType]]</span>
+                <strong>Visit Date: </strong>[[ndr.data.visitDate]]</span>
+              </div>
+            </div>
+
+            <!-- Visit Details - End -->
+            <!-- Diabetes History Start-->
+
+            <div class="type body-lead sub-header">Diabetes History</div>
+            <div class="p-12">
+              <div class="m-horizontal-4">
+                <strong>Symptomatic?: </strong>
+                <span>[[ndr.data.symptomatic.isYes]],</span>
+                <span>Type: [[ndr.data.symptomatic.value]]</span>
+              </div>
+              <div class="m-horizontal-4">
+                <strong>Patient Type: </strong>
+                <span>[[ndr.data.diabeticsInfo.patientType]],</span>
+                <span>Duration: [[ndr.data.diabeticsInfo.duration]]</span>
+              </div>
+              <div class="m-horizontal-4">
+                <strong>Registration Centre: </strong>
+                <span>[[ndr.data.registeredCenter.name]]</span>
+              </div>
+              <div class="m-horizontal-4">
+                <strong>Patient Guide Book No: </strong>
+                <span>[[ndr.data.diabeticsInfo.patientBookSerial]]</span>
+              </div>
+              <div class="m-horizontal-4">
+                <strong>Type of Diabetes: </strong>
+                <span>[[ndr.data.diabeticsInfo.typeOfDiabetics]]</span>
+              </div>
+            </div>
+            <!-- Diabetes History End-->
+
+            <div class="type body-lead sub-header">General Examination</div>
+            <div class="horizontal layout wrap p-12">
+              <template is="dom-repeat" items="[[ndr.data.clinicalInfoList]]">
+                <div class="m-horizontal-4" hidden$="[[_isEmptyString(item.value)]]">
+                  <strong>[[customExamination.name]]</strong>
+                  <span>[[customExamination.unit]]</span>
+                  <strong>[[item.name]]: </strong>
+                  <span>[[item.value]] [[item.unit]]</span>
+                </div>
+              </template>
+            </div>
+
+            <div class="type body-lead sub-header">Laboratory Investigation</div>
+            <div class="horizontal layout wrap p-12">
+              <template is="dom-repeat" items="[[laboratoryTestList]]">
+                <div class="m-horizontal-4">
+                  <strong>[[customTest.name]]</strong>
+                  <span>[[customTest.unit]]</span>
+                  <strong>[[item.type]]</strong>
+                  <strong>[[item.name]]: </strong>
+                  <span>[[item.value]] [[item.unit]]</span>
+                </div>
+              </template>
+            </div>
+
+            <div class="type body-lead sub-header">Complication</div>
+            <div class="horizontal layout wrap p-12">
+              <template is="dom-repeat" items="[[complicationList]]">
+                <div class="m-horizontal-4" hidden$="{{!item.isSelected}}">
+                  <strong>[[item.name]]</strong>
+                </div>
+              </template>
+            </div>
+
+            <div class="type body-lead sub-header">Personal habit(s)</div>
+            <div class="horizontal layout wrap p-12">
+              <template is="dom-repeat" items="[[ndr.data.medicalInfo.drugAddictionList]]">
+                <div class="m-horizontal-4" hidden$="[[_isEmptyString(item.isYes)]]">
+                  <strong>[[item.type]]: </strong>
+                  <span>{{item.isYes}},</span>
+                  <span hidden$="[[_isEmptyString(item.amount)]]">Amount: {{item.amount}}</span>
+                </div>
+              </template>
+            </div>
+
+            <div class="type body-lead sub-header">Family History</div>
+            <div class="horizontal layout wrap p-12">
+              <template is="dom-repeat" items="[[ndr.data.medicalInfo.familyHistoryList]]">
+                <div class="m-horizontal-4" hidden$="[[_isEmptyString(item.value)]]">
+                  <strong>{{item.disease}}: </strong>
+                  <span>{{item.value}}</span>
+                </div>
+              </template>
+            </div>
+
+            <!-- Diabetic Info - end -->
+            <!-- Lifestyle - start -->
+
+            <div class="type body-lead sub-header">Dietary History</div>
+            <div class="horizontal layout wrap p-12">
+              <template id="dietary-list-repeater-2" is="dom-repeat" items="[[ndr.data.medicalInfo.dietaryHistoryList2]]" as="dietItem">
+                <div class="layout horizontal center wrap custom-item">
+                  <div class="type caption secondary m-right-8">[[_returnSerial(index)]]</div>
+                  <div class="m-horizontal-4">
+                    <span>
+                      <strong>{{dietItem.type}}</strong>
+                    </span>
+                    <template is="dom-repeat" items="[[dietItem.consumeAmount]]">
+                      <span>{{item.time}}: {{item.value}}</span>
+                      <span>{{item.unit}}</span>
+                    </template>
+                  </div>
+                </div>
+              </template>
+            </div>
+
+            <div class="type body-lead sub-header">Type of Cooking Oil</div>
+            <div class="horizontal layout wrap p-12">
+              <template is="dom-repeat" items="[[ndr.data.medicalInfo.typeOfCookingOilList2]]">
+                <div class="layout horizontal center wrap custom-item">
+                  <div class="m-horizontal-4" hidden$="[[_isEmptyString(item.amount)]]">
+                    <span>
+                      <strong>{{item.type}}:</strong>
+                    </span>
+                    <template is="dom-if" if="[[$equals(item.isYes, 'yes')]]">
+                      <span>{{item.amount}}</span>
+                      <span>{{item.unit}}/{{item.duration}}</span>
+                    </template>
+                  </div>
+                </div>
+              </template>
+            </div>
+
+            <div class="type body-lead sub-header">Physical Activity</div>
+            <div class="horizontal layout wrap p-12">
+              <template is="dom-repeat" items="[[ndr.data.physicalActivityList2]]">
+                <div class="layout horizontal center wrap custom-item">
+                  <div class="m-horizontal-4" hidden$="[[_isEmptyString(item.amount)]]">
+                    <strong>{{item.name}}: </strong>
+                    <span>{{item.duration}} {{item.unit}}</span>
+                  </div>
+                </div>
+              </template>
+            </div>
+
+            <div class="p-8">
+              <div class="type headline text-center">Management</div>
+            </div>
+
+            <div class="type body-lead sub-header">Dietary History</div>
+            <div class="horizontal layout wrap p-12">
+              <template id="dietary-list-repeater-2" is="dom-repeat" items="[[ndr.data.medicalInfo.dietaryHistoryList]]" as="dietItem">
+                <div class="layout horizontal center wrap custom-item">
+                  <div class="type caption secondary m-right-8">[[_returnSerial(index)]]</div>
+                  <div class="m-horizontal-4">
+                    <span>
+                      <strong>{{dietItem.type}}</strong>
+                    </span>
+                    <template is="dom-repeat" items="[[dietItem.consumeAmount]]">
+                      <span>{{item.time}}: {{item.value}}</span>
+                      <span>{{item.unit}}</span>
+                    </template>
+                  </div>
+                </div>
+              </template>
+            </div>
+
+            <div class="type body-lead sub-header">Type of Cooking Oil</div>
+            <div class="horizontal layout wrap p-12">
+              <template is="dom-repeat" items="[[ndr.data.medicalInfo.typeOfCookingOilList]]">
+                <div class="layout horizontal center wrap custom-item">
+                  <div class="m-horizontal-4" hidden$="[[_isEmptyString(item.amount)]]">
+                    <span>
+                      <strong>{{item.type}}:</strong>
+                    </span>
+                    <template is="dom-if" if="[[$equals(item.isYes, 'yes')]]">
+                      <span>{{item.amount}}</span>
+                      <span>{{item.unit}}/{{item.duration}}</span>
+                    </template>
+                  </div>
+                </div>
+              </template>
+            </div>
+
+            <div class="type body-lead sub-header">Physical Activity</div>
+            <div class="horizontal layout wrap p-12">
+              <template is="dom-repeat" items="[[ndr.data.physicalActivityList]]">
+                <div class="layout horizontal center wrap custom-item">
+                  <div class="m-horizontal-4" hidden$="[[_isEmptyString(item.amount)]]">
+                    <strong>{{item.name}}: </strong>
+                    <span>{{item.duration}} {{item.unit}}</span>
+                  </div>
+                </div>
+              </template>
+            </div>
+
+
+            <!-- Lifestyle - End -->
+            <!-- Medication - start -->
+
+            <div class="type body-lead sub-header">Medication</div>
+            <div class="p-12">
+              <div class="m-horizontal-4">
+                <template is="dom-repeat" items="[[ndr.data.currentTreatment.ogld.ogldDrugList]]">
+                  <span>
+                    <strong>OAD Drug Name: </strong>{{item.ogldDrugName}}</span>
+                  <span>
+                    <strong>Dose: </strong>{{item.drugDosage}}</span>
+                </template>
+              </div>
+            </div>
+
+            <div class="type body-lead m-top-8 sub-header">Insulin</div>
+            <div class="p-12">
+              <div class="m-horizontal-4">
+                <strong>Insulin Usage: </strong>
+                <span>{{ndr.data.insulin.insulinUsage}}</span>
+              </div>
+              <div class="m-horizontal-4">
+                <strong>Insulin Type: </strong>
+                <span>{{ndr.data.insulin.insulinType}}</span>
+              </div>
+              <template is="dom-repeat" items="[[ndr.data.insulin.insulinTherapyList]]">
+                <div class="horizontal layout wrap" hidden$="[[_isEmptyString(item.drugName)]]">
+
+                  <div class="m-horizontal-4">
+                    <strong>{{item.therapyType}}: </strong>
+                    <span>Drug Name: {{item.drugName}}</span>
+                  </div>
+                  <div class="horizontal layout wrap">
+                    [
+                    <template is="dom-repeat" items="[[item.dosageList]]" as="dose">
+                      <div class="m-horizontal-4" hidden$="[[_isEmptyString(dose.value)]]">
+                        <strong>{{dose.time}}: </strong>
+                        <span>{{dose.value}} </span>
+                        <span>{{dose.unit}}</span>
+                      </div>
+                    </template> ]
+                  </div>
+
+                </div>
+              </template>
+            </div>
+
+            <div class="type body-lead sub-header">Other Medication</div>
+            <div class="p-12">
+              <div class="m-horizontal-4">
+                <template is="dom-repeat" items="[[ndr.data.otherMedicationList]]">
+
+                  <div class="m-horizontal-4" hidden$="[[!$equals(item.isYes, 'yes')]]">
+                    <div>
+                      <strong>{{item.name}}:</strong>
+                    </div>
+                  </div>
+                  <div hidden$="[[!$equals(item.isYes, 'yes')]]">
+                    <div>
+                      <template is="dom-repeat" items="[[item.medicineList]]" as="medicine" index-as="medicineIndex">
+                        <div class="horizontal layout center">
+                          <div class="m-right-8 type caption secondary">{{_returnSerial(medicineIndex)}}.</div>
+                          <div class="m-horizontal-4">
+                            <span>
+                              <strong>Name: </strong>{{medicine.name}}</span>
+                            <span>
+                              <strong>Dose: </strong>{{medicine.dose}}</span>
+                            <span> {{medicine.unit}}</span>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="horizontal layout end-justified center">
+          <template is="dom-if" if="[[settings.printDecoration.signatureDataUri]]">
+            <img height="96" width="128" class="logo" src="[[settings.printDecoration.signatureDataUri]]" alt="signature">
+          </template>
+        </div>
+        <div class="type caption secondary" style="text-align: center; padding: 8px;">
+          <div>
+            <i>
+              <strong>prepared by: </strong>{{user.name}}</i>
+          </div>
+
+        </div>
+        <template is="dom-if" if="[[settings.flags.showFooterLine]]">
+          <div class="b-top">
+            <div class="type caption secondary">[[settings.printDecoration.footerLine]]</div>
+          </div>
+        </template>
+      </div>
+
+    </div>
+
+    </div>
+    </div>
+
+
+  </template>
+  <script src="page-preview-ndr.coffee-compiled.js"></script>
+</dom-module>

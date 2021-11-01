@@ -1,0 +1,246 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+
+<link rel="import" href="../../bower-assets/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower-assets/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower-assets/polymer-quill/polymer-quill.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- custom-elements -->
+<link rel="import" href="../../elements/html-block/html-block.html">
+
+<!-- element -->
+<dom-module id="page-add-or-update-online-exam">
+  <template>
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 30px;
+        width: 60%;
+      }
+
+      .paper-custom-input ::content input {
+        border-color: #dadada !important;
+      }
+
+      .b-radius {
+        border: 1px solid #dadada;
+        border-radius: 6px;
+        padding: 12px;
+      }
+
+      .flex-item {
+        margin-left: 16px;
+        box-sizing: border-box;
+      }
+
+      @media screen and (max-width: 740px) {
+        .row.one .card-group:first-child {
+          margin-right: 10px;
+        }
+      }
+
+      @media screen and (max-width: 480px) {
+        .row.one .card-group {
+          display: block;
+        }
+      }
+
+      .card-content.single-block .number {
+        font-size: 72px;
+      }
+
+      .card-content.single-block .subtitle {
+        text-transform: uppercase;
+      }
+
+      .top-margin {
+        margin-top: 10px;
+      }
+
+      .index-number {
+        margin-left: 2px;
+        border: 1px solid #008f3b;
+        border-radius: 10px;
+        padding: 3px;
+      }
+
+      polymer-quill.full {
+        --polymer-quill-editor-max-height: 300px;
+        --polymer-quill-editor-min-height: 150px;
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+      <div class="limiting-container">
+        <div class="m-top-32 m-bottom-16" hidden$="[[userCameToEdit]]">
+          <h1 class="m-left-4">Please choose a method for the exam</h1>
+          <br />
+          <paper-button raised class="btn btn-primary" on-tap="showFreeFormQuestionTapped">Free Form Question
+          </paper-button>
+          <paper-button raised class="btn btn-success" on-tap="showMcqQuestionTapped">MCQ Question</paper-button>
+        </div>
+
+        <!-- Add/Edit Free Form Exam Start -->
+        <template is="dom-if" if="[[showFreeFrom]]">
+          <paper-card>
+            <div class="card-custom-header">
+              <div class="layout horizontal center">
+                <div class="title flex">Free Form Exam Details</div>
+              </div>
+            </div>
+
+            <div class="card-content">
+              <paper-input class="paper-custom-input flex" value="{{newExam.name}}" label="Exam Name" type="text">
+              </paper-input>
+              <paper-input class="paper-custom-input flex" value="{{newExam.code}}" label="Exam Code" type="text">
+              </paper-input>
+              <paper-input class="paper-custom-input" label="Date" value="{{customExamDate}}" type="date"></paper-input>
+              <paper-input class="paper-custom-input" label="Start" value="{{newExam.startDatetimeStamp}}" type="time">
+              </paper-input>
+              <paper-input class="paper-custom-input" label="End" value="{{newExam.endDatetimeStamp}}" type="time">
+              </paper-input>
+              <template is="dom-if" if="[[!userCameToEdit]]">
+                <div class="m-top-16 m-bottom-16">
+                  <h4 class="type text-secondary">Groups:</h4>
+                  <div class="m-top-8 b-radius">
+                    <template is="dom-repeat" items="[[groupList]]">
+                      <paper-checkbox class="m-8" on-change="groupSelectedFromFreeForm" value="[[item]]">[[item.name]]
+                      </paper-checkbox>
+                    </template>
+                  </div>
+                </div>
+              </template>
+              <template is="dom-repeat" items="{{newExam.data}}" as="questionObject">
+                <span class="index-number">[[_returnSerial(index)]]</span>
+                <!-- <paper-textarea
+                  class="b-radius flex m-top-16"
+                  rows="3"
+                  value="{{questionObject.question}}"
+                  label="Write the Question"
+                  type="text"
+                ></paper-textarea> -->
+
+                <polymer-quill class="full" store-as="html" save-interval="1000" toolbar-type="full"
+                  content="{{questionObject.question}}">
+                </polymer-quill <paper-input class="paper-custom-input flex" value="{{questionObject.marks}}"
+                  label="Marks for This Question" type="number">
+                </paper-input>
+
+                <div class="card-actions">
+                  <paper-button raised class="btn btn-danger" on-tap="deleteQuestionBtnPressed">Delete This Question
+                  </paper-button>
+                </div>
+              </template>
+              <paper-button raised class="btn btn-default" on-tap="addAnotherFreeFormQuestion">Add Another Question +
+              </paper-button>
+            </div>
+            <div class="card-actions">
+              <paper-checkbox checked="{{newExam.isActive}}">Is Active</paper-checkbox>
+              <paper-checkbox checked="{{newExam.revealStudentsMarks}}">Reveal Exam marks</paper-checkbox>
+              <paper-button raised class="btn btn-danger" on-tap="CancelButtonPressed">Cancel</paper-button>
+              <paper-button raised class="btn btn-success" on-tap="submitOrUpdateFreeFormExamButtonClicked">Submit
+              </paper-button>
+            </div>
+          </paper-card>
+        </template>
+        <!-- Add/Edit Free Form Exam End -->
+
+        <!-- Add/Edit MCQ Exam Start -->
+        <template is="dom-if" if="[[showMcq]]">
+          <paper-card>
+            <div class="card-custom-header">
+              <div class="layout horizontal center">
+                <div class="title flex">MCQ Exam Details</div>
+              </div>
+            </div>
+
+            <div class="card-content">
+              <paper-input class="paper-custom-input flex" value="{{newMcqExam.name}}" label="Exam Name" type="text">
+              </paper-input>
+              <paper-input class="paper-custom-input flex" value="{{newMcqExam.code}}" label="Exam Code" type="text">
+              </paper-input>
+              <template is="dom-if" if="[[!userCameToEdit]]">
+                <paper-input class="paper-custom-input" label="Date" value="{{customExamDate}}" type="date">
+                </paper-input>
+                <paper-input class="paper-custom-input" label="Start" value="{{newMcqExam.startDatetimeStamp}}"
+                  type="time"></paper-input>
+                <paper-input class="paper-custom-input" label="End" value="{{newMcqExam.endDatetimeStamp}}" type="time">
+                </paper-input>
+                <div class="m-top-16 m-bottom-16">
+                  <h4 class="type text-secondary">Groups:</h4>
+                  <div class="m-top-8 b-radius">
+                    <template is="dom-repeat" items="[[groupList]]">
+                      <paper-checkbox class="m-8" on-change="groupSelectedFromMCQ" value="[[item]]">[[item.name]]
+                      </paper-checkbox>
+                    </template>
+                  </div>
+                </div>
+              </template>
+              <template is="dom-repeat" items="{{newMcqExam.data}}">
+                <span class="index-number">[[_returnSerial(index)]]</span>
+                <paper-textarea class="b-radius flex m-top-16" value="{{item.question}}" label="Question" type="text">
+                </paper-textarea>
+                <!-- <paper-input class="flex" value="{{mcqQuestionObj.link}}" label="Link" type="text"></paper-input> -->
+                <!-- <paper-radio-group selected="{{mcqQuestionObj.mcqAnswerIndex}}">
+                  <template is="dom-repeat" items="[[mcqQuestionObj.choices]]" index-as="optionIndex">
+                    <paper-radio-button name="{{optionIndex}}" class="full-width">
+                      <paper-input class="paper-custom-input" value="{{item.value}}" label="{{item.label}}" type="text"></paper-input>
+                    </paper-radio-button>
+                  </template>
+                </paper-radio-group> -->
+                <template is="dom-repeat" items="[[item.choices]]" as="choice">
+                  <div class="layout vertical wrap m-top-16">
+                    <paper-input class="paper-custom-input" value="{{choice.value}}" label="{{choice.label}}"
+                      type="text">
+                    </paper-input>
+                    <paper-checkbox class="m-left-8" checked="{{choice.checked}}" value="[[choice]]"></paper-checkbox>
+                  </div>
+                </template>
+                <paper-input class="paper-custom-input flex" value="{{item.marks}}" label="Marks for This Question"
+                  type="number"></paper-input>
+
+                <div class="card-actions">
+                  <paper-button raised class="btn btn-danger" on-tap="deleteMcqQuestionBtnPressed">Delete This Question
+                  </paper-button>
+                </div>
+              </template>
+              <paper-button raised class="btn btn-default" on-tap="addAnotherMcqQuestion">Add Another Question +
+              </paper-button>
+            </div>
+            <div class="card-actions">
+              <paper-checkbox checked="{{newMcqExam.isActive}}">Is Active</paper-checkbox>
+              <paper-checkbox checked="{{newMcqExam.revealStudentsMarks}}">Reveal Exam Marks</paper-checkbox>
+              <paper-button raised class="btn btn-danger" on-tap="CancelButtonPressed">Cancel</paper-button>
+              <paper-button raised class="btn btn-success" on-tap="submitOrUpdateMcqExamButtonClicked">Submit
+              </paper-button>
+            </div>
+          </paper-card>
+        </template>
+
+        <!-- Add/Edit MCQ EXAM End -->
+
+      </div>
+    </div>
+  </template>
+  <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+  <script src="page-add-or-update-online-exam.coffee-compiled.js"></script>
+</dom-module>

@@ -1,0 +1,251 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-store-audit-editor">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+
+      /* custom-input - start */
+      .custom-input ::content paper-input-container {
+        padding: 6px 4px;
+      }
+
+      .custom-input ::content .underline {
+        display: none;
+      }
+
+      .custom-input paper-input-container ::content .underline {
+        height: 0 !important;
+      }
+
+      .custom-input  {
+        --paper-input-container-label: {
+          font-size: 18px;
+          color: #576374 !important;
+          font-weigh: 500;
+        };
+      }
+
+      .custom-input ::content paper-input-container ::content input {
+        background-color: #dde2e8;
+        border-radius: 6px;
+        height: 36px;
+        margin-top: 4px;
+        font-weight : 500;
+        padding: 0 8px;
+        box-sizing: border-box;
+        /* min-width: 200px; */
+      }
+
+      .combo-box ::content .toggle-button {
+        bottom: 2px;
+        right: 0px;
+      }
+
+      .combo-box ::content .clear-button {
+        bottom: 0 !important;
+        right: 28px !important;
+      }
+
+      .date-picker ::content div[sufix] {
+        bottom: 0px !important;
+        right: 0px !important;
+      } 
+
+      .combo-box ::content paper-input-container ::content input{
+        padding: 0 60px 0 8px;
+      }
+
+      .combo-box {
+        padding: 0;
+      }
+
+      #productEditor {
+        /* box-shadow: rgba(0,0,0, .54) 0 -10px 6px -10px inset; */
+        /* background-color: #fafafa; */
+
+      }
+
+      .custom-button {
+        padding: 4px 8px;
+        font-size: 14px;
+        font-weight: bold;
+        min-width: auto;
+      }
+
+      .btn-add {
+        min-width: 0;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+        background-color: #eceff1;
+        color: rgba(0, 0, 0, .87);
+      }
+
+      .action-area {
+        background-color: #dde2e8;
+        padding: 8px 0;
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+      }
+      
+      #validateArea {
+        padding: 8px 16px;
+      }
+
+      .custom-input.no-padding {
+        padding: 0;
+      }
+
+      /* custom-input - start */
+
+      .content {
+        width: calc(100%);
+      }
+
+
+      .content .left {
+        width: calc(50%);
+        margin-left: 8px;
+      }
+
+      .content .right {
+        width: calc(50%);
+      }
+
+      vaadin-grid {
+        height: auto;
+      }
+
+      paper-toggle-button.red {
+        --paper-toggle-button-checked-bar-color:  var(--paper-red-500);
+        --paper-toggle-button-checked-button-color:  var(--paper-red-500);
+        --paper-toggle-button-checked-ink-color: var(--paper-red-500);
+        --paper-toggle-button-unchecked-bar-color:  var(--paper-teal-500);
+        --paper-toggle-button-unchecked-button-color:  var(--paper-teal-500);
+        --paper-toggle-button-unchecked-ink-color: var(--paper-teal-500);
+      }
+      .container {
+        background-color: #fff;
+      }
+
+  
+    </style>
+
+    <template is="dom-if" if="{{isAuditValid}}">
+      <!-- local DOM - start -->
+      <div class="container">
+        <div class="p-8">
+          <div class="p-4 horizontal layout center">
+            <div class="flex">
+              <div class="type title-2 primary">{{store.data.name}}</div>
+              <div class="horizontal layout wrap">
+                <div class="type body"><strong>Audit Started: </strong>{{$formatDateTime(audit.createdDatetimeStamp)}}</div>
+                <div class="type body m-left-8 danger"><strong>Flagged: </strong>{{flagedCounter}}</div>
+              </div>
+
+              
+              
+            </div>
+            <paper-button raised class="btn-add" on-tap="_saveAudit">View Report</paper-button>
+            
+          </div>
+        </div>
+        <!-- product list - start -->
+        <template is="dom-if" if="[[!inventory.length]]">
+          <h4 class="p-16 type center">No Product Added Yet...</h4>
+        </template>
+
+        <template is="dom-if" if="[[inventory.length]]">
+          <vaadin-grid items="[[inventory]]" id="inventory" active-item="{{activeItem}}">
+
+            <vaadin-grid-column width="8em" frozen>
+              <template class="header">Product Name</template>
+              <template>
+                  <div class$="{{_computeClass(item.physicallyFound, item.inStock)}}">[[item.name]]</div>
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="6em">
+              <template class="header">Category</template>
+              <template><div class$="{{_computeClass(item.physicallyFound, item.inStock)}}">[[item.category]]</div></template>
+            </vaadin-grid-column>
+            <vaadin-grid-column width="6em">
+              <template class="header">In Stock</template>
+              <template><div class$="{{_computeClass(item.physicallyFound, item.inStock)}}">[[item.inStock]]</div></template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="6em">
+              <template class="header">Physically found</template>
+              <template><paper-input type="number" class$="custom-input no-padding {{_computeClass(item.physicallyFound, item.inStock)}}" no-label-float  value="{{item.physicallyFound}}" on-keyup="_onPhysicallyFoundValueChanged"></paper-input></template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="6em">
+              <template class="header">Missing amount</template>
+              <template><div class$="{{_computeClass(item.physicallyFound, item.inStock)}}">{{_calcMissingAmount(item.physicallyFound, item.inStock)}}</div></template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="2em">
+              <template class="header">Flag</template>
+              <template> 
+                <paper-toggle-button checked="{{item.isFlagged}}" class="red" on-change="_onToggleFlagButton"></paper-toggle-button>
+              </template>
+            </vaadin-grid-column>
+            
+          </vaadin-grid>
+
+          <paper-textarea class="p-16" type="text" value="{{audit.note}}" label="Note"></paper-textarea>
+          
+        </template>
+        <!-- product list - end -->
+      </div>
+      <!-- local DOM - end -->
+    </template>
+    
+
+      
+
+  </template>
+  <script src="page-store-audit-editor.js"></script>
+</dom-module>

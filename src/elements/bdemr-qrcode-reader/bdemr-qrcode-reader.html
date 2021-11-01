@@ -1,0 +1,80 @@
+<dom-module id="bdemr-qrcode-reader">
+  <style>
+    #preview {
+      width: 100%;
+      height: 210px;
+    }
+  
+  </style>
+  <template>
+    <video id="preview"></video>
+  </template>
+
+  <script type="text/javascript" src="./zxing.min.js"></script>
+  <script>
+    Polymer({
+      is: 'bdemr-qrcode-reader',
+      properties: {
+        result: {
+          type: String,
+          notify: true,
+          value: ''
+        },
+        preview: {
+          type: Object,
+          value: null
+        },
+        active: {
+          type: Boolean,
+          value: false,
+          observer: '_activeChanged'
+        },
+        deviceId: {
+          type: Object,
+          value: {}
+        }
+      },
+
+      attached: function() {
+        // console.log('hello form attached');
+      },
+
+      suspend: function() {
+        
+      },
+
+      _activeChanged: function (isActive) {
+        if (isActive) {
+          this._startCamera();
+        } else {
+          if (this.preview) {
+            this.preview.reset();
+          } 
+        }
+      },
+
+      _startCamera: function() {
+        var that = this;
+        this.preview
+          .decodeFromInputVideoDevice(undefined, 'preview')
+          .then(result => {
+            
+            console.log(result);
+            that.result = result.text;
+            console.log(that.result);
+
+            this.fire('qrcode-change', { result: result });
+          })
+          .catch(err => console.error(err));
+        
+        
+      },
+
+      ready: function() {
+
+        this.preview = new ZXing.BrowserQRCodeReader();
+     
+      },
+    });
+  </script>
+</dom-module>

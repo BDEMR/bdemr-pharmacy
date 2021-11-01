@@ -1,0 +1,453 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item-body.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/iron-list/iron-list.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-booking">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .new-fab {
+        position: fixed;
+        right: 20px;
+        bottom: 164px;
+      }
+
+      paper-button {
+        margin: 3px;
+      }
+
+      paper-button:last-child {
+        margin-right: 0px;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin: 0 4px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: 400;
+      }
+
+      .modifier.type1 {
+        background: #757575;
+      }
+
+
+      .organization-info-card-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .std1 {
+        padding: 12px;
+      }
+
+      .mr12 {
+        margin-right: 12px;
+      }
+
+      .chamber-list-item {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+      }
+
+      paper-item.chamber-list-item:last-of-type {
+        border-bottom: 0;
+      }
+
+      .chamber-prop > * {
+        margin-right: 10px;
+        @apply(--layout-flex);
+      }
+
+      .basic-tabs {
+        background-color: #f7f7f7;
+        color: rgba(0, 0, 0, .87);
+        font-size: 16px;
+        --paper-tabs-selection-bar-color: var(--brand-primary-color);
+      }
+
+
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <template is='dom-if' if='[[!loadingCounter]]'>
+        <paper-progress class="progress" indeterminate></paper-progress>
+      </template>
+
+      <div class="limiting-container">
+
+        <!-- Card - Main Tabs - start -->
+        <paper-tabs class="basic-tabs m-top-8" id="tabs" selected="{{selectedSubViewIndex}}">
+          <paper-tab>Booking</paper-tab>
+          <paper-tab>Online Services</paper-tab>
+        </paper-tabs>
+
+        <iron-pages selected="{{selectedSubViewIndex}}">
+
+          <section>
+            <!-- Card - Chamber List - start -->
+            <paper-card class="">
+
+              <div class="card-custom-header">
+                <div class="layout horizontal center">
+                  <div class="title flex">You have [[chamberList.length]] Chamber(s)</div>
+                </div>
+              </div>
+
+              <iron-pages selected="{{selectedChamberEditViewIndex}}">
+                <!-- chamber - view - start -->
+                <section>
+                  <div class="card-content">
+                    <template is="dom-repeat" items="[[chamberList]]" as="chamber" index-as="chamberIndex">
+                      <paper-item class="chamber-list-item layout justified start">
+                        <div class="flex-1">
+                          <div class="type body capitalize">
+                            <span class="type secondary">ShortCode: </span>[[chamber.shortCode]]</div>
+                          <div class="type body capitalize">
+                            <span class="type secondary">Chamber Name: </span>[[chamber.name]]</div>
+
+                          <div class="vertical layout m-top-8 m-bottom-8" style="background-color: #f6f6f6; padding: 4px;">
+                            <div class="type body text-bold"><strong>Assigned Doctor</strong></div>
+                            <template is="dom-if" if="[[_isEmptyArray(chamber.assignedDoctors)]]">
+                              <div class="card-content horizontal layout center center-justified">
+                                <div class="caption-2 type secondary">-- no doctor added yet --</div>
+                              </div>
+                            </template>
+                            <template is="dom-repeat" items="[[chamber.assignedDoctors]]">
+                              <div class="layout horizontal center">
+                                <div class="type caption-2 secondary">[[_returnIndex(index)]].</div>
+                                <div class="flex m-left-8 m-top-8">
+                                  <div class="type body">[[item.name]] <i class="type caption-2">[[item.degreeList]]</i></div>
+                                  <div class="type caption-2">[[item.specializationList]]</div>
+                                  <div class="type caption-2">[[item.experience]]</div>
+                                  <div class="type caption-2">[[item.phone]], [[item.email]]</div>
+                                </div>
+                              </div>
+                            </template>
+                          </div>
+                          
+
+
+                          <!-- <div class="type body capitalize">
+                            <span class="type secondary">Doctor Name: </span>[[chamber.doctorName]]</div>
+
+                          <div class="type body capitalize">
+                            <span class="type secondary">Doctor Phone: </span>[[chamber.doctorPhone]]</div>
+                          <div class="type body capitalize">
+                            <span class="type secondary">Specialization: </span>[[chamber.specialization]]</div> -->
+                          <div class="type body capitalize">
+                            <span class="type secondary">Address: </span>[[chamber.address]]</div>
+                          <div class="type body capitalize">
+                            <span class="type secondary">City: </span>[[chamber.city]]</div>
+                        </div>
+                        <div class="flex-1">
+                          <div class="type body capitalize">
+                            <span class="type secondary">Starts: </span> [[$formatTimeString(chamber.startTimeString)]]</div>
+                          <div class="type body capitalize">
+                            <span class="type secondary">Ends: </span> [[$formatTimeString(chamber.endTimeString)]]</div>
+                        </div>
+                        <div class="flex-1">
+                          <div hidden>[[chamber]]</div>
+                          <div hidden>[[chamberIndex]]</div>
+                          <paper-button class="btn btn-primary btn-sm" raised on-tap="chamberEditTapped" s>Edit</paper-button>
+                          <paper-button class="btn btn-primary btn-sm" raised on-tap="managePatientsScheduleTapped">Manage</paper-button>
+                          <paper-button raised on-tap="chamberDeleteTapped" class="btn btn-danger btn-sm">Delete</paper-button>
+                        </div>
+                      </paper-item>
+                    </template>
+                  </div>
+                  <div class="card-actions">
+                    <paper-button class="btn btn-primary" raised on-tap="addNewChamberTapped" raised>Add New Chamber</paper-button>
+
+                  </div>
+                </section>
+                <!-- chamber - view - end -->
+
+                <!-- chamber - edit - start -->
+                <section>
+                  <div class="card-content">
+                    <div>
+                      <paper-input class="flex" value="{{currentlyEditingChamber.organizationName}}" label="Name of the Organization" type="text" disabled></paper-input>
+                    </div>
+                    <div class="horizontal layout chamber-prop">
+                      <paper-input value="{{currentlyEditingChamber.shortCode}}" label="Chamber Short Code (betwen-4-6 character)"
+                        maxlength="6" minlength="4" auto-validate allowed-pattern="[a-z0-9-_]"></paper-input>
+                      <paper-input value="{{currentlyEditingChamber.name}}" label="Name"></paper-input>
+                    </div>
+
+                    <div class="select-doctor-area">
+                      <div class="horizontal layout end chamber-prop">
+
+                        <paper-dropdown-menu label="Select Doctor" class="flex m-right-8">
+                          <paper-menu class="dropdown-content" selected="{{selectedDoctorId}}" on-iron-select="doctorSelected">
+                            <template is="dom-repeat" items="[[memberList]]">
+                              <paper-item value="[[item.idOnServer]]">
+                                <div class="layout vertical m-bottom-8">
+                                  <div class="type bold">[[item.name]]</div>
+                                  <div class="type secondary">[[item.phone]]</div>
+                                  <div class="type secondary">[[item.specializationList]]</div>
+                                </div>
+                              </paper-item>
+                            </template>
+                          </paper-menu>
+                        </paper-dropdown-menu>
+                      </div>
+
+                      <div class="horizontal layout end center m-bottom-8">
+                        <div class="flex-2"></div>
+                        <paper-button on-tap="assignDoctorToChamber" raised class="btn btn-primary">Assign Doctor</paper-button>
+                      </div>
+
+                      <div class="vertical layout" style="background-color: #f1f1f1; padding: 4px;">
+                        <div class="type body text-bold"><strong>Assigned Doctor(s):</strong></div>
+                        <template is="dom-if" if="[[!currentlyEditingChamber.assignedDoctors.length]]">
+                          <div class="card-content horizontal layout center center-justified">
+                            <div class="caption-2 type secondary">-- no doctor added yet --</div>
+                          </div>
+                        </template>
+                        
+                        <template is="dom-repeat" items="[[currentlyEditingChamber.assignedDoctors]]">
+                          <paper-item class="custom layout horizontal center">
+                            <div class="type caption-2 secondary">[[_returnIndex(index)]].</div>
+                            <div class="flex m-left-8">
+                              <div class="type body">[[item.name]] <i class="type caption-2">[[item.degreeList]]</i></div>
+                              <div class="type caption-2">[[item.specializationList]]</div>
+                              <div class="type caption-2">[[item.experience]]</div>
+                              <div class="type caption-2">[[item.phone]], [[item.email]]</div>
+                            </div>
+                            <paper-icon-button icon="delete" on-tap="_deleteDoctorFromChamber"></paper-icon-button>
+                          </paper-item>
+                        </template>
+                      </div>
+
+
+                      
+                    </div>
+                    
+                    <div class="horizontal layout center chamber-prop">
+                      <paper-input class="flex" value="{{currentlyEditingChamber.address}}" label="Address"></paper-input>
+                    </div>
+                    <div class="horizontal layout center chamber-prop">
+                      <paper-input value="{{currentlyEditingChamber.city}}" label="City"></paper-input>
+                      <paper-input value="{{currentlyEditingChamber.postCode}}" label="Post Code"></paper-input>
+                    </div>
+                    <div class="horizontal layout center chamber-prop">
+                      <paper-input value="{{currentlyEditingChamber.latitude}}" label="Latitude"></paper-input>
+                      <paper-input value="{{currentlyEditingChamber.longitude}}" label="Longitude"></paper-input>
+                    </div>
+                    <div class="horizontal layout center chamber-prop">
+                      <paper-input type="number" value="{{currentlyEditingChamber.bookingSlotSizeInMinutes}}" label="Booking Slot Size (in Minutes)"></paper-input>
+                      <paper-input type="number" value="{{currentlyEditingChamber.maximumVisitorPerBookingSlot}}" label="Maximum Visitor Per Booking Slot"></paper-input>
+                      <paper-input type="number" value="{{currentlyEditingChamber.maximumVisitorPerDay}}" label="Maximum Visitor Per Day"></paper-input>
+                    </div>
+                    <div class="horizontal layout center chamber-prop">
+                      <paper-input type="number" value="{{currentlyEditingChamber.newPatientVisitFee}}" label="New Patient Visit Fee"></paper-input>
+                      <paper-input type="number" value="{{currentlyEditingChamber.oldPatientVisitFee}}" label="Old Patient Visit Fee"></paper-input>
+
+                      <div class="m-top-16 m-left-24" hidden$="{{currentlyEditingChamber.serviceChargeIncluded}}">
+                        <!-- <paper-checkbox on-change="_includeSrvcChrgTicked">Include Service Charge</paper-checkbox> -->
+                        <paper-button class="btn btn-sm btn-success" raised on-tap="_includeSrvcChrgTapped">Include Service Charge</paper-button>
+                      </div>
+                      <div class="m-top-16 m-left-24" hidden$="{{!currentlyEditingChamber.serviceChargeIncluded}}">
+                        <paper-button class="btn btn-sm btn-danger" raised on-tap="_excludeSrvcChrgTapped">Exclude Service Charge</paper-button>
+                      </div>
+
+                    </div>
+                    <div class="horizontal layout center chamber-prop m-top-16 m-bottom-16" hidden$="{{!currentlyEditingChamber.serviceChargeIncluded}}">
+                      <span style="font-style: italic;">Fee Breakdown with charge: {{currentlyEditingChamber.newPatientVisitFee}} BDT - 25 BDT (Service charge) = {{currentlyEditingChamber.visitFeeMinusServiceCharge}} BDT</span>
+                    </div>
+                    <div class="horizontal layout center chamber-prop">
+                      <paper-input type="time" value="{{currentlyEditingChamber.startTimeString}}" label="Start Time"></paper-input>
+                      <paper-input type="time" value="{{currentlyEditingChamber.endTimeString}}" label="End Time"></paper-input>
+                    </div>
+                  </div>
+
+                  <div class="card-actions">
+                    <div hidden>[[chamber]]</div>
+                    <paper-button class="btn btn-success" raised on-tap="chamberSaveTapped">Save</paper-button>
+                    <paper-button raised on-tap="chamberDiscardTapped" class="btn btn-danger">Discard</paper-button>
+                  </div>
+                </section>
+                <!-- chamber - edit - end -->
+              </iron-pages>
+
+            </paper-card>
+            <!-- Card - Chamber List - end -->
+          </section>
+
+          <section>
+
+            <paper-card>
+              <!-- Card - Services - start -->
+              <div class="std1 vertical layout card-content">
+                <template is="dom-if" if="[[onlineStatus]]">
+                  <paper-checkbox checked="{{onlineStatus.doesServeOnline}}">Currently Serving Online</paper-checkbox>
+                  <div class="horizontal layout center">
+                    <paper-checkbox checked="{{onlineStatus.isServingSecondOpinionNow}}" class="mr12">Accept patients
+                      looking for Second Opinion</paper-checkbox>
+                    <paper-input type="number" disabled="[[!onlineStatus.isServingSecondOpinionNow]]" value="{{onlineStatus.secondOpinionFeesAmount}}"
+                      label="Second Opinion Fees"></paper-input>
+                  </div>
+                  <div class="horizontal layout center">
+                    <paper-checkbox checked="{{onlineStatus.isServingOnllineDiscussionNow}}" class="mr12">Accept
+                      patients looking for Online Discussion</paper-checkbox>
+                    <paper-input type="number" disabled="[[!onlineStatus.isServingOnllineDiscussionNow]]" value="{{onlineStatus.onlineDiscussionFeesAmount}}"
+                      label="Online Discussion Fees"></paper-input>
+                  </div>
+                  <div class="horizontal layout center">
+                    <paper-checkbox checked="{{onlineStatus.isServingHistoryNow}}" class="mr12">Accept patients looking
+                      for History</paper-checkbox>
+                    <paper-input type="number" disabled="[[!onlineStatus.isServingHistoryNow]]" value="{{onlineStatus.historyFeesAmount}}"
+                      label="History Discussion Fees"></paper-input>
+                  </div>
+                  <paper-button class="primary" raised style="background:#64B5F6; color:#ffffff" on-tap="updateOnlineServicesTapped">Update</paper-button>
+                </template>
+              </div>
+            </paper-card>
+            <!-- Card - Services - end -->
+            <!-- Card - Service Queue - start -->
+            <paper-card class="m-top-8">
+
+              <div class="card-custom-header">
+                <div class="layout horizontal center">
+                  <div class="title flex">[[$countPendingPatients(serviceQueue, serviceQueue.length)]] Patient(s)
+                    waiting to be served</div>
+                  <paper-checkbox checked="{{serviceQueueShouldShowOnlyPending}}">Show Pending Only</paper-checkbox>
+                </div>
+              </div>
+
+              <div class="vertical layout">
+                <template is="dom-repeat" items="[[serviceQueue]]" as="entry" index-as="entryIndex" filter="{{$applyServiceQueueFilter(serviceQueueShouldShowOnlyPending)}}">
+                  <!-- entry - start -->
+                  <div class="horizontal layout center">
+                    <div class="m-left-8">
+                      <div class="type body capitalize">[[entry.patientFullName]]</div>
+                      <div class="type caption">[[entry.patientEmail]]</div>
+                      <div class="type caption">[[entry.patientPhone]]</div>
+                    </div>
+                    <div class="flex"></div>
+                    <template is="dom-if" if="[[$equals(entry.bookedByUserType, 'doctor')]]">
+                      <paper-dropdown-menu-light label="Service Type">
+                        <paper-listbox class="dropdown-content" selected="{{entry._serviceTypeSelectedIndex}}"
+                          on-iron-select="serviceQueueServiceTypeSelected">
+                          <paper-item data-value="second-opinion">Second Opinion</paper-item>
+                          <paper-item data-value="online-discussion">Online Discussion</paper-item>
+                          <paper-item data-value="history">History</paper-item>
+                        </paper-listbox>
+                      </paper-dropdown-menu-light>
+                    </template>
+                    <div class="flex"></div>
+                    <div class="m-left-8">
+                      <div class="type body capitalize">Service Status: [[entry.serviceStatus]]</div>
+                      <div class="type body capitalize">Service Type: [[entry.serviceType]]</div>
+                      <div class="type body capitalize">Payment Status: [[entry.paymentStatus]]</div>
+                    </div>
+                    <div class="flex"></div>
+                    <div>
+                      <template is="dom-if" if="[[$equals(entry.serviceStatus, 'pending')]]">
+                        <div hidden>[[entry]]</div>
+                        <paper-button class="btn btn-success btn-sm" raised on-tap="startVideoChatWithPatient">Video Call</paper-button>
+                        <paper-button class="btn btn-success btn-sm" raised on-tap="serviceQueueMarkAsDoneTapped">Mark as Done</paper-button>
+                        <paper-button class="btn btn-danger btn-sm" raised on-tap="serviceQueueDoctorCancelTapped">Cancel</paper-button>
+                      </template>
+                    </div>
+                    <div class="flex"></div>
+                    <!-- <paper-icon-button icon="add" on-tap="addPatientToServiceQueueTapped"></paper-icon-button> -->
+                  </div>
+                  <!-- entry - end -->
+                </template>
+              </div>
+
+              <!-- new-entry - start -->
+              <div class="std1 vertical layout">
+                <div class="horizontal layout center">
+                  <paper-input class="flex" value="{{searchPatientInput}}" label="Search with Patient Name, phone, Email, NID or Hospital Number"></paper-input>
+                  <paper-button raised style="background:#03A9F4; color:#ffffff" on-tap="searchPatientTapped">Search
+                    Patient</paper-button>
+                </div>
+                <paper-listbox>
+                  <template id="patient-list-repeater" is="dom-repeat" items="[[matchingPatientList]]" as="patient">
+                    <paper-item class="custom layout horizontal center">
+                      <div class="type caption secondary">[[patient.serial]]</div>
+                      <div class="flex m-left-8">
+                        <div class="type body capitalize">[[$getFullName(patient.name)]]</div>
+                        <div class="type caption">[[patient.email]]</div>
+                        <div class="type caption">[[patient.phone]]</div>
+                      </div>
+                      <paper-icon-button icon="add" on-tap="addPatientToServiceQueueTapped"></paper-icon-button>
+                    </paper-item>
+                  </template>
+                </paper-listbox>
+              </div>
+              <!-- new-entry - end -->
+
+            </paper-card>
+            <!-- Card - Service Queue - end -->
+          </section>
+
+        </iron-pages>
+
+        <!-- Card - Main Tabs - end -->
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-booking.coffee-compiled.js"></script>
+</dom-module>

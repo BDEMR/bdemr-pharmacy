@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Example Page</title>
+        <script src="editorlib/ckeditor.js"></script>
+        <script type="text/javascript" src="editorlib/polymer-compatibility-enhancements.js"></script>
+    </head>
+    <body>
+        <form>
+            <textarea name="editor1" id="editor1" rows="20" cols="80">
+                Example text
+            </textarea>
+            <button onclick="manuallySave()" type="button">Show Source</button>
+            <button onclick="manuallyLoad()" type="button">Load Example Data</button>
+            <br>
+            <button onclick="saveToFile()" type="button">Save to File</button>
+            <input id="fileInput" type="file" accept="text/html" />
+
+            <br><br><br>
+            <input id="imageInput" type="file" accept="image/*" />
+            <script>
+                POLYEDITOR.replace( 'editor1', {
+                    
+                    uiColor: '#9AB8F3',
+                    height: 400,
+
+                    allowedContent: true,
+                    pasteFromWordRemoveFontStyles: false,
+                    pasteFromWordRemoveStyles: false,
+                    pasteFromWordPromptCleanup: false,
+
+                    toolbarGroups: [
+                        { name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
+                        { name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+                        { name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing' ] },
+                        { name: 'forms', groups: [ 'forms' ] },
+                        { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                        { name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi', 'paragraph' ] },
+                        { name: 'links', groups: [ 'links' ] },
+                        { name: 'insert', groups: [ 'insert' ] },
+                        { name: 'styles', groups: [ 'styles' ] },
+                        { name: 'colors', groups: [ 'colors' ] },
+                        { name: 'tools', groups: [ 'tools' ] },
+                        { name: 'others', groups: [ 'others' ] },
+                        { name: 'about', groups: [ 'about' ] }
+                    ],
+                    removeButtons: 'Templates,Scayt,Form,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,CreateDiv,Blockquote,Language,BidiRtl,Anchor,Flash,Smiley,Format,Maximize,ShowBlocks,About'
+                });
+                window.manuallySave = function  () {
+                    var data = POLYEDITOR.instances.editor1.getData();
+                    alert(data);
+                }
+                window.manuallyLoad = function  () {
+                    var data = '<p>This is a test</p>'
+                    POLYEDITOR.instances.editor1.setData(data);
+                }
+                window.saveToFile = function  () {
+                    var data = POLYEDITOR.instances.editor1.getData();
+
+                    var a, blob, identifier, objectURL;
+
+                    blob = new Blob([data]);
+
+                    objectURL = window.URL.createObjectURL(blob, {
+                      type: 'text/json'
+                    });
+
+                    identifier = 'aaaa';
+
+                    identifier += ' ' + (new Date).toString();
+
+                    identifier += '.html';
+
+                    a = window.document.createElement('a');
+
+                    a.href = objectURL;
+
+                    a.download = identifier;
+
+                    document.body.appendChild(a);
+
+                    a.click();
+
+                    document.body.removeChild(a);
+
+                }
+                
+                document.querySelector('#fileInput').addEventListener('change',function(event){
+
+                    var input, reader;
+
+                    input = event.target;
+
+                    reader = new FileReader;
+
+                    reader.onload = function() {
+                      var data;
+                      data = reader.result;
+                      POLYEDITOR.instances.editor1.setData(data);
+
+                    };
+
+                    reader.readAsText(input.files[0]);
+
+                });
+
+                document.querySelector('#imageInput').addEventListener('change',function(event){
+
+                    var input, reader;
+
+                    input = event.target;
+
+                    reader = new FileReader;
+
+                    reader.onload = function() {
+                      var data;
+                      data = reader.result;
+                      // console.log(data)
+                      // POLYEDITOR.instances.editor1.setData(data);
+                      POLYEDITOR.instances.editor1.insertHtml('<img src="'+data+'"/>')
+
+                    };
+
+                    reader.readAsDataURL(input.files[0]);
+
+                });
+            </script>
+        </form>
+    </body>
+</html>

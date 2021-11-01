@@ -1,0 +1,247 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<link rel="import" href="../page-store-staff/page-store-staff.html">
+<link rel="import" href="../page-store-inventory/page-store-inventory.html">
+<link rel="import" href="../page-store-transaction/page-store-transaction.html">
+<link rel="import" href="../page-store-vendor/page-store-vendor.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-store-manager">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      :host {
+        
+      }
+
+      .basic-tabs {
+        font-size: 18px;
+        background-color: #fafafa;
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+        font-weight: 400;
+      }
+
+      .custom-button {
+        padding: 4px 8px;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      #addStore {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+      }
+
+      .container {
+        padding: 8px;
+      }
+
+      .btn-add {
+        min-width: 0;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+        background-color: #eceff1;
+        color: rgba(0, 0, 0, .87);
+      }
+
+    </style>
+    
+    <!-- local DOM - start -->
+    <div id="tabContainer" class="tabs-container">
+      <paper-tabs class="tabs-container" id="tabs" selected="{{selectedStore}}" scrollable noink='true'>
+        <template is="dom-repeat" items="[[stores]]">
+          <paper-tab>[[item.data.name]]</paper-tab>
+        </template>
+      </paper-tabs>
+    </div>
+    <div class="container">
+      <paper-card>
+        <template is="dom-if" if="[[!stores.length]]">
+          <div class="card-content layout horizontal center center-justified">
+            <div class="type body-lead secondary">-- [[$TRANSLATE('no store available', LANG)]] --</div>
+          </div>
+        </template>
+  
+        <template is="dom-if" if="[[store]]">
+  
+          <!-- selected store basic details - start -->
+          <div class="card-custom-header">
+            <div class="layout horizontal center">
+              <div class="title flex">{{store.data.name}}</div>
+              <paper-menu-button class="p-0" vertical-align="top" horizontal-align="right">
+                <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+                <paper-menu class="dropdown-content">
+                  <paper-item on-tap="_showAddStoreDialog">
+                    <iron-icon class="m-right-8" icon="icons:add" item-icon></iron-icon>
+                    [[$TRANSLATE('Add New Store', LANG)]]
+                  </paper-item>
+                  <paper-item on-tap="_showEditStoreDialog">
+                    <iron-icon class="m-right-8" icon="icons:create" item-icon></iron-icon>
+                    [[$TRANSLATE('Edit This store', LANG)]]
+                  </paper-item> 
+                  
+                  <paper-item on-tap="_deleteStorePressed">
+                    <iron-icon class="icon danger m-right-8" icon="icons:delete" item-icon></iron-icon>
+                    [[$TRANSLATE('Delete This store', LANG)]]
+                  </paper-item>
+                </paper-menu>
+              </paper-menu-button>
+            </div>
+          </div>
+          <!-- selected store basic details - end -->
+  
+          <!-- pages - navigation (tab-wise) - start -->
+          <paper-tabs class="basic-tabs" selected="{{selectedPage}}" noink='true'>
+            <template is="dom-repeat" items="[[pages]]">
+              <paper-tab><iron-icon icon="{{item.icon}}" class="m-right-8"></iron-icon>[[item.name]]</paper-tab>
+            </template>
+          </paper-tabs>
+          <!-- pages - navigation (tab-wise) - end -->
+  
+        </template>
+  
+      </paper-card>
+      <template is="dom-if" if="[[store]]">
+        <iron-pages selected="{{selectedPage}}" on-iron-select="ironPagesSelectedEvent">
+          <!-- Store :: Manage - start -->
+          <!-- <section>
+            <page-store-staff user="{{user}}" organization="{{organization}}" store="{{store}}"></page-store-staff>
+          </section> -->
+ 
+
+          <page-store-inventory user="{{user}}" organization="{{organization}}" store="{{store}}"></page-store-inventory>
+          <page-store-transaction user="{{user}}" organization="{{organization}}" store="{{store}}" stores="{{stores}}"></page-store-transaction>
+          <page-store-vendor user="{{user}}" organization="{{organization}}" store="{{store}}"></page-store-vendor>
+
+          <section>
+            <paper-card class="m-top-8">
+              <div class="p-8">
+                <div class="p-4 horizontal layout center">
+                  <div class="type title-2 primary flex">[[$TRANSLATE('Audit Reports', LANG)]]</div>
+                  <paper-button raised class="btn-add colored" on-tap="_addNewAudit">[[$TRANSLATE('Start new audit', LANG)]]</paper-button>
+                </div>
+              </div>
+
+              <template is="dom-if" if="[[!audits.length]]">
+                <h4 class="p-16 type center">[[$TRANSLATE('No Audit report has been made yet', LANG)]]...</h4>
+              </template>
+        
+              <template is="dom-if" if="[[audits.length]]">
+                <vaadin-grid items="[[audits]]" id="auditReports">
+                  
+                  <vaadin-grid-column resizable>
+                    <template class="header">[[$TRANSLATE('Reported Datetime', LANG)]]</template>
+                    <template>[[$formatDateTime(item.createdDatetimeStamp)]] - [[$formatDateTime(item.endAuditDatetimeStamp)]]</template>
+                  </vaadin-grid-column>
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">[[$TRANSLATE('Audited by', LANG)]]</template>
+                    <template>[[item.createdByUserName]]</template>
+                  </vaadin-grid-column>
+
+                  <!-- <vaadin-grid-column resizable>
+                    <template class="header">Record will lock in</template>
+                    <template>[[_calcAuditLockTime(item.endAuditDatetimeStamp, index)]] <div id="[[_generateTempAuditId(index)]]"></div></template>
+                  </vaadin-grid-column> -->
+
+                  <vaadin-grid-column resizable>
+                    <template class="header">[[$TRANSLATE('Action', LANG)]]</template>
+                    <template>
+                      <div class="horizontal layout">
+                        <!-- <paper-button class="custom-button btn" raised on-tap="_editAuditReport">Edit Audit</paper-button> -->
+                        
+                        <paper-button class="custom-button btn" raised on-tap="_previewAuditReport">[[$TRANSLATE('Show Report', LANG)]]</paper-button>
+                      </div>
+                    </template>
+                  </vaadin-grid-column>
+                 
+              
+                </vaadin-grid>
+              </template>
+              <!-- vendor list - end -->
+            </paper-card>
+          </section>
+          <!-- Store :: Vendor - end -->
+  
+        </iron-pages>
+      </template>
+
+      
+    </div>
+    
+
+    <paper-fab id="addStore" on-tap="_showAddStoreDialog" icon="add" title="[[$TRANSLATE('Add Store', LANG)]]"></paper-fab>
+    <!-- local DOM - end -->
+
+    <!-- Dialog for - Store edit - start -->
+    <paper-dialog class="custom-input-field" id="editStoreDialog">
+      <div class="type headline">{{storeTitle}}</div>
+
+      <paper-dialog-scrollable>
+        <paper-input value="{{editStore.data.name}}" type="text" label="[[$TRANSLATE('Store Name', LANG)]]"></paper-input>
+      </paper-dialog-scrollable>
+
+      <div class="buttons m-top-24">
+        <!-- <template is="dom-if" if="{{EDIT_MODE}}">
+          <paper-button class="type danger" on-click="_deleteStore"><iron-icon icon="delete" class="icon danger m-right-8"></iron-icon>Delete</paper-button>
+        </template> -->
+        <div class="flex"></div>
+        <paper-button dialog-dismiss>[[$TRANSLATE('Cancel', LANG)]]</paper-button>
+        <paper-button class="colored" on-click="_editStore" autofocus raised>
+            <span hidden$="{{!EDIT_MODE}}">[[$TRANSLATE('Update', LANG)]]</span>
+          <span hidden$="{{EDIT_MODE}}">[[$TRANSLATE('Add', LANG)]]</span>
+        </paper-button>
+        
+      </div>
+    </paper-dialog>
+    <!-- Dialog for - Store edit - end -->
+
+      
+
+  </template>
+  <script src="page-store-manager.js"></script>
+</dom-module>

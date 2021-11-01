@@ -1,0 +1,66 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-organization-settings">
+  <template>
+
+    <style is="custom-style" include="common-style"></style>
+
+    <div class="master-container">
+      <div class="limiting-container">
+
+        <paper-card>
+          <div class="card-content">
+            <div><span class="type caption-2 warning">Edit Organization Information in Organization Editor page</span></div>
+
+            <div class="layout vertical p-vertical-16">
+              <div><span class="type caption bg-gray">[[organization.idOnServer]]</span></div>
+              <div class="p-vertical-8"><span class="type bold">[[organization.name]]</span></div>
+              <div><span class="type secondary">[[organization.address]]</span></div>
+              <div><span class="type secondary">[[organization.phone]]</span></div>
+            </div>
+
+          </div>
+        </paper-card>
+
+        <paper-card class="m-top-8">
+          <div class="card-content">
+            <div class="layout horizontal">
+              <paper-input id="generalDiscount" class="flex " label="General Discount Percent Limit" value="{{organizationSettings.data.generalDiscountPercentageLimit}}"
+                type="number" step="0.1" max="100" min="0" error-message="Outside of 0-100 range">
+                <div suffix>%</div>
+              </paper-input>
+              <paper-input id="minPayment" class="flex m-left-8" label="Minimum Payment Percentage Limit" value="{{organizationSettings.data.minimumPaymentPercentageLimit}}"
+                type="number" step="0.1" max="100" min="0" error-message="Outside of 0-100 range">
+                <div suffix>%</div>
+              </paper-input>
+              <paper-input id="vatTaxPercent" class="flex m-left-8" label="VAT/TAX Percentage" value="{{organizationSettings.data.vatOrTaxPercentage}}"
+                type="number" step="0.1" max="100" min="0" error-message="Outside of 0-100 range">
+                <div suffix>%</div>
+              </paper-input>
+            </div>
+            <paper-input label="NOC Text" value="{{organizationSettings.data.nocText}}"></paper-input>
+          </div>
+          <div class="card-actions">
+            <paper-button on-tap="saveButtonClicked" class="btn btn-success">Save Settings</paper-button>
+          </div>
+        </paper-card>
+
+      </div>
+    </div>
+
+  </template>
+  <script src="page-organization-settings.js"></script>
+
+</dom-module>

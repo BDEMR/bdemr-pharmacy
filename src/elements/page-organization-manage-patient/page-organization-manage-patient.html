@@ -1,0 +1,255 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower-assets/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-organization-manage-patient">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .organization-info-card-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .organization-info-cards {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+
+      .organization-info-cards .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+
+      .organization-info-cards .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+
+      .organization-info-cards .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+
+      .organization-info-cards .row .modifier.online {
+        background: #757575;
+      }
+
+      .organization-info-cards .row .modifier.local-only {
+        background: #039BE5;
+      }
+
+      .organization-info-cards .row .modifier.locally-updated {
+        background: #009688;
+      }
+
+      .organization-info-cards .row .modifier.imported {
+        background: #4CAF50;
+      }
+
+      .info-row {
+        margin-top: 10px;
+      }
+
+      .top-info-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      .address1 {
+        margin-right: 10px;
+      }
+
+      .break-on-tablet {
+        @apply(--layout-horizontal);
+      }
+
+      @media screen and (max-width: 740px) {
+        .break-on-tablet {
+          display: block;
+        }
+      }
+
+      .val {
+        text-decoration: underline;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .primary {
+        background: #388E3C;
+        color: white;
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container custom-input-field">
+
+        <template is="dom-if" if="{{!isOrganizationValid}}">
+          Organization invalid
+        </template>
+
+        <!-- editing organization - start -->
+        <template is="dom-if" if="{{isOrganizationValid}}">
+
+          <paper-card heading="Basic Information">
+            <div class="card-content">
+              <div class="horizontal layout center top-info-row">
+                <div>ID: </div>
+                <div class="serial-number">[[organization.idOnServer]]</div>
+                <div class="flex"></div>
+              </div>
+              <div class="info-row">
+                <div>Name: [[organization.name]]</div>
+              </div>
+              <div class="info-row">
+                <div>Region: [[organization.effectiveRegion]]</div>
+              </div>
+              <div class="info-row">
+                <div>Address: [[organization.address]]</div>
+              </div>
+            </div>
+          </paper-card>
+
+
+
+          <paper-card class="m-top-8" heading="Fund distribution">
+            
+            <div class="card-content">
+              <div class="type title-2" style="color: green;">Your Balance: [[walletBalance]] BDT</div>
+
+              <paper-input label="Indoor Balance" type="number" value="{{indoorBalance}}"></paper-input>
+              <div class="type caption-2">
+                <strong>Indoor Balance:</strong> This amount can only be used to avail services when patient is admitted to your
+                organization.
+              </div>
+              <paper-input label="Outdoor Balance" type="number" value="{{outdoorBalance}}"></paper-input>
+              <div class="type caption-2">
+                <strong>Outdoor Balance:</strong> This amount can only be used to avail services when patient is not admitted.
+                <!-- However, you can always convert more indoor balance to outdoor balance. -->
+              </div>
+              <div class="type caption-2">
+                <strong>Summary:</strong> When you add a patient below, your wallet balance will be reduced by
+                <strong>[[$add(outdoorBalance,indoorBalance)]]</strong> BDT. This amount will be added to the patient you select.
+              </div>
+            </div>
+
+            <div class="card-actions">
+              <paper-button raised class="primary" on-tap="addBalanceTapped" data-amount="5000">Add Fund</paper-button>
+            </div>
+          </paper-card>
+
+          <!-- Add Patient Start -->
+          <paper-card  class="m-top-8" heading="Add Patient">
+            <div class="card-content">
+              <paper-autocomplete class="flex" id="userSearch" text="{{searchFieldMainInput}}" label="Search with Patient Name, phone, Email, NID or Hospital Number"
+                on-autocomplete-selected="userSelected" on-keyup="onlineSearchEnterKeyPressed" error-message="Input Required"
+                required></paper-autocomplete>
+              <br>
+              <template is="dom-if" if="[[!matchingPatientList.length]]">
+                <div class="layout vertical center type secondary">-- No Patient Data--</div>
+              </template>
+              <template id="patient-list-repeater" is="dom-repeat" items="[[matchingPatientList]]" as="patient">
+                <paper-item class="custom layout horizontal center">
+                  <div class="type caption secondary">[[patient.serial]]</div>
+                  <div class="flex m-left-8">
+                    <div class="type body capitalize">[[$getFullName(patient.name)]]</div>
+                    <div class="type caption">[[patient.email]]</div>
+                    <div class="type caption">[[patient.phone]]</div>
+                    <div class="type caption">Indoor Balance: [[patient.indoorBalance]] BDT</div>
+                    <div class="type caption">Outdoor Balance: [[patient.outdoorBalance]] BDT</div>
+                  </div>
+                  <paper-button raised class="btn-add colored" on-tap="viewPatientExpenseHistoryPressed">
+                    <!-- <iron-icon icon="icons:visibility" class="m-right-8"></iron-icon> -->
+                    View Expenses</paper-button>
+                  <paper-icon-button icon="delete" on-tap="removePatientPressed"></paper-icon-button>
+                </paper-item>
+              </template>
+            </div>
+            <div class="card-actions"></div>
+          </paper-card>
+          <!-- Add Patient End -->
+
+        </template>
+        <!-- editing organization - end -->
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-organization-manage-patient.coffee-compiled.js"></script>
+</dom-module>

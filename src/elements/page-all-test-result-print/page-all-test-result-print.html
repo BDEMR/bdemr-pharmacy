@@ -1,0 +1,798 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower-assets/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower-assets/iron-icons/av-icons.html">
+<link rel="import" href="../../bower-assets/iron-icons/communication-icons.html">
+<link rel="import" href="../../bower-assets/iron-pages/iron-pages.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input-container.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../elements/custom-vital-search/custom-vital-search.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-all-test-result-print">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      paper-card {
+        background-color:#fff;
+      }
+      
+      .patient-info-card-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+      
+      .patient-info-cards {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+      
+      .patient-info-cards .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+      
+      .patient-info-cards .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+      
+      .patient-info-cards .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+      
+      .patient-info-cards .row .modifier.online {
+        background: #757575;
+      }
+      
+      .patient-info-cards .row .modifier.local-only {
+        background: #039BE5;
+      }
+      
+      .patient-info-cards .row .modifier.locally-updated {
+        background: #009688;
+      }
+      
+      .patient-info-cards .row .modifier.imported {
+        background: #4CAF50;
+      }
+      
+      .info-row {
+        margin-top: 10px;
+      }
+      
+      .top-info-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+      
+      .address1 {
+        margin-right: 10px;
+      }
+      
+      .break-on-tablet {
+        @apply(--layout-horizontal);
+      }
+      
+      @media screen and (max-width: 740px) {
+        .break-on-tablet {
+          display: block;
+        }
+      }
+      
+      .val {
+        text-decoration: underline;
+      }
+      
+      .search-result-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+      
+      .search-results {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+      
+      .search-results .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+      
+      .search-results .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+      
+      .search-results .row .name {
+        font-size: 18px;
+        margin-left: 10px;
+      }
+      
+      .search-results .row .email {
+        font-size: 14px;
+        color: #777777;
+        margin-left: 10px;
+      }
+      
+      .search-results .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+      
+      .search-results .row .modifier.online {
+        background: #757575;
+      }
+      
+      .search-results .row .modifier.local-only {
+        background: #039BE5;
+      }
+      
+      .search-results .row .modifier.locally-updated {
+        background: #009688;
+      }
+      
+      .search-results .row .modifier.imported {
+        background: #4CAF50;
+      }
+      
+      .new-patient-fab {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+      }
+      
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+      
+      paper-button {
+        background: white;
+      }
+
+      .comment-history-item.right {
+        @apply(--layout-end-justified);
+      }
+
+      .header {
+        position: relative;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        font-size: 20px;
+        font-weight: 500;
+        text-align: center;        
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px
+      }
+      .header .title {
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: #009688;
+      }
+
+      /*custom-vital-search {
+        margin-left: 30px;
+      }*/
+
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .table{
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td {
+        color: #444;
+      }
+
+      .table td, .table th{
+        vertical-align: middle;
+        padding: 10px 20px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+       .table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .table.two-col th {
+        text-align: right;
+        background-color: white;
+        width: 50%;
+      }
+
+      .two-col .header th {
+        background-color: var(--paper-grey-50);
+        text-align: center;
+        padding: 20px 0;
+        text-trasnform: uppercase;
+      }
+
+      .block{display: block}
+
+      
+      .pagination li{
+        display: inline-block;
+        list-style: none;
+      }
+
+      .pagination paper-button {
+        min-width: 2em;
+        font-size: 14px;
+        background-color: var(--google-grey-100);
+      }
+
+      .filter-query {
+        --paper-input-container: {
+          width: 250px;
+          padding: 0;
+        }
+        --paper-input-container-label: {
+          font-size: 13px;
+        }
+        --paper-input-container-input: {
+          font-size: 13px;
+        }        
+      }
+
+      .search {
+        @apply(--layout-end-justified);
+      }
+
+      @media only screen and (min-width : 320px) and (max-width : 480px){
+        .table td, .table th{
+          vertical-align: top;
+          font-size: 14px;
+        }
+        .search {
+          margin-top: 10px;
+          @apply(--layout-start-justified);
+        }
+      }
+      
+
+      /*Region - Patient Gallary*/
+      .new-attachment-preview {
+        display: block;;
+        width: 256px;
+        height: 256px;
+      }
+      
+      .descriptive-area {
+        padding: 4px;
+      }
+      
+      paper-button {
+        background: white;
+      }
+      
+      .attachment-card {
+        background: white;
+        /*
+        margin: 4px;
+        padding: 4px;
+        */
+      }
+      
+      .image {
+        display: block;
+        max-width: 256px;
+        max-height: 256px;
+        width: 256px;;
+        height: auto;
+      }
+      
+      .footer {
+        
+      }
+      
+      .usage {
+        margin-right: 20px;
+      }
+      .usage .title {
+        font-size: 36px;
+        text-align: left;
+      }
+
+      .attachment-card-list {
+        margin: 10px 0;
+      }
+
+      .attachment-card-list paper-material {
+        margin-right: 10px;
+        margin-bottom: 10px;
+      }
+
+      .attachment-card .footer {
+        padding: 10px;
+      }
+
+      .limiting-container {
+        margin-top: 10px;
+      }
+      
+      .external-card-title {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+      
+      .info-card {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+      
+      .info-card .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+      
+      .info-card .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+      
+      .info-card .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+      
+      .info-card .row .modifier.online {
+        background: #757575;
+      }
+      
+      .info-card .row .modifier.local-only {
+        background: #039BE5;
+      }
+      
+      .info-card .row .modifier.locally-updated {
+        background: #009688;
+      }
+      
+      .info-card .row .modifier.imported {
+        background: #4CAF50;
+      }
+      
+      .info-row {
+        margin-top: 10px;
+      }
+      
+      .top-info-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+      
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+        display: inline-block;
+        font-size: 14px;
+      }
+      
+      .address1 {
+        margin-right: 10px;
+      }
+      
+      .name {
+        margin-left: 5px;
+        font-size: 24px;
+      }
+      
+      .email {
+        margin-left: 5px;
+        font-size: 14px;
+      }
+      
+      .phone {
+        margin-left: 5px;
+      }
+      
+      .val {
+        text-decoration: underline;
+      }
+      
+      .account-box {
+        --iron-icon-width: 96px;
+        --iron-icon-height: 96px;
+      }
+
+      .limiting-container {
+        margin-top: 10px;
+        max-width: 210mm;
+        min-height: 230mm;
+        /*min-height: 297mm;*/        
+      }
+
+      .document {
+        font-family: 'Times New Roman';
+        background: white;
+      }
+      
+      .document-title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+      
+      @media print {
+        .limiting-container {
+          /*margin-top: -60px;*/
+          /*border: 1px solid black;*/
+        }
+      }
+      
+      .collection {
+        color: red;
+        background: grey;
+      }
+      
+      .document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+      
+      .document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+      
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+      
+      .leftSide {
+        margin-left: 6px;
+        text-align: left;
+      }
+
+      .rightSide {
+        margin-right: 6px;
+        text-align: right;
+      }    
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+      
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+      .item{
+        padding: 10px;
+        border: 1px solid grey;
+      }
+
+      .footer{
+        margin-top: 4px;
+        text-align: center;
+      }
+      .investigation-name-style {
+        border: solid 2px black;
+        width: 400px;
+        padding: 2px;
+        margin: auto;
+        text-align: center;
+        font-size: 30px;
+        font-weight: 400px;
+      }
+
+    </style>
+
+    <!-- local DOM -->
+
+    <template is="dom-if" if="{{isPatientValid}}">
+
+      <div class="master-container">
+
+        <div class="limiting-container">
+          <!-- editing patient - start -->
+          <div class="document">
+            <template is="dom-if" if="{{showPrintDetails}}">
+
+              <template is="dom-if" if="[[organization.printSettings.headerLine]]">
+                <div class="header vertical layout">[[organization.printSettings.headerLine]]</div>
+              </template>
+              
+              <div class="document-header horizontal layout center">
+
+                <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+                  <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+                </template>
+
+                <div class="leftSide vertical layout">
+                  <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+                  <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+                  <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+                </div>
+                <div class="flex"></div>
+                <div class="rightSide vertical layout end">
+                  <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+                  <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+                  <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+                </div>
+              </div>
+              
+            </template>
+            
+            <div class="horiline"></div>
+
+            <div class="document-header horizontal layout center">
+              <template is="dom-if" if="[[!patient.isForOrganizationOnly]]">
+                <table class="m-top-8 custom-table" border="1">
+                  <tbody>
+                    <tr>
+                      <td><strong>Name:</strong></td>
+                      <td>{{$getFullName(patient.name)}}</td>
+                      <td><strong>Age:</strong></td>
+                      <td>[[$computeAge(patient.dateOfBirth)]]</td>
+                      <td><strong>Sex:</strong></td>
+                      <td>{{patient.gender}}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Phone:</strong></td>
+                      <td>{{patient.phone}}</td>
+                      <td><strong>Blood Group:</strong></td>
+                      <td>{{patient.bloodGroup}}</td>
+                      <td><strong>Allergy:</strong></td>
+                      <td>{{patient.allergy}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </template>
+              <template is="dom-if" if="[[patient.isForOrganizationOnly]]">
+                Name: REDACTED FOR CONFIDENTIALITY <br>
+                Age : REDACTED FOR CONFIDENTIALITY  <br>
+                Allergy : <br>
+                Blood Group : <br>
+              </template>
+            </div>
+            <template is="dom-repeat" items="[[matchingTestResultsList]]" as="testResult">
+              <paper-card elevation="0">
+                <div class="m-top-16">
+                  <div style="text-align: center">
+                    <div class="investigation-name-style">{{testResult.investigationName}}</div>
+                    <div class="type display-regular">{{testResult.data.heading}}</div>
+                    <div class="type headline">{{testResult.data.subHeading}}</div>
+                  </div>
+                  
+                  <template is="dom-if" if="[[!testResult.data.groupInvestigation]]">
+                    <table class="m-top-8 custom-table m-bottom-24" border="1">
+                      <thead style="background: #eee; border:black solid 2px;">
+                        <tr>
+                          <th style="width: 25%; text-align: left;">Test</th>
+                          <th style="width: 20%; text-align: left;">Result</th>
+                          <th style="width: 15%; text-align: left;">Unit</th>
+                          <th style="width: 40%; text-align: left;">Reference Range</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <template is="dom-repeat" items="{{testResult.data.testList}}">
+                          <tr>
+                            <template is="dom-if" if="[[item.testResult]]">
+                              <td style="width: 25%;">{{item.testName}}</td>
+                              <td style="width: 20%;">{{item.testResult}}</td>
+                              <td style="width: 15%;">{{item.testUnit}}</td>
+                              <td style="width: 40%;">{{item.referenceRange}}</td>
+                            </template>
+                          </tr>
+                        </template>
+                      </tbody>
+                    </table>
+                  </template>
+
+                  <template is="dom-if" if="[[testResult.data.groupInvestigation]]">
+                    <template is="dom-repeat" items="{{testResult.data.groupTestList}}" as="group">
+                      <h4 style="text-align: center;">{{group.groupName}}</h4>
+                      <table class="m-top-8 custom-table m-bottom-24" border="1">
+                        <thead style="background: #eee; border:black solid 2px;">
+                          <tr>
+                            <th style="width: 25%; text-align: left;">Test</th>
+                            <th style="width: 20%; text-align: left;">Result</th>
+                            <th style="width: 15%; text-align: left;">Unit</th>
+                            <th style="width: 40%; text-align: center;">Reference Range</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <template is="dom-repeat" items="{{group.testList}}">
+                            <tr>
+                              <template is="dom-if" if="[[item.testResult]]">
+                                <td style="width: 25%;">{{item.testName}}</td>
+                                <td style="width: 20%;">{{item.testResult}}</td>
+                                <td style="width: 15%;">{{item.testUnit}}</td>
+                                <td style="width: 40%;">{{item.referenceRange}}</td>
+                              </template>
+                            </tr>
+                          </template>
+                        </tbody>
+                      </table>
+                    </template>
+                  </template>
+
+                  <div class="layout vertical">
+                    <span class="type caption-2 m-left-10">
+                      <strong>Advised by:</strong> {{testResult.advisedDoctorName}} - {{testResult.advisedDoctorSpeciality}}
+                    </span>
+                    <span class="type caption-2 m-left-10">
+                      <strong>Reporting Physician:</strong> {{testResult.reportedDoctorName}} - {{testResult.reportedDoctorSpeciality}}
+                    </span>
+                    <span class="type caption-2 m-left-10">
+                      <strong>Checked by:</strong> {{testResult.checkedByUserName}} - {{testResult.checkedByUserSpeciality}}
+                    </span>
+                  </div>
+
+                </div>
+              </paper-card>
+              <div class="sp-2"></div>
+            </template>
+
+            <br>
+            <template is="dom-if" if="[[settings.printDecoration.footerLine]]">
+              <div class="footer vertical layout" style="white-space: pre-wrap; text-align: center;">
+                [[settings.printDecoration.footerLine]]
+              </div>
+            </template>
+
+            <div class="horizontal layout center center-justified p-horizontal-16">
+              <div class="type body secondary italic"><strong>printed by: </strong>[[user.name]]</div>
+            </div>
+          </div>   
+          <!-- editing patient - end -->
+        </div>
+
+      </div>
+      
+    </template>
+
+  </template>
+  <script src="page-all-test-result-print.coffee-compiled.js"></script>
+</dom-module>

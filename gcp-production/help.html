@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!--Basic Page Needs-->
+  <meta charset="utf-8">
+  <title>BDEMR - Help</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <!--Mobile Specific Metas-->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--FONT-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,600" rel="stylesheet" type="text/css">
+  <!--CSS-->
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/main.css">
+  <!--Favicon-->
+  <link rel="icon" type="image/ico" href="images/favicon.ico">
+</head>
+
+<body>
+  <div class="toolbar size-normal">
+    <div class="top-bar">
+      <a href="https://bdemr.com" class="logo">
+        <img src="images/logo-clinic-app.png" alt="BDEMR">
+      </a>
+      <div class="topbar-action">
+        <a href="/help" class="btn transparent toggleTopBarBtn">help</a>
+        <a href="/faq" class="btn transparent toggleTopBarBtn">faq</a>
+        <a href="/video-gallery" class="btn transparent toggleTopBarBtn">video</a>
+        <a href="/doctor-finder" class="btn transparent toggleTopBarBtn">doctor finder</a>
+        <a href="/agent" class="btn transparent toggleTopBarBtn">agent</a>
+        <a href="/signup" class="btn transparent toggleTopBarBtn">signup</a>
+        <a href="https://clinic.bdemr.com/app/" class="btn shadow danger">login</a>
+      </div>
+      <button id="toggleMenuBar" onclick="toggleMenu()">☰</button>
+      <ul id="toggleMenu">
+        <li class="toogleMenuItem">
+          <a href="/doctor-finder">Doctor Finder</a>
+        </li>
+        <li class="toogleMenuItem">
+          <a href="/agent">Find Agent</a>
+        </li>
+        <li class="toogleMenuItem">
+          <a href="/signup">signup</a>
+        </li>
+        <li class="toogleMenuItem">
+          <a href="/faq">faq</a>
+        </li>
+        <li class="toogleMenuItem">
+          <a href="/help">Help</a>
+        </li>
+        <li class="toogleMenuItem">
+          <a href="/video-gallery">Video Gallery</a>
+        </li>
+        <li>
+          <a href="#" onclick="dialogValidateVoucher()">Validate Voucher</a>
+        </li>
+        <li>
+          <a href="#" onclick="dialogPurchaseVoucher()">Purchase Voucher</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div id="faq" class="section">
+    <div class="container">
+
+      <div class="card bg-gray">
+        <h1>সাইন আপ ও লগ ইন সঙ্ক্রান্ত সহায়িকা</h1>
+      </div>
+      <div id="accordion" class="card p-0">
+        <h5>১. কিভাবে সাইন আপ করতে হবে ?</h5>
+        <div>
+          <p>গুগল ক্রোম ব্রাউজার ব্যবহার করে bdemr.com খুলুন। নীচের তথ্য পূরণ করুন।</p>
+          <ul class="inline-list">
+            <li>১। প্রথম সাইন আপের সময় আপনার সম্পূর্ণ নাম লিখুন ইংরেজিতে। প্রথম নাম ও পদবী থাকতে হবে । </li>
+            <li>২। নামের আগে Mr./Miss./Mrs./Dr. লিখতে হবে। সংক্ষিপ্ত নামের শেষে ফুলস্টপ দিতে হবে। </li>
+            <li>৩। আপনার ইমেইল অথবা ফোন নাম্বার লিখুন। </li>
+            <li>৪। যে কোনো পাসওয়ার্ড দিন। এই পাসওয়ার্ড BDEMR এর সব এপসে ব্যবহার করা যাবে। </li>
+            <li>৫। জন্ম তারিখ দিন। </li>
+            <li>৬। আপনার দেশ হিসেবে বাংলাদেশ যোগ করুন। </li>
+            <li>৭। যদি আপনি নিজে নিজে সাইন আপ করেন তবে কুপন কোড প্রয়োজন নেই। </li>
+            <li>৮। Terms of Use এবং Privacy Policy সম্মতিসূচক বক্সে ক্লিক করুন/ </li>
+            <li>৯। SIGNUP ক্লিক করুণ। </li>
+            <li>১০। সাইন আপ শেষ এবং আপনি একটি বার্তা পাবেন যে আপনার লগ ইন সফল হয়েছে। আপনি লগ ইন পাতায় অথবা ওয়েবসাইটে ফিরে যেতে
+              পারেন।</li>
+          </ul>
+        </div>
+        <h5>২. PIN কি? এটা দিয়ে কি হবে?</h5>
+        <div>
+          <p>PIN অর্থ Personal Identification Number. যে কন ৪ টি সংখ্যা দিয়ে আপনি আপনার PIN গঠন করবেন। একজন রোগীর ফাইল খুলতে
+            গেলে একজন চিকিৎসককে এই PIN দিতে হবে। এই PIN আপনার একাউন্ট ছাড়া আর কোথাও সঞ্চিত থাকে না। খানিকটা আপনার ক্রেডিট
+            কার্ডের PIN এর মত। আপনার ছাড়া আর কারও এই PIN জানার প্রয়োজন নেই। চিকিৎসক কিম্বা চিকিৎসকের সহকারীর সামনে আপনি এই
+            PIN ব্যবহার করবেন। </p>
+        </div>
+        <h5>৩. লগ ইন করার পরে কি করতে হবে?</h5>
+        <div>
+          <p>লগ ইন করার পরে আপনি welcome (স্বাগতম) পাতা দেখতে পাবেন। BDEMR লোগোর নীচে লেখা আছে "Welcome! তাঁর নীচে "Please select
+            Your Role" এর নীচে বিভিন্ন Role এর ছবি (icon) দেওয়া আছে। আপনি আপনার প্রয়োজন মত আইকনে ক্লিক করুন। একবারে উপরে
+            এবং ডান দিকে আপনার নামের নীচে "SIGN OUT"লেখা আছে। তাঁর পাশে যে তিনটি ডট দেখা যায় এটা তে ক্লিক করলে আপনি "SETTING"
+            ও "ROLE SWITCH" দেখতে পাবেন। "SETTING" ক্লিক করলে আপনার পাসওয়ার্ড বদলাতে পারবেন। ROLE SWITCH ক্লিক করে আপনি এক
+            Role থেকে অন্য Role এ যেতে পারবেন। </p>
+        </div>
+        <h5>৪. Role select কি? কেন প্রয়োজন। </h5>
+        <div>
+          <p>BDEMR এ যিনি বা যারা সাইন আপ করবেন তারা বিভিন্ন ভাবে এটা ব্যবহার করতে পারেন। বর্তমানে যে সমস্ত ভূমিকা নির্দিষ্ট
+            করা আছে তা হচ্ছে চিকিৎসক (Doctor), রোগী (Patient), মেডিকেল ছাত্র (student), প্রতিনিধি (Agent), চিকিৎসক সহকারী
+            (Doctor’s Assistant) , হাসপাতাল বা ক্লিনিকের ব্যবস্থাপক (Hospital/Clinic admin), হাসপাতাল বা ক্লিনিকের কর্মকর্তা/কর্মচারী
+            (Hospital/Clinic Staff)। সব ভূমিকার জন্যই প্রথম সাইন আপ যথেষ্ট। তবে প্রত্যেক ভূমিকার জন্য আলাদা করে প্রয়োজনীয়
+            তথ্য দিতে হবে। </p>
+        </div>
+        <h5>৫. কেন প্রত্যেক ভূমিকার জন্য আলাদা তথ্য দিতে হবে?</h5>
+        <div>
+          <p>প্রত্যেক ভূমিকার ব্যবহার ও দায়িত্ব ভিন্ন। রোগীর ব্যবহার করা যে কোন তথ্য অতি সংবেদনশীল এবং গোপনীয়। তাই রোগীর তথ্যের
+            সংস্পর্শে আসেন এমন সবাই কে তার সম্পূর্ণ তথ্য পূরণ করতে হবে। </p>
+        </div>
+        <h5>৬. একজন রোগীর তথ্য কি অন্য কেউ পূরণ করতে পারবেন?</h5>
+        <div>
+          <p>রোগীর ব্যবহার করা যে কোন তথ্য অতি সংবেদনশীল এবং গোপনীয়।তবে এটি একান্তই রোগীর দায়িত্ব যে তথ্য পূরণে তিনি কারও সাহায্য
+            নেবেন কিনা। নিজে অপারগ হলে রোগী নিজের প্রয়োজনে ও তাঁর সম্মতিতে অন্য কাউকে দিয়ে তথ্য পূরণ করতে পারেন। এই জন্য
+            BDEMR দায়ী নয়। </p>
+        </div>
+        <h5>৭. পরিবারের সবার জন্য কি আলাদা একাউন্ট খুলতে হবে?</h5>
+        <div>
+          <p>পরিবারের প্রত্যেক সদস্যের জন্য আলাদা একাউন্ট খুলতে হবে। বাড়িতে ১ টা ফোন থাকলে আপনার ফোনের পাশে হাইফেন (-) দিয়ে
+            একাউন্ট খুলুন । তাহলে একই ফোন নাম্বার দিয়ে সবার একাউন্ট খুঁজে পাওয়া যাবে।</p>
+        </div>
+        <h5>৮. BDEMR CLINIC APP সঙ্ক্রান্ত সহায়িকা</h5>
+        <div>
+          <p>
+            <strong>আপনি যদি ওয়েবসাইট ব্যবহার করতে চান তাহলে clinic.bdemr.com ভিজিট করুন।</strong>
+            <br>
+            <br>
+            <strong>Log in করুন</strong>
+            <br>
+          </p>
+          <div>
+            <img src="images/ss_clinic_help/1_login.jpg" width="" alt="">
+            <br>
+            <span>If you have an existing account you need to login,</span>
+            <br>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/2_loginImage2.jpg" width="" alt="">
+            <br>
+            <br>
+            <span>But if you don't have any account on bdemr then you need to sign up for a new account. Signing up is really easy</span>
+            <br>
+            <br>
+            <span>Below is a image of the sign-up page.</span>
+            <br>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/3_signup.jpg" width="" alt="">
+            <br>
+            <br>
+            <span>Fill all the information, click on signup to create your new account.</span>
+            <br>
+            <br>
+            <span>Now if you are logging in for the first time doesn't matter if you had an account or you created just now you
+              will see page like this asking for activation code. please send email  requesting activation code to the email
+              mentioned. If you are singing in and belong to an institution, the hospital admin will/may have the activation
+              code.</span>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/extra_activationCode.jpg" width="70%" alt="">
+            <br>
+            <br>
+            <span>Insert the activation code. Please make sure that there is no space after that. Click check and then Activate.
+              Click on activate and will get this message on the screen.</span>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/extra2_activisionSuccessImage.jpg" width="50%" alt="">
+            <br>
+            <br>
+            <span>Please click on “ Got it” whenever you get this message for whatever reason it may be.</span>
+            <br>
+            <br>
+            <br>
+          </div>
+          <p>
+            <strong>Creating or Selecting Organization</strong>
+            <br>
+            <span>After logging in you will see a page that looks like this, press the button “create/join organization” button.</span>
+          </p>
+          <div>
+            <img src="images/ss_clinic_help/4_createOrganization.jpg" width="" alt="">
+            <br>
+            <span>Select a organization from the drop down if you want to join an existing organization</span>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/5_blankOrganizationSelect.jpg" width="80%" alt="">
+            <br>
+            <br>
+            <span>Now, if you want to create a new organization select “+create a new organization.” Then fill up necessary information
+              from the Organization editor page.</span>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/6_createNewOrganization.jpg" width="" alt="">
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/6.1_createNewOrganization.jpg" width="80%" alt="">
+            <br>
+            <br>
+            <span>But if you just want to join as an user you can search existing organizations through the search bar,</span>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/7_searchOrganization.jpg" width="80%" alt="">
+            <br>
+            <br>
+            <span>Now after finding your desired organization click on the three dot from the right side and select “join as an
+              user”</span>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/8_joinAsAUser.jpg" width="80%" alt="">
+            <br>
+            <span>and select “join as an user”</span>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/8.1_joinAsAUser.jpg" width="80%" alt="">
+            <br>
+            <br>
+            <br>
+          </div>
+          <p>
+            <strong>Hamburger sign and the Dashboard</strong>
+            <br>
+            <span>The  Hamburger Sign (Row of 3 lines) on the left shows the left panel from which you can enter into different
+              part of EMR</span>
+            <br>
+          </p>
+          <div>
+            <img src="images/ss_clinic_help/9_hamburgerSelect.jpg" width="30%" alt="">
+            <br>
+            <br>
+            <span>Dashboard looks like this</span>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/10_dashboard.jpg" width="70%" alt="">
+            <br>
+            <span>Here a doctor can see their total number of patients, new patients, and also how many days left before next activation.
+              To get more activation code email your name, position and requirement or click on purchase to buy it . If have
+              an activation code, click on renew and insert the activation code, you are on for 30 more days. </span>
+            <br>
+            <br>
+            <br>
+          </div>
+          <p>
+            <strong>Cloud sign and Notification bell</strong>
+            <br>
+            <strong>Cloud sign:</strong>
+            <space>Anytime you want to check data about a new patient you need to click on sync to download patient’s total and
+              most recent information. </space>
+            <br>
+          </p>
+          <div>
+            <img src="images/ss_clinic_help/11_cloudSign.jpg" width="" alt="">
+            <br>
+            <br>
+            <strong>Notification bell:</strong>
+            <space>To check notifications of the app.</space>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/12_notificationBell.jpg" width="" alt="">
+            <br>
+            <br>
+            <br>
+          </div>
+          <p>
+            <strong>Patient Manager</strong>
+            <br>
+            <span>Patient Manager (on the left panel) takes you to patient finder</span>
+            <br>
+          </p>
+          <div>
+            <img src="images/ss_clinic_help/13_patientManager.jpg" width="" alt="">
+            <br>
+            <br>
+            <span>Here you can search a patient by name,email, national ID or hospital number that has been assigned to him.</span>
+            <br>
+            <span>There are 3 search</span>
+            <br>
+            <strong>Online search:</strong>
+            <space>to find any patient already registered with our system and has information in the cloud.</space>
+            <br>
+            <strong>Offline Search:</strong>
+            <space>patients that were added by the user offline and still not synced to the cloud.</space>
+            <br>
+            <strong>List all imported /offline patients:</strong>
+            <space>show all patients accessed by the doctor.</space>
+            <br>
+            <span>On the right top there is advanced search which can further refine the search.</span>
+            <br>
+            <br>
+            <span>Write a name</span>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/14_writeApatientName.jpg" width="70%" alt="">
+            <br>
+            <br>
+            <span>Once clicked on online search it will show the patient or list of patients</span>
+            <br>
+            <span>Remember it shows that patient is online only.</span>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/15_johnSearched.jpg" width="70%" alt="">
+            <br>
+            <br>
+            <span>Click on the three dot beside “online only”. You will be asked to “import”</span>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/16_johnImportFromCloud.jpg" width="70%" alt="">
+            <br>
+            <br>
+            <span>When you click on import the following message will appear</span>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/17_enterPinForJohn.jpg" width="" alt="">
+            <br>
+            <br>
+            <strong>Here the doctor will need to insert the PIN set by the patient.</strong>
+            <space>Without the PIN no data can be accessed. Your hospital may decide on a prefixed PIN for patients who is not registered
+              to reduce the time spent on registration. Please consult your hospital. Currently on our system 0000 is set
+              as default. </space>
+            <br>
+            <br>
+            <span>A wrong PIN will provide the following message</span>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/18_pleaseProvideCorrectPin.jpg" width="" alt="">
+            <br>
+            <br>
+            <span>Click on the “GOT IT” to move back </span>
+            <br>
+            <span>With correct PIN the colour changes to green  and looks like this</span>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/19_johnImportSuccessful.jpg" width="70%" alt="">
+            <br>
+            <br>
+            <span>Click on the right side three dots and following option will be seen</span>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/20_clickOnTheThreeDotJohn.jpg" width="" alt="">
+            <br>
+            <br>
+            <strong>View:</strong>
+            <space>to start seeing or creating records</space>
+            <br>
+            <strong>Edit:</strong>
+            <space>to edit patient's information.</space>
+            <br>
+            <strong>Publish to cloud:</strong>
+            <space>for publishing a record that was offline before</space>
+            <br>
+            <strong>Import latest from Cloud :</strong>
+            <space>self explanatory</space>
+            <br>
+            <strong>Delete Local Copy:</strong>
+            <space>delete the patient’s current record on the device.</space>
+            <br>
+            <br>
+            <br>
+          </div>
+          <p>
+            <strong>Clicking on View</strong>
+            <br>
+            <span>Now clicking on view will show a page where you will find</span>
+            <space></space>
+            <strong>Demography, Test advised, Test result, Invoice.</strong>
+            <br>
+            <br>
+            <strong>Demography:</strong>
+            <space>contains patient’s pertinent information </space>
+            <br>
+            <span>This is just an example.</span>
+            <br>
+          </p>
+          <div>
+            <img src="images/ss_clinic_help/21_demography.jpg" width="80%" alt="">
+            <br>
+            <br>
+            <strong>Advised test:</strong>
+            <space>Tests that have been advised by the doctors to a patient.</space>
+            <br>
+            <span>Advised tests will show up here.</span>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/22_advisedTest1.jpg" width="80%" alt="">
+            <br>
+            <span>User can also add new tests, add results for a test, add custom test, find doctors and reported doctor’s list</span>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/23_advisedTest2.jpg" width="80%" alt="">
+            <br>
+            <br>
+            <strong>Test Result:</strong>
+            <space>Results of the advised tests will show up here.</space>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/24_testResult.jpg" width="80%" alt="">
+            <br>
+            <br>
+            <strong>Invoice:</strong>
+            <space>Self explanatory.</space>
+            <br>
+            <span>All past or created invoices will show up here. </span>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/25_invoice1.jpg" width="80%" alt="">
+            <br>
+            <span>User can also create a new invoice. Below is a image of what that looks like.</span>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/26_invoice2.jpg" width="80%" alt="">
+            <br>
+            <span>From here they can add different services, supplies, investigations etc. Updating price list is limited to admins
+              or higher type of users. Another thing to note here is there are two saving options for invoices, Pressing
+              “Save+Complete Invoice” will mean this is the final invoice and it can not be customized later on, But pressing
+              “Save Invoice” will give that flexibility to the user of changing or adding things later on.</span>
+            <br>
+            <br>
+            <br>
+          </div>
+          <p>
+            <strong>Organization Manager</strong>
+            <br>
+            <span>Here user can see which organization they belong to and what is their role in that organization.</span>
+            <br>
+            <span>They can also search and create new organization from here.</span>
+          </p>
+          <div>
+            <img src="images/ss_clinic_help/27_organizationManager.jpg" width="80%" alt="">
+            <br>
+            <span>Clicking on the three dot from the right side of the organization tab will open a dropdown list of options,</span>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/27.1_organizationMangerThreedot.jpg" width="" alt="">
+            <br>
+            <span>From here user can,</span>
+            <br>
+            <strong>Edit Organization:</strong>
+            <space>Edit details of the organization. name, address etc.</space>
+            <br>
+            <strong>Manage Users:</strong>
+            <space>List of users already in that organization, adding new users etc.</space>
+            <br>
+            <strong>Manage Unit Price:</strong>
+            <space>Manage the pricing of services, pharmaceuticals, supply etc.</space>
+            <br>
+            <strong>Remove Organization:</strong>
+            <space>Self explanatory.</space>
+            <br>
+            <strong>Leave Organization:</strong>
+            <space>Self explanatory.</space>
+            <br>
+            <br>
+            <br>
+          </div>
+          <p>
+            <strong>Pending Reports</strong>
+            <br>
+            <br>
+            <br>
+          </p>
+          <p>
+            <strong>Accounts Manager</strong>
+            <br>
+            <span>Clinic owners can add incomes,expenses and see their net profits from this section of the clinic app.</span>
+            <br>
+          </p>
+          <div>
+            <img src="images/ss_clinic_help/extra3_accountManager.jpg" width="80%" alt="">
+            <br>
+            <br>
+            <strong>Income:</strong>
+            <space>In the income tab clinic staffs or accounts staffs can add entries of different type of items with name, category
+              and value. It will show below in the “Income Items” section.</space>
+            <span>Also incomes from other sources like invoiced bill or pharmaceutical sales etc. will automatically show up here
+              in income items. This automation speeds up the process of accurate income calculation.</span>
+            <br>
+            <strong>Expenses:</strong>
+            <space>All the expenditure of a clinic can be added from here. This includes general expenses, salaries and utility
+              bills. This will greatly help the clinic owner to calculate expenses of their establishment. This also helps
+              the clinic staff to keep an accurate record.</space>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/extra3.1_accountManager.jpg" width="80%" alt="">
+            <br>
+            <br>
+            <strong>Net Profit:</strong>
+            <space>This will automatically calculate the net profit using the data from income and expense tabs. It's easy and reliable.</space>
+            <br>
+          </div>
+          <div>
+            <img src="images/ss_clinic_help/extra3.2_accountManager.jpg" width="80%" alt="">
+            <br>
+            <br>
+            <br>
+          </div>
+          <p>
+            <strong>Pharmacy Manager</strong>
+            <br>
+            <span>This section of the app helps to keep record of all the pharmaceutical items sales. Buying price and selling
+              price of the items with quantity and expiry date, makes the process of keeping records easier.</span>
+            <br>
+          </p>
+          <div>
+            <img src="images/ss_clinic_help/extra4_pharmacyManager.jpg" width="80%" alt="">
+            <br>
+            <br>
+            <br>
+          </div>
+          <p>
+            <strong>Invoice Manager</strong>
+            <br>
+            <span>A simple section for managing all the invoices and printing them.</span>
+          </p>
+          <div>
+            <img src="images/ss_clinic_help/28_invoiceManager.jpg" width="80%" alt="">
+            <br>
+            <br>
+            <br>
+          </div>
+          <p>
+            <strong>Commission Manager</strong>
+            <br>
+            <span>Clinic/Hospital can check their third party commission from here. They can search the person by name or by their
+              mobile number. They can also filter date range for specific timelines.</span>
+            <br>
+          </p>
+          <div>
+            <img src="images/ss_clinic_help/29_commissionManager.jpg" width="80%" alt="">
+            <br>
+            <br>
+            <br>
+          </div>
+          <p>
+            <strong>Send Notification</strong>
+            <br>
+            <span>From here user can send notification to Doctor, Patient and Clinic.Simple messages can be sent from here. You
+              may remember the notification bell from the earlier part of the document, notification sent by anyone is instantly
+              shown by the notification bell. A search option available for convenience </span>
+            <br>
+          </p>
+          <div>
+            <img src="images/ss_clinic_help/30_notificationPanel.jpg" width="80%" alt="">
+            <br>
+            <br>
+            <br>
+            <br>
+          </div>
+          <p>
+            <strong>THIS CONCLUDES A BASIC TUTORIAL OF THE CLINIC APP.</strong>
+            <br>
+            <strong>FOR FURTHER INSTRUCTIONS OR INQUIRY PLEASE CONTACT US AT </strong>
+            <i>contact@bdemr.com </i>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" src="js/toolbar.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script type="text/javascript">
+    $(function () {
+      $("#accordion").accordion();
+    });
+  </script>
+</body>
+
+</html>

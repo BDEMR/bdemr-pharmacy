@@ -1,0 +1,712 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower-assets/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower-assets/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower-assets/iron-icons/communication-icons.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+<link rel="import" href="../../bower-assets/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/gold-phone-input/gold-phone-input.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+
+
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-organization-manage-patient-stay">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+        width: 90%;
+      }
+
+      paper-tabs.basic-tabs {
+        --paper-tabs-selection-bar: {
+          color: var(--paper-teal-500);
+          background-color: var(--paper-teal-500);
+        }
+      }
+
+      .organization-info-card-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        color: #777777;
+      }
+
+      .organization-info-cards {
+        @apply(--layout-vertical);
+        /*@apply(--layout-center);*/
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding-bottom: 20px;
+      }
+
+      .organization-info-cards .row {
+        margin-left: 10px;
+        /*margin-right: 10px;*/
+        margin-top: 10px;
+      }
+
+      .organization-info-cards .hr {
+        margin-left: 20px;
+        margin-right: 20px;
+        height: 1px;
+        /*width: 100px;*/
+        background: #dddddd;
+      }
+
+      .organization-info-cards .row .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+      }
+
+      .organization-info-cards .row .modifier.online {
+        background: #757575;
+      }
+
+      .organization-info-cards .row .modifier.local-only {
+        background: #039BE5;
+      }
+
+      .organization-info-cards .row .modifier.locally-updated {
+        background: #009688;
+      }
+
+      .organization-info-cards .row .modifier.imported {
+        background: #4CAF50;
+      }
+
+      .info-row {
+        margin-top: 10px;
+      }
+
+      .top-info-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      .address1 {
+        margin-right: 10px;
+      }
+
+      .break-on-tablet {
+        @apply(--layout-horizontal);
+      }
+
+      @media screen and (max-width: 740px) {
+        .break-on-tablet {
+          display: block;
+        }
+      }
+
+      .val {
+        text-decoration: underline;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      [raised] {
+        background: white;
+      }
+
+      .checkbox-padding {
+        padding: 5px;
+      }
+
+      .list-heading {
+        text-transform: capitalize;
+        border-bottom: 1px solid #eee;
+        padding: 5px 10px;
+      }
+
+      #assistant-list-repeater {
+        height: 400px;
+      }
+
+      .location-item {
+        margin-right: 50px;
+        padding: 10px 0;
+      }
+
+      .seat-list {
+        max-height: 400px;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-teal-500);
+      }
+
+      .grid-sub-item {
+        background-color: #fafafa;
+        border-radius: 8px;
+        margin: 3px;
+        padding: 4px 8px;
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container custom-input-field">
+
+        <paper-progress indeterminate hidden$="[[!loadingCounter]]"></paper-progress>
+
+        <template is="dom-if" if="{{loadingCounter}}">
+          <h2 class="type center">[[$TRANSLATE('Please Wait, Loading', LANG)]]...</h2>
+        </template>
+
+        <!-- editing organization - start -->
+        <template is="dom-if" if="{{isOrganizationValid}}">
+
+          <paper-card class="">
+            <div class="card-content">
+              <div class="horizontal layout center top-info-row">
+                <div>[[$TRANSLATE('ID', LANG)]]: </div>
+                <div class="serial-number">[[organization.idOnServer]]</div>
+                <div class="flex"></div>
+              </div>
+              <div class="info-row">
+                <div>[[$TRANSLATE('Name', LANG)]]: [[organization.name]]</div>
+              </div>
+              <div class="info-row">
+                <div>[[$TRANSLATE('Region', LANG)]]: [[organization.effectiveRegion]]</div>
+              </div>
+              <div class="info-row">
+                <div>[[$TRANSLATE('Address', LANG)]]: [[organization.address]]</div>
+              </div>
+            </div>
+          </paper-card>
+          <br>
+
+          <div class="layout horizontal center">
+            <template is="dom-if" if="[[$equals(selectedPageIndex, 0)]]">
+              <paper-button class="btn btn-primary" on-tap="gotoAddSeatsPage">[[$TRANSLATE('Add Seats', LANG)]] &nbsp;
+                <iron-icon icon="add-box"></iron-icon>
+              </paper-button>
+            </template>
+
+            <template is="dom-if" if="[[$equals(selectedPageIndex, 0)]]">
+              <paper-button class="btn btn-primary" on-tap="gotoAddLocationsPage">[[$TRANSLATE('Add Locations', LANG)]] &nbsp;
+                <iron-icon icon="add-box"></iron-icon>
+              </paper-button>
+            </template>
+
+            <template is="dom-if" if="[[$equals(selectedPageIndex, 0)]]">
+              <paper-button class="btn btn-primary" on-tap="gotoAddPatientStatusPage">[[$TRANSLATE('Add Patient Status', LANG)]] &nbsp;
+                <iron-icon icon="add-box"></iron-icon>
+              </paper-button>
+            </template>
+
+            <template is="dom-if" if="[[!$equals(selectedPageIndex, 0)]]">
+              <paper-button class="btn btn-default" raised on-tap="gotoViewSeatsPage">
+                <iron-icon icon="arrow-back"></iron-icon>
+                &nbsp;x[[$TRANSLATE('Add Patient Status', LANG)]]
+              </paper-button>
+            </template>
+          </div>
+
+          <br>
+
+          <iron-pages selected="{{selectedPageIndex}}">
+            <!-- Manage Stay start -->
+            <section>
+              <paper-card>
+
+                <paper-tabs style="font-size: 18px; background-color: #fafafa;" class="basic-tabs" selected="{{selectedSubViewIndex}}">
+                  <paper-tab>[[$TRANSLATE('View seats', LANG)]]</paper-tab>
+                  <paper-tab>[[$TRANSLATE('Assign Memeber to Location', LANG)]]</paper-tab>
+                </paper-tabs>
+                
+                <iron-pages selected="{{selectedSubViewIndex}}">
+                  <!-- View seats - start -->
+                  <section>
+                    <div class="card-content">
+
+                      <div class="layout horizontal">
+    
+                        <vaadin-combo-box class="m-left-8" label="[[$TRANSLATE('Department', LANG)]]" items="[[patientStayObject.departmentList]]"
+                          on-selected-item-changed="departmentDropdownValueChanged" item-label-path="name">
+                          <template>[[item.name]]</template>
+                        </vaadin-combo-box>
+    
+                        <vaadin-combo-box hidden$="[[!unitList.length]]" class="m-left-8" label="[[$TRANSLATE('Unit', LANG)]]" items="[[unitList]]"
+                          on-selected-item-changed="unitDropdownValueChanged" item-label-path="name">
+                          <template>[[item.name]]</template>
+                        </vaadin-combo-box>
+    
+                        <vaadin-combo-box hidden$="[[!wardList.length]]" class="m-left-8" label="[[$TRANSLATE('Ward', LANG)]]" items="[[wardList]]"
+                          on-selected-item-changed="wardDropdownValueChanged" item-label-path="name">
+                          <template>[[item.name]]</template>
+                        </vaadin-combo-box>
+    
+                      </div>
+    
+                      <div class="m-top-8">
+                        <paper-checkbox class="m-left-8" checked="{{shouldShowVacant}}">[[$TRANSLATE('Show Vacant', LANG)]]</paper-checkbox>
+                        <paper-checkbox class="m-left-8" checked="{{shouldShowOccupied}}">[[$TRANSLATE('Show Occupied', LANG)]]</paper-checkbox>
+                        <paper-checkbox class="m-left-8" checked="{{shouldShowOverflow}}">[[$TRANSLATE('Show Overflow', LANG)]]</paper-checkbox>
+                      </div>
+                      <br>
+
+                      <div class="m-left-8">
+                        <span>[[$TRANSLATE('Locations', LANG)]]:</span>
+                        <template is="dom-repeat" items="[[patientStayObject.locations]]">
+                          <paper-checkbox class="checkbox-padding" on-tap="locationCheckboxTapped" data-loc="[[item]]">[[item]]</paper-checkbox>
+                        </template>
+                      </div>
+                      
+                      <div class="m-left-8">
+                        <span>[[$TRANSLATE('Patient Status', LANG)]]:</span>
+                        <template is="dom-repeat" items="[[patientStayObject.statusList]]">
+                          <paper-checkbox class="checkbox-padding" on-tap="locationCheckboxTapped" data-loc="[[item]]">[[item]]</paper-checkbox>
+                        </template>
+                      </div>
+                      
+
+
+                      <div class="horizontal layout wrap end-justified">
+                        <paper-button class="btn btn-default" on-tap="resetSeatsButtonClicked">[[$TRANSLATE('Reset', LANG)]]</paper-button>
+                        <paper-button class="btn btn-lg btn-primary" on-tap="viewSeatsButtonClicked">[[$TRANSLATE('View Seats', LANG)]]</paper-button>
+                      </div>
+    
+                    </div>
+                      
+                    <div class="card-custom-header">
+                      <div class="layout horizontal center">
+                        <div class="">Total [[matchedSeatList.length]] seats. Vacant:
+                          [[$countSeatList(matchedSeatList,
+                          'vacant', matchedSeatList.length, shownLocationList,
+                          shownLocationList.length)]] Occupied: [[$countSeatList(matchedSeatList, 'occupied',
+                          matchedSeatList.length,
+                          shownLocationList,
+                          shownLocationList.length)]] Overflow: [[$countSeatList(matchedSeatList, 'overflow',
+                          matchedSeatList.length,
+                          shownLocationList,
+                          shownLocationList.length)]]
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="card-content">
+
+                      <vaadin-grid class="m-top-8" items="[[matchedSeatList]]">
+                        <vaadin-grid-column resizable>
+                          <template class="header">[[$TRANSLATE('Seat', LANG)]]</template>
+                          <template>[[item.name]]</template>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column resizable>
+                          <template class="header">[[$TRANSLATE('Details', LANG)]]</template>
+                          <template><span class="type secondary caption">[[item.department]]>[[item.unit]]>[[item.ward]]</span></template>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column resizable>
+                          <template class="header">
+                            <vaadin-grid-filter path="patientName" value="[[nameString]]">
+                              <paper-input label="[[$TRANSLATE('Search By Name', LANG)]]" value="{{nameString}}" no-label-float></paper-input>
+                            </vaadin-grid-filter>
+                          </template>
+                          <template>
+                            <div>
+                              <span class="type caption-2 bg-gray">[[item.patientSerial]]</span>
+                              [[item.patientName]]
+                            </div>
+                          </template>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column resizable>
+                          <template class="header">
+                            <vaadin-grid-filter path="patientEmailOrPhone" value="[[phoneEmailString]]">
+                              <paper-input label="[[$TRANSLATE('Search By Email/Phone', LANG)]]" value="{{phoneEmailString}}" no-label-float></paper-input>
+                            </vaadin-grid-filter>
+                          </template>
+                          <template>[[item.patientEmailOrPhone]]</template>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column resizable>
+                          <template class="header">[[$TRANSLATE('Location', LANG)]]</template>
+                          <template>[[item.location]]</template>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column resizable>
+                          <template class="header">[[$TRANSLATE('Patient Status', LANG)]]</template>
+                          <template>[[item.status]]</template>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column resizable>
+                          <template class="header">[[$TRANSLATE('Admitted on', LANG)]]</template>
+                          <template>[[$formatDateTime(item.patientAdmittedDatetimeStamp)]]</template>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column resizable>
+                          <template class="header">[[$TRANSLATE('Bed Status', LANG)]]</template>
+                          <template>
+                            <div>
+                              <span hidden="[[!item.patientSerial]]" class="type caption-2 bg-gray success">[[$TRANSLATE('OCCUPIED', LANG)]]</span>
+                              <span hidden="[[!item.isOverflow]]" class="type caption-2 bg-gray danger">[[$TRANSLATE('OVERFLOW', LANG)]]</span>
+                            </div>
+                          </template>
+                        </vaadin-grid-column>
+                        <!-- <vaadin-grid-column resizable width="250px" flex-grow="0">
+                          <template class="header">Actions</template>
+                          <template>
+                            <div class="layout center horizontal wrap">
+                              <paper-button hidden$="[[!item.patientSerial]]" class="btn btn-sm btn-default m-8" on-tap="seatVacantTapped">Force
+                                Vacant</paper-button>
+                              <paper-button hidden$="[[item.patientSerial]]" class="btn btn-sm btn-default m-8" on-tap="seatAssignTapped">Assign
+                                Patient</paper-button>
+                              <paper-button class="btn btn-sm btn-danger m-8" on-tap="seatDeleteTapped">Delete</paper-button>
+                            </div>
+                          </template>
+                        </vaadin-grid-column> -->
+                      </vaadin-grid>
+                    </div>
+                  </section>
+                  <!-- View seats - end -->
+
+                  <!-- assign ward to member - start -->
+                  <section>
+                    <template is="dom-if" if="[[_isEmptyArray(matchedInLocationList.length)]]">
+                      <div class="card-content horizontal layout center center-justified">
+                        <div class="body type secondary">-- [[$TRANSLATE('no location available', LANG)]] --</div>
+                      </div>
+                    </template>
+      
+                    <paper-listbox>
+                      <template id="pcc-record-list" is="dom-repeat" items="[[matchedInLocationList]]">
+                        <paper-item class="custom layout horizontal center">
+                          <div class="type caption secondary">[[_returnSerial(index)]]</div>
+                          <div class="flex m-left-8">
+                            <div class="type body-lead">{{item.name}} <span class="type caption-2 bold bg-gray">[[item.type]]</span></div>
+                            <div class="type caption-2 secondary"><i>{{item.locationPath}}</i></div>
+                            
+                            <div class="horizontal layout wrap">
+                              <div class="type body"><strong> [[$TRANSLATE('Assigned Members', LANG)]]:</strong></div>
+                              <template is="dom-repeat" items="[[item.assignedUserList]]" as="member">
+                                <div class="type body m-horizontal-4">{{member.name}},</div>
+                              </template>
+                              
+                            </div>
+                          </div>
+                          
+                          <paper-menu-button class="p-0" vertical-align="bottom" horizontal-align="right">
+      
+                            <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+                            <paper-menu id="memberOptionsMenu" class="dropdown-content">
+                              <paper-item on-tap="showAssignMemberDialog">[[$TRANSLATE('Assign new member', LANG)]]</paper-item>
+                              <paper-item on-tap="showAllMemberListOnSelectedLocation">[[$TRANSLATE('Delete memebers', LANG)]]</paper-item>
+                            </paper-menu>
+                          </paper-menu-button>
+                        </paper-item>
+                      </template>
+                    </paper-listbox>
+                  </section>
+                  <!-- assign ward to member - end -->
+                </iron-pages>
+
+              </paper-card>
+
+            </section>
+            <!-- Manage Stay end -->
+
+            <!-- Add Seats -->
+            <section>
+              <paper-card class="">
+                <div class="card-custom-header">
+                  <div class="layout horizontal center justified flex">
+                    <div>
+                      <template is="dom-if" if="[[$in(level, 'department', 'unit', 'ward')]]">
+                        <paper-button class="btn btn-sm btn-default" raised on-tap="upTapped">
+                          <iron-icon icon="arrow-back"></iron-icon>
+                          [[$TRANSLATE('Go Back One Level', LANG)]]
+                        </paper-button>
+                      </template>
+                    </div>
+                    <div class="m-left-8 flex layout horizontal">
+                      <div class="layout horizontal center">[[organization.name]]</div>
+                      <template is="dom-if" if="[[$in(level, 'department', 'unit', 'ward')]]">
+                        <div class="">
+                          <iron-icon icon="chevron-right"></iron-icon>
+                          <span>[[selectedDepartmentName]]</span>
+                        </div>
+                      </template>
+                      <template is="dom-if" if="[[$in(level, 'unit', 'ward')]]">
+                        <div class="">
+                          <iron-icon icon="chevron-right"></iron-icon>
+                          <span>[[selectedUnitName]]</span>
+                        </div>
+                      </template>
+                      <template is="dom-if" if="[[$in(level,'ward')]]">
+                        <div class="">
+                          <iron-icon icon="chevron-right"></iron-icon>
+                          <span>[[selectedWardName]]</span>
+                        </div>
+                      </template>
+                    </div>
+
+                  </div>
+                </div>
+
+                <div class="card-content">
+                  <paper-input class="flex" value="{{newItemName}}" label="Add New [[showingLevel]]" on-keyup="addNewItemOnEnter">
+                    <paper-button suffix class="btn btn-primary" on-tap="addNewItemTapped">[[$TRANSLATE('Add', LANG)]]</paper-button>
+                  </paper-input>
+                  <br>
+                  <template is="dom-if" if="[[!itemList.length]]">
+                    <div class="layout vertical center m-16">[[$TRANSLATE('No Data Added', LANG)]]...</div>
+                  </template>
+                  <template is="dom-if" if="[[itemList.length]]">
+                    <h3 class="list-heading">[[showingLevel]]s</h3>
+                    <paper-listbox>
+                      <template id="assistant-list-repeater" is="dom-repeat" items="[[itemList]]" as="item">
+                        <paper-item class="custom layout horizontal center">
+                          <div class="flex">
+                            <div class="type body capitalize">[[item.name]]</div>
+                            <!-- <div class="type caption secondary">Info</div>                           -->
+                          </div>
+                          <template is="dom-if" if="[[$in(showingLevel,'ward')]]">
+                            <div hidden>[[item]]</div>
+                            <paper-button class="btn btn-primary btn-sm" raised on-tap="addTapped">
+                              <iron-icon icon="add-box"></iron-icon>&nbsp; [[$TRANSLATE('Add Seats', LANG)]]
+                            </paper-button>
+                          </template>
+                          <template is="dom-if" if="[[$in(level, 'department', 'hospital')]]">
+                            <div hidden>[[item]]</div>
+                            <paper-button class="btn btn-primary btn-sm" on-tap="itemOpenTapped">
+                              <iron-icon icon="launch"></iron-icon>&nbsp; [[$TRANSLATE('Open', LANG)]]
+                            </paper-button>
+                          </template>
+                          <div hidden>[[item]]</div>
+                          <paper-button class="btn btn-primary btn-sm" on-tap="itemViewSeatsTapped">
+                            <iron-icon icon="folder"></iron-icon>&nbsp; [[$TRANSLATE('View Seats', LANG)]]
+                          </paper-button>
+                          <paper-button class="btn btn-danger btn-sm" on-tap="itemDeleteTapped">
+                            <iron-icon icon="delete"></iron-icon>&nbsp; [[$TRANSLATE('Delete', LANG)]]
+                          </paper-button>
+                          <!-- <div class="layout horizontal m-horizontal-4 wrap">
+                            <div class="type caption">[[item.email]]&nbsp;</div>
+                            <div class="type caption">([[item.phone]])</div>
+                          </div> -->
+                        </paper-item>
+                      </template>
+                    </paper-listbox>
+                  </template>
+
+                </div>
+
+                <div class="card-actions layout horizontal center">
+                  <!-- <paper-checkbox class="m-left-8" checked="{{shouldKeepRefreshingUi}}"> Keep Refreshing</paper-checkbox> -->
+                  <paper-checkbox class="m-left-8" checked="{{patientStayObject.isPublic}}"> [[$TRANSLATE('Make Publicly Available', LANG)]]</paper-checkbox>
+                  <div class="flex"></div>
+                  <paper-button raised on-tap="saveTapped" class="btn btn-success">
+                    <iron-icon icon="save"></iron-icon>
+                    &nbsp;[[$TRANSLATE('SAVE HOSPITAL DATA', LANG)]]
+                  </paper-button>
+                </div>
+
+              </paper-card>
+
+
+              <paper-card>
+                <div class="card-content">
+                  <template is="dom-if" if="[[viewSeatItemsClicked]]">
+                    <template id="assistant-list-repeater" is="dom-repeat" items="[[seatList]]" as="seat" sort="sortBySeatIndex">
+                      <div class="layout horizontal center">
+                        <paper-input value="[[seat.department]]" disabled></paper-input>
+                        <paper-input value="[[seat.unit]]" disabled></paper-input>
+                        <paper-input value="[[seat.ward]]" disabled></paper-input>
+                        <paper-input value="{{seat.name}}"></paper-input>
+                        <template is="dom-if" if="[[seat.patientSerial]]">
+                          <div>[[seat.location]]</div>
+                        </template>
+                        <template is="dom-if" if="[[seat.isOverflow]]">
+                          <div style="color: red">OVERFLOW</div>
+                        </template>
+                      </div>
+                    </template>
+                  </template>
+                </div>
+              </paper-card>
+
+            </section>
+            <!-- Add Seats end -->
+
+            <!-- Add Locations -->
+            <section>
+              <paper-card>
+                <div class="card-custom-header">
+                  <div class="layout horizontal justified">
+                    <div class="type bold">[[$TRANSLATE('Add Locations', LANG)]]</div>
+                    <div class="type caption secondary">[[organization.name]]</div>
+                  </div>
+                </div>
+                <div class="card-content">
+                  <ul class="layout horizontal wrap">
+                    <template is="dom-repeat" items="[[patientStayObject.locations]]">
+                      <li class="location-item">[[item]]</li>
+                    </template>
+                  </ul>
+                  <paper-input class="p-16" label="[[$TRANSLATE('Add Location', LANG)]]" value="{{location}}" on-keyup="addLocation"
+                    placeholder="Press enter to Add Location"></paper-input>
+                </div>
+
+              </paper-card>
+            </section>
+            <!-- Add Locatios end -->
+
+            <!-- Add Status -->
+            <section>
+              <paper-card>
+                <div class="card-custom-header">
+                  <div class="layout horizontal justified">
+                    <div class="type bold">[[$TRANSLATE('Add Status', LANG)]]</div>
+                    <div class="type caption secondary">[[organization.name]]</div>
+                  </div>
+                </div>
+                <div class="card-content">
+                  <ul class="layout horizontal wrap">
+                    <template is="dom-repeat" items="[[patientStayObject.statusList]]">
+                      <li class="location-item">[[item]]</li>
+                    </template>
+                  </ul>
+                  <paper-input class="p-16" label="[[$TRANSLATE('Add Patient Status', LANG)]]" value="{{patientStatus}}" on-keyup="addPatientStatus"
+                    placeholder="Press enter to Add a Patient Status"></paper-input>
+                </div>
+
+              </paper-card>
+            </section>
+            <!-- Add Status end -->
+          </iron-pages>
+
+        </template>
+        <!-- editing organization - end -->
+
+        <!-- Dialog for - Organization Member list - start -->
+        <paper-dialog id="dialogOrgMemberList">
+
+            <div class="card-custom-header">
+              <div>
+                <div class="type title">[[$TRANSLATE('Organization Members', LANG)]]</div>
+                <div class="type caption-2 ">Currently there are [[memberList.length]] members in this organization.</div>
+              </div>
+            </div>
+
+            <paper-dialog-scrollable>
+              <template is="dom-if" if="[[memberList.length]]">
+                <div class="p-0">
+                  <paper-listbox>
+
+                    <template id="org-member-list-repeater" is="dom-repeat" items="[[memberList]]" as="member">
+                      <paper-item class="custom layout horizontal center">
+
+                        <div class="type caption secondary">
+                          [[_returnSerial(index)]]
+                        </div>
+
+                        <div class="flex m-left-8">
+
+                          <div class="type body capitalize">[[member.name]]</div>
+
+                          <div class="layout horizontal wrap">
+                            <div class="type caption m-right-8">[[member.email]]&nbsp;</div>
+                            <div class="type caption">([[member.phone]])</div>
+                          </div>
+                        </div>
+
+                        <paper-menu-button horizontal-align="right" no-animations>
+                          <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                          <paper-menu class="dropdown-content">
+
+                            <paper-item on-tap="onTapAssignMemberToLocation">[[$TRANSLATE('Assign', LANG)]]</paper-item>
+
+                          </paper-menu>
+                        </paper-menu-button>
+
+                      </paper-item>
+                    </template>
+
+                  </paper-listbox>
+
+                </div>
+              </template>
+            </paper-dialog-scrollable>
+
+            <div class="buttons">
+              <paper-button dialog-dismiss raised class="colored">[[$TRANSLATE('Done', LANG)]]</paper-button>
+            </div>
+
+          </paper-dialog>
+          <!-- Dialog for - Organization Member list - end -->
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-organization-manage-patient-stay.coffee-compiled.js"></script>
+</dom-module>

@@ -1,0 +1,167 @@
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-medicine-dispensation">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .medication-item {
+        border-top: 2px solid var(--brand-primary-color);
+      }
+
+      .medication-item:nth-child(odd) {
+        background-color: var(--paper-grey-100);
+      }
+
+      .medication-item .patient-name {
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .medication-item .patient-info {
+        background-color: var(--paper-grey-200);
+        padding: 10px;
+        border-radius: 5px;
+      }
+
+      .prescription {
+        border-bottom: 1px solid #eee;
+        margin-left: 15px;
+      }
+
+      .prescription:nth-last-child(2) {
+        border: none;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+    </style>
+
+    <!-- local DOM -->
+
+
+    <div class="master-container">
+
+      <div class="limiting-container custom-input-field">
+
+
+        <!-- Organization Selection- start -->
+
+        <paper-card>
+          <div class="card-content">
+
+            <div class="layout horizontal justified center">
+
+              <vaadin-combo-box class="flex m-left-8" label="[[$TRANSLATE('Department', LANG)]]" items="[[patientStayObject.departmentList]]"
+                on-selected-item-changed="departmentDropdownValueChanged" item-label-path="name">
+                <template>[[item.name]]</template>
+              </vaadin-combo-box>
+
+              <vaadin-combo-box hidden$="[[!unitList.length]]" class="flex m-left-8" label="[[$TRANSLATE('Unit', LANG)]]" items="[[unitList]]"
+                on-selected-item-changed="unitDropdownValueChanged" item-label-path="name">
+                <template>[[item.name]]</template>
+              </vaadin-combo-box>
+
+              <vaadin-combo-box hidden$="[[!wardList.length]]" class="flex m-left-8" label="[[$TRANSLATE('Ward', LANG)]]" items="[[wardList]]"
+                on-selected-item-changed="wardDropdownValueChanged" item-label-path="name">
+                <template>[[item.name]]</template>
+              </vaadin-combo-box>
+
+              <paper-button raised class="btn btn-primary" on-tap="showMedicineButtonClicked">[[$TRANSLATE('Show Medicines', LANG)]]</paper-button>
+
+            </div>
+
+          </div>
+        </paper-card>
+
+
+        <paper-card heading="[[$TRANSLATE('Medication List', LANG)]]" class="m-top-8">
+          <paper-progress indeterminate hidden$="[[!loading]]"></paper-progress>
+          <div class="">
+            <template is="dom-repeat" items="[[matchingMedicationList]]">
+              <div class="medication-item">
+                <div class="patient-info layout horizontal">
+                  <div>[[$returnSerial(index)]].</div>
+                  <div class="flex m-left-8">
+                    <div class="patient-name">[[$getFullName(item.patient.name)]]</div>
+                    <div>[[$TRANSLATE('Phone', LANG)]]: [[item.patient.phoneNumberList.0.phoneNumber]] | [[$TRANSLATE('Email', LANG)]]:
+                      [[item.patient.emailAddressList.0.emailAddress]]</div>
+                    <div>[[$TRANSLATE('Seat Number', LANG)]]: [[item.patient.seat]]</div>
+                  </div>
+                </div>
+
+                <div class="m-left-8 m-top-8">
+                  <template is="dom-if" if="[[!item.medicationList.length]]">
+                    <p class="type center secondary">[[$TRANSLATE('No Medications', LANG)]]</p>
+                  </template>
+                  <template is="dom-repeat" items="[[item.medicationList]]" as="medicine">
+                    <paper-item class="prescription">
+                      <div class="flex-2">[[medicine.data.brandName]]</div>
+                      <div class="flex-1">[[medicine.data.doseDirection]]</div>
+                      <div class="flex-2 type caption-2">
+                        <span class="type secondary">[[$TRANSLATE('Last Dose', LANG)]]: </span>
+                        <span>[[_getLastDoseDateTime(medicine.data.intakeDateTimeStampList,
+                          medicine.data.intakeDateTimeStampList.length)]]</span>
+                      </div>
+                      <!-- <div class="flex-1 layout vertical">
+                        <span class="type secondary caption-2">Next Dose</span>
+                        <span>[[_getNextDoseDateTime(item.data.intakeDateTimeStampList, item.data.nextDoseDateTimeStamp)]]</span>
+                      </div> -->
+                      <div class="">
+                        <paper-button class="btn btn-primary btn-sm" on-tap="tookDoseClicked">[[$TRANSLATE('Give Medicine', LANG)]]</paper-button>
+                      </div>
+                    </paper-item>
+                  </template>
+                </div>
+              </div>
+            </template>
+          </div>
+        </paper-card>
+
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-medicine-dispensation.js"></script>
+</dom-module>

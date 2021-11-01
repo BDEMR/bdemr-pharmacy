@@ -1,0 +1,766 @@
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input-container.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+<link rel="import" href="../../bower-assets/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower-assets/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower-assets/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-patient-signup">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+
+      paper-tabs.basic-tabs {
+        --paper-tabs-selection-bar: {
+          color: var(--paper-teal-500);
+          background-color: var(--paper-teal-500);
+        }
+      }
+
+      paper-tab {
+        font-size: 18px;
+      }
+
+      paper-card {
+        border-radius: 6px;
+        text-align: left !important;
+        background-color: #fff;
+      }
+
+      paper-card ::content .header {
+        border: none;
+      }
+
+      /*paper-card ::content .card-content {
+        padding: 40px 16px;
+      }*/
+
+      paper-button {
+        text-transform: capitalize;
+      }
+
+      paper-button.btn.text-success {
+        color: rgb(47, 127, 50) !important;
+      }
+      paper-button.btn.text-info {
+        color: var(--paper-blue-700) !important;
+      }
+
+      paper-button.btn.text-warning {
+        color: var(--paper-orange-900) !important;
+      }
+
+      .btn.success {
+        background-color: var(--paper-green-700);
+        color: #fff;
+      }
+
+      .p-horizontal-16 {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .p-horizontal-8 {
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+
+      .m-0 {
+        margin: 0 !important;
+      }
+
+      .m-top-40 {
+        margin-top: 40px;
+      }
+
+      .m-top-24 {
+        margin-top: 24px;
+      }
+
+      .m-top-16 {
+        margin-top: 16px;
+      }
+
+      .m-top-8 {
+        margin-top: 8px;
+      }
+
+      .m-right-16 {
+        margin-right: 16px;
+      }
+
+      /*.card {
+        width: 370px;
+      }*/
+
+      paper-button.btn.medium {
+        font-size: 14px;
+      }
+      .user-avatar {
+        height: 64px;
+        width: 64px;
+        border-radius: 50%;
+      }
+
+      .user-avatar.small {
+        height: 36px;
+        width: 36px;
+      }
+
+      .user-avatar.medium {
+        height: inherit;
+        width: inherit;
+      }
+
+      .type-content paper-button {
+        margin: 8px;
+        width: calc(50% - 18px);
+      }
+
+      .user-info {
+        background-color: #f7f7f7;
+        padding: 16px 24px !important;
+      }
+      iron-icon.icon.small {
+        height: 16px;
+        width: 16px;
+      }
+
+      .m-right-4 {
+        margin-right: 4px;
+      }
+
+      .image.normal-size {
+        height: 64px;
+        width: 64px;
+      }
+
+      .image.mid-size {
+        height: 48px;
+        width: 48px;
+      }
+
+      .shadow-2 {
+        box-shadow: var(--shadow-elevation-2dp_-_box-shadow);
+      }
+
+      .content {
+        /*padding: 8px;*/
+      }
+
+
+      .content.left {
+        width: calc(40%);
+      }
+
+      .content.right {
+        width: calc(60%);
+      }
+
+      .custom-input {
+        width: calc(100% - 26px);
+      }
+
+      @media screen and (min-width: 656px) {
+        .custom-input {
+          width: calc(50% - 26px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .custom-input {
+          width: calc(33.33333% - 26px);
+        }
+      }
+
+      .paper-custom {
+        background-color: #fff;
+        border: 1px solid #dadada;
+        border-radius: 6px;
+        padding: 0px 8px 12px 8px;
+        margin: 8px;
+        min-width: calc(100% - 26px);
+      }
+
+
+
+      @media screen and (min-width: 656px) {
+        .paper-custom {
+          min-width: calc(50% - 26px);
+        }
+        .paper-custom.full {
+          min-width: calc(100% - 26px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .paper-custom {
+          min-width: calc(33.33333% - 26px);
+        }
+        .paper-custom.full {
+          min-width: calc(100% - 26px);
+        }
+      }
+
+      .custom-label-2 {
+        background-color: #fafafa;
+        padding: 6px 12px;
+        margin: 8px;
+        width: calc(100% - 36px);
+        border-radius: 6px;
+        border: 2px solid #eee;
+      }
+
+      .custom-label-2 .type {
+        font-weight: 500 !important;
+      }
+
+      .custom-label-2.normal {
+        border-color: #43A047;
+        color: #43A047 !important;
+      }
+
+      .custom-label-2.warning {
+        border-color: #E65100;
+        color: #E65100 !important;
+      }
+
+      .custom-label-2.danger {
+        border-color: #E53935;
+        color: #E53935 !important;
+      }
+
+      @media screen and (min-width: 656px) {
+        .custom-label-2 {
+          width: calc(50% - 36px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .custom-label-2 {
+          width: calc(33.33333% - 36px);
+        }
+      }
+
+      .custom-radio-button-group.full-width {
+        width: calc(100% - 26px) !important;
+      }
+
+      .custom-label.full-width {
+        width: calc(100% - 26px) !important;
+      }
+
+
+      .custom-radio-button-group,
+      .custom-label {
+        background-color: #fff;
+        border: 1px solid #dadada;
+        border-radius: 6px;
+        padding: 8px;
+        margin: 8px;
+        width: calc(100% - 26px);
+      }
+
+      @media screen and (min-width: 656px) {
+        .custom-radio-button-group,
+        .custom-label {
+          width: calc(50% - 26px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .custom-radio-button-group,
+        .custom-label {
+          width: calc(33.33333% - 26px);
+        }
+      }
+
+      .profile-image-area {
+        position: relative;
+        height: 128px;
+        width: 128px;
+        margin-top: 33px;
+      }
+
+      #fileInput {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        left: 0;
+        top: 0;
+        cursor: pointer;
+        opacity: 0;
+      }
+
+      #fileInput:hover {
+        background-color: rgba(0,0,0, .56)
+      }
+
+      .p-horizontal-40 {
+        padding-left: 40px;
+        padding-right: 40px;
+      }
+      .val {
+        text-decoration: underline;
+      }
+
+      .custom-input{
+        margin-left: 8px;
+        margin-right: 8px;
+        width: calc(100% - 16px);
+      }
+
+      @media screen and (min-width: 656px) {
+        .custom-input{
+          width: calc(50% - 16px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .custom-input{
+          width: calc(33.33333% - 16px);
+        }
+      }
+
+      .custom-checkbox {
+        width: calc(100% - 16px);
+        margin-left: 8px;
+        margin-right: 8px;
+      }
+
+      @media screen and (min-width: 656px) {
+        .custom-checkbox {
+          width: calc(50% - 16px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .custom-checkbox {
+          width: calc(33.33333% - 16px);
+        }
+      }
+
+      .card-custom-header {
+        padding: 8px;
+        /*border-bottom: 1px solid var(--paper-grey-200);*/
+        background-color: var(--paper-grey-50);
+      }
+
+      .deep {
+        background-color: var(--paper-grey-200);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        color: var(--brand-primary-color);
+      }
+
+      vaadin-combo-box ::content paper-input-container {
+        padding: 8px 0;
+      }
+
+      .custom-radio-button-group {
+        margin: 8px;
+        width: calc(100% - 16px);
+      }
+
+      @media screen and (min-width: 656px) {
+        .custom-radio-button-group {
+          width: calc(50% - 16px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .custom-radio-button-group {
+          width: calc(33.33333% - 16px);
+        }
+      }
+
+      .btn-add {
+        min-width: 3em;
+      }
+
+      .custom-item {
+        padding: 6px 12px;
+        border-radius: 6px;
+        margin: 6px 4px;
+        border: 1px solid #dadada;
+        background-color: #fff
+      }
+
+      .full-width {
+        width: calc(100% - 16px) !important;
+      }
+
+      .profile-image {
+        height: 78px;
+        width: 78px;
+        border-radius: 50%;
+        border: 2px solid #f7f7f7;
+      }
+      .card-item {
+        border-radius: 6px;
+        margin: 4px;
+        border: 1px solid #eee;
+        background-color: #fff;
+      }
+      .btn-add {
+        min-width: 0;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+        background-color: #eceff1;
+        color: rgba(0, 0, 0, .87);
+      }
+
+      .btn-add.small {
+        margin: 3px;
+        font-size: 14px;
+      }
+
+      .custom-label {
+        padding: 4px 8px;
+        border: 1px solid #dadada;
+        border-radius: 6px;
+        margin: 8px;
+        /*background-color: #f7f7f7;*/
+        width: calc(100% - 26px);
+      }
+
+      @media screen and (min-width: 656px) {
+        .custom-label {
+          width: calc(50% - 26px);
+        }
+      }
+
+      @media screen and (min-width: 976px) {
+        .custom-label {
+          width: calc(33.33333% - 26px);
+        }
+      }
+
+      .bg-gray {
+        padding: 3px 6px;
+        display: table;
+      }
+
+      .custom-input ::content paper-input-container [suffix] {
+        color: rgba(0,0,0, .54) !important;
+      }
+
+      .text-bold {
+        font-weight: 500;
+        color: rgba(0,0,0,.87);
+      }
+
+      .ageInStyle {
+        position: relative;
+        left: 10px;
+      }
+      
+
+    </style>
+
+    <!-- local DOM -->
+    <div class="master-container">
+      <div class="limiting-container">
+        <paper-card class="card custom-input-field">
+          <div class="card-content">
+            <iron-image class="p-horizontal-8" src="../../images/bdemr_logo_small.png" preload></iron-image>
+            <div class="type headline p-horizontal-8">[[$TRANSLATE('Patient Signup', LANG)]]</div>
+          </div>
+
+          <paper-tabs class="basic-tabs" selected="{{selectedPage}}" noink='true'>
+            <paper-tab>[[$TRANSLATE('General', LANG)]]</paper-tab>
+            <paper-tab>[[$TRANSLATE('Additional', LANG)]]</paper-tab>
+          </paper-tabs>
+
+          <iron-pages selected="{{selectedPage}}">
+
+            <section>
+              <div class="card-content">
+                <!-- <div class="horizontal layout wrap">
+                  <div class="horizontal layout center-justified center">
+                    <div class="profile-image-area">
+                      <iron-image class="user-avatar medium" src$="[[profileImage]]" preload sizing="cover"></iron-image>
+                      <input id="fileInput" type="file" accept="image/*" on-change="fileInputChanged"></paper-input>
+                    </div>
+                  </div>
+                  <div class="type caption-2 text-center secondary m-top-8 p-horizontal-8 center horizontal layout flex">
+                    <div class="flex">we recommend you to add your profile photo so that your doctor/service provider can identify you better.</div>
+                  </div>
+                </div> -->
+
+                <paper-input class="custom-input paper-custom full" label="[[$TRANSLATE('Full Name', LANG)]]" required value="{{patient.name}}" auto-validate error-message="Patient Name is Required!" on-keyup="checkNextBtnStatus"></paper-input>
+
+                <div class="custom-input paper-custom horizontal layout full">
+
+                  <!-- <vaadin-date-picker on-keyup="checkNextBtnStatus" required auto-validate 
+                  error-message="Date of Birth is Required!" class="flex m-right-16" type="date" 
+                  max="[[$getTodayDate()]]"  value="{{patient.dateOfBirth}}" label="Date of Birth" on-value-changed="calculateAge"></vaadin-date-picker> -->
+
+                  <paper-input class="flex m-right-16" on-keyup="checkNextBtnStatus" label="[[$TRANSLATE('Date of Birth', LANG)]]" type="date" value="{{patient.dateOfBirth}}" on-value-changed="calculateAge"></paper-input>
+
+                </div>
+
+                <div class="ageInStyle">[[$TRANSLATE('Age In (If patient is unable to provide Date of birth)', LANG)]]</div>
+
+                <div class="custom-input paper-custom horizontal layout full">
+                  <!-- Date picker for age in years -->
+                  <paper-input class="m-right-24" label="[[$TRANSLATE('Years', LANG)]]" min="0" type="number" value="{{ageInYears}}" on-change="makeDOBFromYMD"></paper-input>
+
+                  <!-- Date picker for age in months -->
+                  <paper-input label="[[$TRANSLATE('Months', LANG)]]" min="0" type="number" value="{{ageInMonths}}" on-change="makeDOBFromYMD"></paper-input>
+                </div>
+
+                
+                <div class="custom-radio-button-group full-width">
+                  
+                  <div class="type body secondary">[[$TRANSLATE('Gender', LANG)]]</div>
+                  <paper-radio-group selected="{{patient.gender}}">
+                    <paper-radio-button name="male">[[$TRANSLATE('Male', LANG)]]</paper-radio-button>
+                    <paper-radio-button name="female">[[$TRANSLATE('Female', LANG)]]</paper-radio-button>
+                    <paper-radio-button name="other">[[$TRANSLATE('Other', LANG)]]</paper-radio-button>
+                  </paper-radio-group>
+                </div>
+
+                <paper-input class="custom-input paper-custom full" class="p-horizontal-8" value="{{patient.phone}}" label="[[$TRANSLATE('Phone Number', LANG)]]" pattern="^[0-9]{11,11}(-[0-9]*){0,1}$" required auto-validate error-message="Phone Number Required. i.e.: 01712345678 or 01712345678-12'" char-counter minlength="11" maxlength="14">
+                  <div prefix>+88</div>
+                </paper-input>
+
+                <template is="dom-if" if="[[errorMsg]]">
+                  <div class="p-top-8 type caption-2 danger p-horizontal-8 horizontal layout center">
+                    <iron-icon icon="icons:info-outline" class="icon small m-right-4"></iron-icon>
+                    <div class="flex">{{errorMsg}}</div>
+                  </div>
+                </template>
+
+                <template is="dom-if" if="[[successMsg]]">
+                  <div class="p-top-8 type caption-2 primary p-horizontal-8 horizontal layout center">
+                    <iron-icon icon="icons:info-outline" class="icon small m-right-4"></iron-icon>
+                    <div class="flex">{{successMsg}}</div>
+                  </div>
+                </template>
+
+                <paper-input class="custom-input paper-custom full" class="p-horizontal-8" value="{{patient.repeatPhone}}" required label="[[$TRANSLATE('Repeat Phone Number', LANG)]]"
+                  char-counter minlength="11" maxlength="14" on-keyup="_checkForPhoneNumberMatch">
+                  <div prefix>+88</div>
+                </paper-input>
+
+                <template is="dom-if" if="[[errorMsg2]]">
+                  <div class="p-top-8 type caption-2 danger p-horizontal-8 horizontal layout center">
+                    <iron-icon icon="icons:info-outline" class="icon small m-right-4"></iron-icon>
+                    <div class="flex">{{errorMsg2}}</div>
+                  </div>
+                </template>
+
+                <template is="dom-if" if="[[successMsg2]]">
+                  <div class="p-top-8 type caption-2 primary p-horizontal-8 horizontal layout center">
+                    <iron-icon icon="icons:info-outline" class="icon small m-right-4"></iron-icon>
+                    <div class="flex">{{successMsg2}}</div>
+                  </div>
+                </template>
+
+                <paper-input class="custom-input paper-custom full" label="[[$TRANSLATE('Email (optional)', LANG)]]" value="{{patient.email}}" pattern='^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$' error-message="Please Enter valid Email."></paper-input>
+                
+                <paper-input class="custom-input paper-custom full" 
+                  label="[[$TRANSLATE('Supervisor ID (for third party)', LANG)]]" 
+                  value="{{patient.supervisorId}}"></paper-input>
+
+
+
+                <!-- <paper-input class="custom-input paper-custom full" label="Repeat Email" value="{{patient.repeatEmail}}" on-keyup="_checkForEmailMatch"></paper-input>
+                <template is="dom-if" if="[[errorMsg3]]">
+                  <div class="p-top-8 type caption-2 danger p-horizontal-8 horizontal layout center">
+                    <iron-icon icon="icons:info-outline" class="icon small m-right-4"></iron-icon>
+                    <div class="flex">{{errorMsg3}}</div>
+                  </div>
+                </template>
+
+                <template is="dom-if" if="[[successMsg3]]">
+                  <div class="p-top-8 type caption-2 primary p-horizontal-8 horizontal layout center">
+                    <iron-icon icon="icons:info-outline" class="icon small m-right-4"></iron-icon>
+                    <div class="flex">{{successMsg3}}</div>
+                  </div>
+                </template> -->
+                
+                <vaadin-combo-box class="custom-input paper-custom full" label="[[$TRANSLATE('Patient Type', LANG)]]" items="{{patientTypeList}}" value="{{patient.patientType}}"  allow-custom-value="true"></vaadin-combo-box>
+                
+                <!-- <paper-input class="custom-input paper-custom full" label="Password" required value="{{patient.password}}" auto-validate error-message="Password is Required!"></paper-input> -->
+
+                <!-- <paper-input class="custom-input paper-custom full" label="Doctor Access Pin" required value="{{patient.doctorAccessPin}}" auto-validate error-message="Doctor Access Pin is Required!"></paper-input> -->
+              </div>
+            </section>
+            
+            <section>
+              <div class="card-item p-8">
+                <div class="horizontal layout center wrap">
+                  <div class="type body-lead primary m-horizontal-4">[[$TRANSLATE('Drug Allergy', LANG)]]</div>
+                  <paper-radio-group class="flex" selected="{{patient.drugAllergy.value}}">
+                    <paper-radio-button name="yes">[[$TRANSLATE('Yes', LANG)]]</paper-radio-button>
+                    <paper-radio-button name="no">[[$TRANSLATE('No', LANG)]]</paper-radio-button>
+                    <paper-radio-button name="Not Known">[[$TRANSLATE('Not Known', LANG)]]</paper-radio-button>
+                  </paper-radio-group>
+                  <div class="flex"></div>
+                  <paper-button hidden$="{{!$equals(patient.drugAllergy.value, 'yes')}}" class="btn-add" on-tap="addAnotherDrugAllergy" >[[$TRANSLATE('Add', LANG)]]</paper-button>
+                </div>
+                
+                <div hidden$="{{!$equals(patient.drugAllergy.value, 'yes')}}">
+                  <template is="dom-repeat" items="[[patient.drugAllergy.list]]">
+                    <div class="horizontal layout center">
+                      <paper-input class="flex" value="{{item.type}}" label="[[$TRANSLATE('Add Allergy', LANG)]]"></paper-input>
+                      <paper-icon-button icon="delete" on-tap="deleteDrugAllergy"></paper-icon-button>
+                    </div>
+                  </template>
+                </div>
+              </div>
+
+              <div class="card-item p-8">
+                <paper-input class="m-horizontal-4" value="{{patient.allergy}}" label="[[$TRANSLATE('Allergy', LANG)]]"></paper-input>
+
+                <vaadin-combo-box class="custom-input m-horizontal-4 flex full-width" label="[[$TRANSLATE('Blood Group', LANG)]]" items="{{bloodGroupList}}" allow-custom-value="true" value="{{patient.bloodGroup}}"></vaadin-combo-box>
+
+
+                <paper-input class="custom-input full-width" type="number" value="{{patient.nationalIdCardNumber}}" label="[[$TRANSLATE('National ID', LANG)]]"></paper-input>
+
+              </div>
+              <!-- basic - end -->
+
+              <!-- Contact Person Name - start -->
+              <div class="card-item p-8">
+                <div class="type body-lead primary m-horizontal-4">[[$TRANSLATE('Emergency Contact', LANG)]]</div>
+
+                <div class="horizontal layout wrap">
+                  <paper-input type="text" class="m-horizontal-4 flex" value="{{patient.emmergencyContact.name}}" label="[[$TRANSLATE('Person Name', LANG)]]"></paper-input>
+
+                  <paper-input type="text" class="m-horizontal-4 flex" value="{{patient.emmergencyContact.relation}}" label="[[$TRANSLATE('Relation', LANG)]]"></paper-input>
+
+
+                  <paper-input class="m-horizontal-4" class="p-horizontal-8" value="{{patient.emmergencyContact.phoneNumber}}" label="[[$TRANSLATE('Phone Number', LANG)]]" char-counter minlength="7" maxlength="11">
+                        <div prefix>+88</div>
+                      </paper-input>
+                </div>
+              </div>
+              <!-- Contact Person Name - end -->
+
+              <!-- Family info - start -->
+              <div class="card-item p-8">
+                <div class="type body-lead primary m-horizontal-4">[[$TRANSLATE('Family Details', LANG)]]</div>
+
+                <div class="horizontal layout wrap">
+                  <paper-input type="number" class="custom-input" value="{{patient.numberOfFamilyMember}}" label="[[$TRANSLATE('Number of Family Member', LANG)]]"></paper-input>
+                  <paper-input type="text" class="custom-input" value="{{patient.patientSpouseName}}" label="[[$TRANSLATE('Spouse Name', LANG)]]"></paper-input>
+                  <paper-input type="text" class="custom-input" value="{{patient.patientFatherName}}" label="[[$TRANSLATE('Father\'s Name', LANG)]]"></paper-input>
+                  <paper-input type="text" class="custom-input" value="{{patient.patientMotherName}}" label="[[$TRANSLATE('Mother\'s Name', LANG)]]"></paper-input>
+                </div>
+              </div>
+              <!-- Family info - end -->
+
+              <!-- Professional info - start -->
+              <div class="card-item p-8">
+                <div class="type body-lead primary m-horizontal-4">[[$TRANSLATE('Professional info', LANG)]]</div>
+
+                <div class="horizontal layout wrap">
+                  <vaadin-combo-box class="custom-input" label="[[$TRANSLATE('Monthly Expenditure', LANG)]]" items="{{expenditureList}}" allow-custom-value="true" value="{{patient.expenditure}}"></vaadin-combo-box>
+                  <vaadin-combo-box class="custom-input" label="[[$TRANSLATE('Profession', LANG)]]" items="{{professionList}}" allow-custom-value="true" value="{{patient.profession}}"></vaadin-combo-box>
+                  <vaadin-combo-box class="custom-input" label="[[$TRANSLATE('Education', LANG)]]" items="{{educationTypeList}}" allow-custom-value="true" value="{{patient.education}}"></vaadin-combo-box>
+                </div>
+              </div>
+              <!-- Professional info - end -->
+
+              <!-- Contact Address - start -->
+              <div class="card-item p-8">
+                <div class="type body-lead primary m-horizontal-4">[[$TRANSLATE('Contact Address', LANG)]]</div>
+                <paper-input class="custom-input full-width" value="{{patient.addressList.0.addressLine1}}" label="[[$TRANSLATE('Address Line 1', LANG)]]"></paper-input>
+                <paper-input class="custom-input full-width" value="{{patient.addressList.0.addressLine2}}" label="[[$TRANSLATE('Address Line 2', LANG)]]"></paper-input>
+
+                <div class="horizontal layout wrap pull-combobox-up">
+                  <vaadin-combo-box class="custom-input" label="[[$TRANSLATE('Division', LANG)]]" items="{{divisionList}}" allow-custom-value="true" value="{{patient.addressList.0.addressDivision}}"></vaadin-combo-box>
+                  <vaadin-combo-box class="custom-input" label="[[$TRANSLATE('District', LANG)]]" items="{{districtList}}" allow-custom-value="true" value="{{patient.addressList.0.addressDistrict}}"></vaadin-combo-box>
+
+                  <paper-input class="custom-input" value="{{patient.addressList.0.subdistrictName}}" label="[[$TRANSLATE('Thana/Sub Disctrict', LANG)]]"></paper-input>
+                    
+                </div>
+
+                <paper-input class="custom-input full-width" value="{{patient.addressList.0.addressCountry}}" label="[[$TRANSLATE('Country', LANG)]]"></paper-input>
+
+                <div class="horizontal layout end-justified p-8">
+                  <paper-toggle-button class="m-left-16" checked="{{hideMoreAddressInput}}">[[$TRANSLATE('More Address options', LANG)]]</paper-toggle-button>
+                </div>
+
+                <div class="horizontal layout wrap" hidden$="[[!hideMoreAddressInput]]">
+                  <paper-input class="custom-input" value="{{patient.addressList.0.addressAreaName}}" label="[[$TRANSLATE('Area', LANG)]]"></paper-input>
+                  <paper-input class="custom-input" value="{{patient.addressList.0.flat}}" label="[[$TRANSLATE('Flat', LANG)]]"></paper-input>
+                  <paper-input class="custom-input" value="{{patient.addressList.0.floor}}" label="[[$TRANSLATE('Floor', LANG)]]"></paper-input>
+                  <paper-input class="custom-input" value="{{patient.addressList.0.plot}}" label="[[$TRANSLATE('Plot', LANG)]]"></paper-input>
+                
+                  <paper-input class="custom-input" value="{{patient.addressList.0.block}}" label="[[$TRANSLATE('Block', LANG)]]"></paper-input>
+                  <paper-input class="custom-input" value="{{patient.addressList.0.road}}" label="[[$TRANSLATE('Road', LANG)]]"></paper-input>
+                  <paper-input class="custom-input" value="{{patient.addressList.0.village}}" label="[[$TRANSLATE('Village', LANG)]]"></paper-input>
+                
+                  <paper-input class="custom-input" value="{{patient.addressList.0.addressUnion}}" label="[[$TRANSLATE('Union', LANG)]]"></paper-input>
+
+                  <paper-input type="number" class="custom-input" value="{{patient.addressList.0.addressPostalOrZipCode}}" label="[[$TRANSLATE('Postal/Zip Code', LANG)]]"></paper-input>
+                  <paper-input class="custom-input" value="{{patient.addressList.0.addressCityOrTown}}" label="[[$TRANSLATE('City/Town', LANG)]]"></paper-input>
+
+                  <paper-input class="custom-input" value="{{patient.addressList.0.stateOrProvince}}" label="[[$TRANSLATE('State/Province', LANG)]]"></paper-input>
+                </div>
+
+                
+              </div>
+              <!-- Contact Address - end -->
+
+            </section>
+      
+          </iron-pages>
+
+          <div class="card-actions">
+            <!-- <paper-button  class="p-horizontal-40" on-tap="offlineSignup" raised>Signup (offline)</paper-button> -->
+            <paper-button class="colored p-horizontal-40" raised auto-focuse on-tap="nextBtnPressed">[[$TRANSLATE('Signup', LANG)]]</paper-button>
+          </div>
+        </paper-card>
+
+      </div>
+    </div>
+
+   
+
+  </template>
+  <script src="page-patient-signup.coffee-compiled.js"></script>
+</dom-module>

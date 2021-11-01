@@ -1,0 +1,192 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+<link rel="import" href="template-view.html">
+
+<!-- element -->
+<dom-module id="page-view-template">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      paper-button {
+        background: white;
+      }
+
+      .results {
+        margin-top: 20px;
+        padding: 10px;
+      }
+
+      .results-top {
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      .tr:hover {
+        background: #eeeeee;
+        cursor: pointer;
+      }
+
+      .table {
+        border-collapse: collapse;
+      }
+
+      .table th,
+      .table td {
+        padding: 10px;
+      }
+
+      .table thead {
+        border-bottom: 1px solid #999;
+      }
+
+      .table th {
+        text-align: left;
+      }
+
+      .table tfoot {
+        border-top: 1px solid #999;
+      }
+
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+      }
+
+      .editor-content {
+        padding: 12px;
+        background: #cccccc
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container vertical layout">
+
+        <!-- search strip - start -->
+        <paper-card class="vertical layout template-map-container">
+
+          <template-view template-map="{{templateMap}}"></template-view>
+
+        </paper-card>
+        <!-- search strip - end -->
+
+        <br />
+
+        <!-- <div class="horizontal layout">
+          <paper-button class="no-print flex" raised on-tap="searchButtonPressed">SEARCH</paper-button>
+          <paper-button class="no-print" raised on-tap="toggleButtonPressed">TOGGLE FILTERS</paper-button>
+          <paper-button class="no-print" raised on-tap="printButtonPressed">PRINT</paper-button>
+        </div> -->
+
+        <!-- search results - start -->
+
+        <div class="results-top">Found [[matchingTemplateList.length]] Templates</div>
+
+        <paper-card class="results vertical layout">
+
+          <div class="card-content horizontal layout">
+
+            <table class="table">
+              <!-- <thead>
+                <tr>
+                  <th>PERFORMED ON</th>
+                  <th>SERVICE RENDERED</th>
+                  <th>INSTITUTION</th>
+                  <th>PATIENT</th>
+                  <th>FEE BILLED</th>
+                  <th>FEE PAID</th>
+                  <th>FEE BALANCE</th>
+                  <th>CLEARED</th>
+                  <th>FREE</th>
+                </tr>
+              </thead> -->
+              <tbody>
+                <template is="dom-repeat" items="[[matchingTemplateList]]" as="template">
+                  <tr class="tr" on-tap="templatePressed">
+                    <td>[[template.pathString]]</td>
+                    <td>[[template.name]]</td>
+                  </tr>
+                </template>
+              </tbody>
+              <!-- <tfoot>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td class="tf">[[total.feeBilledAmount]]</td>
+                  <td class="tf">[[total.feePaidAmount]]</td>
+                  <td class="tf">[[total.feeRemainingAmount]]</td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tfoot> -->
+            </table>
+
+          </div>
+        </paper-card>
+        <!-- search results - end -->
+
+
+        <br><br>
+        <paper-card class="vertical layout">
+          <paper-input label="[[$TRANSLATE('ID', LANG)]]" value="{{newTemplate.templateId}}" readonly></paper-input>
+          <paper-input label="[[$TRANSLATE('Path', LANG)]]" value="{{newTemplate.pathString}}" readonly></paper-input>
+          <paper-input label="[[$TRANSLATE('Name', LANG)]]" value="{{newTemplate.name}}" readonly></paper-input>
+          <div class="editor-content">
+          </div>
+
+          <!-- <div>
+            <paper-checkbox checked="{{newTemplate.isPublic}}">Mark as public template</paper-checkbox>
+          </div>
+          <div class="horizontal layout">
+            <paper-button on-tap="editTapped" class="primary">Edit Content</paper-button>
+            <paper-button on-tap="resetTapped" class="primary">Reset Template</paper-button>
+            <paper-button on-tap="saveTapped" class="primary">Save Template</paper-button>
+          </div> -->
+
+        </paper-card>
+
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-view-template.coffee-compiled.js"></script>
+</dom-module>

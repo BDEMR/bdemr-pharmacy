@@ -1,0 +1,218 @@
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input-container.html">
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+
+<!-- Commong Styles -->
+<link rel="import" href="../../styles/common-style.html">
+
+<dom-module id='page-my-bookings'>
+  <template>
+    <style is='custom-style' include='common-style'>
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 21px;
+        color: var(--brand-primary-color);
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        border: none !important;
+      }
+
+      .table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td {
+        color: #444;
+      }
+
+      .table td,
+      .table th {
+        vertical-align: middle;
+        padding: 10px 20px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+      .table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .block {
+        display: block
+      }
+
+      .pagination li {
+        display: inline-block;
+        list-style: none;
+      }
+
+      .pagination paper-button {
+        min-width: 2em;
+        font-size: 14px;
+        background-color: var(--google-grey-100);
+      }
+
+      .filter-query {
+        --paper-input-container: {
+          width: 250px;
+          padding: 0;
+        }
+
+        --paper-input-container-label: {
+          font-size: 13px;
+        }
+
+        --paper-input-container-input: {
+          font-size: 13px;
+        }
+      }
+
+      iron-icon {
+        width: 18px;
+        height: 18px;
+        margin-left: 10px;
+      }
+
+      paper-button {
+        margin-bottom: 5px;
+      }
+
+      .search {
+        @apply(--layout-end-justified);
+      }
+
+
+      @media only screen and (min-width: 320px) and (max-width: 480px) {
+
+        .table td,
+        .table th {
+          vertical-align: top;
+          font-size: 14px;
+        }
+
+        .search {
+          margin-top: 10px;
+          /* @apply(--layout-start-justified); */
+        }
+      }
+
+      @media only print {
+        .hide-on-print {
+          display: none;
+        }
+      }
+
+      .limiting-container {
+        margin-top: 20px;
+        margin: auto;
+      }
+
+      paper-card {
+        width: fit-content;
+        margin-bottom: 20px;
+        border-radius: 10px;
+      }
+    </style>
+
+    <!--local dom-->
+
+    <div class="limiting-container">
+      <div class="layout horizontal center search wrap m-top-16">
+        <!-- <custom-vital-search on-date-select="visitCustomSearchClicked" on-clear="visitSearchClearButtonClicked">
+        </custom-vital-search> -->
+        <paper-dropdown-menu error-message="Chose an option" no-label-float label="Status" required class="m-left-16">
+          <paper-menu selected="{{bookingStatusSelectedIndex}}" class="dropdown-content"
+            on-iron-select="_bookingStatusSelected">
+            <template is="dom-repeat" items="[[bookingStatusList]]">
+              <paper-item>{{item}}</paper-item>
+            </template>
+          </paper-menu>
+        </paper-dropdown-menu>
+        <paper-button class="btn btn-success m-left-16" raised on-tap="filterButtonClicked">
+          <iron-icon class="m-right-8" icon="icons:filter-list"></iron-icon>Filter
+        </paper-button>
+      </div>
+      <paper-card class="with-table">
+        <!--Custom Header with Search-->
+        <div class="card-custom-header">
+          <div class="layout horizontal justified center wrap">
+            <div class="title">My Bookings</div>
+          </div>
+        </div>
+        <div class="card-content">
+          <table class="table">
+            <tr>
+              <th>[[$TRANSLATE('Date',LANG)]]</th>
+              <th>[[$TRANSLATE('Chamber Serial',LANG)]]</th>
+              <th>[[$TRANSLATE('Organization',LANG)]]</th>
+              <th>[[$TRANSLATE('Doctor info',LANG)]]</th>
+              <th>[[$TRANSLATE('Status',LANG)]]</th>
+              <th>[[$TRANSLATE('Action',LANG)]]</th>
+            </tr>
+            <template is="dom-if" if="[[_isEmptyTable(filteredMyBookingList)]]">
+              <tr>
+                <td colspan="6" class="text-center">
+                  [[$TRANSLATE('No Data Available',LANG)]]...
+                </td>
+              </tr>
+            </template>
+            <template is="dom-repeat" items="[[filteredMyBookingList]]" sort="_sortByDate"
+              filter="{{computeFilter(searchString)}}">
+              <tr>
+                <td>
+                  <span class="text-muted">[[_formatDateTime(item.bookedDatetimeStamp)]]</span>
+                </td>
+                <td>[[item.chamberSerial]]</td>
+                <td>[[item.organizationName]]</td>
+                <td>[[item.doctorPublicInfo.publicNameOfDoctor]] ([[item.doctorPublicInfo.specializationList]])</td>
+                <td>[[item.status]] ([[item.patientAcceptedBooking]])</td>
+                <td>
+                  <div class="horizontal layout">
+                    <div hidden$="[[!$equals(item.patientAcceptedBooking, 'pending')]]">
+                      <div class="horizontal layout">
+                        <paper-button class="btn btn-success btn-sm" raised on-tap="acceptButtonPressed">
+                          Accept
+                        </paper-button>
+                        <paper-button class="btn btn-danger btn-sm" raised on-tap="rejectButtonPressed">
+                          Reject
+                        </paper-button>
+                      </div>
+                    </div>
+                    <paper-icon-button icon="print" on-click="printBookingDetails"></paper-icon-button>
+                  </div>
+                </td>
+              </tr>
+            </template>
+          </table>
+        </div>
+      </paper-card>
+    </div>
+
+
+
+
+
+  </template>
+  <script src="page-my-bookings.coffee-compiled.js"></script>
+</dom-module>

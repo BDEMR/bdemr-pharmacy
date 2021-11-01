@@ -1,0 +1,24 @@
+[
+        
+    {
+        "name": "Mahmudul Hassan",
+        "address" : "Dhaka,Bangladesh",
+        "number": "0171111111",
+        "gender": "male",
+        "age": "26",
+        "createdDatetimeStamp":"02/05/2021",
+        "icon": "extra-icons:settings",
+        "category": "patient"
+    },
+    {
+        "name": "Mahmudul Hassan",
+        "address" : "Dhaka,Bangladesh",
+        "number": "0171111111",
+        "gender": "male",
+        "age": "26",
+        "createdDatetimeStamp":"02/05/2021",
+        "icon": "extra-icons:settings",
+        "category": "patient"
+    }
+]
+    

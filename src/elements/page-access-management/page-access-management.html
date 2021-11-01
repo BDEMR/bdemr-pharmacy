@@ -1,0 +1,197 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box-light.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box-light.html">
+
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<dom-module id="page-access-management">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      vaadin-grid.grid-table {
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+      }
+
+      .profile-image {
+        height: 48px;
+        width: 48px;
+        border-radius: 50%;
+        border: 1px solid #f7f7f7;
+      }
+
+      .profile-image.small {
+        height: 30px;
+        width: 30px;
+      }
+
+      #userSearch input {
+        width: calc(100% - 16px);
+        line-height: 32px;
+        font-size: 16px;
+        padding: 0 8px;
+        border-radius: 6px;
+        border: 1px solid rgba(0, 0, 0, .86);
+        background-color: white;
+      }
+
+      vaadin-grid.custom-vaadin-grid {
+        --vaadin-grid-body-cell: {
+          height: 70px !important;
+        }
+      }
+    </style>
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <paper-card heading="[[$TRANSLATE('Update User Access', LANG)]]">
+          <div class="card-content">
+            <template is="dom-if" if="[[!selectedUser]]">
+              <vaadin-combo-box-light id="userSearch" filter="{{userSearchQuery}}"
+                loading="[[fetchingUserSearchResult]]" item-label-path='name' item-value-path='id'
+                value="{{item.slotId}}" on-selected-item-changed="userSelected">
+                <input class="filter-input" is="iron-input" placeholder="Search By Name/Mobile/Email">
+                <template>
+                  <div class="horizontal layout center">
+                    <iron-image class="profile-image small m-right-8" src$="[[$getProfileImage(item.profileImage)]]"
+                      preload sizing="cover"></iron-image>
+                    <div class="flex">
+                      <div class="type body">[[item.name]]</div>
+                      <div class="type caption secondary m-bottom-8">[[item.phone]] - [[item.email]]</div>
+                    </div>
+                  </div>
+
+                </template>
+              </vaadin-combo-box-light>
+
+              <!-- <vaadin-combo-box autofocus allow-custom-value no-label-float id="userSearch" class="paper-custom-input flex" label="Search By Name/Mobile/Email"
+                item-label-path="name" filter="{{userSearchQuery}}" loading="[[fetchingUserSearchResult]]" on-selected-item-changed="userSelected" value="">
+                <template>
+                  <div class="horizontal layout center">
+                    <iron-image class="profile-image small m-right-8" src$="[[$getProfileImage(item.profileImage)]]" preload sizing="cover"></iron-image>
+                    <div class="flex">
+                      <div class="type body">[[item.name]]</div>
+                      <div class="type caption secondary m-bottom-8">[[item.phone]] - [[item.email]]</div>
+                    </div>
+                  </div>
+                  
+                </template>
+              </vaadin-combo-box> -->
+            </template>
+            <div hidden$="{{!selectedUser}}">
+              <div class="user-container horizontal layout center">
+                <iron-image class="profile-image m-right-8" src$="[[$getProfileImage(selectedUser.profileImage)]]"
+                  preload sizing="cover"></iron-image>
+                <div class="flex">
+                  <div class="type body">{{selectedUser.name}}</div>
+                  <div class="type body">{{selectedUser.phone}}</div>
+                  <div class="type body">{{selectedUser.email}}</div>
+                </div>
+                <paper-icon-button icon="delete" on-tap="_clearSelectedUserData"></paper-icon-button>
+              </div>
+              <paper-checkbox class="m-top-16" checked="{{selectedUser.hasLimitedAccess}}">Limited Access
+              </paper-checkbox>
+              <div hidden$="{{!selectedUser.hasLimitedAccess}}">
+                <div class="type body m-top-24">Privileged list:</div>
+                <div class="horizontal layout wrap">
+                  <template is="dom-repeat" items="[[selectedUser.privilegeList]]">
+                    <paper-checkbox id="{{item.id}}" class="m-4"
+                      style="background-color: #E0F2F1; padding: 8px; border-radius: 4px; "
+                      checked="[[item.isSelected]]">
+                      [[item.name]]</paper-checkbox>
+                  </template>
+                </div>
+              </div>
+            </div>
+
+
+
+          </div>
+
+          <template is="dom-if" if="{{selectedUser}}">
+            <div class="card-actions">
+              <paper-button on-tap="_saveUserAccess" class="colored" raised> Save </paper-button>
+            </div>
+          </template>
+
+        </paper-card>
+
+        <paper-card heading="Limited access users" class="m-top-24">
+          <vaadin-grid items="[[userList]]" class="custom-vaadin-grid" id="userList" active-item="{{activeItem}}">
+            <vaadin-grid-column resizable>
+              <template class="header">
+                <span>Name</span>
+              </template>
+              <template>
+                <div>[[$getFullName(item.name)]]</div>
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column resizable>
+              <template class="header">
+                <span>Phone</span>
+              </template>
+              <template>
+                <div>[[item.phone]]</div>
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column resizable>
+              <template class="header">
+                <span>Email</span>
+              </template>
+              <template>
+                <div>[[item.email]]</div>
+              </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column resizable>
+              <template class="header">
+                <span>Privilege List</span>
+              </template>
+              <template> <span class="type caption">[[item.privileges]]</span></template>
+            </vaadin-grid-column>
+
+          </vaadin-grid>
+        </paper-card>
+      </div>
+    </div>
+    <!-- Reports - start -->
+
+  </template>
+
+  <script src="page-access-management.coffee-compiled.js"></script>
+</dom-module>

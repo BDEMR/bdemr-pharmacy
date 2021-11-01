@@ -1,0 +1,203 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+<link rel="import" href="../bdemr-qrcode/bdemr-qrcode.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box-light.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<dom-module id="page-qrcode-manager">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .bdemr-qrcode {
+        padding-top: 4px;
+        padding-bottom: 4px;
+      }
+
+      .profile-image {
+        height: 48px;
+        width: 48px;
+        border-radius: 50%;
+        border: 1px solid #f7f7f7;
+      }
+
+      @media only screen and (max-width: 480px) {
+        .m-right-8 {
+          margin-right: 0 !important;
+        }
+        .m-left-8 {
+          margin-left: 0 !important;
+        }
+      }
+
+      m-right-8
+    </style>
+
+    <div class="tabs-container">
+      <paper-tabs id="tabs" selected="{{selectedIndex}}" scrollable noink='true' on-iron-select="onPageIndexChange">
+        <paper-tab>[[$TRANSLATE('QR Code List',LANG)]]</paper-tab>
+        <paper-tab>[[$TRANSLATE('Logs',LANG)]]</paper-tab>
+      </paper-tabs>
+    </div>
+    
+    <div class="master-container">
+
+      <div class="limiting-container">
+        <iron-pages selected="{{selectedIndex}}">
+          <section>
+            <!-- add - start -->
+            <paper-card>
+              <div class="card-custom-header">
+                <div class="title">Generate New QR Code</div>
+              </div>
+              <div class="card-content">
+                <vaadin-combo-box class="paper-custom-input" no-label-float id="patientSearch" class="flex"
+                  label="Search User By Name/Mobile/Email or Input Name" item-label-path="name"
+                  filter="{{patientSearchQuery}}" loading="[[fetchingPatientSearchResult]]"
+                  on-selected-item-changed="patientSelected" value="">
+                  <template>
+                    <div><strong>[[$getFullName(item.name)]]</strong></div>
+                    <div><small>[[item.phone]] | [[item.email]]</small></div>
+                  </template>
+                </vaadin-combo-box>
+                <vaadin-combo-box no-label-float class="paper-custom-input" label="[[$TRANSLATE('Purpose', LANG)]]"
+                  items="{{purposeList}}" value="{{doc.purpose}}" allow-custom-value></vaadin-combo-box>
+                
+                <div class="m-top-8 horizontal layout wrap">
+                  <paper-input type="datetime-local" class="paper-custom-input flex one m-right-8"
+                  label="[[$TRANSLATE('Start Date', LANG)]]" value="{{doc.startDatetimeStamp}}">
+                  </paper-input>
+                  <paper-input type="datetime-local" class="paper-custom-input flex one m-left-8"
+                  label="[[$TRANSLATE('End Date', LANG)]]" value="{{doc.endDatetimeStamp}}">
+                  </paper-input>
+                </div>
+              </div>
+
+              <div class="card-actions">
+
+                <paper-button raised class="colored" on-tap="_generateQrCode">Generate</paper-button>
+
+              </div>
+
+            </paper-card>
+            <!-- add - end -->
+            
+            <!-- list - add -->
+            <paper-card class="m-top-8">
+              <div class="card-custom-header">
+                <div class="title">QR Code List</div>
+                <!-- <paper-button raised class="colored" on-tap="_onTapGenerateNewCode">
+                  Generate New QR Code
+                </paper-button> -->
+              </div>
+              <paper-listbox>
+                <template is="dom-repeat" items="[[list]]">
+                  <paper-item class="custom layout horizontal center">
+                    <div class="type caption secondary m-right-8">[[$returnSerial(index)]].</div>
+                    <iron-image class="profile-image m-right-8" src$="[[$getProfileImage(item.profileImage)]]" preload sizing="cover"></iron-image>
+                    
+                    <div class="type body horizontal layout wrap flex">
+                      <div class="flex">
+                        <div><strong>Purpose:</strong> [[item.purpose]]</div>
+                        <div><strong>User Name:</strong> [[$getFullName(item.name)]]</div>
+                      </div>
+                      <div class="type caption-2 info">
+                        <div><strong>Code:</strong> [[item.code]]</div>
+                        <div><strong>Star Date Time:</strong> [[$getFormattedDateTime(item.startDatetimeStamp)]]</div>
+                        <div><strong>End Date Time:</strong> [[$getFormattedDateTime(item.endDatetimeStamp)]]</div>
+                      </div>
+                    </div>
+                    <template is="dom-if" if="[[item.code]]">
+                      <bdemr-qrcode class="bdemr-qrcode m-horizontal-8" code="[[item.code]]" width="64" height="64"></bdemr-qrcode>
+                    </template>
+                    <paper-icon-button icon="delete" on-tap="_deleteItem"></paper-icon-button>
+                  </paper-item>
+                </template>
+              </paper-listbox>
+
+            </paper-card>
+            <!-- list - end -->
+          </section>
+
+          <section>
+            <paper-card>
+              <vaadin-grid items="{{reports}}" class="custom-vaadin-grid" active-item="{{activeItem}}">
+    
+                <vaadin-grid-column width="12em" frozen>
+                  <template class="header">[[$TRANSLATE('Name', LANG)]]</template>
+                  <template>{{$getFullName(item.scannedUserName)}}</template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="12em" frozen>
+                  <template class="header">[[$TRANSLATE('ID Pass Purpose', LANG)]]</template>
+                  <template>{{$getFullName(item.purpose)}}</template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="8em" frozen>
+                  <template class="header">[[$TRANSLATE('Scan Code', LANG)]]</template>
+                  <template>{{$getFullName(item.code)}}</template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="8em">
+                  <template class="header">[[$TRANSLATE('Date & Time', LANG)]]</template>
+                  <template>{{$formatDateTime(item.createdDatetimeStamp)}}</template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="8em">
+                  <template class="header">[[$TRANSLATE('Category', LANG)]]</template>
+                  <template>{{item.category}}</template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="12em">
+                  <template class="header">[[$TRANSLATE('Scan Reason', LANG)]]</template>
+                  <template>{{item.reason}}</template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="8em">
+                  <template class="header">[[$TRANSLATE('Scanned By', LANG)]]</template>
+                  <template>{{$getFullName(item.createdByUserName)}}</template>
+                </vaadin-grid-column>
+
+
+              </vaadin-grid>
+            </paper-card>
+          </section>
+          
+        </iron-pages>
+        
+      </div>
+    </div>
+
+  </template>
+
+  <script src="page-qrcode-manager.coffee-compiled.js"></script>
+</dom-module>

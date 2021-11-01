@@ -1,0 +1,326 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box-light.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<dom-module id="page-doctor-list">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+
+      .custom-paper-input {
+        width: 100%;
+      }
+
+      .custom-paper-input ::content .underline {
+        display: none;
+      }
+
+      .custom-paper-input ::content paper-input-container {
+        padding-bottom: 0;
+      }
+      .custom-paper-input ::content input {
+        font-weight: bold !important;
+        background-color: #f7f7f7 !important;
+        padding: 4px 6px;
+        box-sizing: border-box !important;
+        border-radius: 6px !important;
+      }
+
+      .custom-paper-input ::content input::placeholder {
+        color: rgba(0, 0, 0, .87) !important;
+      }
+
+      :host {
+        height: 100%;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 56px;
+      }
+
+      .container {
+        width: 100%;
+        height: inherit;
+        position: relative;
+        /* background-color: #fff; */
+      }
+
+
+      .custom-tab {
+        font-size: 18px;
+        color: white;
+        background-color: var(--custom-input-box-color);
+      }
+
+    
+
+    </style>
+
+    <paper-tabs class="custom-tab" selected="{{selectedPageIndex}}">
+      <paper-tab>[[$TRANSLATE('Verified',LANG)]]</paper-tab>
+      <paper-tab>[[$TRANSLATE('Unverified',LANG)]]</paper-tab>
+      <paper-tab>[[$TRANSLATE('Flagged',LANG)]]</paper-tab>
+    </paper-tabs>
+
+    <div class="container">
+      <iron-pages style="height: inherit;" selected="{{selectedPageIndex}}">
+        <!-- verified - start -->
+        <section style="height: inherit;">
+  
+          <template is="dom-if" if="[[$isEmptyArray(verifiedDoctors.length)]]">
+            <div class="type caption-2 secondary" style="text-align: center; background: #fff; padding: 16px;">No Doctors Available!</div>
+          </template>
+
+          <template is="dom-if" if="[[!$isEmptyArray(verifiedDoctors.length)]]">
+            <div class="type caption-2 secondary" style="background: #fff; padding: 16px;"><strong>{{verifiedDoctors.length}} Verifeid doctor(s)</strong></div>
+            <vaadin-grid items="{{verifiedDoctors}}" class="custom-vaadin-grid" active-item="{{activeItem}}">
+
+              <vaadin-grid-column width="14em" frozen>
+                <template class="header">
+                  <vaadin-grid-filter  aria-label="Filter by Name" path="doctorName" value="[[doctorNameFilter]]">
+                    <paper-input class="custom-paper-input" no-label-float placeholder="Filter by Name" value="{{doctorNameFilter}}"></paper-input>
+                  </vaadin-grid-filter>
+                </template>
+                <template>
+                  <div class="horizontal layout center" style="text-transform: capitalize;">
+                    <div class="user-image-container m-right-8">
+                      <iron-image class="user-image" src$="[[$getProfileImage(item.profilePhoto)]]" preload sizing="cover"></iron-image>
+                    </div>
+                    <div class="m-left-8 flex">[[item.doctorName]]</div>
+                  </div>
+                </template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column width="4em">
+                <template class="header">BMDC Number</template>
+                <template>{{item.bmdcNumber}}</template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column width="12em">
+                <template class="header">MBBS Passed Institution Name</template>
+                <template>{{item.mbbsPassedInstitutionName}}</template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column width="4em">
+                <template class="header">MBBS Passed Year</template>
+                <template>{{item.mbbsPassedYear}}</template>
+              </vaadin-grid-column>
+    
+              <vaadin-grid-column width="6em">
+                <template class="header">Father's Name</template>
+                <template>{{item.fatherName}}</template>
+              </vaadin-grid-column>
+    
+              <vaadin-grid-column width="8em">
+                <template class="header">Address</template>
+                <template>
+                  [[_formatAddress(item.addressList)]]
+                </template>
+              </vaadin-grid-column>
+              
+              <vaadin-grid-column width="8em">
+                <template class="header">
+                  <vaadin-grid-filter  aria-label="Verified By" path="verifiedByUserName" value="[[verifiedByUserNameFilter]]">
+                    <paper-input class="custom-paper-input" no-label-float placeholder="Filter Verified By" value="{{verifiedByUserNameFilter}}"></paper-input>
+                  </vaadin-grid-filter>
+                </template>
+                <template>
+                  [[item.verifiedByUserName]]
+                </template>
+              </vaadin-grid-column>
+    
+            </vaadin-grid>
+          </template>
+            
+        </section>
+        <!-- verified - end -->
+  
+        <!-- unverified - start -->
+        <section style="height: inherit;">
+     
+          <template is="dom-if" if="[[$isEmptyArray(unverifiedDoctors.length)]]">
+            <div class="type caption-2 secondary" style="text-align: center; background: #fff; padding: 16px;">No Doctors Available!</div>
+          </template>
+          
+          <template is="dom-if" if="[[!$isEmptyArray(unverifiedDoctors.length)]]">
+            <div class="type caption-2 secondary" style="background: #fff; padding: 16px;"><strong>{{unverifiedDoctors.length}} Unverifeid doctor(s)</strong></div>
+            <vaadin-grid items="{{unverifiedDoctors}}" class="custom-vaadin-grid" active-item="{{activeItem}}">
+
+              <vaadin-grid-column width="14em" frozen>
+                <template class="header">
+                  <vaadin-grid-filter  aria-label="Filter by Name" path="doctorName" value="[[doctorNameFilter]]">
+                    <paper-input class="custom-paper-input" no-label-float placeholder="Filter by Name" value="{{doctorNameFilter}}"></paper-input>
+                  </vaadin-grid-filter>
+                </template>
+                <template>
+                  <div class="horizontal layout center" style="text-transform: capitalize;">
+                    <div class="horizontal layout center" style="text-transform: capitalize;">
+                      <div class="user-image-container m-right-8">
+                        <iron-image class="user-image" src$="[[$getProfileImage(item.profilePhoto)]]" preload sizing="cover"></iron-image>
+                      </div>
+                      <div class="m-left-8 flex">[[item.doctorName]]</div>
+                    </div>
+                  </div>
+                </template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column width="4em">
+                <template class="header">BMDC Number</template>
+                <template>{{item.bmdcNumber}}</template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column width="12em">
+                <template class="header">MBBS Passed Institution Name</template>
+                <template>{{item.mbbsPassedInstitutionName}}</template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column width="4em">
+                <template class="header">MBBS Passed Year</template>
+                <template>{{item.mbbsPassedYear}}</template>
+              </vaadin-grid-column>
+    
+              <vaadin-grid-column width="6em">
+                <template class="header">Father's Name</template>
+                <template>{{item.fatherName}}</template>
+              </vaadin-grid-column>
+    
+              <vaadin-grid-column width="8em">
+                <template class="header">Address</template>
+                <template>
+                  [[_formatAddress(item.addressList)]]
+                </template>
+              </vaadin-grid-column>
+
+              <template is="dom-if" if="{{isPrivileged}}">
+                <vaadin-grid-column width="14em">
+                  <template class="header">Action</template>
+                  <template>
+                    <div class="horizontal layout center wrap">
+                      <paper-button style="background-color: #fafafa; color: red !important;" on-tap="_flagAsError">Flag As Error</paper-button>
+                      <paper-button raised class="colored" on-tap="_verifyDoctor">Verify</paper-button>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+              </template>
+    
+            </vaadin-grid>
+          </template>
+    
+        </section>
+        <!-- unverified - end -->
+
+        <!-- flagged - start -->
+        <section style="height: inherit;">
+  
+          <template is="dom-if" if="[[$isEmptyArray(flaggedDoctors.length)]]">
+            <div class="type caption-2 secondary" style="text-align: center; background: #fff; padding: 16px;">No Doctors Available!</div>
+          </template>
+
+          <template is="dom-if" if="[[!$isEmptyArray(flaggedDoctors.length)]]">
+            <div class="type caption-2 secondary" style="background: #fff; padding: 16px;"><strong>{{flaggedDoctors.length}} Flagged doctor(s)</strong></div>
+            <vaadin-grid items="{{flaggedDoctors}}" class="custom-vaadin-grid" active-item="{{activeItem}}">
+
+              <vaadin-grid-column width="14em" frozen>
+                <template class="header">
+                  <vaadin-grid-filter  aria-label="Filter by Name" path="doctorName" value="[[doctorNameFilter2]]">
+                    <paper-input class="custom-paper-input" no-label-float placeholder="Filter by Name" value="{{doctorNameFilter2}}"></paper-input>
+                  </vaadin-grid-filter>
+                </template>
+                <template>
+                  <div class="horizontal layout center" style="text-transform: capitalize;">
+                    <div class="horizontal layout center" style="text-transform: capitalize;">
+                      <div class="user-image-container m-right-8">
+                        <iron-image class="user-image" src$="[[$getProfileImage(item.profilePhoto)]]" preload sizing="cover"></iron-image>
+                      </div>
+                      <div class="m-left-8 flex">[[item.doctorName]]</div>
+                    </div>
+                  </div>
+                </template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column width="4em">
+                <template class="header">BMDC Number</template>
+                <template>{{item.bmdcNumber}}</template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column width="12em">
+                <template class="header">MBBS Passed Institution Name</template>
+                <template>{{item.mbbsPassedInstitutionName}}</template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column width="4em">
+                <template class="header">MBBS Passed Year</template>
+                <template>{{item.mbbsPassedYear}}</template>
+              </vaadin-grid-column>
+    
+              <vaadin-grid-column width="6em">
+                <template class="header">Father's Name</template>
+                <template>{{item.fatherName}}</template>
+              </vaadin-grid-column>
+    
+              <vaadin-grid-column width="8em">
+                <template class="header">Address</template>
+                <template>
+                  [[_formatAddress(item.addressList)]]
+                </template>
+              </vaadin-grid-column>
+              
+              <vaadin-grid-column width="8em">
+                <template class="header">
+                  <vaadin-grid-filter  aria-label="Verified By" path="verifiedByUserName" value="[[verifiedByUserNameFilter]]">
+                    <paper-input class="custom-paper-input" no-label-float placeholder="Filter Verified By" value="{{verifiedByUserNameFilter}}"></paper-input>
+                  </vaadin-grid-filter>
+                </template>
+                <template>
+                  [[item.verifiedByUserName]]
+                </template>
+              </vaadin-grid-column>
+    
+            </vaadin-grid>
+          </template>
+            
+        </section>
+        <!-- flagged - end -->
+      </iron-pages>
+
+    </div>
+    
+    
+    
+
+  </template>
+
+  <script src="page-doctor-list.coffee-compiled.js"></script>
+</dom-module>

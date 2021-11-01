@@ -1,0 +1,221 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-print-chamber-patients">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .new-fab {
+        position: fixed;
+        right: 20px;
+        bottom: 164px;
+      }
+
+      paper-button {
+        margin: 3px;
+      }
+
+      paper-button:last-child {
+        margin-right: 0px;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin: 0 4px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: 400;
+      }
+
+      .modifier.type1 {
+        background: #757575;
+      }
+
+
+      .organization-info-card-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .std1 {
+        padding: 12px;
+      }
+
+      .mr12 {
+        margin-right: 12px;
+      }
+
+      .chamber-prop {
+        margin-right: 2px;
+      }
+
+      .calendar {
+        max-width: 960px;
+        min-width: 960px;
+      }
+
+      .calendar-entry {
+        min-width: 128px;
+        min-height: 96px;
+        margin: 4px;
+      }
+
+      .calendar-entry.white {
+        background: white;
+      }
+
+      .calendar-entry.day-name {
+        background: #dddddd;
+        text-align: center;
+      }
+
+      .status.awaiting {
+        color: orange;
+      }
+
+      .status.completed {
+        color: green;
+      }
+
+      .status.require-second-visit {
+        color: #00A2FF
+      }
+
+      .status.canceled {
+        color: red
+      }
+
+      .list {
+        border-bottom: 1px solid #eee;
+        padding: 10px 0;
+        @apply(--layout-start);
+      }
+
+      .list:nth-last-child(2) {
+        border: none;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td,
+      .table th {
+        vertical-align: left;
+        padding: 15px;
+        border: 1px solid var(--paper-grey-500);
+      }
+
+      .m-left-10 {
+        margin-left: 10px;
+      }
+
+      .m-top-8 {
+        margin-left: 8px;
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <!-- Card - Header - start -->
+    <paper-card>
+
+      <div class="card-custom-header">
+        <div class="layout horizontal center">
+          <div class="title flex">Chamber name: [[chamber.name]]</div>
+        </div>
+      </div>
+
+      <br>
+      <div class="m-left-10">
+        <span>Doctor's Name: </span>
+        <strong>[[chamber.doctorName]]</strong>
+      </div>
+      <div class="m-left-10">
+        <span>Organization's Name: </span>
+        <strong>[[organization.name]]</strong>
+      </div>
+
+      <div class="class m-top-8">
+        <table class="table">
+          <tr>
+            <th>Serial</th>
+            <th>Patient's Name</th>
+            <th>Phone Number</th>
+            <th>Email</th>
+            <th>Time</th>
+          </tr>
+          <template is="dom-repeat" items="[[bookedList]]">
+            <tr>
+              <td>[[_returnSerial(index)]].</td>
+              <td>[[item.patientFullName]]</td>
+              <td>[[item.patientPhone]]</td>
+              <td>[[item.patientEmail]]</td>
+              <td>[[$formatTimeSlotString(item.timeSlot)]]</td>
+            </tr>
+          </template>
+        </table>
+      </div>
+      <br>
+
+    </paper-card>
+    <!-- Card - Header - end -->
+
+
+
+  </template>
+  <script src="page-print-chamber-patients.coffee-compiled.js"></script>
+</dom-module>

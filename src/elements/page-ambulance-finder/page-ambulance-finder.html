@@ -1,0 +1,460 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../../bower-assets/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower-assets/paper-tooltip/paper-tooltip.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+
+
+<dom-module id="page-ambulance-finder">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      app-header-layout ::content #contentContainer {
+        overflow: hidden !important;
+      }
+
+      :host {
+        height: 100%;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+      }
+
+      .container {
+        width: 100%;
+        height: inherit;
+        position: relative;
+        /* background-color: #fff; */
+      }
+
+      vaadin-grid.custom-vaadin-grid {
+        height: inherit;
+        font-family: Roboto, sans-serif;
+        --divider-color: black;
+
+        /* --vaadin-grid-cell: {
+          padding: 0;
+        }; */
+
+        --vaadin-grid-header-cell: {
+          height: 40px;
+          /* color: rgba(0, 0, 0, var(--dark-secondary-opacity)); */
+          font-size: 16px;
+          background-color: #E0F2F1;
+          border-right: 1px solid black !important;
+          border-bottom: 1px solid black !important;
+        };
+
+        --vaadin-grid-body-cell: {
+          /* height: 48px; */
+          color: rgba(0, 0, 0, var(--dark-primary-opacity));
+          font-size: 16px;
+          border-right: 1px solid black !important;
+          border-bottom: 1px solid black !important;
+        };
+
+        --vaadin-grid-body-row-hover-cell: {
+          background-color: var(--paper-grey-200);
+        };
+
+        --vaadin-grid-body-row-selected-cell: {
+          background-color: var(--paper-grey-100);
+        };
+
+        --vaadin-grid-focused-cell: {
+          box-shadow: none;
+          font-weight: bold;
+        };
+      }
+
+      .top-container {
+        /* background-color: #f3f5f7; */
+        box-shadow:rgba(0, 0, 0, .54) 0 -10px 6px -10px inset;
+        height: 310px;
+      }
+
+      #filter {
+        /* padding: 8px 8px 16px 8px; */
+        background-color: #f3f5f7;
+        position: relative;
+      }
+
+      .filter {
+        padding: 0 6px 1px 6px;
+      }
+
+
+      .custom-input {
+        padding-top: 6px;
+        padding-bottom: 6px;
+      }
+
+      .custom-flat-button {
+        font-weight: bold;
+        font-size: 14px;
+        text-transform: uppercase;
+      }
+
+      #importResult {
+        overflow-y: scroll;
+        height: 200px;
+        background: white;
+        padding: 12px;
+        margin-top: 16px;
+      }
+
+      .type.capton-2 {
+        line-height: 25px;
+      }
+
+      .left {
+        width: 30%;
+      }
+      .right {
+        width: 100%;
+        height: inherit;
+      }
+
+      @media screen and (max-width: 859px) {
+        .left, .right {
+          width: 100%;
+        }
+      }
+
+      @media screen and (max-width: 639px) {
+        .editor {
+          width: 100% !important;
+          right: -100%;
+        }
+        .open {
+          right: 0;
+        }
+      }
+
+      @media screen and (max-width: 479px) {
+        .filter-input {
+          width: 100%;
+        }
+
+        #btnFilter {
+          margin-top: 8px;
+          margin-bottom: 8px;
+        }
+      }
+
+      .container {
+        width: 100%;
+        height: 100%;
+        /* background-color: #fff; */
+      }
+
+
+      .fixed-title {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 12px 8px 11px 12px;
+        border-bottom: 1px solid #eee;
+        z-index: 1;
+        background-color: #fafafa;
+        width: calc( 100% - 24px);
+      }
+
+      vaadin-combo-box-light {
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .filter-input-2  {
+        border: none;
+        background-color: #eee;
+        font-size: 16px;
+        font-weight: 500;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 6px 8px;
+        border-radius: 6px;
+        outline: none;
+      }
+
+      .filter-input  {
+        border: none;
+        background-color: inherit;
+        font-size: 20px;
+        /* height: 100%; */
+        /* padding: 12px 16px; */
+        width: 100%;
+        /* text-align: center; */
+        outline: none;
+      }
+
+      .custom-button {
+        padding: 0.4em 1em;
+        font-size: 16px;
+        line-height: 24px;
+        background-color: #fff;
+      }
+
+      #ItemSearch {
+        /* padding: 12px 16px; */
+        /* background-color: #fafafa; */
+      }
+
+      #ItemSearch {
+        color: #fff;
+      }
+
+      #ItemSearch ::content input{
+        font-size: 20px;
+        color: #fff;
+      }
+
+      #ItemSearch ::content #label{
+        font-size: 20px;
+        color: rgba(255, 255, 255, .54) !important;
+      }
+
+      #ItemSearch ::content .underline{
+        display: none;
+      }
+
+      #ItemSearch ::content iron-icon{
+        color: #fff !important;
+      }
+
+      /* #ItemSearch ::content .clear-button {
+        display: none;
+      }
+
+      #ItemSearch ::content .toggle-button {
+        display: none;
+      } */
+
+      .top-bar {
+        background-color: var(--brand-primary-color);
+        height: 56px;
+        box-sizing: border-box;
+        padding: 0 16px;
+        width: 100%;
+        /* text-align: center; */
+        color: #fff;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      }
+
+      .advance-search {
+        background: #fff;
+        /* padding: 8px 8px 8px 16px; */
+      }
+
+      .filter-label-list {
+        /* padding: 4px 8px; */
+        background-color: #fff;
+      }
+
+      .filter-label {
+        border-radius: 18px;
+        background: #eee;
+        padding-left: 8px;
+        margin: 4px 6px;
+      }
+
+      .btn-icon-small {
+        height: 20px;
+        width: 20px;
+        padding: 1px;
+        text-align: center;
+      }
+
+      .btn-icon-small ::content iron-icon {
+        height: 16px;
+        width: 16px;
+      }
+
+      .no-results {
+        background: #fafafa;
+        height: 100%;
+        width: 100%;
+      }
+
+      .table-icon {
+        height: 20px;
+        width: 20px;
+      }
+
+      .filter-paper-input ::content paper-input-container {
+        padding: 0 !important;
+      }
+
+      .custom-paper-input {
+        width: 100%;
+      }
+
+      .custom-paper-input ::content .underline {
+        display: none;
+      }
+
+      .custom-paper-input ::content paper-input-container {
+        padding-bottom: 0;
+      }
+      .custom-paper-input ::content input {
+        font-weight: bold !important;
+        background-color: #00968840 !important;
+        padding: 4px 8px;
+        box-sizing: border-box !important;
+        border-radius: 6px !important;
+        padding-left: 12px !important;
+      }
+
+      .custom-paper-input ::content input::placeholder {
+        color: rgba(0, 0, 0, .87) !important;
+      }
+
+      .paper-custom-input ::content input::placeholder {
+        color: rgba(0,0,0, .76) !important;
+      }
+
+      .search-area {
+        background-color: #fafafa;
+        box-sizing: border-box;
+        padding: 8px;
+      }
+
+      #loginBtn {
+        padding: 0.4em 2em;
+        font-size: 16px;
+        background-color: #fff;
+        color: black;
+      }
+
+      .custom-checkbox {
+        color: white;
+      }
+
+      .editor {
+        top: 56px !important;
+        width: 50%;
+        border-top-left-radius: 6px;
+        /* right: -50%; */
+      }
+
+      .paper-custom-input ::content paper-input-container {
+        padding: 0 !important;
+      }
+
+      .editor-content {
+        margin-top: 60px;
+      }
+
+    </style>
+
+    <div class="container">
+      <div class="top-bar horizontal layout center">
+        <div class="type headline flex">BDEMR - Ambulance Finder</div>
+        
+        <!-- <paper-button id="loginBtn" on-tap="_goLoginPage" raised>Login</paper-button> -->
+        
+      </div>
+
+      <div class="search-area">
+        
+        <div class="horizontal layout center">
+          <vaadin-combo-box allow-custom-value no-label-float items="{{districtlist}}" class="m-horizontal-4 paper-custom-input flex" placeholder="[[$TRANSLATE('Address/Location',LANG)]]" value="{{filterBy.address}}"></vaadin-combo-box>
+          <vaadin-combo-box no-label-float items="{{organizationList}}" class="m-horizontal-4 paper-custom-input flex" placeholder="[[$TRANSLATE('Hospital/Clinic',LANG)]]" value="{{filterBy.organizationId}}" item-value-path="id" item-label-path="name" ></vaadin-combo-box>
+        </div>
+        
+        <!-- <div class="type caption-2 m-horizontal-4"><strong>FILTER BY FACILITIES:</strong></div> -->
+        <div class="horizontal layout wrap center">
+          <!-- <template is="dom-repeat" items="[[filterBy.otherFacilities]]">
+            
+            <paper-checkbox class="custom-checkbox m-8" checked="{{item.isChecked}}">{{item.label}}</paper-checkbox>
+            
+          </template> -->
+
+          <paper-checkbox class="custom-checkbox m-8" checked="{{filterBy.isOxizenAvailable}}">Oxizen Available</paper-checkbox>
+        </div>
+        
+        <div class="horizontal layout end-justified center m-top-8">
+          <paper-button raised class="custom-button" on-tap="_onTapSearch">
+            <iron-icon icon="search" class='m-right-8'></iron-icon>[[$TRANSLATE('Search',LANG)]]
+          </paper-button>
+        </div>
+        
+      </div>
+
+
+      <vaadin-grid class="custom-vaadin-grid" items="{{matchingResults}}" id="list" active-item="">
+
+
+        <vaadin-grid-column width="16em" frozen>
+          <template class="header">
+            <!-- <div>organization Name</div> -->
+            <vaadin-grid-filter  aria-label="Hospital Name" path="name" value="[[nameFilter]]">
+              <paper-input class="custom-paper-input" no-label-float placeholder="[[$TRANSLATE('Hospital Name',LANG)]]" value="{{nameFilter}}"></paper-input>
+            </vaadin-grid-filter>
+          </template>
+          <template>
+            
+            <div class="horizontal layout wrap center">
+              <!-- <iron-icon class="m-right-8 table-icon" src$="{{_getCategoryIcon(item.category)}}"></iron-icon> -->
+              <div class="flex">
+                <div>[[item.name]]</div>
+              </div>
+            </div>
+            
+          </template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column width="8em">
+          <template class="header">[[$TRANSLATE('Available Ambulance',LANG)]]</template>
+          <template>[[item.availableAmulanceCount]]</template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column width="8em">
+          <template class="header">[[$TRANSLATE('Call for Booking',LANG)]]</template>
+          <template><a href$="tel:{{item.ambulanceServicePhoneNumber}}">[[item.ambulanceServicePhoneNumber]]</a></template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column width="8em">
+          <template class="header">[[$TRANSLATE('Address',LANG)]]</template>
+          <template>[[item.address]]</template>
+        </vaadin-grid-column>
+      
+
+      </vaadin-grid>
+    </div>
+      
+
+  </template>
+
+  <script src="page-ambulance-finder.coffee-compiled.js"></script>
+</dom-module>

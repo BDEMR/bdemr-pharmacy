@@ -1,0 +1,334 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+<link rel="import" href="../../bower-assets/iron-icons/iron-icons.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-store-inventory">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+
+      /* custom-input - start */
+      .custom-input ::content paper-input-container {
+        padding: 6px 4px;
+      }
+
+      .custom-input ::content .underline {
+        display: none;
+      }
+
+      .custom-input paper-input-container ::content .underline {
+        height: 0 !important;
+      }
+
+      .custom-input  {
+        --paper-input-container-label: {
+          font-size: 18px;
+          color: #576374 !important;
+          font-weigh: 500;
+        };
+      }
+
+      .custom-input ::content paper-input-container ::content input {
+        background-color: #dde2e8;
+        border-radius: 6px;
+        height: 36px;
+        margin-top: 4px;
+        font-weight : 500;
+        padding: 0 8px;
+        box-sizing: border-box;
+        /* min-width: 200px; */
+      }
+
+      .custom-input.no-padding {
+        padding: 0;
+      }
+
+      /* cutom-input : end  */
+
+      .combo-box ::content .toggle-button {
+        bottom: 2px;
+        right: 0px;
+      }
+
+      .combo-box ::content .clear-button {
+        bottom: 0 !important;
+        right: 28px !important;
+      }
+
+      .date-picker ::content div[sufix] {
+        bottom: 0px !important;
+        right: 0px !important;
+      } 
+
+      .combo-box ::content paper-input-container ::content input{
+        padding: 0 60px 0 8px;
+      }
+
+      .combo-box {
+        padding: 0;
+      }
+
+      #productEditor {
+        /* box-shadow: rgba(0,0,0, .54) 0 -10px 6px -10px inset; */
+        /* background-color: #fafafa; */
+
+      }
+
+      .custom-button {
+        padding: 4px 8px;
+        font-size: 14px;
+        font-weight: bold;
+        min-width: auto;
+      }
+
+      .btn-add {
+        min-width: 0;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+        background-color: #eceff1;
+        color: rgba(0, 0, 0, .87);
+      }
+
+      .action-area {
+        background-color: #dde2e8;
+        padding: 8px 0;
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+      }
+      
+      #validateArea {
+        padding: 8px 16px;
+      }
+
+      
+
+      /* custom-input - start */
+
+      .content {
+        width: calc(100%);
+      }
+
+
+      .content .left {
+        width: calc(50%);
+        margin-left: 8px;
+      }
+
+      .content .right {
+        width: calc(50%);
+      }
+
+      vaadin-grid {
+        height: auto;
+      }
+
+  
+    </style>
+    
+    <!-- local DOM - start -->
+    <paper-card class="m-top-8">
+      <!-- product editor - start -->
+      <div id="productEditor">
+        <div class="p-8">
+          <div class="p-4 horizontal layout center" on-tap="_toggleProductEditor">
+            <div class="type title-2 primary flex">{{productDialogTitle}}</div>
+            <paper-icon-button icon="icons:arrow-drop-down"></paper-icon-button>
+          </div>
+          <div  hidden$="{{toggleProductEditor}}">
+            <div class="layout horizontal wrap">
+              <vaadin-combo-box class="custom-input combo-box flex" always-float-label label="[[$TRANSLATE('Product Name', LANG)]]" value="{{product.data.name}}" items="[[brandNameSourceDataList]]"
+              required allow-custom-value></vaadin-combo-box>
+              <paper-input class="custom-input" always-float-label label="[[$TRANSLATE('Cateogry', LANG)]]" value="{{product.data.category}}"></paper-input>
+            </div>
+            <div class="horizontal layout p-vertical-8">
+              <paper-button class="btn-add colored" raised on-tap="_pushNewBatchObject" hidden$="{{toggleProductEditor}}">[[$TRANSLATE('Add new batch', LANG)]]</paper-button>
+            </div>
+            <template is="dom-if" if="[[!product.data.list.length]]">
+              <h4 class="p-16 type center">[[$TRANSLATE('No Batch Added Yet', LANG)]]...</h4>
+            </template>
+      
+            <template is="dom-if" if="[[product.data.list.length]]">
+              <vaadin-grid items="[[product.data.list]]">
+
+                <vaadin-grid-column width="12em" frozen>
+                  <template class="header">[[$TRANSLATE('Batch No', LANG)]].</template>
+                  <template>
+                    <paper-input class="custom-input no-padding" no-label-float value="{{item.batch}}" required></paper-input>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="12em">
+                  <template class="header">[[$TRANSLATE('Vendor', LANG)]]</template>
+                  <template>
+                    <vaadin-combo-box class="custom-input combo-box" no-label-float label="[[$TRANSLATE('Item', LANG)]]" value="{{item.vendorName}}" items="[[vendors]]"
+                      required allow-custom-value></vaadin-combo-box>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="12em">
+                  <template class="header">[[$TRANSLATE('Qty', LANG)]]</template>
+                  <template>
+                    <paper-input class="custom-input no-padding" no-label-float value="{{item.qty}}" type="number"></paper-input>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="12em">
+                  <template class="header">[[$TRANSLATE('Buying/Unit', LANG)]]</template>
+                  <template>
+                    <paper-input class="custom-input no-padding" no-label-float value="{{item.buyingPrice}}" type="number"></paper-input>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="12em">
+                  <template class="header">[[$TRANSLATE('Selling/Unit', LANG)]]</template>
+                  <template>
+                    <paper-input class="custom-input no-padding" no-label-float value="{{item.sellingPrice}}" type="number"></paper-input>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="12em">
+                  <template class="header">[[$TRANSLATE('Created on', LANG)]]</template>
+                  <template>
+                    <paper-input class="custom-input no-padding" no-label-float value="{{item.createdOn}}"></paper-input>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="12em">
+                  <template class="header">[[$TRANSLATE('Expired on', LANG)]]</template>
+                  <template>
+                    <paper-input class="custom-input no-padding" no-label-float value="{{item.expiredOn}}"></paper-input>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="4em">
+                  <template class="header"></template>
+                  <template>
+                    <paper-button class="custom-button btn btn-danger" raised on-tap="_removeSelectedBatch"><iron-icon class="icon small" icon="delete"></iron-icon></paper-button>
+                  </template>
+                </vaadin-grid-column>
+
+              </vaadin-grid>
+            </template>
+            
+          </div>
+        </div>
+        
+        <div id="validateArea" hidden$="{{toggleProductEditor}}">
+          <template is="dom-repeat" items="[[validates]]">
+            <div class$="type {{item.classType}}">{{item.message}}</div>
+          </template>
+        </div>
+        <div class="action-area fixed horizontal layout" hidden$="{{toggleProductEditor}}">
+          <paper-button hidden$="{{!EDIT_MODE}}" on-tap="_deleteProduct"><iron-icon icon="delete" class="m-right-8"></iron-icon> [[$TRANSLATE('Delete', LANG)]]</paper-button>
+          <div class="flex"></div>
+          <paper-button on-tap="_clearButtonPressed">[[$TRANSLATE('Clear', LANG)]]</paper-button>
+          <paper-button on-tap="_saveProduct">
+            <span hidden$="{{EDIT_MODE}}">[[$TRANSLATE('Add', LANG)]]</span>
+            <span hidden$="{{!EDIT_MODE}}">[[$TRANSLATE('Update', LANG)]]</span>  
+          </paper-button>
+        </div>
+        
+      </div>
+      <!-- product editor - end -->
+    </paper-card>
+    <paper-card class="m-top-8">
+      <div class="p-8">
+        <div class="p-4 horizontal layout center">
+          <div class="type title-2 primary flex">[[$TRANSLATE('Product List', LANG)]]</div>
+        </div>
+      </div>
+      <!-- product list - start -->
+      <template is="dom-if" if="[[!inventory.length]]">
+        <h4 class="p-16 type center">[[$TRANSLATE('No Product Added Yet', LANG)]]...</h4>
+      </template>
+
+      <template is="dom-if" if="[[inventory.length]]">
+        <vaadin-grid items="[[inventory]]" id="inventory" active-item="{{activeItem}}">
+
+          <vaadin-grid-column width="12em" frozen>
+            <template class="header">
+              <vaadin-grid-sorter path="data.name" direction="desc">
+                <vaadin-grid-filter path="data.name" value="[[filterName]]">
+                  <paper-input class="custom-input no-padding" no-label-float placeholder="[[$TRANSLATE('Product Name', LANG)]]" value="{{filterName}}" required></paper-input>
+                </vaadin-grid-filter>
+              </vaadin-grid-sorter>
+            </template>
+            <template>
+              [[item.data.name]]
+            </template>
+          </vaadin-grid-column>
+
+          <vaadin-grid-column resizable>
+            <template class="header">[[$TRANSLATE('Category', LANG)]]</template>
+            <template>[[item.data.category]]</template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">[[$TRANSLATE('In Stock', LANG)]]</template>
+            <template>[[_getProductInStockCount(item.data)]]</template>
+          </vaadin-grid-column>
+          <!-- <vaadin-grid-column resizable>
+            <template class="header">Buying Price</template>
+            <template>[[_getLastBatchBuyingPrice(item.data.list)]]</template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Selling Price</template>
+            <template>[[_getLastBatchBuyingPrice(item.data.list)]]</template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Last Batch No.</template>
+            <template>[[item.data.batch]]</template>
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable>
+            <template class="header">Expiry</template>
+            <template>[[$formatDate(item.data.expiryDate)]]</template>
+          </vaadin-grid-column> -->
+        </vaadin-grid>
+      </template>
+      <!-- product list - end -->
+    </paper-card>
+    <!-- local DOM - end -->
+    
+
+      
+
+  </template>
+  <script src="page-store-inventory.js"></script>
+</dom-module>

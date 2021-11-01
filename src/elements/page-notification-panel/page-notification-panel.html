@@ -1,0 +1,228 @@
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/translating.html">
+
+<!-- Commong Styles -->
+<link rel="import" href="../../styles/common-style.html">
+
+<dom-module id='page-notification-panel'>
+  <template>
+    <style is='custom-style' include='iron-flex iron-flex-alignment common-style'>
+      .search-area {
+        padding: 10px;
+        background-color: var(--paper-blue-grey-50);
+        border-radius: 5px;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+      }
+
+      .search-area paper-autocomplete {
+        margin-left: 10px;
+      }
+
+      paper-autocomplete {
+        --paper-input-container-color: var(--paper-indigo-500);
+      }
+
+      .group span {
+        padding-right: 10px;
+      }
+
+      .group fieldset {
+        border-color: #fafafa;
+      }
+
+      .list-item {
+        border-bottom: 1px solid #fafafa;
+      }
+
+      .list-item:hover {
+        background-color: #fafafa;
+      }
+
+      @media only screen and (min-width: 320px) and (max-width: 480px) {
+        .search-area {
+          @apply(--layout-vertical);
+          background-color: transparent;
+          padding: 0;
+        }
+        .search-area paper-autocomplete {
+          margin-left: 0;
+        }
+        .search-area paper-button {
+          margin-top: 10px;
+        }
+      }
+
+      .pull-searchbutton-down {
+        position: relative;
+        top: 5px;
+      }
+
+    </style>
+
+    <!--local dom-->
+
+    <div class="tabs-container horizontal layout">
+      <paper-tabs class="flex tabs-container" id="tabs" selected="{{selectedPage}}" scrollable noink='true'>
+        <paper-tab>[[$TRANSLATE('Send to Individual',LANG)]]</paper-tab>
+        <paper-tab>[[$TRANSLATE('Send to Group',LANG)]]</paper-tab>
+      </paper-tabs>
+    </div>
+
+
+    <div class="master-container">
+      <div class="limiting-container custom-input-field">
+
+        <iron-pages selected="{{selectedPage}}">
+
+          <!-- Send Notification to Individual -->
+          <section>
+            <paper-card heading="[[$TRANSLATE('Send Notifiation', LANG)]]">
+              <div class="card-content">
+                <div class="center search-area wrap">
+                  <paper-autocomplete class="flex" id="userSearch" label="[[$TRANSLATE('Search for User',LANG)]]" on-autocomplete-selected="userSelected"
+                    on-autocomplete-reset="userSearchCleared" on-keyup="userSearchEnterKeyPressed" error-message="Input Required"
+                    text-property="name" value-property="idOnServer" required>
+                    <template autocomplete-custom-template>
+                      <paper-item on-tap="_onSelect" id$="[[_getSuggestionId(index)]]" role="option" aria-selected="false">
+                        <div class="type bold">[[item.name]]</div>
+                        <div class="type secondary m-left-8">([[item.phone]])</div>
+                        <div class="type secondary m-left-8">[[item.email]]</div>
+                        <paper-ripple></paper-ripple>
+                      </paper-item>
+                    </template>
+                  </paper-autocomplete>
+                  <paper-button class="btn btn-success pull-searchbutton-down" on-tap="userSearchButtonPressed">[[$TRANSLATE('Search', LANG)]]</paper-button>
+                </div>
+                <paper-input class="flex" label="[[$TRANSLATE('Message', LANG)]]" value="{{notificationMessage}}"></paper-input>
+              </div>
+              <div class="card-actions text-left">
+                <paper-button class="btn btn-info" raised on-tap="smsSendButtonPressed">
+                  [[$TRANSLATE('Send SMS', LANG)]] &nbsp;
+                  <iron-icon icon="mail"></iron-icon>
+                </paper-button>
+                <paper-button class="btn btn-success" raised on-tap="notificationSendButtonPressed">
+                  [[$TRANSLATE('Send (1 BDT, Patient)', LANG)]] &nbsp;
+                  <iron-icon icon="send"></iron-icon>
+                </paper-button>
+              </div>
+            </paper-card>
+          </section>
+          <!-- Send Notification to Individual - end -->
+
+          <!-- Send Notification to Group -->
+          <section>
+
+            <iron-pages selected="{{selectedGroupMessageView}}" on-selected-changed="loadGroupList">
+              <!-- Send To Group -->
+              <paper-card heading="[[$TRANSLATE('Send to Group', LANG)]]">
+                <div class="card-content">
+                  <paper-button class="btn btn-primary" on-tap="createNewGroupButtonPressed">
+                    <iron-icon icon="add"></iron-icon> [[$TRANSLATE('Create New Group', LANG)]]
+                  </paper-button>
+                  <br>
+                  <template is="dom-if" if="[[notificationGroupList.length]]">
+                    <paper-input id="notificationMessage" class="flex p-16" label="[[$TRANSLATE('Notification Message', LANG)]]" value="{{groupNotificationMessage}}"></paper-input>
+
+                    <template is="dom-repeat" items="[[notificationGroupList]]">
+                      <div class="p-16 list-item layout horizontal">
+                        <div class="flex">
+                          <div class="type bold">[[item.groupName]]</div>
+                          <template is="dom-repeat" items="[[item.members]]" as="member">
+                            <span class="type bg-gray caption secondary m-8">
+                              <template is="dom-if" if="[[!member.email]]">[[member.phone]]</template>
+                              [[member.email]]
+                            </span>
+                          </template>
+                        </div>
+                        <div class="m-left-8">
+                          <paper-icon-button icon="delete" class="type danger" on-tap="deleteList"></paper-icon-button>
+                          <paper-button class="btn btn-success btn-sm" raised on-tap="groupNotificationSendButtonPressed">
+                            [[$TRANSLATE('Send to this Group', LANG)]] &nbsp;
+                            <iron-icon icon="send"></iron-icon>
+                          </paper-button>
+                        </div>
+                      </div>
+                    </template>
+                  </template>
+                </div>
+
+
+              </paper-card>
+              <!-- Send to Group end-->
+
+              <!-- Create Group Start -->
+              <paper-card heading="[[$TRANSLATE('Create Group', LANG)]]">
+                <div class="card-content">
+
+                  <div class="search-area wrap">
+                    <paper-autocomplete class="flex" id="groupUserSearch" label="[[$TRANSLATE('Search for User',LANG)]]" on-autocomplete-selected="userAddedToGroup"
+                      on-autocomplete-reset="userSearchCleared" on-keyup="userSearchEnterKeyPressed" error-message="Input Required"
+                      text-property="name" value-property="idOnServer" required>
+                      <template autocomplete-custom-template>
+                        <paper-item on-tap="_onSelect" id$="[[_getSuggestionId(index)]]" role="option" aria-selected="false">
+                          <div class="type bold">[[item.name]]</div>
+                          <div class="type secondary m-left-8">([[item.phone]])</div>
+                          <div class="type secondary m-left-8">[[item.email]]</div>
+                          <paper-ripple></paper-ripple>
+                        </paper-item>
+                      </template>
+                    </paper-autocomplete>
+                    <paper-button class="btn btn-primary pull-searchbutton-down" on-tap="userSearchButtonPressed">[[$TRANSLATE('Search and Add', LANG)]]</paper-button>
+                  </div>
+
+                  <template is="dom-if" if="[[userGroup.length]]">
+                    <paper-input id="groupName" class="flex p-16" label="[[$TRANSLATE('Group Name', LANG)]]" value="{{groupName}}" required error-message="Please give this group a name"></paper-input>
+                    <form class="group m-16">
+                      <fieldset>
+                        <legend>[[$TRANSLATE('Group', LANG)]]</legend>
+                        <template is="dom-repeat" items="[[userGroup]]">
+                          <paper-item class="type">
+                            <span class="type bold">[[$getFullName(item.name)]]</span>
+                            <span class="type secondary">[[item.email]]</span>
+                            <span class="type secondary">[[item.phone]]</span>
+                          </paper-item>
+                        </template>
+                      </fieldset>
+                    </form>
+                  </template>
+
+                </div>
+                <div class="card-actions layout horizontal justified">
+                  <paper-icon-button icon="arrow-back" on-tap="backToSendGroupNotification"></paper-icon-button>
+                  <paper-button class="btn btn-success" raised on-tap="saveGroup">
+                    [[$TRANSLATE('Save This Group', LANG)]] &nbsp;
+                    <iron-icon icon="save"></iron-icon>
+                  </paper-button>
+                </div>
+              </paper-card>
+              <!-- Create Group End -->
+            </iron-pages>
+
+          </section>
+          <!-- Send Notification to Group -->
+
+
+
+        </iron-pages>
+
+      </div>
+    </div>
+
+
+  </template>
+  <script src="page-notification-panel.coffee-compiled.js"></script>
+</dom-module>

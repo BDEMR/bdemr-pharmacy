@@ -1,0 +1,171 @@
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+
+<!-- custom-elements -->
+<link rel="import" href="../html-block/html-block.html">
+
+<!-- element -->
+<dom-module id="page-print-record">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+    .limiting-container {
+      margin-top: 10px;
+    }
+    
+    .limiting-container {
+      max-width: 210mm;
+      min-height: 230mm;
+      /*min-height: 297mm;*/
+    }
+    
+    .document {
+      font-family: 'Times New Roman';
+      background: white;
+    }
+    
+    .document-title {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    
+    @media print {
+      .limiting-container {
+        /*margin-top: -60px;*/
+        /*border: 1px solid black;*/
+      }
+    }
+    
+    .collection {
+      color: red;
+      background: grey;
+    }
+    
+    .document-header {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+    
+    .document-header .logo {
+      max-width: 128px;
+      max-height: 128px;
+    }
+    
+    .horiline {
+      width: 100%;
+      height: 0px;
+      /*background: black;*/
+      border: 1px solid black;
+      margin-bottom: 6px;
+    }
+    
+    .leftSide {
+      margin-left: 6px;
+    }
+    
+    .leftSideLine1 {
+      font-size: 24px;
+    }
+    
+    .rightSideLine1 {
+      font-size: 22px;
+    }
+    .item{
+      padding: 10px;
+      border: 1px solid grey;
+    }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container document">
+        <template is="dom-if" if="[[shouldRender]]">
+
+          <div class="document-header horizontal layout center">
+
+            <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+              <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+            </template>
+
+            <div class="leftSide vertical layout">
+              <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+              <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+              <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+            </div>
+            <div class="flex"></div>
+            <div class="rightSide vertical layout end">
+              <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+              <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+              <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+            </div>
+          </div>
+
+
+
+          <div class="horiline"></div>
+
+          <div class="document-header horizontal layout center">
+            <template is="dom-if" if="[[!patient.isForOrganizationOnly]]">
+              Name: {{$getFullName(patient.name)}} <br>
+              Age :[[$computeAge(patient.dateOfBirth)]] <br>
+              Allergy : <br>
+              Blood Group : <br>
+            </template>
+            <template is="dom-if" if="[[patient.isForOrganizationOnly]]">
+              Name: REDACTED FOR CONFIDENTIALITY <br>
+              Age : REDACTED FOR CONFIDENTIALITY  <br>
+              Allergy : <br>
+              Blood Group : <br>
+            </template>
+          </div>
+
+<!-- Prescription - start -->
+        <paper-card class="m-top-16" heading="Prescription">
+          <paper-listbox>
+            <template is="dom-repeat" items="{{medications}}">
+              <div class="item">
+                <div class="type body flex">
+                  <div><span>#[[_indexIncrement(index)]].</span>
+                    <span class="document-title">{{item.data.brandName}}</span>
+                    <span>({{item.data.genericName}})</span>
+                    <span class="type caption bg-gray">{{item.data.manufacturer}}</span>
+                  </div>
+                </div>
+                <div>
+                  <span>{{item.data.strength}}</span> ,
+                  <span>{{item.data.quantityPerPrescription}} {{item.data.form}}</span> ,
+                  <span>{{item.data.route}}</span> ,
+                  <span>{{item.data.direction}}</span> ,
+                  <span><div class="type caption m-horizontal-4">[[$TRANSLATE_NUMBER(item.data.dose, LANG)]] [[$TRANSLATE(item.data.form, LANG)]] 
+                    
+                    <span hidden="[[!item.data.doseDirection]]">
+                          [[$TRANSLATE_NUMBER(item.data.doseDirection, LANG)]]</span> for [[_computeTotalDaysCount(item.data.endDateTimeStamp,item.data.startDateTimeStamp)]] <span hidden$="[[!item.data.endDateTimeStamp]]">[[$TRANSLATE('Days',LANG)]]</span></div></span>
+                </div>
+              </div>
+            </template>
+          </paper-listbox>
+
+        </template>
+
+      </div>
+      </paper-card>
+
+      <div class="sp-2"></div>
+      <div class="horizontal layout center center-justified p-horizontal-16">
+        <div class="type body italic"><strong>printed by: </strong>[[user.name]]</div>
+      </div>
+    </div>
+
+  </template>
+  <script src="page-print-record.coffee-compiled.js"></script>
+</dom-module>

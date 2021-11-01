@@ -1,0 +1,269 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box-light.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<dom-module id="page-complain-list">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .custom-paper-input {
+        width: 100%;
+      }
+
+      .custom-paper-input ::content .underline {
+        display: none;
+      }
+
+      .custom-paper-input ::content paper-input-container {
+        padding-bottom: 0;
+      }
+      .custom-paper-input ::content input {
+        font-weight: bold !important;
+        background-color: #f7f7f7 !important;
+        padding: 4px 6px;
+        box-sizing: border-box !important;
+        border-radius: 6px !important;
+      }
+
+      .custom-paper-input ::content input::placeholder {
+        color: rgba(0, 0, 0, .87) !important;
+      }
+
+      vaadin-grid {
+        height: inherit;
+        font-family: Roboto, sans-serif;
+        --divider-color: rgba(0, 0, 0, var(--dark-divider-opacity));
+
+        /* --vaadin-grid-cell: {
+          padding: 0;
+        }; */
+
+        --vaadin-grid-header-cell: {
+          height: 48px;
+          /* color: rgba(0, 0, 0, var(--dark-secondary-opacity)); */
+          font-size: 16px;
+        };
+
+        --vaadin-grid-body-cell: {
+          /* height: 48px; */
+          color: rgba(0, 0, 0, var(--dark-primary-opacity));
+          font-size: 16px;
+        };
+
+        --vaadin-grid-body-row-hover-cell: {
+          background-color: var(--paper-grey-200);
+        };
+
+        --vaadin-grid-body-row-selected-cell: {
+          background-color: var(--paper-grey-100);
+        };
+
+        --vaadin-grid-focused-cell: {
+          box-shadow: none;
+          font-weight: bold;
+        };
+      }
+
+      .resolved {
+        color: green;
+      }
+
+
+    </style>
+    <div class="master-container">
+
+      <div style="width: 100%;">
+        <template is="dom-if" if="[[$isEmptyArray(matchingComplaintList.length)]]">
+          <div class="type caption-2 secondary" style="text-align: center; background: #fff; padding: 16px;">[[$TRANSLATE('No Complain(s) Available', LANG)]]</div>
+        </template>
+        <template is="dom-if" if="[[!$isEmptyArray(matchingComplaintList.length)]]">
+          <vaadin-grid id="complains" items="{{matchingComplaintList}}" class="grid-table" active-item="{{activeItem}}" style="padding: 10px;
+          width: 90%;
+          margin: 0 auto;
+          margin-top: 20px;
+          border-radius: 10px;
+          box-shadow: 1px 2px 3px #858585;">
+  
+            <vaadin-grid-column width="8em">
+              <template class="header">
+                <vaadin-grid-sorter path="name" direction="asc">
+                  
+                  <vaadin-grid-filter aria-label="Applicants name" path="name" value="[[nameSearchString]]">
+                    <paper-input class="custom-paper-input"  placeholder="[[$TRANSLATE('Applicants name', LANG)]]" value="{{nameSearchString}}" no-label-float></paper-input>
+                  </vaadin-grid-filter>
+              
+                </vaadin-grid-sorter>
+              </template>
+              <template>{{item.name}}</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="8em">
+              <template class="header">
+                <vaadin-grid-sorter path="position" direction="asc">
+                  
+                  <vaadin-grid-filter aria-label="Applicants position" path="position" value="[[positionSearchString]]">
+                    <paper-input class="custom-paper-input" placeholder="[[$TRANSLATE('Applicants position', LANG)]]" value="{{positionSearchString}}" no-label-float></paper-input>
+                  </vaadin-grid-filter>
+              
+                </vaadin-grid-sorter>
+              </template>
+              <template>{{item.position}}</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="8em">
+              <template class="header">
+                <vaadin-grid-sorter path="location" direction="asc">
+                  
+                  <vaadin-grid-filter aria-label="Applicants location" path="location" value="[[locationSearchString]]">
+                    <paper-input class="custom-paper-input" placeholder="[[$TRANSLATE('Applicants location', LANG)]]" value="{{locationSearchString}}" no-label-float></paper-input>
+                  </vaadin-grid-filter>
+              
+                </vaadin-grid-sorter>
+              </template>
+              <template>{{item.location}}</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="8em">
+              <template class="header">
+                <vaadin-grid-sorter path="dateOfOccurrence" direction="asc">
+                  
+                  <vaadin-grid-filter aria-label="Date of occurrence" path="dateOfOccurrence" value="[[dateOfOccurrenceSearchString]]">
+                    <paper-input class="custom-paper-input" placeholder="[[$TRANSLATE('Date of occurrence', LANG)]]" value="{{dateOfOccurrenceSearchString}}" no-label-float></paper-input>
+                  </vaadin-grid-filter>
+              
+                </vaadin-grid-sorter>
+              </template>
+              <template>{{item.dateOfOccurrence}}</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="8em">
+              <template class="header">
+                <vaadin-grid-sorter path="typeOfComplaint" direction="asc">
+                  
+                  <vaadin-grid-filter aria-label="Type of complaint" path="typeOfComplaint" value="[[typeOfComplaintSearchString]]">
+                    <paper-input class="custom-paper-input" placeholder="[[$TRANSLATE('Type of complaint', LANG)]]" value="{{typeOfComplaintSearchString}}" no-label-float></paper-input>
+                  </vaadin-grid-filter>
+              
+                </vaadin-grid-sorter>
+              </template>
+              <template>{{item.typeOfComplaint}}</template>
+            </vaadin-grid-column>
+
+            
+            <vaadin-grid-column width="8em">
+              <template class="header">
+                <vaadin-grid-sorter path="complaintAgainstPerson" direction="asc">
+                  
+                  <vaadin-grid-filter aria-label="Complain against person" path="complaintAgainstPerson" value="[[complaintAgainstPersonSearchString]]">
+                    <paper-input class="custom-paper-input" placeholder="[[$TRANSLATE('Complain against person', LANG)]]" value="{{complaintAgainstPersonSearchString}}" no-label-float></paper-input>
+                  </vaadin-grid-filter>
+              
+                </vaadin-grid-sorter>
+              </template>
+              <template>{{item.complaintAgainstPerson}}</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="8em">
+              <template class="header">
+                <vaadin-grid-sorter path="complainAgainstOrganization.name" direction="asc">
+                  
+                  <vaadin-grid-filter aria-label="Complain Organization Name" path="complainAgainstOrganization.name" value="[[complainAgainstOrganizationSearchString]]">
+                    <paper-input class="custom-paper-input" placeholder="[[$TRANSLATE('Complain Organization Name', LANG)]]" value="{{complainAgainstOrganizationSearchString}}" no-label-float></paper-input>
+                  </vaadin-grid-filter>
+              
+                </vaadin-grid-sorter>
+              </template>
+              <template>{{item.complainAgainstOrganization.name}}</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="16em">
+              <template class="header">
+                <vaadin-grid-sorter path="complainDetails" direction="asc">
+                  
+                  <vaadin-grid-filter aria-label="Complain Details" path="complainDetails" value="[[complainDetailsSearchString]]">
+                    <paper-input class="custom-paper-input" placeholder="[[$TRANSLATE('Complain Details', LANG)]]" value="{{complainDetailsSearchString}}" no-label-float></paper-input>
+                  </vaadin-grid-filter>
+              
+                </vaadin-grid-sorter>
+              </template>
+              <template>{{item.complainDetails}}</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="8em">
+              <template class="header">
+                <vaadin-grid-sorter path="status" direction="asc">
+                  
+                  <vaadin-grid-filter aria-label="Status" path="status" value="[[statusSearchString]]">
+                    <paper-input class="custom-paper-input"  placeholder="[[$TRANSLATE('Status', LANG)]]" value="{{statusSearchString}}" no-label-float></paper-input>
+                  </vaadin-grid-filter>
+              
+                </vaadin-grid-sorter>
+              </template>
+              <template>{{item.status}}</template>
+            </vaadin-grid-column>
+
+          </vaadin-grid>
+        </template>
+      </div>
+    </div>
+
+    
+    <!-- <paper-dialog id="dialogComplainPreview">
+      <h2 class="p-horizontal-24 p-top-24">Complain Preview</h2>
+      <paper-dialog-scrollable>
+        <div class="type body"><strong>Applicants name: </strong> <span>{{complain.name}}</span></div>
+        <div class="type body"><strong>Applicants position: </strong> <span>{{complain.position}}</span></div>
+        <div class="type body"><strong>Organization Name: </strong> <span>{{complain.organization.name}}</span></div>
+        <div class="type body"><strong>Applicants location: </strong> <span>{{complain.location}}</span></div>
+        <div class="type body"><strong>Date of occurrence: </strong> <span>{{complain.dateOfOccurrence}}</span></div>
+        <div class="type body"><strong>Type of complaint: </strong> <span>{{complain.typeOfComplaint}}</span></div>
+        <div class="type body"><strong>Complain against person: </strong> <span>{{complain.complaintAgainstPerson}}</span></div>
+        <div class="type body"><strong>Complain Organization Name: </strong> <span>{{complain.complainAgainstOrganization.name}}</span></div>
+        <div class="type body"><strong>Complain Details: </strong> <span>{{complain.complainDetails}}</span></div>
+        <vaadin-combo-box  class="flex m-top-16 custom-paper-input" label="Status" items="{{statusList}}" value="{{complain.status}}" allow-custom-value></vaadin-combo-box>
+      </paper-dialog-scrollable>
+
+      <div class="buttons">
+        <paper-button dialog-dismiss>Close</paper-button>
+        <paper-button raised class="colored" on-tap="_updateComplainStatus">Update Status</paper-button>
+      </div>
+    </paper-dialog> -->
+    
+    
+
+  </template>
+
+  <script src="page-complain-list.coffee-compiled.js"></script>
+</dom-module>

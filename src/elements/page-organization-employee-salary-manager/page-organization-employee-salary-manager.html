@@ -1,0 +1,215 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-organization-employee-salary-manager">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        width: 90%;
+      }
+    </style>
+
+    <div class="master-container">
+      <paper-progress class="progress" indeterminate hidden$="[[!loading]]"></paper-progress>
+      <div class="limiting-container">
+
+        <paper-card>
+          <div class="card-content">
+            <vaadin-grid items="[[employeeList]]">
+              <vaadin-grid-column>
+                <template class="header">Employee Id</template>
+                <template>
+                  <span>[[item.data.employeeId]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column>
+                <template class="header">Name</template>
+                <template>
+                  <span>[[item.data.name]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column>
+                <template class="header">Mobile</template>
+                <template>
+                  <span>[[item.data.mobile]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column>
+                <template class="header">Designation</template>
+                <template>
+                  <span>[[getDesignation(item.data.designationId)]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column>
+                <template class="header">Department</template>
+                <template>
+                  <span>[[getDepartment(item.data.departmentId)]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column>
+                <template class="header">Action</template>
+                <template>
+                  <div>
+                    <paper-icon-button icon="visibility" on-tap="viewSalaryButtonPressed"></paper-icon-button>
+                    <paper-icon-button icon="create" on-tap="editSalaryButtonPressed"></paper-icon-button>
+                  </div>
+                </template>
+              </vaadin-grid-column>
+            </vaadin-grid>
+          </div>
+        </paper-card>
+
+      </div>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'page-organization-employee-salary-manager',
+      behaviors: [
+        app.behaviors.commonComputes,
+        app.behaviors.dbUsing,
+        app.behaviors.pageLike,
+        app.behaviors.apiCalling
+      ],
+      properties: {
+        user: Object,
+        organization: Object,
+        employeeList: Array,
+        departmentList: Array,
+        designationList: Array,
+        loading: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      navigatedIn() {
+        const params = this.domHost.getPageParams()
+        this._loadUser();
+        if (params['organization']) {
+          this._loadOrganization(params['organization'], () => {
+            this._loadDepartmentList(this.organization.idOnServer)
+            this._loadDesignationList(this.organization.idOnServer)
+            this._loadEmployeeList(this.organization.idOnServer)
+          })
+        } else {
+          return this.domHost.showModalDialog("Missing Organization params");
+        }
+      },
+
+      _loadUser(cbfn) {
+        const userList = app.db.find('user');
+        if (userList.length === 1) {
+          this.user = userList[0];
+        } else {
+          return this.domHost.showModalDialog('Invalid User');
+        }
+      },
+
+      _loadOrganization(idOnServer, cbfn) {
+        const data = {
+          apiKey: this.user.apiKey,
+          idList: [idOnServer]
+        };
+        return this.callApi('/bdemr-organization-list-organizations-by-ids', data, (err, response) => {
+          if (response.hasError) {
+            return this.domHost.showModalDialog(response.error.message);
+          } else {
+            if (response.data.matchingOrganizationList.length !== 1) {
+              this.domHost.showModalDialog("Invalid Organization");
+              return;
+            }
+            this.set('organization', response.data.matchingOrganizationList[0]);
+            cbfn()
+          }
+        });
+      },
+
+      _loadEmployeeList(organizationIdentifier) {
+        const query = {
+          apiKey: this.user.apiKey,
+          organizationId: organizationIdentifier
+        }
+        this.loading = true;
+        this.callApi('/bdemr-organization-get-employee-list', query, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (response.data.length) {
+            this.set('employeeList', response.data);
+          }
+        })
+      },
+
+      _loadDepartmentList(organizationIdentifier) {
+        const query = {
+          apiKey: this.user.apiKey,
+          organizationId: organizationIdentifier
+        }
+        this.loading = true;
+        this.callApi('/bdemr--organizations-get-department-list', query, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (response.data.length) {
+            this.set('departmentList', response.data);
+          }
+        })
+      },
+
+      _loadDesignationList(organizationIdentifier) {
+        const query = {
+          apiKey: this.user.apiKey,
+          organizationId: organizationIdentifier
+        }
+        this.loading = true;
+        this.callApi('/bdemr--organizations-get-designation-list', query, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (response.data.length) {
+            this.set('designationList', response.data);
+          }
+        })
+      },
+
+      getDepartment(departmentId) {
+        let department = this.departmentList.find(item => item._id === departmentId)
+        return department ? department.name : ''
+      },
+
+      getDesignation(designationId) {
+        let designation = this.designationList.find(item => item._id === designationId)
+        return designation ? designation.name : ''
+      },
+
+      viewSalaryButtonPressed(e) {
+        let item = e.model.item
+        this.domHost.navigateToPage('#/organization-employee-salary-editor/organization:' + this.organization.idOnServer + '/employee:' + item.serial + '/mode:view')
+      },
+
+      editSalaryButtonPressed(e) {
+        let item = e.model.item
+        this.domHost.navigateToPage('#/organization-employee-salary-editor/organization:' + this.organization.idOnServer + '/employee:' + item.serial)
+      }
+
+    })
+  </script>
+</dom-module>

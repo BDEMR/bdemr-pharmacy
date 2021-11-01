@@ -1,0 +1,474 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+
+
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+<link rel="import" href="./page-icons.html">
+
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+<link rel="import" href="../../elements/html-block/html-block.html">
+
+<!-- element -->
+<dom-module id="page-dashboard">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      
+      .navigate-to{
+        justify-content: left;
+            display: flex;
+            position: relative;
+      }
+
+
+      .card {
+        @apply(--layout-flex);
+        min-height: 100px;
+        margin: 3px;
+      }
+
+      .card-content.single-block .number {
+        font-size: 72px;
+      }
+
+      .card-content.single-block .subtitle {
+        text-transform: uppercase;
+      }
+
+   
+
+
+
+
+      .right-hand-text {
+        padding-left: 20px;
+      }
+
+      .language-strip {
+        margin: 10px;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-end-justified);
+      }
+
+
+    
+
+      .dashboard-item {
+        position: relative;
+        margin: 4px;
+        padding: 8px;
+        border: 1px solid #eee;
+        background-color: #f7f7f7;
+        width: calc(15% - 26px);
+        text-align: center;
+        border-radius: 20px;
+        box-shadow: 5px 5px 10px #b9b9b9;
+        /* color: white; */
+        margin: 10px;
+        transition: all 0.2s ease-in-out;
+      }
+
+      .dashboard-item-2 {
+        position: relative;
+        margin: 8px 16px;
+        width: 128px;
+        @apply(--layout-center-justified);
+        @apply(--layout-horozontal);
+        @apply(--layout-center);
+        text-align: center;
+      }
+
+      .uppercase {
+        text-transform: uppercase !important;
+      }
+
+      .dashboard-item:hover {
+        cursor: pointer;
+      }
+
+      .dashboard-item .title {
+        font-weight: 300;
+        text-align: center;
+        margin: 0;
+        padding: 5px 0;
+        font-size: 16px;
+      }
+
+      .dashboard-item .icon {
+        text-align: center;
+        padding: 16px;
+      }
+
+      iron-icon {
+        --iron-icon-height: 40px;
+        --iron-icon-width: 40px;
+      }
+      .dashboard-item:hover iron-icon{
+        color:white;
+      }
+      .dashboard-item:hover {
+        background-color:var(--app-primary-color);
+        color: white;
+        transform: scale(1.1);
+        
+      }
+
+      .hide-on-mobile {
+        display: block;
+      }
+
+      @media screen and (max-width: 639px) {
+        .hide-on-mobile {
+          display: none;
+        }
+
+        .dashboard-item {
+          width: calc(50% - 26px);
+          @apply(--layout-horozontal);
+          @apply(--layout-center);
+          @apply(--layout-wrap);
+          padding: 4px;
+        }
+
+        .dashboard-item-2 {
+          width: 96px;
+        }
+
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        /* color: var(--brand-primary-color); */
+      }
+
+      paper-tabs.basic-tabs {
+        --paper-tabs-selection-bar: {
+          color: var(--paper-teal-500);
+          background-color: var(--paper-teal-500);
+        }
+      }
+
+      vaadin-grid {
+        --vaadin-grid-cell: {
+          font-size: 14px;
+          min-width: 100px;
+          max-width: 200px;
+        }
+
+        ;
+      }
+
+      .organization-dropdown {
+        min-width: 270px;
+      }
+
+      paper-input {
+        padding-left: 10px;
+        padding-right: 5px;
+      }
+     
+    </style>
+
+    <!-- local DOM -->
+
+
+
+    <div class="master-container">
+
+      <div class="limiting-container custom-input-field">
+
+        <div class="language-strip">
+          <paper-dropdown-menu-light label="[[$TRANSLATE('Language', LANG)]]">
+            <paper-listbox class="dropdown-content" selected="{{languageSelectedIndex}}">
+              <paper-item>English (US)</paper-item>
+              <paper-item>Bengali / বাংলা</paper-item>
+            </paper-listbox>
+          </paper-dropdown-menu-light>
+        </div>
+
+        <paper-card heading="[[$TRANSLATE('Manage Patients', LANG)]]">
+          <div class="p-8" >
+            <div class="layout horizontal wrap" style="justify-content: center;
+            display: flex;
+            position: relative;">
+              <template is="dom-repeat" items="[[managePatientLinkList]]">
+                <div class="dashboard-item-2" on-tap="goToUrlForManagePatientList">
+                  <div class="icon">
+                    <img width="64" height="64"  src$="{{item.imagePath}}" />
+                    
+                  </div>
+                  <div class="type body secondary">[[$TRANSLATE(item.subTitle, LANG)]]</div>
+                  <div class="type body-lead uppercase">[[$TRANSLATE(item.title, LANG)]]</div>
+                  <paper-ripple></paper-ripple>
+                </div>
+              </template>
+            </div>
+          </div>
+        </paper-card>
+
+        <paper-card heading="[[$TRANSLATE('Manage Samples', LANG)]]" style="margin-top: 20px;">
+          <div >
+            <div class="layout horizontal center man-samples">
+              <paper-input class="flex" label="[[$TRANSLATE('Insert Sample Code for Tests', LANG)]]" value="{{sampleCodeToJump}}"></paper-input>
+              <paper-button raised on-tap="sampleCodeJumpTapped">[[$TRANSLATE('Jump To Test Results', LANG)]]</paper-button>
+            </div>
+          </div>
+        </paper-card>
+
+        <template is="dom-if" if="[[organization.markAsNwdrOrganization]]">
+          <paper-card class="m-top-8">
+            <div class="card-custom-header">
+              <div class="layout horizontal center">
+                <div class="title flex">[[$TRANSLATE('NWDR Patients List', LANG)]]</div>
+                <vaadin-combo-box class="organization-dropdown m-right-8" label="Organization" items="[[childOrganizationList]]"
+                  on-value-changed="organizationSelected" loading="[[organizationLoading]]" disabled="[[!childOrganizationList.length]]"></vaadin-combo-box>
+
+              </div>
+            </div>
+            <!-- <div class="card-content">
+            <paper-progress indeterminate hidden="[[!loading]]"></paper-progress>
+          </div> -->
+
+            <paper-tabs style="font-size: 18px; background-color: #fafafa;" class="basic-tabs" selected="{{selectedDateRangeIndex}}"
+              scrollable>
+              <template is="dom-repeat" items="[[dayRangeTypeList]]">
+                <paper-tab>[[item.type]]</paper-tab>
+              </template>
+            </paper-tabs>
+
+            <template is="dom-if" if="{{nwdrPatientList}}">
+              <div class="card-content">
+                <div class="horizontal layout center">
+                  <div class="type body flex secondary">
+                    <strong>[[$TRANSLATE('Patient Found', LANG)]]: {{nwdrPatientCounter}}</strong>
+                  </div>
+
+                  <template is="dom-if" if="{{!$equals(selectedDateRangeIndex, 4)}}">
+                    <div class="type body secondary">
+                      ([[$TRANSLATE('From', LANG)]] [[_formatDateTime(dateCreatedFrom)]] [[$TRANSLATE('to', LANG)]] [[_formatDateTime(dateCreatedTo)]])
+                    </div>
+                  </template>
+
+
+                  <template is="dom-if" if="{{$equals(selectedDateRangeIndex, 4)}}">
+                    <div class="horizontal layout center">
+                      <custom-vital-search style="width:210px" on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
+                      <paper-button on-tap="filterButtonClicked">[[$TRANSLATE('Filter', LANG)]]</paper-button>
+                    </div>
+                  </template>
+
+                </div>
+              </div>
+
+              <vaadin-grid items="[[nwdrPatientList]]">
+                <vaadin-grid-column>
+                  <template class="header layout horizontal">
+                    [[$TRANSLATE('SI', LANG)]]
+                  </template>
+                  <template>
+                    <div class="type body">
+                      <div>[[_returnSerial(index)]].</div>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column>
+                  <template class="header layout horizontal">
+                    <!-- <vaadin-grid-filter aria-label="Full Name" path="name" value="[[nameFilter]]">
+                    <paper-input label="Patient Name" value="{{nameFilter}}" no-label-float></paper-input>
+                  </vaadin-grid-filter> -->
+                    [[$TRANSLATE('Patient Name', LANG)]]
+                  </template>
+                  <template>
+                    <div class="type body">
+                      <div>[[$getFullName(item.name)]]</div>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column>
+                  <template class="header layout horizontal">
+                    <!-- <vaadin-grid-filter aria-label="Full Name" path="name" value="[[nameFilter]]">
+                    <paper-input label="Patient Name" value="{{nameFilter}}" no-label-float></paper-input>
+                  </vaadin-grid-filter> -->
+                    [[$TRANSLATE('Gender', LANG)]]
+                  </template>
+                  <template>
+                    <div class="type body">
+                      <div>[[item.gender]]</div>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column>
+                  <template class="header layout horizontal">
+                    <!-- <vaadin-grid-filter aria-label="Full Name" path="name" value="[[nameFilter]]">
+                    <paper-input label="Patient Name" value="{{nameFilter}}" no-label-float></paper-input>
+                  </vaadin-grid-filter> -->
+                    [[$TRANSLATE('Patient ID', LANG)]]
+                  </template>
+                  <template>
+                    <div class="type body">
+                      <div>[[item.nwdrPatientId]]</div>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column>
+                  <template class="header layout horizontal">
+                    [[$TRANSLATE('Organization Serial', LANG)]]
+                  </template>
+                  <template>
+                    <div class="type body">
+                      <div>[[item.organizationId]]</div>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column>
+                  <template class="header layout horizontal">
+                    [[$TRANSLATE('Organization Name', LANG)]]
+                  </template>
+                  <template>
+                    <div class="type body">
+                      <div>[[item.orgName]]</div>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column>
+                  <template class="header layout horizontal">
+                    [[$TRANSLATE('Date Registration', LANG)]]
+                  </template>
+                  <template>
+                    <div class="type body">
+                      <div>[[$mkDateTime(item.cratedDatetimeStamp)]]</div>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column>
+                  <template class="header layout horizontal">
+                    [[$TRANSLATE('Last Visit', LANG)]]
+                  </template>
+                  <template>
+                    <div class="type body">
+                      <div>[[$mkDateTime(item.lastVisit.createdDatetimeStamp)]]</div>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column>
+                  <template class="header layout horizontal">
+                    [[$TRANSLATE('Last Visit Type', LANG)]]
+                  </template>
+                  <template>
+                    <div class="type body">
+                      <div>[[item.lastVisit.visitType]]</div>
+                    </div>
+                  </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column>
+                  <template class="header layout horizontal">
+                    [[$TRANSLATE('Action', LANG)]]
+                  </template>
+                  <template>
+                    <paper-button style="background: #eee;" on-tap="viewPatientNdrRecordList">View Records</paper-button>
+                  </template>
+                </vaadin-grid-column>
+
+
+
+                <!-- <div class="p-0 b-top">
+              <paper-listbox>
+                <template is="dom-repeat" items="[[nwdrPatientList]]">
+
+                  <paper-item class="custom layout horizontal">
+                    <div class="type caption-2 m-right-8">[[_returnSerial(index)]].</div>
+                    <div class="flex">
+                      <div class="type body">
+                        <div>[[$getFullName(item.name)]]</div>
+                        <div class="type caption-2">[[_formatDateTime(item.cratedDatetimeStamp)]]</div>
+                      </div>
+                    </div>
+                    <paper-button on-tap="viewPatientNdrRecordList">View Records</paper-button>
+                  </paper-item>
+                </template>
+              </paper-listbox>
+            </div> -->
+            </template>
+          </paper-card>
+        </template>
+
+        <paper-card heading="[[$TRANSLATE('Navigate to', LANG)]]" class="m-top-8">
+          <div class="p-12">
+            <div class="layout horizontal wrap navigate-to" >
+
+              <template is="dom-repeat" items="[[sortcutList]]">
+                <div class="dashboard-item" on-tap="goToUrlForShortcutNav">
+                  <div class="icon">
+                    <!-- <img width="64" height="64"  src$="{{item.imagePath}}" /> -->
+                    <iron-icon icon$='[[item.icon]]'></iron-icon>
+                  </div>
+                  <div class="type body uppercase">[[$TRANSLATE(item.title, LANG)]]</div>
+                  <div class="type caption secondary">[[$TRANSLATE(item.info, LANG)]]</div>
+                  <paper-ripple></paper-ripple>
+                </div>
+              </template>
+
+            </div>
+          </div>
+        </paper-card>
+
+        <paper-card heading="[[$TRANSLATE('My App license', LANG)]]" class="m-top-8">
+          <div class="card-content single-block horizontal layout center">
+            <div class="vertical layout center">
+              <div class="number">[[$TRANSLATE_NUMBER(daysLeft,LANG)]]</div>
+              <div class="subtitle">[[$TRANSLATE('days left',LANG)]]</div>
+            </div>
+            <div class="right-hand-text">
+              <html-block html="[[$getString1(daysLeft, LANG)]]"></html-block>
+              <br>
+            </div>
+          </div>
+          <div class="card-actions">
+            <paper-button class="colored" raised on-tap="renewAnaesMonTapped">[[$TRANSLATE('renew',LANG)]]</paper-button>
+            <paper-button on-tap="purchaseAnaesMonTapped">[[$TRANSLATE('purchase',LANG)]]</paper-button>
+          </div>
+        </paper-card>
+
+        <div class="type caption m-horizontal-8 secondary text-right">v[[version]]</div>
+      </div>
+    </div>
+
+    </div>
+
+  </template>
+  <script src="page-dashboard.coffee-compiled.js"></script>
+</dom-module>

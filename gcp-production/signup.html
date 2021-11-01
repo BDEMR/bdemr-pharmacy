@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!--Basic Page Needs-->
+    <meta charset="utf-8">
+    <title>BDEMR - Signup</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!--Mobile Specific Metas-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--FONT-->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,600" rel="stylesheet" type="text/css">
+    <!--CSS-->
+    <link rel="stylesheet" href="css/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/main.css">
+    <!--Favicon-->
+    <link rel="icon" type="image/ico" href="images/favicon.ico">
+  </head>
+  <body id="pageSignup" onload="bodyOnload()">
+    <div class="toolbar size-normal">
+      <div class="top-bar"><a href="https://bdemr.com" class="logo"><img src="images/logo.png" alt=""></a>
+        <div class="topbar-action"><a href="https://my.bdemr.com" class="btn shadow danger">login</a></div>
+      </div>
+    </div>
+    <div id="signup" class="section">
+      <div class="container">
+        <div class="card p-0">
+          <div class="transparent-header"></div>
+          <div class="absolute-title">Signup</div>
+          <div class="card-content p-vertical-16">
+            <form id="signupForm" action="" method="get" novalidate="novalidate">
+              <div id="emailExistError"></div>
+              <div class="card-input-item">
+                <div class="paper-input__wrapper">
+                  <input id="inputFullName" type="text" name="inputFullName" placeholder="Full Name" class="paper-input paper-input--floating">
+                  <label></label>
+                  <div class="paper-input__error"></div>
+                  <div class="paper-input__info">Please Type Your Full Name Along with Honorifics. i.e. Dr., Mr., Mrs, Miss., etc.</div>
+                </div>
+              </div>
+              <div class="card-input-item">
+                <div class="paper-input__wrapper">
+                  <input id="inputEmailOrPhone" type="text" name="inputEmailOrPhone" placeholder="Email or Phone" class="paper-input paper-input--floating">
+                  <label></label>
+                  <div class="paper-input__error"></div>
+                  <div class="paper-input__info">Example: john@xyz.com or 01712345678 or 01712345678-1</div>
+                </div>
+              </div>
+              <div class="card-input-item">
+                <div class="paper-input__wrapper">
+                  <input id="inputPassword" type="password" name="inputPassword" placeholder="Password" class="paper-input paper-input--floating">
+                  <label></label>
+                  <div class="paper-input__error"></div>
+                  <div class="paper-input__info">NOTE: Password can be anything but Must be 6 characters long.</div>
+                </div>
+              </div>
+              <div class="card-input-item">
+                <div class="paper-input__wrapper">
+                  <input id="inputRepeatPassword" type="password" name="inputRepeatPassword" placeholder="Repeat Password" class="paper-input paper-input--floating">
+                  <label></label>
+                  <div class="paper-input__error"></div>
+                </div>
+              </div>
+              <div class="card-input-item">
+                <div class="paper-input__wrapper">
+                  <div class="paper-input__info">Date Of Birth</div>
+                  <input id="inputDateOfBirth" type="text" name="inputDateOfBirth" placeholder="MM/DD/YYYY" class="paper-input">
+                  <div class="paper-input__error"></div>
+                </div>
+              </div>
+              <div class="card-input-item">
+                <div class="paper-input__wrapper">
+                  <div class="paper-input__info">Effective Country</div>
+                  <select id="inputEffectiveRegion" name="inputEffectiveRegion" class="paper-dropdown full-width">
+                    <option value="">Select Country</option>
+                  </select>
+                  <div class="paper-input__error"></div>
+                </div>
+              </div>
+              <div class="card-input-item">
+                <div class="paper-input__wrapper">
+                  <input id="inputCouponCode" type="text" name="inputCouponCode" placeholder="Coupon Code" class="paper-input paper-input--floating">
+                  <label></label>
+                  <div class="paper-input__error"></div>
+                </div>
+              </div>
+              <div class="card-input-item">
+                <div class="paper-input__wrapper">
+                  <label>
+                    <input id="inputCondition" type="checkbox" name="inputCondition" class="checkbox">I have read and agree to the <a href="#" onclick="dialogTermsOfUse()">Terms of Use </a>and <a href="#" onclick="dialogPrivacyPolicy()">Privacy Policy.</a>
+                    <div class="paper-input__error"></div>
+                  </label>
+                </div>
+              </div>
+              <div class="p-horizontal-16 p-bottom-16 text-right">
+                <button type="submit" class="shadow btn success m-0">Signup</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="dialogSignupSuccess" class="overlay">
+      <div class="modal-container text-center"><img src="images/ico_cross.png" alt="" onclick="_ondialogSignupClosebtnPressed()" class="modal-close">
+        <div class="modal-header">
+          <div class="type headline">Congrats!</div>
+          <div id="viewFullName" class="type body-lead m-left-8"></div>
+        </div>
+        <div class="modal-content">
+          <div class="type title-2">You Successfully Completed Your Signup!</div><a href="https://my.bdemr.com" class="btn shadow success m-vertical-16">Login</a>
+          <div class="type body">or back <a href="https://bdemr.com" class="text link">HOME</a></div>
+        </div>
+      </div>
+    </div>
+    <div id="dialogTermsOfUse" class="overlay">
+      <div class="modal-container"><img src="images/ico_cross.png" alt="" onclick="dialogTermsOfUse()" class="modal-close">
+        <div class="modal-header"><img src="images/bdemr_logo_small.png" alt="">
+          <div class="type headline m-left-8">Terms of Use</div>
+        </div>
+        <div class="type body modal-content">
+          <p><strong>PLEASE READ THESE TERMS OF USE CAREFULLY BEFORE USING THIS SITE (INCLUDING, THE LIMITATIONS OF LIABILITY AND CHOICE OF LAW AND JURISDICTION SECTIONS)</strong></p>
+          <p><strong>Website Operator</strong></p>
+          <p><span style="font-weight: 400;">This Website is run by </span><span style="font-weight: 400;">BDEMR </span><span style="font-weight: 400;">(referred to below as “</span><strong>we</strong><span style="font-weight: 400;">”, “</span><strong>us</strong><span style="font-weight: 400;">” or “</span><strong>our</strong><span style="font-weight: 400;">”).</span></p>
+          <p><span style="font-weight: 400;">BDEMR Patient app , BDEMR Doctors app, BDEMR Report app, Anaesmon </span><span style="font-weight: 400;">is a brand name of medical software produced by  </span><span style="font-weight: 400;">Bangladesh Electronic Medical Records (BDEMR)</span><span style="font-weight: 400;">, a company registered in Canada (company </span><span style="font-weight: 400;">registration </span><span style="font-weight: 400;">number </span><span style="font-weight: 400;">BC1045871</span><span style="font-weight: 400;">) with registered offices at </span><span style="font-weight: 400;">8505 wildwood pl, Surrey, BC, V4N5C5</span><span style="font-weight: 400;">. We are a private company.</span></p>
+          <p><strong>Application of Terms of Use </strong></p>
+          <p><span style="font-weight: 400;">These “</span><strong>Terms of Use</strong><span style="font-weight: 400;">” (together with the documents referred to in them) tell you the terms of use on which you may make use of our website</span><span style="font-weight: 400;">https://bdemr.com/</span><span style="font-weight: 400;"> (the “</span><strong>Website</strong><span style="font-weight: 400;">”), or the app as a registered user. Use of our Website includes accessing, browsing, searching, or registering to use the Website or any of the apps.</span></p>
+          <p><span style="font-weight: 400;">Please read these Terms of Use carefully </span><strong>(including the “Limitations of Liability” and “Choice of Law and Jurisdiction” sections below)</strong><span style="font-weight: 400;">before you start to use our Website,or app as these will apply to your use of our Website.</span></p>
+          <p><span style="font-weight: 400;">We may update these Terms of Use from time to time, including, to reflect changes in law or as a result of changes to the content of the Website or the addition of new features – it is therefore important that you refer to these Terms of Use from time to time to ensure that you are familiar with the relevant terms which will govern your use of the Website, or app/apps.</span></p>
+          <p><strong>By using our Website, app/apps, you confirm that you accept these Terms of Use and that you agree to comply with them.</strong></p>
+          <p><span style="font-weight: 400;">If you do not agree to these Terms of Use, you must not use our Website, app/apps.</span></p>
+          <p><span style="font-weight: 400;">These Terms of Use incorporate the following additional terms, which also apply to your use of our Website, app/app:</span></p>
+          <ul>
+            <li>          <span style="font-weight: 400;">Our Privacy Policy (</span><span style="font-weight: 400;">https://bdemr.com/privacy-policy</span><span style="font-weight: 400;">), which sets out the terms on which we process any personal data we collect from you, or that you provide to us. By using our Website, app/apps, you consent to such processing and you warrant that all data provided by you is accurate.</span></li>
+          </ul>
+          <p><span style="font-weight: 400;">Subject to any specific terms identified in respect of a particular feature or part of our Website, app/apps, these Terms of Use (including, our Privacy Policy) constitute the entire agreement between you and us with respect to your use of the Website.</span></p>
+          <p><span style="font-weight: 400;">For the avoidance of doubt, please note that use of our PATIENT ACCESS service is subject to specific terms of use and privacy policy which may be found at</span><span style="font-weight: 400;">www.patient.bdemr.com/privacy-policy</span></p>
+          <p><strong>Accessing the Website</strong></p>
+          <p><span style="font-weight: 400;">We do not guarantee that our Website, app/apps, or any content on it, will always be available or be uninterrupted. Access to our Website is permitted on a temporary basis. We may suspend, withdraw, discontinue or change all or any part of our Website without notice. We will not be liable to you if for any reason our Website is unavailable at any time or for any period.</span></p>
+          <p><span style="font-weight: 400;">You are responsible for making all arrangements necessary for you to access our Website, app/apps (including, having access to an internet connection and an appropriate browser).</span></p>
+          <p><span style="font-weight: 400;">You are also responsible for ensuring that all persons who access our Website, app/apps through your internet connection are aware of these Terms of Use and other applicable terms and conditions, and that they comply with them.</span></p>
+          <p><strong>Prohibited Uses</strong></p>
+          <p><span style="font-weight: 400;">You may use our Website only for lawful purposes.  You may not use our Website:</span></p>
+          <ul>
+            <li>          <span style="font-weight: 400;">In any way that breaches any applicable local, national or international law or regulation.</span></li>
+            <li>          <span style="font-weight: 400;">In any way that is unlawful or fraudulent, or has any unlawful or fraudulent purpose or effect.</span></li>
+            <li>          <span style="font-weight: 400;">To send, knowingly receive, upload, download, use or re-use any material which does not comply with our content standards (as set out below).</span></li>
+            <li>           <span style="font-weight: 400;">To transmit, or procure the sending of, any unsolicited or unauthorised advertising or promotional material or any other form of similar solicitation (spam).</span></li>
+            <li>          <span style="font-weight: 400;">To knowingly transmit any data, send or upload any material that contains viruses, Trojan horses, worms, time-bombs, keystroke loggers, spyware, adware or any other harmful programs or similar computer code designed to adversely affect the operation of any computer software or hardware.</span></li>
+          </ul>
+          <p><strong>Disclaimers</strong></p>
+          <p><span style="font-weight: 400;">The Website, app/apps contains content generated by us (or on our behalf by medical authors). The content on our Website, app/apps is provided for general information only. It is not intended to amount to advice on which you should rely. In particular, this information is not a substitute for professional medical care by a qualified doctor or other healthcare professional. Also this information is not a substitute  for  professional medical knowledge required by the physician. If you are not a healthcare professional then you should ALWAYS check with your doctor if you have any concerns about your condition or treatment and before taking, or refraining from, any action on the basis of the content on our Website, app/apps.</span><strong>If you are a healthcare professional </strong><span style="font-weight: 400;">then this information (including any professional reference material) is intended to support,</span><strong>not replace</strong><span style="font-weight: 400;">, your own knowledge, experience and judgement.</span></p>
+          <p><span style="font-weight: 400;">Not all medical resources on the internet are authoritative or current. Any decision about your health or medical care based solely on information obtained from the internet could be dangerous. Whilst we hope that you will find the third party sites linked (if any) to of interest, we can accept no responsibility in respect of any third party web sites or any information contained therein.</span></p>
+          <p><span style="font-weight: 400;">The information contained in the Website, app/apps may contain technical inaccuracies or typographical errors. We reserve the right to make changes and improvements to any information contained within the Website, app/apps, at any time and without notice.</span></p>
+          <p><span style="font-weight: 400;">Although we make reasonable efforts to update the information on our Website, we make no representations, warranties or guarantees, whether express or implied, that the content on our Website is accurate, complete or up-to-date. We also do not warrant or represent that the information or materials available through the Website will meet your particular requirements or needs or that access to, or use of, the same will be uninterrupted or completely secure.</span></p>
+          <p><span style="font-weight: 400;">Medical tips are the authority of the writers. Though providing correct information is the responsibility of the author, the health tip do not replace a professional help. Tips are intended to create awareness, not to provide accurate medical information to be used without consulting appropriate medical professional.</span></p>
+          <p><span style="font-weight: 400;">We do not endorse any specific products, processes, service providers, diets, or other information that may be mentioned on our Website (including, those promoted by any advertisers or advertising sponsors).</span></p>
+          <h1> </h1>
+          <p><strong>Intellectual Property Rights</strong></p>
+          <p><span style="font-weight: 400;">We are the owner (or the licensee) of all intellectual property rights in our Website, and in the material published on it. Those works are protected by copyright laws and treaties around the world. All such rights are reserved.</span></p>
+          <p><span style="font-weight: 400;">You may download and/or print off your own personal information  from our Website for your personal use. and you may (in a non-commercial context) draw the attention of others to content posted on our Website.</span></p>
+          <p><span style="font-weight: 400;">You must not modify the paper or digital copies of any materials you have printed off or downloaded in any way, and you must not further use any illustrations, photographs, video or audio sequences or any graphics separately from any accompanying text.</span></p>
+          <p><span style="font-weight: 400;">You must not do the same to any content which does not belong to you or infringe on any other person’s right and  confidentiality.</span></p>
+          <p><span style="font-weight: 400;">Our status (and that of any identified contributors) as the authors of content on our Website must always be acknowledged. Any information other than yours own, or your own patient as a helathcare pofessional, should be accessed, shared, reproduced or modified.</span></p>
+          <p><span style="font-weight: 400;">You must not use any part of the content on our Website, app/apps for commercial purposes without obtaining a licence to do so from us (or our licensors as appropriate).</span></p>
+          <p><span style="font-weight: 400;">If you print off, copy or download any part of our Website, app/apps in breach of these Terms of Use, your right to use our Website, app/apps will cease immediately and you must, at our option, return or destroy any copies of the materials you have made (for the avoidance of doubt, these Terms of Use shall continue to apply in respect of any such materials).</span></p>
+          <p><strong>Website  registering and contributions</strong></p>
+          <p><strong>Registering for an Account</strong></p>
+          <p><span style="font-weight: 400;">If you choose to register for an account with our Website then if you select, or you are provided with, a user identification code,</span><span style="font-weight: 400;">an email, </span><span style="font-weight: 400;">password or any other piece of information as part of our registration or security procedures, you must treat such information as confidential. You must not disclose it to any third party.</span></p>
+          <p><span style="font-weight: 400;">We have the right to disable any user identification code or password, whether chosen by you or allocated by us, at any time, if in our reasonable opinion you have failed to comply with any of the provisions of these Terms of Use.</span></p>
+          <p><span style="font-weight: 400;">If you know or suspect that anyone other than you knows your user identification code or password, you must promptly reset your password to something which only you know (please visit</span><span style="font-weight: 400;">https://bdemr.com/).</span></p>
+          <p><span style="font-weight: 400;">You can retrieve, change or request that we delete the details you place with us. You will only receive emails that you have agreed to, or those relating to administration purposes. We will not provide your personal data to any third party for any commercial purposes.</span></p>
+          <p><span style="font-weight: 400;">You must only use the Website for lawful purposes and you must not infringe the rights of other users of this site or prevent their enjoyment of it.</span></p>
+          <p><span style="font-weight: 400;">If you are under 16 you need to get permission from a parent or guardian before providing us with any personal details. The use of any of our interactive services by a minor is subject to the consent of their parent or guardian. We advise parents who permit their children to use an interactive service that it is important that they communicate with their children about their safety online, as moderation is not foolproof. Minors who are using any interactive service should be made aware of the potential risks to them.</span></p>
+          <p><strong>Contributions to our Website</strong></p>
+          <p><span style="font-weight: 400;">If you submit any contribution to this Website, app/apps via the </span><span style="font-weight: 400;">medical information or health tips</span><span style="font-weight: 400;">(including any text, photographs, graphics, video or audio) then such content will be considered non-confidential and non-proprietary. You retain all of your ownership rights in your content, but you are required to grant us a perpetual, royalty-free, non-exclusive, right to store, modify (where reasonably necessary to allow publication), copy and publish the contribution on the Website and to make it available to third parties. If you wish to keep your content confidential or do not want to grant us these rights, then please do not submit your contribution to the</span><span style="font-weight: 400;">Medical tips.</span></p>
+          <p><span style="font-weight: 400;">Furthermore, by submitting your contribution to the Website,app/apps, you warrant that you have the right to make it available to us for all the purposes specified above; it is not defamatory; it does not infringe any law or third party rights; that it has not been copied from any third party and you will be required to reimburse us in respect of all legal fees, damages and other expenses that we may incur as a result of your breach of the above warranty.</span></p>
+          <p><span style="font-weight: 400;">We have the right to disclose your identity to any third party who is claiming that any content posted or uploaded by you to our site constitutes a violation of their intellectual property rights, or of their right to privacy.</span></p>
+          <p><span style="font-weight: 400;">We will not be responsible, or liable to any third party, for the content or accuracy of any content posted by you or any other user of our Website, app/apps.</span></p>
+          <p><span style="font-weight: 400;">We have the right to remove any posting you make on our Website if, in our opinion, your post does not comply with the content standards set out in these Terms of Use.</span></p>
+          <p><strong>Third Party Links and Resources in our Website</strong></p>
+          <p><span style="font-weight: 400;">This Website may contain links to other websites and resources operated by third parties. These links are provided for your reference only. We do not control such websites or resources and are not responsible for their availability or content.</span></p>
+          <p><span style="font-weight: 400;">Our inclusion of links to such websites does not imply any endorsement of the material on such websites or any association with their operators.</span></p>
+          <p><span style="font-weight: 400;">Where our site contains links to other sites and resources provided by third parties, these links are provided for your information only.</span></p>
+          <p><span style="font-weight: 400;">We have no control over the contents of those sites or resources.</span></p>
+          <p><strong>Linking to our Website</strong></p>
+          <p><span style="font-weight: 400;">You may link to the Website, provided you do so in a way that is fair and legal and does not damage our reputation or take advantage of it. ( this clause will be at the discretion of the  Website, app/apps).</span></p>
+          <p><span style="font-weight: 400;">You must not establish a link in such a way as to suggest any form of association, approval or endorsement on our part where none exists. Our Website must not be framed on any other site.</span></p>
+          <p><span style="font-weight: 400;">We reserve the right to withdraw linking permission without notice.</span></p>
+          <p><span style="font-weight: 400;">If you wish to make any use of content on our Website other than that set out above, please contact us using this form:</span><span style="font-weight: 400;">https://bdemr.com/</span></p>
+          <p><strong>LIMITATIONS OF LIABILITY</strong></p>
+          <p><strong>Please read this section carefully as it sets out the limits of our liability to you in relation to your use of the Website.</strong></p>
+          <p><span style="font-weight: 400;">Nothing in these Terms of Use excludes or limits our liability for death or personal injury arising from our negligence, or our fraud or fraudulent misrepresentation, or any other liability that cannot be excluded or limited law of the land</span></p>
+          <p><span style="font-weight: 400;">To the extent permitted by law, we exclude all conditions, warranties, representations or other terms which may apply to our  Website, app/apps or any content on it, whether express or implied.</span></p>
+          <p><span style="font-weight: 400;">We will not be liable to any user for any loss or damage, whether in contract, tort (including negligence or breach of statutory duty), or otherwise, even if foreseeable, arising under or in connection with:</span></p>
+          <ul>
+            <li><span style="font-weight: 400;">                    </span><span style="font-weight: 400;">use of, or inability to use, our  Website, app/apps; or</span></li>
+            <li><span style="font-weight: 400;">                    </span><span style="font-weight: 400;">use of or reliance on any content displayed on our Website (regardless of the origins of such content).</span></li>
+          </ul>
+          <p><span style="font-weight: 400;">Please note that we only provide our Website for domestic and private use (and as a auxiliary tool for use by healthcare professionals). You agree not to use our site for any commercial or business purposes, and we have no liability to you for any loss of profit, loss of business, business interruption, or loss of business opportunity.</span></p>
+          <p><span style="font-weight: 400;">We assume no responsibility for the content of websites linked on our  Website, app/apps,if any. Such links should not be interpreted as endorsement by us of those linked websites. We will not be liable for any loss or damage that may arise from your use of them.</span></p>
+          <p><span style="font-weight: 400;">We use our reasonable efforts to check the accuracy of the professional information published on this Website.</span><strong>You should note however that we do not warrant that such information will be error free and you acknowledge that the information, products, and services published on this Website may include inaccuracies or typographical errors.</strong><span style="font-weight: 400;">Changes are periodically added to the information herein.</span></p>
+          <p><span style="font-weight: 400;">We (and/or our suppliers) make no representations about the suitability of the information, products, and services contained on this Website for any purpose.</span></p>
+          <p><span style="font-weight: 400;">Subject to the first paragraph under this section (Limitations of Liability), in no event shall we (or any of our suppliers or licensors) be liable to you whether in contract, tort (including negligence or breach of statutory duty), or otherwise, for any, indirect, incidental, special, or consequential damages arising out of or in any way connected with the use of this  Website, app/apps or with the delay or inability to use this  Website, app/apps, or for any information, products, and services obtained through this  Website, app/apps, or otherwise arising out of the use of this  Website, app/apps, even if we or any of our suppliers has been advised of the possibility of such damages arising.</span></p>
+          <p><span style="font-weight: 400;">Subject to the first paragraph under this section (Limitations of Liability), our liability (and that of our suppliers or licensors) for any losses suffered arising out of, or in connection with, your use of this</span><span style="font-weight: 400;"> </span><span style="font-weight: 400;">Website, app/apps, whether in contract, tort (including negligence or breach of statutory duty), or otherwise is limited to the greater of: (i) the total value of the relevant transaction (if any) under which the claim arises for any one event or series of connected events, or (ii) the sum of ten  thousand taka ( Tk 10,000).</span></p>
+          <p><span style="font-weight: 400;">We will not be liable for any loss or damage caused by a virus, distributed denial-of-service attack, or other technologically harmful material that may infect your computer equipment, computer programs, data or other proprietary material due to your use of our Website or to your downloading of any content on it, or on any website linked to it.</span></p>
+          <p><strong>This does not affect any legal rights you may have as a consumer.</strong></p>
+          <p><span style="font-weight: 400;">You acknowledge that we have made the Website available to you in reliance upon these Terms of Use and in particular these Limitations of Liability.</span></p>
+          <p><strong>Breach of these Terms of Use</strong></p>
+          <p><span style="font-weight: 400;">If you fail to abide by these Terms of Use when using this Website, you may be sent an e-mail which informs you why your contribution to the Website has been rejected or edited. This mail will also include a warning that continuing to break the rules may result in action being taken against your account or accounts. In certain cases, at  total discretion to us, your access may be denied temporarily or permanently even without sending any email or notice.</span></p>
+          <p><span style="font-weight: 400;">This action may include your relevant account or accounts being placed into pre-moderation or a temporary or permanent suspension of your ability to log on to the  Website, app/apps.</span></p>
+          <p><span style="font-weight: 400;">If you post or send offensive or inappropriate content to this  Website, app/apps or otherwise engage in any disruptive behaviour on the Website, and Patient or its representatives consider such behaviour to be serious and/or repeated, Patient may use whatever information that is available to it about you to stop any further such infringements. This may include informing relevant third parties such as your employer,  email provider or legal authorities about the infringement/s.</span></p>
+          <p><span style="font-weight: 400;">Patient reserves the right to delete any contribution, or take action against any account, at any time, for any reason.</span></p>
+          <p><strong>Collection of Personal Data</strong></p>
+          <p><span style="font-weight: 400;">If you register to use any app produced by BDEMR  Solutions Corp.</span><span style="font-weight: 400;">, the Services   may collect personal data about you, including without limitation your name,, age, medical conditions and a valid email address from you when you register to use these services. This data will be securely held in accordance with the terms of our Privacy Policy (see</span><span style="font-weight: 400;">https://bdemr.com/privacy-policy).</span></p>
+          <p><span style="font-weight: 400;">Notwithstanding anything to the contrary </span><span style="font-weight: 400;">BDEMR</span><span style="font-weight: 400;">may also hold your name and details in relation to assisting us in the provision of the</span><span style="font-weight: 400;">different app/apps </span><span style="font-weight: 400;">Services and associated services. We shall at all times remain responsible to you for the treatment and use of data submitted via the Website which is held by BDEMR.</span></p>
+          <p><strong>Viruses</strong></p>
+          <p><span style="font-weight: 400;">We do not guarantee that our  Website, app/apps will be secure or free from bugs or viruses and you should use your own virus protection software.</span></p>
+          <p><span style="font-weight: 400;">You must not misuse our  Website, app/apps by knowingly introducing viruses, trojans, worms, logic bombs or other material which is malicious or technologically harmful. You must not attempt to gain unauthorised access to our Website, the server on which our Website is stored or any server, computer or database connected to our Website. You must not attack our Website via a denial-of-service attack or a distributed denial-of service attack. By breaching this provision, you may be committing a criminal offence under the Computer Misuse Act 1990. We will report any such breach to the relevant law enforcement authorities and we will co-operate with those authorities by disclosing your identity to them. In the event of such a breach, your right to use our Website will cease immediately.</span></p>
+          <p><strong>Choice of Law and Jurisdiction</strong></p>
+          <p><span style="font-weight: 400;">Please note that these Terms of Use, its subject matter and its formation, are governed by  Law of the Bangladesh even if this software is used in other countries. If there is any legal action, it should be dealt in Bangladesh</span></p>
+          <p><span style="font-weight: 400;">This Website is intended for use by persons resident within Bangladesh. If you are accessing this Website from any other location then: (i) we make no representations that the content of this Website will be suitable for your requirements or that it is permissible or legal for you to access the same; and (ii) your use of the Website is entirely at your own risk and you are responsible for ensuring that you act in accordance with any applicable laws.</span></p>
+          <p><span style="font-weight: 400;">Use of this Website is unauthorised in any jurisdiction that does not give effect to all provisions of these Terms of Use, including without limitation this paragraph.</span></p>
+          <p><strong>General</strong></p>
+          <p><span style="font-weight: 400;">We reserve the right to change these Terms of Use (and any other terms, conditions, and notices) under which this  Website, app/apps is offered.</span></p>
+          <p><span style="font-weight: 400;">If any part of these Terms of Use is determined to be invalid or unenforceable pursuant to applicable law including, but not limited to, the warranty disclaimers and liability limitations set forth above, then the invalid or unenforceable provision will be deemed superseded by a valid, enforceable provision that most closely matches the intent of the original provision and the remainder of the agreement shall continue in effect.</span></p>
+          <p><span style="font-weight: 400;">Any provision of these Terms of Use that expressly or by implication is intended to come into or continue in force on or after termination of your right to use the  Website, app/apps shall remain in full force and effect, including, any licences granted by you in respect of any uploaded content and the provisions of the section titled Limitations of Liability.</span></p>
+          <p><span style="font-weight: 400;">We will not be in breach of any of our obligations under these Terms of Use (or otherwise liable for any failure or delay in performance) if we are prevented, hindered or delayed in or from performing any of our obligations by any event beyond our reasonable control. The time for performance of such obligations shall be extended accordingly.</span></p>
+          <p><span style="font-weight: 400;">Subject to any specific terms detailed on the  Website, app/apps in relation to particular features or materials, these Terms of Use (together with the Privacy Policy and Cookie Policy) set out the entire agreement between you and us in respect of your use of the Website.</span></p>
+          <p><span style="font-weight: 400;">No failure or delay by us to exercise any right or remedy provided under these Terms of Use or by law shall constitute a waiver of that or any other right or remedy, nor shall it prevent or restrict the further exercise of that or any other right or remedy. No single or partial exercise of such right or remedy shall prevent or restrict the further exercise of that or any other right or remedy.</span></p>
+          <p><span style="font-weight: 400;">Any rights not expressly granted herein are reserved.</span></p>
+          <p><span style="font-weight: 400;">BDEMR Solutions Corp. may choose to alter this document at any given time with or without prior notice to those affected.</span></p>
+          <p><strong>Trade Marks</strong></p>
+          <p><strong>Contact Us</strong></p>
+          <p><span style="font-weight: 400;">To contact us, please use the contact/feedback form accessible via this link </span><a href="https://bdemr.com/"><span style="font-weight: 400;">https://bdemr.com/</span></a></p>
+          <p><strong>Last updated: 06th June 2016</strong></p>
+        </div>
+      </div>
+    </div>
+    <div id="dialogPrivacyPolicy" class="overlay">
+      <div class="modal-container"><img src="images/ico_cross.png" alt="" onclick="dialogPrivacyPolicy()" class="modal-close">
+        <div class="modal-header"><img src="images/bdemr_logo_small.png" alt="">
+          <div class="type headline m-left-8">Privacy Policy</div>
+        </div>
+        <div class="type body modal-content">
+          <p dir="ltr">
+            This Website and related app/apps are run by https://bdemr.com/. BDEMR Patient app , BDEMR Doctors app, BDEMR Report app, Anaesmon is a brand name of BDEMR
+            Solutions Corp. (henceafter mentioned as BDEMR), a company registered in Canada with company registration number BC1045871 with registered offices at 8505
+            Wildwood pl, Surrey, BC, Canada V4N5C5
+          </p>
+          <p dir="ltr">BDEMR Solutions Corp. (henceafter mentioned as BDEMR, (&ldquo;We&rdquo;) is committed to protecting and respecting your privacy.</p>
+          <p dir="ltr">Scope of policy</p>
+          <p dir="ltr">This policy (together with our terms of use as set out at <a href="https://bdemr.com/terms-and-conditions">https://bdemr.com/terms-and-conditions</a> (the
+                &ldquo;Terms of Use&rdquo;)) applies to your use of the PATIENT website (and all related services and features, collectively, the &ldquo;Website/app/apps&rdquo;).
+          </p><br>
+          <p dir="ltr">
+            This policy sets out the basis on which any personal data We collect from you, or that you provide to us, will be processed by us. Please read the
+            following carefully to understand our views and practices regarding your personal data and how We will treat it.
+          </p>
+          <p dir="ltr">
+            For the avoidance of doubt, by registering with, or using, the Website/app/apps, you consent to the collection, use and transfer of that data and your
+            information under the terms of this Privacy Policy.
+          </p>
+          <p dir="ltr">Information we may collect from you</p>
+          <p dir="ltr">We may collect and process the following data about you:</p>
+          <p dir="ltr">
+            &bull; Information you give us (&ldquo;Submitted Information&rdquo;): You may give us information about you by filling in forms on the Website/app/apps, or by corresponding
+            with us (for example, editing , adding in the personal files) or information provided by any healthcare personel for your medical management . This
+            includes information you provide when you register for an account at the Website/app/apps. The information you give us may include your name, nickname,
+            age, postcode and email address; and the personal medical information you or your caring healthcare personnel enter for the purpose of evaluation,
+            diagnosis and treatment.
+          </p>
+          <p dir="ltr">&bull; Anonymous information about your site visit. Each time you visit the Website We may automatically collect the following information:</p>
+          <p dir="ltr">o technical information, including the type of device used, operating system, browser type, and screen resolution (&ldquo;Device Information&rdquo;)</p>
+          <p dir="ltr">o details of the resources accessed (&ldquo;Log Information&rdquo;).</p>
+          <p dir="ltr">&bull; If you contact us, We may keep a record of that correspondence.</p>
+          <p dir="ltr">
+            if you would like to save any data with us , that will be saved in the server. while you accept the terms and conditions , you automatically consent to the
+            access of all data provided on the website by you or any user, to whom you have consented to use of your personal and health related data.
+          </p>
+          <p dir="ltr">
+            this data will be stored and maintained under HIPA ( Health Information Privacy Act) compatible server service. Actual data will not be available to any
+            third party. spatial data regarding the diseases will be accessed for statistical purpose.
+          </p>
+          <p dir="ltr">
+            No personal information ( that includes but not limited to, name, date of birth, address, email, phone number etc) data will ever be distributed nor sold
+            any third party for commercial purpose. Your designated healthcare personell will be able to view your information for the purpose of managing your medical
+            care only. No party who is not involved with your care will not have any access to your information.
+          </p>
+          <p dir="ltr">Cookies</p>
+          <p dir="ltr">
+            We use cookies to distinguish you from other users of the Website/app/apps. This helps us to provide you with a good experience when you visit the
+            Website/app/apps and also allows us to improve our Website/app/apps. For detailed information on the cookies We use and the purposes for which We use them,
+            see our cookie policy <a href="https://bdemr.com/cookies">https://bdemr.com/cookies</a>.
+          </p>
+          <p dir="ltr">Uses made of the information</p>
+          <p dir="ltr">We use information held about you in the following ways:</p>
+          <p dir="ltr">
+            &bull; Submitted Information: We will use information which you submit as part of registering to use the Website/app/apps in order to manage your account and
+            for our own internal administrative purposes.
+          </p>
+          <p dir="ltr">&bull; Device information: We will use this information to ensure that We present the correct version of our Website for your Device.</p>
+          <p dir="ltr">
+            &bull; Log information: We will use this information to monitor visitor interest and behaviour anonymously and understand general usage of the Website/app/apps,
+            to help us improve the service
+          </p>
+          <p dir="ltr">Disclosure of your information</p>
+          <p dir="ltr">We will not provide your Submitted Information to any third party for any commercial purposes.</p>
+          <p dir="ltr">We may disclose your personal information to third parties:</p>
+          <p dir="ltr">&bull; in order to:</p>
+          <p dir="ltr">o enforce or apply the Terms of Use and other agreements or to investigate potential breaches; or</p>
+          <p dir="ltr">o protect the rights, property or safety of EMIS, our customers, or others.</p>
+          <p dir="ltr">&bull; if We are under a duty to disclose or share your personal data in order to comply with any legal or regulatory obligation or request.</p>
+          <p dir="ltr">How and where we store your personal data</p>
+          <p dir="ltr">
+            The data that We collect from you will be processed (which includes storing it) in accordance with our obligations under the relevant laws which set out
+            our obligations as someone that has personal data without our possession and control.
+          </p>
+          <p dir="ltr">
+            Sometimes we use other organisations to process your personal information on our behalf, for example, in relation to the feedback surveys on our Website.
+            We may use service providers to help us run the Website or services available on the Website, However, it is our responsibility to ensure that if We use
+            any such service provider then such processing must comply with appropriate security measures (including, that if any of your data is sent outside of the
+            country then We need to ensure that it is properly protected). We may also independently audit these service providers to ensure that they meet our
+            standards.
+          </p>
+          <p dir="ltr">
+            Unfortunately, the transmission of information via the internet is not completely secure. Although We will do our best to protect your personal data, We
+            cannot guarantee the security of your data transmitted to the Website/app/apps; any transmission is at your own risk. Once We have received your
+            information, We will use strict procedures and security features to try to prevent unauthorised access and all information you provide to us is stored
+            securely.
+          </p>
+          <p dir="ltr">Your rights</p>
+          <p dir="ltr">
+            We will respect your privacy. It will be made clear to you where you have these choices, for example, tick boxes will let you decide whether you wish to
+            receive marketing or newsletters. We may, however, email you occasionally with information or queries about your registration, your subscription account,
+            your Website activity or postings, for example, with reminders, confirmations, warnings or copyright requests.
+          </p>
+          <p dir="ltr">You can exercise your right to prevent such processing by unticking certain boxes which will be included in any forms We may use to collect your data.</p>
+          <p dir="ltr">
+            Our Website may, from time to time, contain links to and from the websites of our partner networks, advertisers and affiliates. If you follow a link to any
+            of these websites, please note that these websites and any services that may be accessible through them have their own privacy policies and that We do not
+            accept any responsibility or liability for these policies or for any personal data that may be collected through these websites or services, such as
+            contact and location data. Please check these policies before you submit any personal data to these websites or use these services.
+          </p>
+          <p dir="ltr">
+            Where We have given you (or where you have chosen) a password that enables you to access certain parts of the Website/app/apps, you are responsible for
+            keeping this password confidential. We ask you not to share your password with anyone.
+          </p>
+          <p dir="ltr">Access to information</p>
+          <p dir="ltr">
+            You have the right to access information held about you. Your right of access can be exercised in accordance with the &ldquo;law of the land&rdquo; by making a
+            &ldquo;subject access request&rdquo;.
+          </p>
+          <p dir="ltr">
+            If you would like to make a subject access request then you must make that request in writing to the address provided below. Any access request may be
+            subject to a reasonable fee (as notified to you upon request) to meet our costs in providing you with details of the information We hold about you
+          </p>
+          <p dir="ltr">
+            If We do hold information about you then following a subject access request we will: (i) describe it to you; (ii) explain why we tell you why we are
+            holding it; (iii) tell you who it could be disclosed to; and (iv) let you have a copy of it.
+          </p>
+          <p dir="ltr">If you wish to delete or correct any personal data held by us then you may do so by sending a request to us via this form    <a href="https://bdemr.com">https://bdemr.com</a> or when applicable u can ddo it yourself through your account on the website/app/apps. We will use our
+                reasonable efforts to delete the relevant information from our systems.
+          </p>
+          <p dir="ltr">Changes to privacy policy</p>
+          <p dir="ltr">
+            We update our privacy policy from time to time and any changes We may make to our privacy policy in the future will be posted on this page. Once updated,
+            the new privacy policy applies to all available documents at that time whether new or old.
+          </p>
+          <p dir="ltr">BDEMR Solutions Corp. may choose to alter this document at any given time with or without prior notice to those affected.</p><br><br>
+          <p dir="ltr">Last updated: 10th June 2016</p>
+          <p>LCC163 Version 3</p>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript" src="js/sjcl.js"></script>
+    <script type="text/javascript" src="js/system-configs.js"></script>
+    <script type="text/javascript" src="js/client-libraries.js"></script>
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="js/validate/jquery.validate.js"></script>
+    <script type="text/javascript" src="js/signup.js"></script>
+  </body>
+</html>

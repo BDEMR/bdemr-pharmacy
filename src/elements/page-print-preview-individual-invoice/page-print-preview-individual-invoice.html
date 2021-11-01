@@ -1,0 +1,395 @@
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-print-preview-individual-invoice">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .external-card-title {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+        display: inline-block;
+        font-size: 14px;
+      }
+
+      .address1 {
+        margin-right: 10px;
+      }
+
+      .name {
+        margin-left: 5px;
+        font-size: 24px;
+      }
+
+      .email {
+        margin-left: 5px;
+        font-size: 14px;
+      }
+
+      .phone {
+        margin-left: 5px;
+      }
+
+      .val {
+        text-decoration: underline;
+      }
+
+      .account-box {
+        --iron-icon-width: 96px;
+        --iron-icon-height: 96px;
+      }
+
+      .document {
+        font-family: 'Arial,';
+        background: white;
+        width: 100%;
+        overflow-x: hidden;
+      }
+
+      .document-title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .collection {
+        color: red;
+        background: grey;
+      }
+
+      .document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+
+      .rightSide {
+        text-align: right;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+      .item {
+        padding: 10px;
+        border: 1px solid grey;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        margin: 0;
+        padding: 5px 0;
+      }
+
+      :host([has-scrolling-region]) #wrapper #contentContainer {
+        overflow-y: visible;
+        overflow-x: hidden;
+      }
+
+      @media print {
+        :host([has-scrolling-region]) #wrapper #contentContainer {
+          overflow-y: visible;
+          overflow-x: hidden;
+        }
+      }
+
+      .signature {
+        width: 200px;
+      }
+
+      .signature .underline {
+        border-bottom: 1px dashed #ccc;
+      }
+
+      .header {
+        position: relative;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        font-size: 20px;
+        font-weight: 500;
+        text-align: center;        
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px
+      }
+      .header .title {
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: #009688;
+      }
+
+      .footer{
+       text-align: center;
+      }
+
+      paper-item {
+        --paper-item-min-height: 30px;
+      }
+
+      .align-left {
+        float: left;
+        width: 50%
+      }
+
+      .align-right {
+        float: right;
+        width: 50%
+      }
+
+      .unbolded {
+        font-weight: normal;
+      }
+
+      #totalBillSize {
+        font-size: 150%;
+      }
+
+      
+    </style>
+
+    <!-- local DOM -->
+    <div class="document">
+
+      <template is="dom-if" if="[[loadingCounter]]">
+        <div class="layout horizontal center type bold text-center">
+          <paper-progress class="progress" indeterminate></paper-progress>
+        </div>
+      </template>
+
+      <!-- <template is="dom-if" if="{{!isPatientValid}}">
+        Patient invalid
+      </template> -->
+
+      <!-- editing visit - start -->
+      <template is="dom-if" if="[[settings.printDecoration.headerLine]]">
+        <div class="header vertical layout">[[settings.printDecoration.headerLine]]</div>
+      </template>
+      
+
+      <div class="document-header horizontal layout center">
+
+        <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+          <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+        </template>
+
+        <div class="leftSide vertical layout">
+          <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+          <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+          <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+        </div>
+        <div class="flex"></div>
+        <div class="rightSide vertical layout end">
+          <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+          <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+          <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+        </div>
+      </div>
+
+      <div class="horiline"></div>
+
+      <div class="document-header horizontal layout justified">
+        <template is="dom-if" if="[[patient]]">
+          <div class="leftSide vertical layout">
+            <div>Patient's Name: [[$getFullName(patient.name)]]</div>
+            <div>Phone: [[patient.phone]]</div>
+            <div>Age: [[$computeAge(patient.dateOfBirth)]]</div>
+            <!-- <div>Allergy: [[patient.allergy]]</div>
+            <div>Blood Group: [[patient.bloodGroup]]</div> -->
+            <div>Serial: <span class="type caption-2 bg-gray">[[patient.serial]]</span></div>
+          </div>
+        </template>
+
+        <div class="flex"></div>
+
+        <div class="rightSide vertical layout end">
+          <!-- <strong>Invoice#: [[invoice.referenceNumber]]</strong> -->
+          <strong>Invoice#: [[invoice.serial]]</strong>
+          <span>Date: [[$formatDateTime(invoice.createdDatetimeStamp)]]</span>
+          <span hidden$="[[!invoice.reportDeliveryDateTime]]">
+            <strong>Delivery Date and Time: </strong>[[$formatDateTime(invoice.reportDeliveryDateTime)]]
+          </span>
+          <span hidden$="[[!invoice.nextPaymentDate]]">
+            <strong>Next Payment Date: </strong>[[$formatDate(invoice.nextPaymentDate)]]
+          </span>
+          <span hidden$="[[!invoice.referralDoctor.name]]">Referred By: [[invoice.referralDoctor.name]]</span>
+          <span>Created By: [[invoice.createdByUserName]]</span>
+        </div>
+
+      </div>
+
+      <div class="horiline"></div>
+
+
+      <!--Invoice Starts -->
+      <div class="invoice document-header">
+
+        <div class="p-16">
+          <paper-item class="layout horizontal center invoice-item">
+            <div class="flex-7">
+              <strong>Items</strong>
+            </div>
+            <div class="flex-2">
+              <strong>Unit Price</strong>
+            </div>
+            <div class="flex-1">
+              <strong>Qty</strong>
+            </div>
+            <div class="flex-2">
+              <strong>Price</strong>
+            </div>
+          </paper-item>
+          <template is="dom-repeat" items="[[invoice.data]]">
+            <paper-listbox>
+              <paper-item class="invoice-item">
+                <div>[[_returnSerial(index)]]</div>
+                <div class="flex-7 layout vertical m-left-8">
+                  <div>
+                    <strong>[[item.name]]</strong> &nbsp;
+                    <template is="dom-if" if="[[item.type]]">
+                      <span class="type secondary">[[item.type]]</span>
+                    </template>
+                  </div>
+                  <div>
+                    <template is="dom-repeat" items="[[item.itemList]]" as="packageItem">
+                      <div> - [[packageItem.name]]</div>
+                    </template>
+                  </div>
+                </div>
+                <div class="flex-2">[[item.price]]</div>
+                <div class="flex-1">[[item.qty]]</div>
+                <div class="flex-2">[[item.totalPrice]]
+                  <span class="text-mute">BDT</span>
+                </div>
+              </paper-item>
+            </paper-listbox>
+          </template>
+          <div class="horiline"></div>
+
+          <div class="layout horizontal center">
+            <!-- left panel start -->
+            <div class="layout vertical start align-left">
+              <h2>Due: [[$calculateDue(invoice.advancePayment, invoice.totalBilled, invoice.totalAmountReceieved)]] BDT</h2>
+            </div>
+            <!-- left panel end -->
+          
+
+            <!-- right panel start -->
+            <div class="layout vertical end align-right">
+              <div class="layout vertical end">
+                  <div class="text-mute" hidden$="[[!invoice.advancePayment]]">Advance Payment: [[invoice.advancePayment]]</div>
+                  <div class="text-mute" hidden$="[[!invoice.cashBackPaid]]">Cash Back Paid: [[invoice.cashBackPaid]]</div>
+              </div>
+              <div class="layout vertical end">
+                <div class="text-mute" hidden$="[[!invoice.discountBy]]">Discount By: [[invoice.discountBy]]</div>
+                <div class="text-mute" hidden$="[[!invoice.discountBy]]"><h3 id="totalBillSize">Total Billed: [[$calculateGrossTotalToTwoDecimal(invoice.totalBilled,invoice.discount,invoice.vatOrTax)]]&nbsp;BDT</h3></div>
+                <div class="text-mute" hidden$="[[!invoice.discount]]"><h3 class="unbolded">Total Discount: [[$toTwoDecimalPlace(invoice.discount)]]&nbsp;BDT</h3></div>
+                <div class="text-mute" hidden$="[[!invoice.discountFromFund.serial]]">Discount From Fund:
+                  <strong>[[invoice.discountFromFund.name]] : [[$toTwoDecimalPlace(invoice.discountFromFund.amount)]]</strong></div>
+                <div class="text-mute"><h3 class="unbolded">Vat/Tax: [[$toTwoDecimalPlace(invoice.vatOrTax)]]&nbsp;BDT</h3></div>
+                <h2>Grand Total: [[$toTwoDecimalPlace(invoice.totalBilled)]] BDT</h2>
+              </div>
+              <div class="layout vertical end">
+                <h2>Total Paid: [[$toTwoDecimalPlace(invoice.totalAmountReceieved)]] BDT</h2>
+              </div>
+            </div>
+            <!-- right panel end -->
+          </div>
+
+
+          <div class="layout horizontal">
+            <div class="signature">
+              <div class="underline"></div>
+              <div>Authorized Signature</div>
+            </div>
+
+          </div>
+
+          <br>
+          <template is="dom-if" if="[[settings.printDecoration.footerLine]]">
+            <div class="footer vertical layout">
+              <div>
+                [[settings.printDecoration.footerLine]]
+              </div>
+            </div>
+          </template>
+
+          <template is="dom-if" if="[[isPrintTypeAvailable]]">
+            <div class="footer vertical layout">
+              <div>
+                  <strong>[ [[printType]] Copy ]</strong>
+              </div>
+            </div>
+          </template>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </template>
+  <script src="page-print-preview-individual-invoice.coffee-compiled.js"></script>
+</dom-module>

@@ -1,0 +1,813 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-manage-group-editor">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .paper-custom-input ::content input {
+        border-color: #dadada !important;
+      }
+
+      .b-radius {
+        border: 1px solid #dadada;
+        border-radius: 6px;
+        padding: 12px;
+      }
+
+      .pull-down {
+        position: relative;
+        top: 10px;
+      }
+
+      .dialog-input {
+        background-color: #dde2e8;
+        border-radius: 6px;
+        height: 36px;
+        font-weight: 500;
+        padding: 0px 8px;
+        box-sizing: border-box;
+      }
+    </style>
+
+    <div class="master-container">
+      <div class="limiting-container">
+
+        <paper-card heading="Group Editor">
+          <paper-progress class="progress" indeterminate hidden="[[!loading]]"></paper-progress>
+          <div class="card-content">
+            <div class="flex"></div>
+            <div class="card-actions">
+              <paper-button on-tap="saveButtonPressed" class="btn btn-success">Save</paper-button>
+            </div>
+          </div>
+          <div class="card-content">
+            <paper-input class="paper-custom-input" label="Title" value="{{group.name}}"></paper-input>
+            <paper-textarea class="b-radius" rows="2" label="Description" value="{{group.description}}">
+            </paper-textarea>
+
+            <div class="layout horizontal">
+
+              <vaadin-combo-box class="paper-custom-input m-right-16" label="Select User Role" id="userRoleType"
+                items="[[userRoles]]" item-label-path="roleName" selected-item="{{selectedUserRoleType}}">
+              </vaadin-combo-box>
+
+              <vaadin-combo-box class="paper-custom-input m-right-16" label="Select Member Role" id="memberRoleType"
+                items="[[memberRoles]]" item-label-path="roleName" selected-item="{{selectedMemberRoleType}}">
+              </vaadin-combo-box>
+
+
+              <!-- <paper-input class="paper-custom-input m-right-16 pull-down" label="Year" value="{{selectedAttendeeYear}}"></paper-input>
+              <paper-input class="paper-custom-input pull-down" label="Institution" value="{{selectedAttendeeInstitution}}"></paper-input> -->
+
+            </div>
+
+            <div class="layout horizontal wrap">
+              <template is="dom-repeat" items="[[selectedRole.requiredData]]">
+                <paper-input class="paper-custom-input m-right-8" type="{{item.inputType}}" label="[[item.label]]"
+                  value="{{item.value}}"></paper-input>
+              </template>
+            </div>
+
+            <!-- <template is="dom-if" if="[[isStudentYearVisible]]">
+            </template> -->
+
+            <!-- <vaadin-combo-box label="Select Attendee" id="assignAttendeeId" items="[[memberList]]" item-value-path="value"
+              item-label-path="name" allow-custom-value value="{{selectedAttendee}}">
+              <template>
+                <div><strong>[[item.name]]</strong></div>
+                <div><small>[[item.value.phone]], [[item.value.email]]</small></div>
+              </template>
+            </vaadin-combo-box> -->
+
+            <div class="layout horizontal">
+              <div class="flex"></div>
+              <paper-button on-tap="findAttendeePressed" class="btn btn-success">Find</paper-button>
+            </div>
+
+          </div>
+
+        </paper-card>
+
+        <paper-card heading="Attendee List" class="m-top-24">
+          <div class="card-content">
+            <vaadin-grid items="[[attendeesWithInfo]]">
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>Name</span>
+                </template>
+                <template>
+                  <div>[[$getFullName(item.name)]]</div>
+                </template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>Phone</span>
+                </template>
+                <template>
+                  <div>[[item.phone]]</div>
+                </template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>Email</span>
+                </template>
+                <template>
+                  <div>[[item.email]]</div>
+                </template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>Action</span>
+                </template>
+                <template>
+                  <div class="horizontal layout">
+                    <paper-icon-button icon="delete" on-tap="deleteAttendeePressed"></paper-icon-button>
+                  </div>
+                </template>
+              </vaadin-grid-column>
+
+            </vaadin-grid>
+
+          </div>
+        </paper-card>
+
+      </div>
+    </div>
+
+    <paper-dialog id="addAttendeeDialog">
+      <div class="type body-lead">Add Attendee(s)</div>
+      <!-- class="dialog-content" -->
+      <div style="min-width: 500px;">
+        <vaadin-grid items="[[filteredMemberList]]">
+          <!-- checkbox -->
+          <vaadin-grid-column width="10px">
+            <template class="header">
+              <paper-checkbox checked="{{allAttendeeSelected}}"><strong>All</strong></paper-checkbox>
+            </template>
+            <template>
+              <div><strong>
+                  <paper-checkbox checked="{{item.isSelected}}"></paper-checkbox>
+                </strong></div>
+            </template>
+          </vaadin-grid-column>
+
+
+          <!-- name -->
+          <vaadin-grid-column resizable>
+            <template class="header">
+              <input class="dialog-input" placeholder="Name" is="iron-input"
+                bind-value="{{dialogNameFilteringString}}" />
+            </template>
+            <template>
+              <div>[[$getFullName(item.name)]]</div>
+            </template>
+          </vaadin-grid-column>
+
+          <!-- phone -->
+          <vaadin-grid-column resizable>
+            <template class="header">
+              <input class="dialog-input" placeholder="Phone" is="iron-input"
+                bind-value="{{dialogPhoneFilteringString}}" />
+            </template>
+            <template>
+              <div>[[item.value.phone]]</div>
+            </template>
+          </vaadin-grid-column>
+
+          <!-- email -->
+          <vaadin-grid-column resizable>
+            <template class="header">
+              <input class="dialog-input" placeholder="Email" is="iron-input"
+                bind-value="{{dialogEmailFilteringString}}" />
+            </template>
+            <template>
+              <div>[[item.value.email]]</div>
+            </template>
+          </vaadin-grid-column>
+
+        </vaadin-grid>
+
+        <!-- <paper-checkbox checked="{{allAttendeeSelected}}"><strong>Select All</strong></paper-checkbox>
+        <br>
+        <hr>
+        <div class="layout vertical">
+          <template is="dom-repeat" items="[[filteredMemberList]]">
+            <div class="layout vertical m-top-8">
+              <div><strong><paper-checkbox checked="{{item.isSelected}}">[[$getFullName(item.name)]]</paper-checkbox></strong></div>
+              <div class="m-left-16"><small>[[item.value.phone]], [[item.value.email]]</small></div>
+            </div>
+          </template>
+        </div> -->
+      </div>
+
+      <div class="buttons m-top-24">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <template is="dom-if" if="[[filteredMemberList.length]]">
+          <paper-button class="colored" on-click="addBulkAttendees" autofocus raised>Add</paper-button>
+        </template>
+      </div>
+    </paper-dialog>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'page-manage-group-editor',
+      behaviors: [
+        app.behaviors.commonComputes,
+        app.behaviors.dbUsing,
+        app.behaviors.pageLike,
+        app.behaviors.apiCalling
+      ],
+      properties: {
+        user: Object,
+        organization: Object,
+        group: Object,
+        memberList: Array,
+        filteredMemberList: Array,
+        organizationMemberList: Array,
+        memberRoles: Array,
+        attendeesWithInfo: {
+          type: Array,
+          value: []
+        },
+        selectedUserRoleType: {
+          type: String,
+          observer: '_userRoleTypeChanged'
+        },
+        selectedRole: Object,
+        userRoles: {
+          type: Array,
+          value: [
+            // Doctor
+            {
+              roleType: 'doctor',
+              roleName: 'Doctor',
+              requiredData: [
+                {
+                  inputType: 'text',
+                  type: 'bmdc-type',
+                  label: 'BMDC Type',
+                  value: '',
+                  key: 'bmdcType',
+                },
+                {
+                  inputType: 'text',
+                  type: 'bmdc-number',
+                  label: 'BMDC Registration Number',
+                  value: '',
+                  key: 'bmdcRegNumber',
+                },
+                {
+                  inputType: 'number',
+                  type: 'mbbs-passed-year',
+                  label: 'MBBS/BDS Passed Year',
+                  value: '',
+                  key: 'mbbsPassedYear',
+                },
+                {
+                  inputType: 'text',
+                  type: 'mbbs-passed-institution',
+                  label: 'MBBS/BDS Passed Institution',
+                  value: '',
+                  key: 'mbbsPassedInstitution',
+                },
+                {
+                  inputType: 'text',
+                  type: 'doctor-type',
+                  label: 'Doctor Type',
+                  value: '',
+                  key: 'doctorType',
+                }
+              ]
+            },
+            // Physician(Non BMDC)
+            {
+              roleType: 'physician-non-bmdc',
+              roleName: 'Physician(Non BMDC)',
+              requiredData: [
+                {
+                  inputType: 'text',
+                  type: 'doctor-type',
+                  label: 'Doctor Type',
+                  value: '',
+                  key: 'doctorType',
+                }
+              ]
+            },
+            // Patient
+            {
+              roleType: 'patient',
+              roleName: 'Patient',
+              requiredData: [],
+            },
+            // Student
+            {
+              roleType: 'student',
+              roleName: 'Student',
+              requiredData: [
+                {
+                  inputType: 'text',
+                  type: 'student-year',
+                  label: 'Student Year',
+                  value: '',
+                  key: 'studentInstitutionYear',
+                },
+                {
+                  inputType: 'text',
+                  type: 'student-institution',
+                  label: 'Current Instituion',
+                  value: '',
+                  key: 'studentInstitutionName',
+                }
+              ]
+            },
+            // Agent
+            {
+              roleType: 'agent',
+              roleName: 'Agent',
+              requiredData: [
+                {
+                  inputType: 'text',
+                  type: 'applied-district',
+                  label: 'Applied District Name',
+                  value: '',
+                  key: 'agentAppliedDistrictName',
+                },
+                {
+                  inputType: 'text',
+                  type: 'nid',
+                  label: 'National ID',
+                  value: '',
+                  key: 'nationalIdCardNumber',
+                }
+              ]
+            },
+            // Clinic owner
+            {
+              roleType: 'clinic-owner',
+              roleName: 'Institution Admin',
+              requiredData: [
+                {
+                  inputType: 'text',
+                  type: 'nid',
+                  label: 'National ID',
+                  value: '',
+                  key: 'nationalIdCardNumber',
+                }
+              ]
+            },
+            // Doctor Assistant
+            {
+              roleType: 'doctor-assistant',
+              roleName: 'Doctor Assistant',
+              requiredData: [
+                {
+                  inputType: 'text',
+                  type: 'nid',
+                  label: 'National ID',
+                  value: '',
+                  key: 'nationalIdCardNumber',
+                }
+              ]
+            },
+            // Clinic Staff
+            {
+              roleType: 'clinic-staff',
+              roleName: 'Hospital/Clinic Staff',
+              requiredData: [
+                {
+                  inputType: 'text',
+                  type: 'staff-type',
+                  label: 'Staff Type',
+                  value: '',
+                  key: 'clinicStaffType',
+                },
+                {
+                  inputType: 'text',
+                  type: 'nid',
+                  label: 'National ID',
+                  value: '',
+                  key: 'nationalIdCardNumber',
+                }
+              ]
+            },
+            // Nurse
+            {
+              roleType: 'nurse',
+              roleName: 'Nurse',
+              requiredData: [
+                {
+                  inputType: 'text',
+                  type: 'nurse-pass-year',
+                  label: 'Passed Year',
+                  value: '',
+                  key: 'nursePassedYear',
+                },
+                {
+                  inputType: 'text',
+                  type: 'nurse-institution',
+                  label: 'Current Instituion',
+                  value: '',
+                  key: 'nurseCurrentInstitutionName',
+                }
+              ]
+            }
+          ]
+        },
+        dialogNameFilteringString: String,
+        dialogPhoneFilteringString: String,
+        dialogEmailFilteringString: String,
+        allAttendeeSelected: {
+          type: Boolean,
+          value: false,
+          observer: '_allAttendeeOptionChanged'
+        },
+      },
+      observers: [
+        'filterDialogEntries(dialogNameFilteringString, dialogPhoneFilteringString, dialogEmailFilteringString)'
+      ],
+
+      _userRoleTypeChanged(selectedUserRole) {
+        this.set('selectedRole', selectedUserRole);
+        console.log('selected user role', this.selectedRole);
+      },
+
+      filterDialogEntries(dialogNameFilteringString, dialogPhoneFilteringString, dialogEmailFilteringString) {
+        // if(!dialogNameFilteringString && !dialogPhoneFilteringString && !dialogEmailFilteringString){
+        //   console.log('inside default');
+        //   this.set('filteredMemberList', this.memberList);
+        // }
+
+        if (!this.memberList) {
+          return
+        }
+
+        lib.util.delay(300, () => {
+          tempName = dialogNameFilteringString ? dialogNameFilteringString.trim().toLowerCase() : '';
+          tempPhone = dialogPhoneFilteringString ? dialogPhoneFilteringString.trim().toLowerCase() : '';
+          tempEmail = dialogEmailFilteringString ? dialogEmailFilteringString.trim().toLowerCase() : '';
+
+          tempList = this.memberList.filter((item) => {
+            nameFlag = phoneFlag = emailFlag = false;
+            if ((item.name) && ((tempName === '') || (tempName !== '' && this.$getFullName(item.name).toLowerCase().includes(tempName)))) {
+              nameFlag = true;
+            }
+            if ((!item.value.phone) || ((item.value.phone) && ((tempPhone === '') || (tempPhone !== '' && item.value.phone.includes(tempPhone))))) {
+              phoneFlag = true;
+            }
+            if ((!item.value.email) || ((item.value.email) && ((tempEmail === '') || (tempEmail !== '' && item.value.email.includes(tempEmail))))) {
+              emailFlag = true;
+            }
+            return nameFlag && phoneFlag && emailFlag;
+          });
+
+          this.set('filteredMemberList', tempList);
+          console.log('filtered list', this.filteredMemberList);
+        });
+
+      },
+
+      navigatedIn() {
+        var datetime = new Date((new Date("2020-08-12")).setHours(16)).setMinutes(45)
+        console.log(datetime);
+        const params = this.domHost.getPageParams()
+        this._loadUser();
+        if (params['organization']) {
+          this._loadOrganization(params['organization'], () => {
+            this._loadMemberList();
+            if (params['group'] === 'new') {
+              return this._makeNewGroupObject()
+            } else {
+              return this._loadGroup(params['group']);
+            }
+          })
+        } else {
+          return this.domHost.showModalDialog("Missing Organization params");
+        }
+      },
+
+      navigatedOut() {
+        this.group = null;
+        this.memberList = null;
+        this.attendeesWithInfo = null;
+        this.selectedAttendeeType = null;
+        this.selectedAttendeeYear = null;
+        this.selectedAttendeeInstitution = null;
+
+      },
+
+      _allAttendeeOptionChanged(allAttendeeOptionVal) {
+        if (!this.filteredMemberList || this.filteredMemberList.length < 1) {
+          return;
+        }
+        console.log('all selected ', allAttendeeOptionVal);
+        tempFilteredMemberList = this.filteredMemberList.map((member) => {
+          member.isSelected = allAttendeeOptionVal;
+          return Object.assign({}, member);
+        });
+        this.set('filteredMemberList', tempFilteredMemberList);
+      },
+
+      _attendeeTypeValueChanged(attendeeType) {
+        if (!attendeeType) {
+          return;
+        }
+        console.log('current attendee type', attendeeType);
+        this.set('isStudentYearVisible', attendeeType.toLowerCase() === 'student');
+      },
+
+      _loadUser(cbfn) {
+        const userList = app.db.find('user');
+        if (userList.length === 1) {
+          this.user = userList[0];
+        } else {
+          return this.domHost.showModalDialog('Invalid User');
+        }
+      },
+
+      _loadOrganization(idOnServer, cbfn) {
+        const data = {
+          apiKey: this.user.apiKey,
+          idList: [idOnServer]
+        };
+        this.loading = true;
+        return this.callApi('/bdemr-organization-list-organizations-by-ids', data, (err, response) => {
+          this.loading = false;
+          if (err) {
+            return this.domHost.showModalDialog(err.message);
+          }
+          if (response.hasError) {
+            return this.domHost.showModalDialog(response.error.message);
+          } else {
+            if (!response.data.matchingOrganizationList.length) {
+              this.domHost.showModalDialog("Invalid Organization");
+              return;
+            }
+            this.set('organization', response.data.matchingOrganizationList[0]);
+            cbfn()
+          }
+        });
+      },
+
+      _loadMemberList() {
+        const query = {
+          apiKey: this.user.apiKey,
+          organizationId: this.organization.idOnServer,
+          overrideWithIdList: (function () {
+            var i, len, ref, results;
+            ref = this.organization.userList;
+            results = [];
+            for (i = 0, len = ref.length; i < len; i++) {
+              user = ref[i];
+              results.push(user.id);
+            }
+            return results;
+          }).call(this),
+          searchString: 'N/A'
+        }
+        this.loading = true;
+        this.callApi('/bdemr-organization-find-user', query, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (response.data.matchingUserList.length) {
+            memberList = response.data.matchingUserList;
+            processedMemberList = memberList.map((member) => {
+              return {
+                name: member.name,
+                value: member
+              }
+            });
+            this.set('organizationMemberList', processedMemberList);
+            console.log('returned user list', this.organizationMemberList);
+            memberRoles = this.organizationMemberList.map((member) => member.value.roleList).reduce((result, roles) => result.concat(roles), []);
+            this.set('memberRoles', memberRoles);
+            console.log('member roles', this.memberRoles);
+          }
+        })
+      },
+
+      _fetchPotentialAttendeeList(selectedRole) {
+        this.set('dialogNameFilteringString', '');
+        this.set('dialogPhoneFilteringString', '');
+        this.set('dialogEmailFilteringString', '');
+
+        filters = [];
+        if (selectedRole && selectedRole.requiredData) {
+          filters = selectedRole.requiredData.filter((inputData) => inputData.value).map((input) => {
+            return { key: input.key, value: input.value };
+          })
+        }
+        console.log('filters', filters);
+
+        const query = {
+          apiKey: this.user.apiKey,
+          payload: {
+            roleType: selectedRole ? selectedRole.roleType : null,
+            filterBy: filters,
+            'organizationId': this.organization.idOnServer,
+            'memberRoleType': this.selectedMemberRoleType ? this.selectedMemberRoleType.roleType : null,
+          }
+        }
+        console.log('query', query);
+        this.loading = true;
+        this.callApi('/get-user-list-by-role', query, (err, response) => {
+          this.loading = false;
+          if (err) {
+            this.domHost.showModalDialog(err.message);
+          } else if (response.hasError) {
+            this.domHost.showModalDialog(response.error.message);
+          } else {
+            attendeeList = response.data;
+            if (attendeeList.length) {
+              processedAttendeeList = attendeeList.map((student) => {
+                return {
+                  name: student.name,
+                  value: student
+                }
+              });
+              this.set('memberList', processedAttendeeList);
+              this.set('filteredMemberList', processedAttendeeList);
+              console.log('returned user list', this.memberList);
+              this.set('allAttendeeSelected', false);
+              this.$$('#addAttendeeDialog').toggle();
+            }
+          }
+        })
+      },
+
+      addBulkAttendees() {
+        console.log('selected attendees', this.filteredMemberList);
+        notAlreadyAddedAttendees = this.filteredMemberList.filter((member) => {
+          return member.isSelected && !this.group.attendees.includes(member.value.idOnServer || member.value.userId);
+        }).map((selectedNotAddedMember) => {
+          selectedNotAddedMember.value.justId = selectedNotAddedMember.value.idOnServer || selectedNotAddedMember.value.userId
+          return selectedNotAddedMember.value
+        });
+        console.log('not already added users', notAlreadyAddedAttendees);
+
+        this.set('attendeesWithInfo', this.attendeesWithInfo.concat(notAlreadyAddedAttendees));
+
+        this.group.attendees = this.group.attendees || []
+        this.set('group.attendees', this.group.attendees.concat(notAlreadyAddedAttendees.map((attendee) => attendee.justId)));
+
+        this.$$('#addAttendeeDialog').close();
+      },
+
+      findAttendeePressed(e) {
+        if (!this.selectedRole && !this.selectedMemberRoleType) {
+          return this.domHost.showModalDialog('Select member/user role first!');
+        }
+        this._fetchPotentialAttendeeList(this.selectedRole);
+      },
+
+      deleteAttendeePressed(e) {
+        if (!e.model.item) {
+          return
+        }
+        let deletedAttendee = e.model.item
+        console.log('deleting attendee', deletedAttendee);
+
+        this.set('group.attendees', this.group.attendees.filter((attendeeId) => {
+          return attendeeId !== deletedAttendee.userId;
+        }));
+
+        this.set('attendeesWithInfo', this.attendeesWithInfo.filter((attendee) => {
+          return attendee.userId !== deletedAttendee.userId;
+        }));
+
+        console.log('updated group ', this.group);
+        console.log('updated attendees ', this.attendeesWithInfo);
+      },
+
+      _loadGroup(groupIdentifier) {
+        const query = {
+          apiKey: this.user.apiKey,
+          payload: {
+            groupId: groupIdentifier,
+            organizationId: this.organization.idOnServer
+          }
+        }
+        this.loading = true;
+        this.callApi('/get-organization-attendance-group', query, (err, response) => {
+          this.loading = false;
+          if (err) {
+            this.domHost.showModalDialog(err.message);
+          } else if (response.hasError) {
+            this.domHost.showModalDialog(response.error.message);
+          } else {
+            this.set('group', response.data);
+            console.log('loaded group', this.group);
+            this._loadGroupAttendeeDetails(groupIdentifier);
+          }
+        })
+
+      },
+
+      _loadGroupAttendeeDetails(groupIdentifier) {
+        const query = {
+          apiKey: this.user.apiKey,
+          payload: {
+            groupId: groupIdentifier,
+            organizationId: this.organization.idOnServer
+          }
+        }
+        this.loading = true;
+        this.callApi('/get-group-attendees-detail-info', query, (err, response) => {
+          this.loading = false;
+          if (err) {
+            this.domHost.showModalDialog(err.message);
+          } else if (response.hasError) {
+            this.domHost.showModalDialog(response.error.message);
+          } else {
+            this.set('attendeesWithInfo', response.data);
+            console.log('loaded group attendees', response.data);
+          }
+        })
+
+      },
+
+      _makeNewGroupObject() {
+        const group = {
+          organizationId: this.organization.idOnServer,
+          name: '',
+          description: '',
+          attendees: []
+        }
+        this.set('group', group);
+      },
+
+      _validateGroupData(group) {
+        if (!group.name) {
+          this.domHost.showModalDialog('Name is required!');
+          return false;
+        }
+        if (!group.description) {
+          this.domHost.showModalDialog('Description is required!');
+          return false;
+        }
+        return true;
+      },
+
+      saveButtonPressed() {
+        const valid = this._validateGroupData(this.group);
+        if (valid) {
+          var data = {
+            payload: this.group,
+            apiKey: this.user.apiKey
+          }
+          this.loading = true;
+          this.callApi('/set-organization-attendance-group', data, (err, response) => {
+            this.loading = false;
+            if (err) return this.domHost.showModalDialog(err.message);
+            if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+            this._makeNewGroupObject();
+            this.attendeesWithInfo = [];
+            this.selectedAttendee = '';
+            return this.domHost.showModalDialog('Group Saved Successfully');
+          })
+
+          this.domHost.addActivityLog('attendance', 'group', 'add', {
+            createdByUserSerial: this.user.serial,
+            createdDatetimeStamp: lib.datetime.now()
+          });
+
+          return console.log(this.group)
+        }
+      },
+
+      arrowBackButtonPressed() {
+        return this.domHost.navigateToPreviousPage()
+      },
+
+    })
+  </script>
+</dom-module>

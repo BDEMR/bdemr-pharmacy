@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!--Basic Page Needs-->
+  <meta charset="utf-8">
+  <title>Clinic App - Home</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <!--Mobile Specific Metas-->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--FONT-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,600" rel="stylesheet" type="text/css">
+  <!--CSS-->
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/main.css">
+  <!--Favicon-->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+</head>
+
+<body id="body" onload="bodyOnload()">
+  <div id="topBarAd">
+    <span class="type body m-right-16">Go To</span>
+    <a href="https://patient.bdemr.com" class="btn-2">
+      <img src="images/logo-patient-app.png" alt="BDEMR Patient App">
+    </a>
+    <a href="https://doctor.bdemr.com" class="btn-2">
+      <img src="images/logo-doctor-app.png" alt="BDEMR Doctor App">
+    </a>
+    <a href="https://clinic.bdemr.com" alt="BDEMR Clinic App" class="btn-2">
+      <img src="images/logo-clinic-app.png" alt="BDEMR Clinic App">
+    </a>
+  </div>
+  <div id="toolBar" class="toolbar">
+    <div class="top-bar">
+      <a href="https://bdemr.com" class="logo">
+        <img src="images/logo-clinic-app.png" alt="">
+      </a>
+      <div class="topbar-action">
+        <a href="/help" class="btn transparent toggleTopBarBtn">help</a>
+        <a href="/faq" class="btn transparent toggleTopBarBtn">faq</a>
+        <a href="https://bdemr.com/video-gallery" class="btn transparent toggleTopBarBtn">video</a>
+        <a href="https://bdemr.com/doctor-finder" class="btn transparent toggleTopBarBtn">doctor finder</a>
+        <a href="https://clinic.bdemr.com/app/#/find-hospital" class="btn transparent toggleTopBarBtn">Find Empty Seats</a>
+        <a href="https://clinic.bdemr.com/app/#/find-ambulance" class="btn transparent toggleTopBarBtn">Find Ambulance Service</a>
+        <a href="/app/#/login/signup:new" class="btn transparent toggleTopBarBtn">signup</a>
+        <a href="/app/" class="btn shadow danger">login</a>
+      </div>
+      <button id="toggleMenuBar" onclick="toggleMenu()">☰</button>
+      <ul id="toggleMenu">
+        <li class="toogleMenuItem">
+          <a href="/doctor-finder">Doctor Finder</a>
+        </li>
+        <li class="toogleMenuItem">
+          <a href="/agent">Find Agent</a>
+        </li>
+        <li class="toogleMenuItem">
+          <a href="/app/#/login/signup:new">signup</a>
+        </li>
+        <li class="toogleMenuItem">
+          <a href="/faq">faq</a>
+        </li>
+        <li class="toogleMenuItem">
+          <a href="/help">Help</a>
+        </li>
+        <li class="toogleMenuItem">
+          <a href="/video-gallery">Video Gallery</a>
+        </li>
+        <li>
+          <a href="#" onclick="dialogValidateVoucher()">Validate Voucher</a>
+        </li>
+        <li>
+          <a href="#" onclick="dialogPurchaseVoucher()">Purchase Voucher</a>
+        </li>
+      </ul>
+    </div>
+    <div class="bottom-bar">
+      <ul class="tabs">
+        <li class="tab active">
+          <a href="#main-slider" onclick="smoothScroll('main-slider')">intro</a>
+        </li>
+        <li class="tab">
+          <a href="#features" onclick="smoothScroll('features')">features</a>
+        </li>
+        <li class="tab">
+          <a href="#about" onclick="smoothScroll('about')">about</a>
+        </li>
+        <li class="tab">
+          <a href="#contact" onclick="smoothScroll('contact')">contact</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div id="main-slider" class="section">
+    <div id="sequence" class="seq">
+      <div class="seq-screen">
+        <ul class="seq-canvas">
+          <li id="step1" class="seq-step1">
+            <div class="seq-content">
+              <h2 data-seq="" class="seq-title">BDEMR
+                <span class="text green bold">Clinic App</span>
+              </h2>
+              <h3 data-seq="" class="seq-subtitle">Upload results of any test easily to any patient</h3>
+              <h3 data-seq="" class="seq-subtitle">
+                <span>The result goes to doctor and the patient instantaneously the moment it is uploaded</span>
+              </h3>
+              <a href="https://play.google.com/store/apps/details?id=com.bdemr.clinic" target="_blank" tabindex="-1" class="seq-image">
+                <img src="images/en-play-badge.png" alt="" class="m-top-24">
+              </a>
+            </div>
+          </li>
+          <li id="step2" class="seq-step2">
+            <div class="seq-content">
+              <h2 data-seq="" class="seq-title">Anaes
+                <span class="text green bold">Mon</span>
+              </h2>
+              <h3 data-seq="" class="seq-subtitle">আমাদের প্রথম মেডিকেল সফটওয়্যার এখন পাওয়া যাচ্ছে</h3>
+              <h3 data-seq="" class="seq-subtitle">
+                <span>এনেস্থেসিয়া</span>
+                <span>আইসিইউ</span>
+                <span>ও সব রকম সার্জারির (অপারেশনের) তথ্যের জন্য</span>
+              </h3>
+              <h3 data-seq="" class="seq-subtitle">সকল চিকিৎসক
+                <a href="/signup" class="green">সাইন আপ</a> করুন ও ব্যবহার করুন</h3>
+              <a href="/signup" class="seq-button">Signup now</a>
+            </div>
+          </li>
+          <li id="step3" class="seq-step4">
+            <div class="seq-content">
+              <h2 data-seq="" class="seq-title">বিডিইএমআর
+                <span class="text green bold">পেসেন্ট</span>
+              </h2>
+              <h3 data-seq="" class="seq-subtitle">আপনার যাবতীয় মেডিকেল তথ্য সংরক্ষণ করুন এক জায়গায়।</h3>
+              <h3 data-seq="" class="seq-subtitle">
+                <span>মেডিসিন রিমাইন্ডার</span>
+                <span>রক্ত চাপ, ডায়াবেটিস এর তথ্য সংরক্ষণের সুবিধা</span>
+                <span>ও আরও অনেক ফ্রি সুবিধা ।</span>
+              </h3>
+              <a href="https://play.google.com/store/apps/details?id=com.bdemr.patient" target="_blank" tabindex="-1" class="seq-image">
+                <img src="images/en-play-badge.png" alt="" class="m-top-24">
+              </a>
+            </div>
+          </li>
+          <li id="step4" class="seq-step4">
+            <div class="seq-content">
+              <h1 data-seq="" class="seq-title green">BDEMR</h1>
+              <h2 data-seq="" class="seq-subtitle">A cloud-based
+                <br>electronic health record platform</h2>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <ul rel="sequence" role="navigation" aria-label="Pagination" class="seq-pagination">
+        <li>
+          <a href="#step2" rel="step3" title="BDEMR Doctor App(BN)"></a>
+        </li>
+        <li>
+          <a href="#step2" rel="step3" title="Anaesmon(BN)"></a>
+        </li>
+        <li>
+          <a href="#step3" rel="step3" title="BDEMR Patient(BN)"></a>
+        </li>
+        <li>
+          <a href="#step4" rel="step1" title="Welcome"></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div id="multi-section" class="section colored">
+    <div id="features">
+      <div class="section-header m-bottom-40">
+        <div class="type headline">key features</div>
+      </div>
+      <div class="container">
+        <div class="row">
+          <div class="one-third column card-2">
+            <div class="card-content-2">
+              <img src="images/icons/ico_search_w.png" alt="" class="content-thumb">
+              <div class="type body-lead">Patient can find you straight away in our clinic hospital finder </div>
+            </div>
+          </div>
+          <div class="one-third column card-2">
+            <div class="card-content-2">
+              <img src="images/icons/ico_efficiency_w.png" alt="" class="content-thumb">
+              <div class="type body-lead">Increased efficiency</div>
+            </div>
+          </div>
+          <div class="one-third column card-2">
+            <div class="card-content-2">
+              <img src="images/icons/ico_increased_revenue_w.png" alt="" class="content-thumb">
+              <div class="type body-lead">Increases revenue</div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="one-third column card-2">
+            <div class="card-content-2">
+              <img src="images/icons/ico_piechart_w.png" alt="" class="content-thumb">
+              <div class="type body-lead">Increase business</div>
+            </div>
+          </div>
+          <div class="one-third column card-2">
+            <div class="card-content-2">
+              <img src="images/icons/ico_megaphone_w.png" alt="" class="content-thumb">
+              <div class="type body-lead">Easy advertisement of your institution directly to the patient</div>
+            </div>
+          </div>
+          <div class="one-third column card-2">
+            <div class="card-content-2">
+              <img src="images/icons/ico_speech_bubble_w.png" alt="" class="content-thumb">
+              <div class="type body-lead">Communicate with the patient without the middleman</div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="one-third column card-2">
+            <div class="card-content-2">
+              <img src="images/icons/ico_bangladesh_w.png" alt="" class="content-thumb">
+              <div class="type body-lead">Put yourself on the digital screen of Bangladesh</div>
+            </div>
+          </div>
+          <div class="one-third column card-2">
+            <div class="card-content-2">
+              <img src="images/icons/ico_compare_w.png" alt="" class="content-thumb">
+              <div class="type body-lead">Compare your service with peer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="about" class="section">
+    <div class="section-header">
+      <div class="type headline">About</div>
+    </div>
+    <div class="container">
+      <div class="type body-lead center">BDEMR is a medical software company. Our current services are cloud based . We are providing web based/app based platform
+        to create, save, organize the medical record in one place. It is a onestop service for doctors, patient, and allied
+        health professionals alike. Our endavour is to minimize cost, increase efficiency, ease communication, ensure fairness
+        and easy accesibilty of data by the interested party. We will also help to create medical solutions for hospitals.</div>
+    </div>
+  </div>
+  <div id="contact" class="section colored contact">
+    <div class="container">
+      <div class="card p-0 absolute">
+        <div class="section-header colored">
+          <div class="type headline">get in touch</div>
+          <div class="type body secondary">Contact Us or Say Hello!</div>
+        </div>
+        <div class="p-16">
+          <div class="row">
+            <div class="one-half column">
+              <div class="m-bottom-16">
+                <div class="type body-lead">Head Office</div>
+                <div class="type body">8505 wildwood pl , Surrey, BC, V4N5C5, Canada</div>
+              </div>
+              <div class="m-bottom-16">
+                <div class="type body-lead">Bangladesh Office</div>
+                <div class="type body">SRA Enterprise Ltd, House # 1, Road #6, Kanaikhali Zale Para, Natore- 6400</div>
+              </div>
+              <div class="m-bottom-16">
+                <div class="type body-lead">Email Us</div>
+                <div class="type body">contact@bdemr.com</div>
+              </div>
+              <div class="m-bottom-16">
+                <div class="type body-lead">Call Us</div>
+                <div class="type body">+88 017 3123 7323</div>
+                <div class="type body">+88 077161320 (Landline)</div>
+              </div>
+            </div>
+            <div class="one-half column">
+              <div id="contactMessageSuccess" class="type body-lead text-success"></div>
+              <input id="btnToggleContactUsForm" type="button" value="Write Another Message!" onclick="_onToggleContactUsForm()" class="btn shadow success m-0">
+              <form id="contactForm">
+                <div class="p-vertical-16">
+                  <div class="paper-input__wrapper">
+                    <input id="inputContactName" type="text" class="paper-input paper-input--floating">
+                    <label>Your Name</label>
+                    <div id="contactNameError" class="paper-input__error"> </div>
+                  </div>
+                </div>
+                <div class="p-vertical-16">
+                  <div class="paper-input__wrapper">
+                    <input id="inputContactEmail" type="text" class="paper-input paper-input--floating">
+                    <label>Email</label>
+                    <div id="contactEmailError" class="paper-input__error"> </div>
+                  </div>
+                </div>
+                <div class="p-vertical-16">
+                  <div class="paper-input__wrapper">
+                    <input id="inputContactMessage" type="text" class="paper-input paper-input--floating">
+                    <label>Message</label>
+                    <div id="inputMessageError" class="paper-input__error"> </div>
+                  </div>
+                </div>
+                <input type="button" value="say hello" onclick="_onContactUsBtnPressed()" class="btn shadow success m-0">
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-top">
+      <div class="row">
+        <div class="one-half column">
+          <div id="subscribe-box">
+            <div class="paper-input__wrapper m-0">
+              <input id="inputSubscribedEmailId" type="text" class="paper-input paper-input--floating">
+              <label>Your Email</label>
+              <span id="subscribeInfoMessage" class="type body text-success"></span>
+              <span id="subscribeErrorMessage" class="paper-input__error"></span>
+            </div>
+            <button onclick="_onSubscribeUsBtnPressed()" class="btn shadow success m-0 no-radius no-width fixed-height">
+              <img src="images/ico_send.png" alt="">
+            </button>
+          </div>
+        </div>
+        <div class="one-half column">
+          <div id="social-links">
+            <a href="http://facebook.com/BangladeshEMR" target="_blank" tabindex="-1" class="social-item">
+              <img src="images/ico_facebook.png">
+            </a>
+            <a href="https://twitter.com/BDEMRSolutions" target="_blank" tabindex="-1" class="social-item">
+              <img src="images/ico_twitter.png">
+            </a>
+            <a href="https://plus.google.com/u/0/113386496880005887426" target="_blank" tabindex="-1" class="social-item">
+              <img src="images/ico_gplus.png">
+            </a>
+            <a href="https://www.youtube.com/channel/UCqgVPVPxbhVOyV_ddkRC6oA" target="_blank" tabindex="-1" class="social-item">
+              <img src="images/ico_youtube.png">
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="copyrght">All rights reserved. 2017 &copy; BDEMR Solutions. Corp.</div>
+      <a href="#body" onclick="scrollToTop();return false" class="btn transparent black">back to top
+        <img src="images/up-arrow.png" alt="" class="ico tiny m-left-16">
+      </a>
+    </div>
+  </footer>
+  <div id="dialogEmailVerifySuccess" class="overlay">
+    <div class="modal-container">
+      <img src="images/ico_cross.png" alt="" onclick="_ondialogSignupClosebtnPressed()" class="modal-close">
+      <div class="modal-content text-center">
+        <div id="emailVerifyingMsg" class="type title-2"></div>
+        <a href="#" onclick="_onDialogEmailVerifySuccessCloseBtnPressed()" class="btn shadow success m-vertical-16">OK</a>
+      </div>
+    </div>
+  </div>
+  <div id="dialogValidateVoucher" class="overlay">
+    <div class="modal-container">
+      <img src="images/ico_cross.png" alt="" onclick="dialogValidateVoucher()" class="modal-close">
+      <div class="modal-header">
+        <div class="type headline">Validate Voucher</div>
+      </div>
+      <div class="modal-content">
+        <div class="paper-input__wrapper">
+          <input id="inputValidateVoucherCode" type="text" name="inputValidateVoucherCode" placeholder="Voucher Code" class="paper-input paper-input--floating">
+          <label></label>
+          <div class="paper-input__error"></div>
+          <div class="paper-input__info">Enter your Voucher.</div>
+        </div>
+        <a id="dialogValidateVoucherValidateButton" href="#" class="btn shadow success m-vertical-16">Check</a>
+      </div>
+    </div>
+  </div>
+  <div id="dialogPurchaseVoucher" class="overlay">
+    <div class="modal-container">
+      <img src="images/ico_cross.png" alt="" onclick="dialogPurchaseVoucher()" class="modal-close">
+      <div class="modal-header">
+        <div class="type headline">Purchase Voucher</div>
+      </div>
+      <div class="modal-content">
+        <div class="l-flex l-center m-top-16">
+          <div class="paper-input__wrapper l-flex-1">
+            <select id="inputPurchaseVoucherType" name="inputPurchaseVoucherType" class="paper-dropdown full-width">
+              <option value="">Select Voucher Amount</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="200">200</option>
+              <option value="500">500</option>
+              <option value="1000">1000</option>
+            </select>
+            <div class="paper-input__error"></div>
+          </div>
+          <div class="paper-input__wrapper l-flex-1 m-left-16">
+            <input id="inputPurchaseVoucherCount" type="number" name="inputPurchaseVoucherCount" placeholder="How Many?" class="paper-input paper-input--floating">
+            <label></label>
+            <div class="paper-input__error"></div>
+          </div>
+        </div>
+        <div class="paper-input__wrapper m-top-24">
+          <input id="inputPurchaseVoucherEmail" type="text" name="inputPurchaseVoucherEmail" placeholder="Email" class="paper-input paper-input--floating">
+          <label></label>
+          <div class="paper-input__error"></div>
+          <div class="paper-input__info type warning">Please, make sure the email address you provide is valid. Otherwise you're vouchers might be sent to an email address
+            you don't own. Also, if you are an agent, you will get a 20% discount for 25 BDT Purchases.</div>
+        </div>
+        <a id="dialogPurchaseVoucherPurchaseButton" href="#" class="btn shadow success m-vertical-16"> Purchase</a>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" src="js/sjcl.js"></script>
+  <script type="text/javascript" src="js/system-configs.js"></script>
+  <script type="text/javascript" src="js/client-libraries.js"></script>
+  <script type="text/javascript" src="js/jquery.js"></script>
+  <script type="text/javascript" src="js/sequencejs/hammer.min.js"></script>
+  <script type="text/javascript" src="js/sequencejs/imagesloaded.pkgd.min.js"></script>
+  <script type="text/javascript" src="js/sequencejs/sequence.min.js"></script>
+  <script type="text/javascript" src="js/custom.js"></script>
+  <script type="text/javascript" src="js/toolbar.js"></script>
+  <script type="text/javascript" src="js/verify-email.js"></script>
+  <script type="text/javascript" src="js/voucher.js"></script>
+</body>
+
+</html>

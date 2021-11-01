@@ -1,0 +1,156 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+<link rel="import" href="../bdemr-qrcode/bdemr-qrcode.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box-light.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<dom-module id="my-pass-id-list">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .bdemr-qrcode {
+        padding-top: 4px;
+        padding-bottom: 4px;
+      }
+
+      #dialogShowBarcode {
+        width: 310px;
+      }
+
+    </style>
+
+    <div class="tabs-container">
+      <paper-tabs id="tabs" selected="{{selectedIndex}}" scrollable noink='true' on-iron-select="onPageIndexChange">
+        <paper-tab>[[$TRANSLATE('QR Code List',LANG)]]</paper-tab>
+        <paper-tab>[[$TRANSLATE('Logs',LANG)]]</paper-tab>
+      </paper-tabs>
+    </div>
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <iron-pages selected="{{selectedIndex}}">
+          <section>
+            <!-- list - add -->
+            <paper-card class="m-top-8">
+              
+              <template is="dom-if" if="[[!list.length]]">
+                <div class="card-content horizontal layout center center-justified">
+                  <div>-- no pass available --</div>
+                </div>
+              </template>
+              <paper-listbox>
+                <template is="dom-repeat" items="[[list]]">
+                  <paper-item class="custom layout horizontal center" on-tap="_ontapItem">
+                    <div class="type caption secondary m-right-8">[[$returnSerial(index)]].</div>
+                    <!-- <template is="dom-if" if="[[item.code]]">
+                      <bdemr-qrcode class="bdemr-qrcode" code="[[item.code]]" width="64" height="64"></bdemr-qrcode>
+                    </template> -->
+                    <div class="type body horizontal layout wrap flex m-right-8">
+                      <div class="flex">
+                        <div class="type body-lead">[[item.organizationName]]</div>
+                        <div>[[item.purpose]]</div>
+                      </div>
+                      <div class="type caption-2 info">
+                        <!-- <div><strong>Code:</strong> [[item.code]]</div> -->
+                        <div><strong>Star Date Time:</strong> [[$getFormattedDateTime(item.startDatetimeStamp)]]</div>
+                        <div><strong>End Date Time:</strong> [[$getFormattedDateTime(item.endDatetimeStamp)]]</div>
+                      </div>
+                    </div>
+                  </paper-item>
+                </template>
+              </paper-listbox>
+
+            </paper-card>
+            <!-- list - end -->
+          </section>
+
+          <section>
+            <vaadin-grid items="{{reports}}" class="custom-vaadin-grid" active-item="{{activeItem}}">
+
+              <vaadin-grid-column width="8em">
+                <template class="header">[[$TRANSLATE('Date & Time', LANG)]]</template>
+                <template>{{$formatDateTime(item.createdDatetimeStamp)}}</template>
+              </vaadin-grid-column>
+    
+              <vaadin-grid-column width="8em">
+                <template class="header">[[$TRANSLATE('Category', LANG)]]</template>
+                <template>{{item.category}}</template>
+              </vaadin-grid-column>
+
+              <vaadin-grid-column width="12em">
+                <template class="header">[[$TRANSLATE('Pass Purpose', LANG)]]</template>
+                <template>{{item.purpose}}</template>
+              </vaadin-grid-column>
+    
+              <vaadin-grid-column width="12em">
+                <template class="header">[[$TRANSLATE('Reason', LANG)]]</template>
+                <template>{{item.reason}}</template>
+              </vaadin-grid-column>
+    
+              <vaadin-grid-column width="8em">
+                <template class="header">[[$TRANSLATE('Scanned By', LANG)]]</template>
+                <template>{{$getFullName(item.createdByUserName)}}</template>
+              </vaadin-grid-column>
+    
+              <vaadin-grid-column width="12em" frozen>
+                <template class="header">[[$TRANSLATE('Organization', LANG)]]</template>
+                <template>{{$getFullName(item.organizationName)}}</template>
+              </vaadin-grid-column>
+    
+    
+            </vaadin-grid>
+          </section>
+        </iron-pages>
+        
+      </div>
+    </div>
+
+    <paper-dialog id="dialogShowBarcode">
+      <div class="p-16">
+        <div class="type body-lead text-center">[[selectedItem.organizationName]]</div>
+        <template is="dom-if" if="[[selectedItem.code]]">
+          <div class="horizontal layout center center-justified">
+            <bdemr-qrcode class="bdemr-qrcode" code="[[selectedItem.code]]" width="110" height="110"></bdemr-qrcode>
+          </div>
+        </template>
+      </div>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Done</paper-button>
+      </div>
+    </paper-dialog>
+
+  </template>
+
+  <script src="my-pass-id-list.coffee-compiled.js"></script>
+</dom-module>

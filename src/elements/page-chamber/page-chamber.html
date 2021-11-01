@@ -1,0 +1,194 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower-assets/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-chamber">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .new-fab {
+        position: fixed;
+        right: 20px;
+        bottom: 164px;
+      }
+
+      paper-button {
+        margin: 3px;
+      }
+
+      paper-button:last-child {
+        margin-right: 0px;
+      }
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      .modifier {
+        font-size: 14px;
+        background: #000000;
+        color: #ffffff;
+        margin: 0 4px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: 400;
+      }
+
+      .modifier.type1 {
+        background: #757575;
+      }
+
+
+      .organization-info-card-counter {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .std1 {
+        padding: 12px;
+      }
+
+      .mr12 {
+        margin-right: 12px;
+      }
+
+      .chamber-prop {
+        margin-right: 2px;
+      }
+
+      .calendar {
+        max-width: 960px;
+        min-width: 960px;
+      }
+
+      .calendar-entry {
+        min-width: 128px;
+        min-height: 96px;
+        margin: 4px;
+        padding: 10px 0;
+      }
+
+      .calendar-entry.white {
+        background: white;
+      }
+
+      .day-name {
+        min-width: 128px;
+        margin: 4px;
+        padding: 10px 0;
+        background: var(--paper-blue-grey-300);
+        color: white;
+        text-align: center;
+      }
+
+      .date {
+        display: block;
+        padding: 5px;
+        border-radius: 5%;
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+      <div class="limiting-container custom-input-field">
+        <template is="dom-if" if="[[chamberName]]">
+          <div class="vertical layout">
+            <div class="horizontal layout center p-16" style="background: white;">
+              <vaadin-date-picker label="Pick a Date for Month (mm/dd/yyyy)" value="{{fullDateString}}" on-value-changed="refreshScheduleForMonthTapped"></vaadin-date-picker>
+              <div class="flex"></div>
+              <paper-button class="btn btn-success" on-tap="refreshScheduleForMonthTapped" raised >
+                <iron-icon icon="refresh"></iron-icon>&nbsp;
+                Refresh</paper-button>
+            </div>
+
+            <div class="horizontal layout wrap calendar">
+              <template is="dom-repeat" items="[[calendar]]" as="entry" index-as="entryIndex">
+                <template is="dom-if" if="[[$equals(entry.type, 'dayName')]]">
+                  <div class="flex day-name">[[entry.dayName]]</div><br>
+                </template>
+                <template is="dom-if" if="[[$equals(entry.type, 'skip')]]">
+                  <div class="flex calendar-entry"></div><br>
+                </template>
+                <template is="dom-if" if="[[$equals(entry.type, 'date')]]">
+                  <div class="flex calendar-entry white vertical layout center">
+                    <div class="type date">
+                      <template is="dom-if" if="[[isToday(entry.date)]]">
+                        <span class="type bold warning bg-gray">[[entry.date]]</span>
+                      </template>
+                      <template is="dom-if" if="[[!isToday(entry.date)]]">[[entry.date]]</template>
+                    </div>
+                    <div class="flex"></div>
+                    <template is="dom-if" if="[[$equals(entry.status, 'empty')]]">
+                      <div hidden>[[entry]]</div>
+                      <paper-button class="btn btn-sm btn-default" raised on-tap="createScheduleTapped">Create</paper-button>
+                    </template>
+                    <template is="dom-if" if="[[$equals(entry.status, 'canceled')]]">
+                      <div hidden>[[entry]]</div>
+                      <paper-button class="btn btn-sm btn-default" raised on-tap="reinstateScheduleTapped">Reinstate</paper-button>
+                    </template>
+                    <template is="dom-if" if="[[$equals(entry.status, 'ready')]]">
+                      <div hidden>[[entry]]</div>
+                      <paper-button class="btn btn-sm" raised on-tap="managePatientsScheduleTapped" raised style="background:#5c4575; color: white">Patients</paper-button>
+                      <paper-button class="btn btn-sm" raised on-tap="rescheduleScheduleTapped" raised style="background:#02AF84; color: white">Reschedule</paper-button>
+                      <paper-button class="btn btn-sm btn-default" raised on-tap="cancelScheduleTapped" raised >Cancel</paper-button>
+                    </template>
+                    <template is="dom-if" if="[[$equals(entry.status, 'rescheduling')]]">
+                      <div hidden>[[entry]]</div>
+                      <paper-input type="number" value="{{entry.rescheduleDelayInMinutes}}" label="Rescheduling Delay"></paper-input>
+                      <paper-button class="btn btn-sm btn-success" raised on-tap="saveReschedulingScheduleTapped">Save</paper-button>
+                    </template>
+                  </div>
+                </template>
+              </template>
+            </div>
+          </div>
+
+        </template>
+      </div>
+    </div>
+
+  </template>
+  <script src="page-chamber.coffee-compiled.js"></script>
+</dom-module>

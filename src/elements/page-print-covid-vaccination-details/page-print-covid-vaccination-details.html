@@ -1,0 +1,376 @@
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-print-covid-vaccination-details">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .external-card-title {
+        margin-top: 20px;
+        margin-left: 20px;
+        margin-right: 10px;
+        color: #777777;
+      }
+
+      .serial-number {
+        background: #37474F;
+        color: #ffffff;
+        margin-left: 5px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+        display: inline-block;
+        font-size: 14px;
+      }
+
+      .address1 {
+        margin-right: 10px;
+      }
+
+      .name {
+        margin-left: 5px;
+        font-size: 24px;
+      }
+
+      .email {
+        margin-left: 5px;
+        font-size: 14px;
+      }
+
+      .phone {
+        margin-left: 5px;
+      }
+
+      .val {
+        text-decoration: underline;
+      }
+
+      .account-box {
+        --iron-icon-width: 96px;
+        --iron-icon-height: 96px;
+      }
+
+      .document {
+        font-family: 'Arial,';
+        background: white;
+        width: 100%;
+        overflow-x: hidden;
+      }
+
+      .document-title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .collection {
+        color: red;
+        background: grey;
+      }
+
+      .document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+        font-size: 18px;
+      }
+
+      .rightSide {
+        text-align: right;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+      .item {
+        padding: 10px;
+        border: 1px solid grey;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        margin: 0;
+        padding: 5px 0;
+      }
+
+      :host([has-scrolling-region]) #wrapper #contentContainer {
+        overflow-y: visible;
+        overflow-x: hidden;
+      }
+
+      @media print {
+        :host([has-scrolling-region]) #wrapper #contentContainer {
+          overflow-y: visible;
+          overflow-x: hidden;
+        }
+      }
+
+      .signature {
+        width: 200px;
+      }
+
+      .signature .underline {
+        border-bottom: 1px dashed #ccc;
+      }
+
+      .header {
+        position: relative;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        font-size: 20px;
+        font-weight: 500;
+        text-align: center;
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px
+      }
+
+      .header .title {
+        font-family: 'Roboto', 'Noto', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: #009688;
+      }
+
+      .footer {
+        text-align: center;
+      }
+
+      paper-item {
+        --paper-item-min-height: 30px;
+      }
+
+      .align-left {
+        float: left;
+        width: 50%
+      }
+
+      .align-right {
+        float: right;
+        width: 50%
+      }
+
+      .unbolded {
+        font-weight: normal;
+      }
+
+      #totalBillSize {
+        font-size: 150%;
+      }
+
+      .count-table {
+        margin-left: 16px;
+        table-layout: fixed;
+        width: 80%;
+        border-collapse: collapse;
+      }
+      
+      .count-table tr {
+        margin-bottom: 15px;
+      }
+
+      .count-table th {
+        background-color: var(--paper-grey-50);
+      }
+
+      .count-table td {
+        vertical-align: top;
+        color: #444;
+      }
+
+      .count-table  tr td:first-child {
+        text-align: left;
+        margin-right: 10px;
+        font-weight: bold;
+      }
+
+      .count-table  tr td:last-child {
+        text-align: left;
+      }
+      
+      
+      .count-table tbody td,
+      .count-table tfoot th,
+      .print-footer-table th {
+        padding: 5px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+      .count-table tr:last-child td {
+        border-bottom: 0;
+      }
+
+
+    </style>
+
+    <!-- local DOM -->
+    <div class="document">
+
+      <template is="dom-if" if="[[loadingCounter]]">
+        <div class="layout horizontal center type bold text-center">
+          <paper-progress class="progress" indeterminate></paper-progress>
+        </div>
+      </template>
+
+      <!-- <template is="dom-if" if="{{!isPatientValid}}">
+        Patient invalid
+      </template> -->
+
+      <!-- editing visit - start -->
+      <template is="dom-if" if="[[organization.printSettings.headerLine]]">
+        <div class="header vertical layout">[[organization.printSettings.headerLine]]</div>
+      </template>
+
+
+      <div class="document-header horizontal layout center">
+
+        <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+          <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+        </template>
+
+        <div class="leftSide vertical layout">
+          <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+          <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+          <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+        </div>
+        <div class="flex"></div>
+        <div class="rightSide vertical layout end">
+          <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+          <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+          <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+        </div>
+      </div>
+      <div class="horiline"></div>
+
+      <div class="footer vertical layout m-bottom-40">
+        <div>
+          <h1>Covid Vaccination Details</h1>
+        </div>
+      </div>
+
+      <!--Respirator Fit Test Starts -->
+      <div class="document-header">
+        <div class="p-16">
+          <table class="count-table">
+            <tbody>
+              <tr>
+                <td>Name of the Patient</td>
+                <td>[[covidVacciDetails.data.name]]</td>
+              </tr>
+              <tr>
+                <td>Organization</td>
+                <td>[[covidVacciDetails.data.organization.name]]</td>
+              </tr>
+              <tr>
+                <td>Id Number of the Vaccine</td>
+                <td><strong>[[covidVacciDetails.data.IdnttyNmbrOfVaccine]]</strong></td>
+              </tr>
+              <tr>
+                <td>Vaccine Type</td>
+                <td>[[covidVacciDetails.data.vaccineType]]</td>
+              </tr>
+              <tr>
+                <td>Root</td>
+                <td>[[covidVacciDetails.data.root]]</td>
+              </tr>
+              <tr>
+                <td>Dose</td>
+                <td>[[covidVacciDetails.data.vaccinationDose]]</td>
+              </tr>
+              <tr>
+                <td>Vaccine Given by</td>
+                <td>[[covidVacciDetails.data.testConductedBy.name]] ([[covidVacciDetails.data.userRole]])</td>
+              </tr>
+              <tr>
+                <td>Vaccination Date</td>
+                <td>[[$formatDate(covidVacciDetails.data.vaccinationDate)]]</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <br>
+          <br>
+          <br>
+          <br>
+
+
+
+        </div>
+
+      </div>
+
+      <div class="layout horizontal m-right-32">
+        <div class="flex"></div>
+        <div class="signature">
+          <div class="underline"></div>
+          <div>Authorized Signature</div>
+        </div>
+      
+      </div>
+      
+      <br>
+      <template is="dom-if" if="[[settings.printDecoration.footerLine]]">
+        <div class="footer vertical layout" style="white-space: pre-wrap;">
+          <div>
+            [[organization.printSettings.footerLine]]
+          </div>
+        </div>
+      </template>
+
+    </div>
+
+  </template>
+  <script src="page-print-covid-vaccination-details.coffee-compiled.js"></script>
+</dom-module>

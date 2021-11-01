@@ -1,0 +1,343 @@
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item-body.html">
+<link rel="import" href="../../bower-assets/paper-menu-button/paper-menu-button.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-view-single-waitlist">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .waitlist-item {
+        border-bottom: 1px solid #ccc;
+      }
+
+      .waitlist-item:nth-last-child(2) {
+        border: none;
+      }
+
+      .log-box {
+        padding: 10px 0px;
+        border-bottom: solid 1px #eee;
+      }
+    </style>
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <paper-progress class="progress" indeterminate hidden$="[[!loading]]"></paper-progress>
+
+        <paper-card>
+          <div class="card-content">
+            <div class="layout vertical">
+              <div><span class="type caption bg-gray">[[organization.idOnServer]]</span></div>
+              <div class="p-vertical-8"><span class="type bold">[[organization.name]]</span></div>
+              <div><span class="type secondary">[[organization.address]]</span></div>
+              <div><span class="type secondary">[[organization.phone]]</span></div>
+            </div>
+          </div>
+        </paper-card>
+
+        <paper-card class="m-top-8" heading="[[waitList.name]]">
+          <div class="card-content">
+            <template is='dom-if' if='[[!waitList.patientList.length]]'>
+              <p class="type center">No Data</p>
+            </template>
+            <div>
+              <template is='dom-repeat' items='[[waitList.patientList]]'>
+                <paper-item class="waitlist-item">
+                  <div>[[$returnSerial(index)]].</div>
+                  <div class="flex">
+                    <paper-item-body two-line class="m-left-16">
+                      <div>[[item.name]]</div>
+                      <div secondary><span hidden$="[[!item.phone]]" class="type caption-2 bg-gray">[[item.phone]]</span>
+                        [[item.email]]</div>
+                    </paper-item-body>
+                  </div>
+                  <div class="p-horizontal-8">
+                    <span class="type caption secondary">[[getRelativeTime(item.createdDatetimeStamp)]]</span>
+                  </div>
+                  <div>
+                    <paper-menu-button id="actionDropdown" vertical-align="bottom" horizontal-align="right">
+                      <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+                      <paper-menu class="dropdown-content">
+                        <!-- <paper-item on-tap="bookForProcedureButtonClicked">Book</paper-item> -->
+                        <paper-item on-tap="movePatientToTop" hidden$="[[!index]]">Move To Top</paper-item>
+                        <paper-item on-tap="moveToOtherWaitListTapped">Move To Other Waitlist...</paper-item>
+                        <paper-item on-tap="deletePatientClicked">Delete</paper-item>
+                      </paper-menu>
+                    </paper-menu-button>
+                  </div>
+                </paper-item>
+              </template>
+            </div>
+          </div>
+        </paper-card>
+
+        <paper-card class="m-top-8" heading="[[waitList.name]] Logs">
+
+          <div class="card-content">
+            <template is='dom-if' if='[[!waitList.patientList.length]]'>
+              <p class="type center">No Data</p>
+            </template>
+            <div>
+              <template is='dom-repeat' items='[[waitList.patientList]]'>
+                <div class="log-box">
+                  <span><strong>[[item.name]]&nbsp;</strong></span>
+                  
+                  <!-- <div>[[$formatDate(item.createdDatetimeStamp)]]</div> -->
+                  <div class="vertical layout wrap m-top-8">
+                    <div>Tranferred here in&nbsp;<strong>[[waitList.name]]</strong>&nbsp;| Wait time [[getRelativeTime(item.createdDatetimeStamp)]]</div>
+                    <br>
+                    <div hidden=[[!item.previousWaitListName]]><span>Transferred from&nbsp;<strong>[[item.previousWaitListName]]</strong>&nbsp;| Wait time [[getRelativeTimeForPreviousWaitlist(item.previousWaitListEntryTime)]]</span></div>
+                    <!-- <span style="text-decoration: italic">[[$formatDate(item.previousWaitListEntryTime)]]&nbsp;</span> -->
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+
+        </paper-card>
+
+
+      </div>
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'page-view-single-waitlist',
+      behaviors: [
+        app.behaviors.translating,
+        app.behaviors.pageLike,
+        app.behaviors.dbUsing,
+        app.behaviors.apiCalling,
+        app.behaviors.commonComputes
+      ],
+
+      properties: {
+        user: {
+          type: Object,
+          value: null
+        },
+
+        patient: {
+          type: Object,
+          value: null
+        },
+
+        organization: {
+          type: Object,
+          value: {}
+        },
+
+        waitList: {
+          type: Object,
+          value: null
+        }
+
+      },
+
+      navigatedIn() {
+        const params = this.domHost.getPageParams()
+        const organizationId = params['organization'];
+        const waitListId = params['waitlist']
+        this._loadUser();
+        if (organizationId) {
+          this._loadOrganization(organizationId, () => {
+            this._loadWaitList(waitListId, _ => null);
+          });
+        } else {
+          this._notifyInvalidOrganization()
+        }
+      },
+
+      _loadUser() {
+        const userList = app.db.find('user');
+        if (userList.length === 1) {
+          return this.user = userList[0];
+        }
+      },
+
+      _loadOrganization(idOnServer, cbfn) {
+        const data = {
+          apiKey: this.user.apiKey,
+          idList: [idOnServer]
+        };
+        this.loading = true;
+        this.callApi('/bdemr-organization-list-organizations-by-ids', data, (err, response) => {
+          this.loading = false;
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (!response.data.matchingOrganizationList.length) return this._notifyInvalidOrganization();
+          this.set('organization', response.data.matchingOrganizationList[0]);
+          return cbfn();
+        });
+      },
+
+      _notifyInvalidOrganization() {
+        return this.domHost.showModalDialog("Invalid Organization");
+      },
+
+
+      _loadWaitList(waitListId, cbfn) {
+        const data = {
+          apiKey: this.user.apiKey,
+          id: waitListId
+        };
+        this.loading = true;
+        this.callApi('/bdemr-organization-get-waitlist', data, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          this.set('waitList', response.data[0]);
+          if (cbfn) cbfn();
+        });
+      },
+
+      _updateWaitList(waitList, cbfn) {
+        let data = {
+          apiKey: this.user.apiKey,
+          waitList
+        }
+        this.loading = true;
+        this.callApi('/bdemr-organization-create-waitlist', data, (err, response) => {
+          this.loading = false;
+          if (err) return this.domHost.showModalDialog(err.message);
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          let newWaitList = response.data;
+          cbfn(newWaitList);
+        })
+      },
+
+      _deletePatientFromWaitList(patientId, cbfn) {
+        let index = this.waitList.patientList.findIndex(patient => patient.userId === patientId);
+        if (index > -1) {
+          this.waitList.patientList.splice(index, 1);
+          this.waitList.lastModifiedDatetimeStamp = Date.now()
+          this._updateWaitList(this.waitList, cbfn);
+        }
+      },
+
+      deletePatientClicked(e) {
+        let { item, index } = e.model;
+        this.domHost.showModalPrompt('Are you sure', (yes) => {
+          if (yes) {
+            this._deletePatientFromWaitList(item.userId, (newWaitList) => {
+              this.set('waitList', newWaitList);
+            });
+          }
+        })
+      },
+
+      moveToOtherWaitListTapped(e) {
+        let { item, index } = e.model;
+        const currentWaitListId = this.waitList._id;
+        const currentWaitListName = this.waitList.name;
+        const currentWaitListEntryTime = item.createdDatetimeStamp;
+        const patientSerial = item.serial;
+        this.waitList.patientList[index].previousWaitListName = currentWaitListName
+        this.waitList.patientList[index].previousWaitListEntryTime = currentWaitListEntryTime
+        window.waitListTempPatient = item;
+        this.domHost.navigateToPage(`#/put-patient-to-waitlist/organization:${this.organization.idOnServer}/waitlist:${currentWaitListId}/patient:${patientSerial}`);
+      },
+
+      movePatientToTop(e) {
+        let { item, index } = e.model;
+        this.splice('waitList.patientList', index, 1);
+        this.unshift('waitList.patientList', item);
+        this.waitList.lastModifiedDatetimeStamp = Date.now();
+        this._updateWaitList(this.waitList, _ => null);
+      },
+
+      bookForProcedureButtonClicked(e) {
+        let { item, index } = e.model;
+      },
+
+      getRelativeTime(createdDatetimeStamp) {
+        const msPerMinute = 60 * 1000;
+        const msPerHour = msPerMinute * 60;
+        const msPerDay = msPerHour * 24;
+        const msPerWeek = msPerDay * 7;
+        const msPerMonth = msPerDay * 30;
+        const msPerYear = msPerDay * 365;
+        const elapsed = Date.now() - createdDatetimeStamp;
+        if (elapsed < msPerMinute) {
+          return Math.round(elapsed / 1000) + ' seconds';
+        } else if (elapsed < msPerHour) {
+          return Math.round(elapsed / msPerMinute) + ' minutes';
+        } else if (elapsed < msPerDay) {
+          return Math.round(elapsed / msPerHour) + ' hours';
+        } else if (elapsed < msPerWeek) {
+          let days = Math.round(elapsed / msPerDay);
+          let hoursMS = elapsed - (days * msPerDay);
+          let hours = (hoursMS / msPerHour)
+          console.log(days, hours)
+          return `${Math.round(elapsed / msPerDay)} days ${Math.round(hours)} hours`;
+        }
+        else if (elapsed > msPerMonth && elapsed < msPerYear) {
+          return `approximately ${Math.round(elapsed / msPerMonth)} Months`;
+        }
+        else {
+          return `approximately ${Math.round(elapsed / msPerYear)} years`;
+        }
+      },
+
+      getRelativeTimeForPreviousWaitlist(previousDateTimeStamp) {
+        const msPerMinute = 60 * 1000;
+        const msPerHour = msPerMinute * 60;
+        const msPerDay = msPerHour * 24;
+        const msPerWeek = msPerDay * 7;
+        const msPerMonth = msPerDay * 30;
+        const msPerYear = msPerDay * 365;
+        const elapsed = Date.now() - previousDateTimeStamp;
+        if (elapsed < msPerMinute) {
+          return Math.round(elapsed / 1000) + ' seconds';
+        } else if (elapsed < msPerHour) {
+          return Math.round(elapsed / msPerMinute) + ' minutes';
+        } else if (elapsed < msPerDay) {
+          return Math.round(elapsed / msPerHour) + ' hours';
+        } else if (elapsed < msPerWeek) {
+          let days = Math.round(elapsed / msPerDay);
+          let hoursMS = elapsed - (days * msPerDay);
+          let hours = (hoursMS / msPerHour)
+          console.log(days, hours)
+          return `${Math.round(elapsed / msPerDay)} days ${Math.round(hours)} hours`;
+        }
+        else if (elapsed > msPerMonth && elapsed < msPerYear) {
+          return `approximately ${Math.round(elapsed / msPerMonth)} Months`;
+        }
+        else {
+          return `approximately ${Math.round(elapsed / msPerYear)} years`;
+        }
+      },
+
+      getTotalWaitTime(createdDatetimeStamp, previousDateTimeStamp) {
+        return totalWaitTime = createdDatetimeStamp + previousDateTimeStamp
+      },
+      arrowBackButtonPressed(e) {
+        this.domHost.navigateToPreviousPage();
+      }
+
+
+    })
+  </script>
+</dom-module>

@@ -1,0 +1,218 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- iron-* -->
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+
+<dom-module id="page-select-organization">
+  <template>
+    <style is="custom-style" include="common-style">
+      .form-container {
+        position: relative;
+      }
+
+      .form-topbar {
+        background-color: var(--brand-primary-color);
+        height: 256px;
+        width: 100%;
+        padding-top: 40px;
+        text-align: center;
+        color: #fff;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      }
+
+      .form-card-container {
+        position: absolute;
+        top: 160px;
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+        width: 100%;
+        min-width: 330px;
+      }
+
+      .form-card {
+        position: relative;
+        width: 600px;
+        background-color: white;
+        padding: 16px 24px;
+        margin: 16px;
+        border-radius: 16px;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      }
+
+      .form-heading {
+        text-align: center;
+      }
+
+      .user-icon {
+        color: var(--brand-primary-color);
+        height: 96px;
+        width: 96px;
+      }
+
+      .footer {
+        width: calc(100% - 32px);
+        padding: 8px 16px;
+        text-align: center;
+      }
+
+      @media screen and (max-width: 1391px) {
+        .form-card {
+          width: calc(100% - 80px);
+          padding: 16px;
+        }
+      }
+
+      .absolute-back-btn {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        color: #fff;
+      }
+
+      .absolute-back-btn ::content iron-icon {
+        color: #fff;
+      }
+
+      .btn-submit {
+        padding: 0.7em 4em;
+        font-size: 14px;
+        margin-top: 16px;
+      }
+
+      .full-width {
+        width: 100%;
+      }
+
+      paper-input, vaadin-date-picker {
+        margin-top: 8px;
+        margin-bottom: 8px;
+      }
+
+      #loader {
+        background: rgba(255, 255, 255, 1);
+        position: absolute;
+        left: 0;
+        top: 0;
+        border-radius: 16px;
+        z-index: 1;
+        height: 100%;
+        width: 100%;
+      }
+
+      .expired, .expired > * {
+        color: red !important;
+      }
+    </style>
+
+    <div class="form-container">
+
+      <div class="form-topbar">
+        <div class="type display-regular">[[$TRANSLATE('BDEMR', LANG)]]</div>
+        <div style="letter-spacing: 2px; font-weight: 300px; font-size: 20px;">[[$TRANSLATE('Pharmacy App', LANG)]]</div>
+      </div>
+
+      <paper-icon-button class="absolute-back-btn" icon="arrow-back" on-tap="arrowBackButtonPressed"></paper-icon-button>
+
+
+      <!-- .form-card-container - start -->
+      <div class="form-card-container">
+        
+        <div class="horizontal layout wrap">
+          <div class="form-card">
+
+            
+            <!-- activation - start -->
+            <div class="p-16">
+              <div class="form-heading">
+                <!-- <iron-icon class="user-icon" icon="icons:account-circle"></iron-icon> -->
+                
+                
+                <!--If User doesn't have Organization-->
+            
+                <template is="dom-if" if="[[!organizationsIBelongToList.length]]">
+                  <div class="type body secondary" >[[$TRANSLATE('No Organization Available', LANG)]]</div>
+                </template>
+                
+                <template is="dom-if" if="[[organizationsIBelongToList.length]]">
+                  <div class="type body">[[$TRANSLATE('Please select your organization from the list below', LANG)]].</div>
+
+                  <vaadin-combo-box class="flex paper-custom-input" label="[[$TRANSLATE('Select Existing Organization', LANG)]]" item-label-path="name" items="[[organizationsIBelongToList]]"
+                    item-value-path="idOnServer" on-value-changed="organizationSelected" loading="[[organizationLoading]]">
+                    <template>
+                      <div class$="{{expiredWarningClass(item.daysLeft)}}">
+                        <div class="type body-lead">[[item.name]]</div>
+                        <div class="type caption-2 secondary">Expired in [[item.daysLeft]] day(s).</div>
+                      </div>
+                      
+                    </template>
+                  </vaadin-combo-box>
+
+                  <template is="dom-if" if="[[!_isEmpty(userRoleList.length)]]">
+                    <paper-dropdown-menu label="Select Your Role">
+                      <paper-listbox class="dropdown-content" selected="{{selectedUserRoleIndex}}">
+                        <template is="dom-repeat" items="[[userRoleList]]">
+                          <paper-item>[[item.title]] </paper-item>
+                        </template>
+                      </paper-listbox>
+                    </paper-dropdown-menu>
+                  </template>
+                  <paper-button raised class="colored m-top-8" style="padding-left: 40px; padding-right: 40px;" on-tap="navigateWithOrganizationSelected">[[$TRANSLATE('Select', LANG)]]</paper-button>
+                </template>
+                
+              </div>
+  
+            </div>
+            <!-- activation - end -->
+  
+            <!-- loader - start -->
+            <div id="loader" class="horizontal layout center center-justified" hidden$="{{!isLoading}}">
+              <div style="text-align: center;">
+                <paper-spinner active></paper-spinner>
+                <div class="type body secondary">[[$TRANSLATE('please wait', LANG)]]...</div>
+              </div>
+            </div>
+            <!-- loader - end -->
+            
+          </div>
+  
+          <div class="form-card vertical layout center center-justified">
+            <paper-button raised class=" m-top-16 btn btn-success" on-tap="joinOrganizationButtonPressed">[[$TRANSLATE('Join an Organization', LANG)]]</paper-button>
+            <div class="type caption-2 secondary p-16"><i>[[$TRANSLATE('or', LANG)]]</i></div>
+            <paper-button raised class=" btn btn-success" on-tap="createOrganizationButtonPressed">[[$TRANSLATE('Create an Organization', LANG)]]</paper-button>
+  
+          </div>
+        </div>
+
+        
+
+
+        
+        <div class="footer">
+          <span class="type caption">[[$TRANSLATE('All rights reserved 2019 © BDEMR Solutions. Corp.', LANG)]]</span>
+        </div>
+      </div>
+      <!-- .form-card-container - end -->
+
+    </div>
+
+
+  </template>
+  <script src="page-select-organization.coffee-compiled.js"></script>
+</dom-module>

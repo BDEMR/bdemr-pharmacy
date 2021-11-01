@@ -1,0 +1,262 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<dom-module id="page-organization-unit-price-public">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      app-header-layout ::content #contentContainer {
+        overflow: hidden !important;
+      }
+
+      .container {
+        /* width: 100%;
+        height: 100%; */
+        /* background-color: #fff; */
+      }
+
+      vaadin-grid#list {
+
+        font-family: Roboto, sans-serif;
+        --divider-color: rgba(0, 0, 0, var(--dark-divider-opacity));
+        width: 100%;
+
+        /* --vaadin-grid-cell: {
+          padding: 0;
+        }; */
+
+        --vaadin-grid-header-cell: {
+          height: 48px;
+          /* color: rgba(0, 0, 0, var(--dark-secondary-opacity)); */
+          font-size: 16px;
+        };
+
+        --vaadin-grid-body-cell: {
+          /* height: 48px; */
+          color: rgba(0, 0, 0, var(--dark-primary-opacity));
+          font-size: 16px;
+        };
+
+        --vaadin-grid-body-row-hover-cell: {
+          background-color: var(--paper-grey-200);
+        };
+
+        --vaadin-grid-body-row-selected-cell: {
+          background-color: var(--paper-grey-100);
+        };
+
+        --vaadin-grid-focused-cell: {
+          box-shadow: none;
+          font-weight: bold;
+        };
+      }
+
+      .top-container {
+        /* background-color: #f3f5f7; */
+        box-shadow:rgba(0, 0, 0, .54) 0 -10px 6px -10px inset;
+        height: 310px;
+      }
+
+      #filter {
+        padding: 8px 8px 16px 8px;
+        background-color: #f3f5f7;
+        position: relative;
+        width: 100%;
+      }
+
+      #editor {
+        background-color: #fff;
+        /* border: 1px solid rgba(0, 0, 0, var(--dark-divider-opacity)); */
+        position: relative;
+        height: 100%;
+        
+      }
+
+      .editor-content {
+        padding: 16px;
+        width: calc(100%-32px);
+        height: calc(100% - 98px);
+        overflow-y: auto;
+      }
+
+      .editor-buttons {
+        background-color: #eee;
+        padding: 12px 16px;
+        @apply(--layout-horizontal);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+
+      .custom-input {
+        padding-top: 6px;
+        padding-bottom: 6px;
+      }
+
+      .custom-button {
+        padding: 0.5em 3em;
+        font-size: 16px;
+        background-color: #fff;
+      }
+
+      .custom-flat-button {
+        font-weight: bold;
+        font-size: 14px;
+        text-transform: uppercase;
+      }
+
+      #importResult {
+        overflow-y: scroll;
+        height: 200px;
+        background: white;
+        padding: 12px;
+        margin-top: 16px;
+      }
+
+      .type.capton-2 {
+        line-height: 25px;
+      }
+
+      .left {
+        width: 30%;
+      }
+      .right {
+        width: 100%
+      }
+
+      @media screen and (max-width: 859px) {
+        .left, .right {
+          width: 100%;
+        }
+      }
+      
+
+    </style>
+
+    <div class="container horizontal layout wrap">
+
+      <!-- filter - start -->
+      <div id="filter" >
+    
+    
+        <!-- filter - form - start -->
+        <div class="horizontal layout center">
+          <div class="type caption-2 p-horizontal-8 flex"><iron-icon icon="icons:filter-list" class="m-right-8"></iron-icon><strong>FILTER BY</strong></div>
+        </div>
+
+        <div class="horizontal layout center wrap">
+          <vaadin-combo-box class="m-horizontal-8" id="filterByCategory" label="Product Type" class="full-width" items="[[categories]]" value="{{filterBy.category}}" item-label-path='name' item-value-path='name'></vaadin-combo-box>
+          <vaadin-combo-box class="m-horizontal-8" id="filterByOrganization" label="Product Type" class="full-width" items="" value="{{filterBy.organizationId}}" item-label-path='name' item-value-path='name'></vaadin-combo-box>
+        </div>
+
+        <div class="m-top-16">
+          <paper-button on-tap="onClearFilterTapped" class="custom-button">Clear</paper-button>
+          <paper-button on-tap="onFilterTapped" class="custom-button colored">Search</paper-button>
+        </div>
+        
+      </div>
+      <!-- filter - end -->
+
+      <!-- inventory - start -->
+      <vaadin-grid items="[[inventory]]" id="list" active-item="{{activeItem}}">
+
+        <vaadin-grid-column width="12px" frozen>
+          <template class="header">No.</template>
+          <template>[[$returnSerial(index)]]</template>
+        </vaadin-grid-column>
+
+        <vaadin-grid-column width="12em" frozen>
+          <template class="header">
+            <vaadin-grid-sorter path="name" direction="asc">
+              
+              <vaadin-grid-filter aria-label="Name" path="name" value="[[searchString]]">
+                <paper-input label="Product Name" value="{{searchString}}" no-label-float></paper-input>
+              </vaadin-grid-filter>
+          
+            </vaadin-grid-sorter>
+          </template>
+          <template>
+            [[item.name]]
+          </template>
+        </vaadin-grid-column>
+  
+        <vaadin-grid-column width="4em">
+          <template class="header">
+            <vaadin-grid-sorter path="organizationName" class="numeric">
+              <div class="header-cell">
+                Hospital/Clinic
+              </div>
+            </vaadin-grid-sorter>
+          </template>
+          <template>
+            [[item.organizationName]]
+          </template>
+        </vaadin-grid-column>
+  
+        <vaadin-grid-column width="4em">
+          <template class="header">
+            <vaadin-grid-sorter path="price" class="numeric">
+              <div class="header-cell">
+                Price
+              </div>
+            </vaadin-grid-sorter>
+          </template>
+          <template>
+            <span class="total">[[item.price]]</span>
+          </template>
+        </vaadin-grid-column>
+  
+        <vaadin-grid-column width="6em">
+          <template class="header">
+            <vaadin-grid-sorter path="category">
+              <div class="header-cell">
+                Category
+              </div>
+            </vaadin-grid-sorter>
+          </template>
+          <template>
+            <span style="text-transform: capitalize;"></span>[[item.category]]</span>
+          </template>
+        </vaadin-grid-column>
+  
+      </vaadin-grid>
+      <!-- inventory - end -->
+
+    </div>
+
+  </template>
+  <script src="page-organization-unit-price-public.coffee-compiled.js"></script>
+</dom-module>

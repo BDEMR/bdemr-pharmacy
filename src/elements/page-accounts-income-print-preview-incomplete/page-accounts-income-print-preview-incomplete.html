@@ -1,0 +1,361 @@
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="./../module-print-header/module-print-header.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-accounts-income-print-preview-incomplete">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      .document {
+        font-family: 'Arial,';
+        background: white;
+        width: 100%;
+        overflow-x: hidden;
+      }
+
+      .document-title {
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+
+      .document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+
+      .rightSide {
+        text-align: right;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+
+      .item {
+        padding: 10px;
+        border: 1px solid grey;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        margin: 0;
+        padding: 5px 0;
+      }
+
+      :host([has-scrolling-region]) #wrapper #contentContainer {
+        overflow-y: visible;
+        overflow-x: hidden;
+      }
+
+      @media print {
+        :host([has-scrolling-region]) #wrapper #contentContainer {
+          overflow-y: visible;
+          overflow-x: hidden;
+        }
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+    </style>
+
+    <!-- local DOM -->
+
+
+    <div class="document">
+
+      <template is="dom-if" if="[[loadingCounter]]">
+        <div class="layout horizontal center type bold text-center">
+          <paper-progress indeterminate></paper-progress>
+        </div>
+      </template>
+
+      <!-- <template is="dom-if" if="{{!isPatientValid}}">
+        Patient invalid
+      </template> -->
+
+      <!-- editing visit - start -->
+
+      <template is="dom-if" if="[[settings.printDecoration.headerLine]]">
+        <div class="header vertical layout">[[settings.printDecoration.headerLine]]</div>
+      </template>
+
+      <div class="document-header layout horizontal">
+
+        <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+          <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+        </template>
+
+        <div class="leftSide vertical layout">
+          <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+          <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+          <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+        </div>
+        <div class="flex"></div>
+        <div class="rightSide vertical layout end">
+          <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+          <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+          <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+        </div>
+      </div>
+
+      <div class="horiline"></div>
+
+      <div class="document-header horizontal layout justified">
+        <div class="leftSide vertical layout">
+          <span>[[$TRANSLATE('Customer Name', LANG)]]: <strong>[[invoice.customerDetails.name]]</strong></span>
+          <span>[[$TRANSLATE('Phone', LANG)]]: <strong>[[invoice.customerDetails.phone]]</strong></span>
+          <span>[[$TRANSLATE('Address', LANG)]]: <strong>[[invoice.customerDetails.address]]</strong></span>
+        </div>
+
+        <div class="flex"></div>
+
+        <div class="rightSide vertical layout end">
+          <div>[[$TRANSLATE('Serial', LANG)]]: <span class="type caption bg-gray">[[formatSerial(invoice.serial)]]</span></div>
+          <span>[[$TRANSLATE('Date', LANG)]]: <strong>[[$formatDate(invoice.createdDatetimeStamp)]]</strong></span>
+          <span>[[$TRANSLATE('Created By', LANG)]]: <strong>[[user.name]]</strong></span>
+        </div>
+
+      </div>
+
+      <div class="horiline"></div>
+
+
+      <!--Invoice Starts -->
+      <div class="invoice document-header">
+
+        <div class="p-16">
+          <paper-item class="layout horizontal center invoice-item">
+            <div class="flex-7">
+              <strong>[[$TRANSLATE('Items', LANG)]]</strong>
+            </div>
+            <div class="flex-2">
+              <strong>[[$TRANSLATE('Category', LANG)]]</strong>
+            </div>
+            <div class="flex-2">
+              <strong>[[$TRANSLATE('Unit Price', LANG)]]</strong>
+            </div>
+            <div class="flex-1">
+              <strong>[[$TRANSLATE('Qty', LANG)]]</strong>
+            </div>
+            <div class="flex-2">
+              <strong>[[$TRANSLATE('Price', LANG)]]</strong>
+            </div>
+          </paper-item>
+          <template is="dom-repeat" items="[[invoice.data]]">
+            <paper-listbox>
+              <paper-item class="invoice-item">
+                <div>[[$returnSerial(index)]]</div>
+                <div class="flex-7 layout vertical m-left-8">
+                  <div>
+                    <strong>[[item.name]]</strong> &nbsp;
+                  </div>
+                </div>
+                <div class="flex-2">[[item.category]]</div>
+                <div class="flex-2">[[item.unitPrice]]</div>
+                <div class="flex-1">[[item.qty]]</div>
+                <div class="flex-2">[[getItemTotal(item)]]</div>
+              </paper-item>
+            </paper-listbox>
+          </template>
+          <div class="horiline"></div>
+
+
+          <div class="layout vertical end type body-lead">
+            <div class="text-mute">[[$TRANSLATE('Total Discount', LANG)]]: <strong>[[invoice.discount]]</strong>&nbsp;[[$TRANSLATE('BDT', LANG)]]</div>
+            <div class="text-mute">[[$TRANSLATE('VAT/TAX', LANG)]]: <strong>[[invoice.vatOrTax]]</strong>&nbsp;[[$TRANSLATE('BDT', LANG)]]</div>
+            <div>[[$TRANSLATE('Total Billed', LANG)]] <strong>[[$toTwoDecimalPlace(invoice.totalBilled)]]</strong> [[$TRANSLATE('BDT', LANG)]]</div>
+          </div>
+          <div class="layout vertical end type body-lead">
+            <div>[[$TRANSLATE('Total Receieved', LANG)]] <strong>[[$toTwoDecimalPlace(invoice.totalAmountReceieved)]]</strong> [[$TRANSLATE('BDT', LANG)]]</div>
+            <div>[[$TRANSLATE('Due', LANG)]]
+              <strong>[[calculateDue(invoice.totalBilled, invoice.totalAmountReceieved)]] [[$TRANSLATE('BDT', LANG)]]</strong>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <br>
+      <template is="dom-if" if="[[settings.printDecoration.footerLine]]">
+        <div class="footer vertical layout">[[settings.printDecoration.footerLine]]</div>
+      </template>
+
+      <div style="text-align: center; margin-top: 16px">
+        <span class="type secondary">[[$TRANSLATE('Report Generation Date & Time', LANG)]] -
+          [[_getFormattedCurrentDateTime(currentDateTime)]]</span>
+      </div>
+
+      <div class="horizontal layout center center-justified p-horizontal-16">
+        <div class="type body italic"><strong>[[$TRANSLATE('Printed by', LANG)]]: </strong>[[user.name]]</div>
+      </div>
+
+    </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'page-accounts-income-print-preview-incomplete',
+      behaviors: [
+        app.behaviors.translating,
+        app.behaviors.pageLike,
+        app.behaviors.dbUsing,
+        app.behaviors.apiCalling,
+        app.behaviors.commonComputes
+      ],
+
+      properties: {
+        user: {
+          type: Object,
+          notify: true,
+          value: null
+        },
+        invoice: {
+          type: Object,
+          value: {}
+        },
+        currentDateTime: {
+          type: Number,
+          value: lib.datetime.now()
+        },
+        organization: {
+          type: Object,
+          notify: true,
+          value: (app.db.find('organization'))[0]
+        },
+        settings: {
+          type: Object,
+          notify: true,
+          value: (app.db.find('settings'))[0]
+        }
+
+      },
+
+      navigatedIn() {
+        const params = this.domHost.getPageParams()
+        this._loadUser();
+        if (params['organization']) {
+          this._loadOrganization(params['organization'], () => {
+            this._loadIncomeItem()
+          });
+        } else {
+          this._notifyInvalidOrganization()
+        }
+      },
+
+      _loadUser() {
+        const userList = app.db.find('user');
+        if (userList.length === 1) {
+          return this.user = userList[0];
+        }
+      },
+
+      _loadOrganization(idOnServer, cbfn) {
+        const data = {
+          apiKey: this.user.apiKey,
+          idList: [idOnServer]
+        };
+        this.loading = true;
+        this.callApi('/bdemr-organization-list-organizations-by-ids', data, (err, response) => {
+          this.loading = false;
+          if (response.hasError) return this.domHost.showModalDialog(response.error.message);
+          if (!response.data.matchingOrganizationList.length) return this._notifyInvalidOrganization();
+          this.set('organization', response.data.matchingOrganizationList[0]);
+          return cbfn();
+        });
+      },
+
+      _notifyInvalidOrganization() {
+        return this.domHost.showModalDialog("Invalid Organization");
+      },
+
+      _loadIncomeItem() {
+        previewIncomeInvoice = JSON.parse(localStorage.getItem('previewIncomeInvoiceObject'))
+        if(previewIncomeInvoice){
+          this.set('invoice', previewIncomeInvoice)
+        }else {
+          return this.domHost.showModalDialog("Invalid Income Item");
+        }
+      },
+
+      getItemTotal(item) {
+        return this.$toTwoDecimalPlace(item.qty * item.unitPrice)
+      },
+
+      calculateDue(totalBilled, totalAmountReceieved) {
+        let due = parseFloat(totalBilled) - parseFloat(totalAmountReceieved ? totalAmountReceieved : 0)
+        return due > 0 ? this.$toTwoDecimalPlace(due) : 0
+      },
+
+      formatSerial(serial) {
+        if (!serial) return;
+        let user = serial.charAt(2);
+        let inc = serial.split('AccI')[1]
+        return user + '-' + inc
+      },
+
+      arrowBackButtonPressed() {
+        this.domHost.navigateToPreviousPage()
+      },
+
+      _getFormattedCurrentDateTime(currentTime){
+        return lib.datetime.format((new Date(currentTime)), 'mmm d, yyyy h:MMTT');
+      },
+      
+      printButtonPressed(){
+        this.currentDateTime = lib.datetime.now();
+        window.print();
+      }
+
+    })
+  </script>
+</dom-module>

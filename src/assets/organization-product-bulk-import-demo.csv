@@ -1,0 +1,9 @@
+name,actualCost,price,quantity,category,isActive,isPublic,testName,testUnit,testReferenceRange,medicineGenericName,medicineForm,medicineManufacturer,medicineDoseDirection,medicineRoute,medicineDirection,description,batchNumber,vendorName,manufacturDate,expiredDate,contactNumber,url
+Napa 500mg,1.25,2,10,medicine,yes,no,,,,Paracitamol,Tablet,square pharma,1+1+1,Oral,Full Stomach,,,,,,,
+CBC,300,500,,investigation,yes,yes,WBC,10-3/ml,4.0-10.5,,,,,,,,,,,,,
+CBC,,,,,,,RBC,10-6/ml,4.7-6.10,,,,,,,,,,,,,
+CBC,,,,,,,Hemoglobin,g/dL,14.0-18.0,,,,,,,,,,,,,
+TSH,700,900,,investigation,yes,yes,TSH,mmol,3.0-10.0,,,,,,,,,,,,,
+Dr. Ashit Bardhan,1500,2000,,doctor-fees,yes,yes,,,,,,,,,,,,,,,,
+Ambulance Service,1500,3000,,service,yes,yes,,,,,,,,,,,,,,,,
+Alatrol,30,40,10,medicine,yes,yes,,,,Cetirizine Hydrochoride BP 10mg,Tablet,Square,0+0+1,Oral,Full Stomach,,,,,,,

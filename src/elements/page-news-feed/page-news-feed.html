@@ -1,0 +1,363 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<dom-module id="page-news-feed">
+  <style is="custom-style" include="common-style">
+    :host {
+      background-color: #f7f7f7;
+      position: absolute;
+      top: 56px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+
+    .container {
+      margin: 8px auto;
+      width: 960px;
+    }
+
+    paper-card {
+      margin: 8px;
+      width: calc(100% - 16px);
+    }
+
+    .paper-custom-input {
+      margin-left: 8px;
+      margin-right: 8px;
+    }
+
+    .top-actions {
+      margin-top: 16px;
+      margin-right: 4px;
+      margin-bottom: 16px;
+    }
+
+    @media screen and (max-width: 976px) {
+      .container {
+        width: calc(100% - 16px);
+      }
+      
+    }
+
+    @media screen and (max-width: 639px) {
+      #noNewsAvailable {
+        width: 100% !important;
+        height: 100% !important;
+      }
+    }
+
+    .btn-comment {
+      height: 38px;
+      text-transform: capitalize !important;
+      border: 1px solid #eee;
+      background-color: #fafafa;
+      border-radius: 6px;
+    }
+
+    .paper-custom-input ::content paper-input-container {
+      padding: 0 !important;
+    }
+
+    #searchInput ::content input {
+      background-color: #fff !important;
+    }
+
+    .user-avatar {
+      height: 36px;
+      width: 36px;
+      border-radius: 50%;
+    }
+
+    .user-avatar.medium {
+      height: 42px;
+      width: 42px;
+      border-radius: 50%;
+    }
+
+    /* editor - start */
+    .editor {
+      position: fixed;
+      right: -80%;
+      top: 56px;
+      bottom: 0;
+      z-index: 1;
+      width: 80%;
+      /* height: calc(100% - 104px); */
+      /* border-left: 1px solid #eee; */
+      background-color: #fff;
+      /* height: 100%; */
+      box-shadow: -3px 0px 2px rgba(0,0,0, 0.16);
+      transition: .5s;
+    }
+
+    .open {
+      transition: .5s;
+      right: 0;
+    }
+
+    .editor-content {
+      margin-top: 84px;
+      position: relative;
+      box-sizing: border-box;
+      padding: 16px;
+      height: calc(100% - 190px);
+    }
+
+    .editor-content vaadin-grid {
+      height: inherit;
+      overflow-y: auto;
+    }
+
+    .editor-buttons {
+      background-color: #eee;
+      padding: 12px 16px;
+      position: absolute;
+      bottom: -106px;
+      left: 0;
+      right: 0;
+      @apply(--layout-horizontal);
+    }
+
+    .fixed-title {
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: 12px 12px 12px 16px;
+      border-bottom: 1px solid #eee;
+      z-index: 1;
+      background-color: #fafafa;
+      width: calc( 100% - 20px);
+    }
+    /* editor - end */
+
+    .post-custom-button {
+      padding: 9px !important;
+    }
+
+    .item-with-close-button {
+      border-radius: 6px;
+      padding: 1px 0px 1px 6px;
+      background-color: #fafafa;
+      border: 1px solid #eee;
+      margin: 4px;
+      box-sizing: border-box;
+    }
+
+    .custom-icon-btn {
+      height: 24px;
+      width: 24px;
+      padding: 3px;
+    }
+
+    .custom-icon-btn ::content iron-icon {
+      height: 18px;
+      width: 18px;
+    }
+
+    #noNewsAvailable {
+      width: 400px;
+      height: 400px;
+    }
+
+    .master-container {
+      width: 100%;
+      height: 100%;
+      overflow-y:auto;
+    }
+
+  </style>
+  <template>
+    <div class="master-container">
+      <div class="container">
+
+        <!-- post editor - end -->
+        <div id="editor" class$="editor {{_editorHasOpened(hideEditForm)}}">
+  
+          <div class="fixed-title horizontal layout center">
+            <div class="flex">
+              <h2>[[$TRANSLATE('Send Message', LANG)]]</h2>
+              <!-- <div class="type body-lead secondary">{{organization.name}}</div> -->
+            </div>
+            <paper-icon-button icon="close" on-tap="_toggleEditForm"></paper-icon-button>
+            
+          </div>
+  
+          <div class="editor-content">
+            <!-- <div class="type caption-2 p-horizontal-8"><strong>Send to:</strong></div> -->
+            <div class="horizontal layout wrap">
+              <vaadin-combo-box class="paper-custom-input" label="[[$TRANSLATE('Select Organization', LANG)]]" items="[[childOrganizationList]]" on-value-changed="organizationSelected"
+              loading="[[organizationLoading]]" disabled="[[!childOrganizationList.length]]" selected="0"></vaadin-combo-box>
+
+              <vaadin-combo-box class="paper-custom-input flex" disabled="[[!availableRoles.length]]" label="[[$TRANSLATE('Select Roles', LANG)]]" items="{{availableRoles}}" on-selected-item-changed="_addUserOnPost" item-label-path='name' item-value-path='name'>
+              </vaadin-combo-box>
+            </div>
+            
+  
+            <!-- added members - start -->
+            <div class="horizontal layout wrap p-4">
+              
+              <template is="dom-repeat" items="{{post.shareWith}}">
+                <div class="item-with-close-button horizontal layout center">
+                  <div class="type caption-2 flex"><div>{{item.name}}</div><div class="type caption secondary">{{item.role}}</div></div>
+                  <paper-icon-button icon="close" class="custom-icon-btn" on-tap="_removeMember"></paper-icon-button>
+                </div>
+              </template>
+            </div>
+            <!-- added members - end -->
+  
+            <paper-textarea rows="5" class="paper-custom-input" required auto-validate error-message="What is your message?!" char-counter label="[[$TRANSLATE('What\'s happening?', LANG)]]" value="{{post.message}}"></paper-textarea>
+       
+            <paper-checkbox style="margin: 32px 8px 8px 8px;" checked="{{post.hasRequiredConfirmation}}">[[$TRANSLATE('Require confirmation from all readers', LANG)]]</paper-checkbox>
+  
+            <div class="editor-buttons">
+              <paper-icon-button icon="icons:delete" on-tap="_deleteRoster" hidden$="{{!EDIT_MODE}}">[[$TRANSLATE('Delete', LANG)]]</paper-icon-button>
+      
+              <div class="flex"></div>
+              <paper-button on-click="_clearRoster">[[$TRANSLATE('Clear', LANG)]]</paper-button>
+              <paper-button class="btn btn-success" on-tap="_onTapSetPost" autofocus raised>
+                <!-- <span hidden$="{{!EDIT_MODE}}">Update</span>
+                <span hidden$="{{EDIT_MODE}}">Save</span> -->
+                [[$TRANSLATE('Save', LANG)]]
+              </paper-button>
+            </div>
+              
+          </div>
+        </div>
+        <!-- post editor - end -->
+  
+        <!-- top action bar - start -->
+        <div class="horizontal layout center top-actions">
+          <!-- filter - start -->
+          <div class="filter flex">
+            <paper-dropdown-menu class="paper-custom-input" no-label-float>
+              <paper-menu class="dropdown-content" selected="{{selectedDateRangeIndex}}">
+                <template is='dom-repeat' items='[[dayRange]]'>
+                  <paper-item>[[item]]</paper-item>
+                </template>
+              </paper-menu>
+            </paper-dropdown-menu>
+    
+            <div class="flex"></div>
+    
+            <template is="dom-if" if="{{$equals(selectedDateRangeIndex, 4)}}">
+              <vaadin-date-picker class="m-horizontal-8" type="date" max="" value="{{filterBy.fromDate}}" label="[[$TRANSLATE('From', LANG)]]"></vaadin-date-picker>
+              <vaadin-date-picker class="m-horizontal-8" type="date" max="" value="{{filterBy.toDate}}" label="[[$TRANSLATE('To', LANG)]]"></vaadin-date-picker>
+              <!-- <paper-icon-button on-tap="onClearFilterTapped" icon="icons:clear"></paper-icon-button> -->
+              <paper-button on-tap="onFilterTapped" class="btnFilter custom-button"><iron-icon class="m-right-8" icon="icons:sort"></iron-icon>[[$TRANSLATE('Filter', LANG)]]</paper-button>
+            </template>
+          </div>
+          <!-- filter - end -->
+          
+          <paper-button class="post-custom-button colored" raised on-tap="_addNewPost">[[$TRANSLATE('Send Message', LANG)]]</paper-button>
+          
+        </div>
+        <!-- top action bar - end -->
+  
+        <!-- search area - start -->
+        <paper-input id="searchInput" no-label-float placeholder="[[$TRANSLATE('Search Messages', LANG)]]..." class="paper-custom-input" value="{{filterVal::input}}"></paper-input>
+        <!-- search area - end -->
+  
+        <!-- news feed - start -->
+        <template is="dom-if" if="{{$isEmptyArray(posts.length)}}">
+          <paper-card image="" elevation="0" animated-shadow="false">
+            <div class="card-content type text-center">
+              
+              <!-- <iron-image id="noNewsAvailable" src="../../images/no-news.svg" preload sizing="contain"></iron-image> -->
+  
+              <div class="type headline m-top-8">[[$TRANSLATE('No Message available now, please check back later', LANG)]].</div>
+              
+            </div>
+          </paper-card>
+  
+        </template>
+        <template is="dom-repeat" items="{{posts}}" filter="{{_filter(filterVal)}}">
+          <paper-card image="" elevation="1" animated-shadow="false">
+            <div class="card-content">
+              <div class="horizontal layout center">
+                <iron-image class="user-avatar medium" src="../../images/avatar.png" preload sizing="cover"></iron-image>
+                <div class="m-left-8 flex">
+                  <div class="type body"><strong>[[item.authorName]]</strong></div>
+                  <div class="type caption secondary">Shared at [[$formatDateTime(item.createdDatetimeStamp)]] with {{_getShareWithNames(item)}}
+  
+                  </div>
+                </div>
+
+                <div hidden$="[[!item.hasRequiredConfirmation]]">
+                  
+                  <div hidden$="[[!_checkIfUserExisitForConfirmation(item.shareWith)]]" >
+                    <paper-button class="post-custom-button" on-tap="_onTapConfirmed" hidden$="[[_checkIfUserAlreadyConfirmed(item.shareWith)]]" raised>[[$TRANSLATE('Tap to confirm', LANG)]]</paper-button>
+                    <div class="type body success" hidden$="[[!_checkIfUserAlreadyConfirmed(item.shareWith)]]">
+                      <!-- <iron-icon icon="icons:check" class="m-right-8"></iron-icon>  -->
+                      [[$TRANSLATE('Confirmed', LANG)]]</div>
+                    </div>
+                  </div>
+                
+              </div>
+    
+              <div class="type body m-top-16">
+                [[item.message]]
+              </div>
+  
+              <template is="dom-if" if="[[item.hasRequiredConfirmation]]">
+                <paper-button class="btn-comment m-top-16" on-tap="_showConfirmedList">{{_getConfirmationCounter(item.shareWith)}}</paper-button>
+              </template>
+  
+              <template is="dom-if" if="[[item.comments.length]]">
+                <div class="b-top m-top-16"></div>
+                <template is="dom-repeat" items="{{item.comments}}" as="comment">
+                  
+                  <div class="horizontal layout m-vertical-10">
+                    <iron-image class="user-avatar" src="../../images/avatar.png" preload sizing="cover"></iron-image>
+                    <div class="m-left-8 flex">
+                      <div>
+                        <span class="type body"><strong>[[comment.name]] </strong></span>
+                        <span>{{comment.message}}</span>
+                      </div>
+                      
+                      <div class="type caption-2 secondary">[[$formatDateTime(comment.createdDatetimeStamp)]]</div>
+                    </div>
+                  </div>
+                </template>
+              </template>
+              
+            </div>
+            <div class="card-actions">
+            
+              <div class="horizontal layout wrap center">
+                <!-- <paper-spinner active="{{item.isLoading}}"></paper-spinner> -->
+  
+                <iron-image class="user-avatar" src="../../images/avatar.png" preload sizing="cover"></iron-image>
+                <paper-input no-label-float placeholder="[[$TRANSLATE('Write comment', LANG)]]..." class="paper-custom-input flex" value="{{item.newComment}}"></paper-input>
+                <paper-button class="btn-comment" on-tap="_addCommentOnPost">[[$TRANSLATE('Comment', LANG)]]</paper-button>
+                
+              </div>
+            </div>
+          </paper-card>
+        </template>
+        <!-- news feed - end -->
+
+      </div>
+    </div>
+    
+  </template>
+  <script src="page-news-feed.js"></script>
+</dom-module>

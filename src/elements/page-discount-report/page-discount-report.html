@@ -1,0 +1,395 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+
+<!-- <link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html"> -->
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-discount-report">
+  <template>
+
+    <!-- style -->
+
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        margin-top: 10px;
+        width: 90%;
+      }
+
+
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: white;
+      }
+      paper-card .card-content .header{
+        color:white
+      }
+
+      .header {
+        background-color: var(--paper-grey-100);
+        padding: 15px;
+      }
+
+      .label {
+        background-color: var(--paper-grey-100);
+        padding: 5px;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      .pull-div-up {
+        position: relative;
+        top: 18px;
+      }
+
+      /* styles related to print preview */
+
+      .print-button-style {
+        margin-top: 16px;
+        background:burlywood;
+      }
+
+      #printPreview {
+        
+        display: none !important;
+      }
+
+      @media print {
+
+        .hideOnPrint {
+          display: none !important;
+        }
+
+        #printPreview {
+          display: block !important;
+          background-color: transparent;
+        }
+      }
+
+      /*  */
+      .print-document {
+        font-family: 'Times New Roman';
+        background: white;
+        width: 100%;
+      }
+
+      .print-header {
+        position: relative;
+        border-top-left-radius: inherit;
+        border-top-right-radius: inherit;
+        overflow: hidden;
+        border-bottom: 1px solid #eeeeee;
+        background-color: #fafafa;
+        padding: 16px
+      }
+      
+      .print-document-header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .print-document-header .logo {
+        max-width: 128px;
+        max-height: 128px;
+      }
+
+      .horiline {
+        width: 100%;
+        height: 0px;
+        /*background: black;*/
+        border: 1px solid black;
+        margin-bottom: 6px;
+      }
+
+      .leftSide {
+        margin-left: 6px;
+      }
+
+      .leftSideLine1 {
+        font-size: 24px;
+      }
+
+      .rightSideLine1 {
+        font-size: 22px;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .table th {
+        text-align: left;
+        background-color: var(--paper-grey-50);
+      }
+
+      .table td,
+      .table th {
+        vertical-align: left;
+        padding: 10px;
+        border: 1px solid var(--paper-grey-300);
+      }
+
+      .table td.special-td {
+        padding: 0px;
+        margin: 0px;
+        height: 100%;
+      }
+
+      .bottom-total-style {
+        position: relative;
+        float: right;
+      }
+
+
+    </style>
+
+    <!-- <module-accounts-top-nav page-name="discount-report" organization-id="[[organization.idOnServer]]" class="hideOnPrint">
+    </module-accounts-top-nav> -->
+
+    <!-- local DOM -->
+
+    <div class="master-container">
+
+      <div class="limiting-container">
+
+        <!-- Main Content -->
+        <div class="hideOnPrint">
+
+      
+          <!-- Card - Search - start -->
+          <paper-card>
+            <div class="card-custom-header">
+              <div class="layout horizontal center">
+                <div class="title flex">[[$TRANSLATE('Discount Report', LANG)]]</div>
+              </div>
+            </div>
+  
+            <div class="card-content">
+
+              <template is="dom-if" if="[[loadingCounter]]">
+                <div class="layout horizontal center type bold text-center">
+                  <paper-progress indeterminate></paper-progress>
+                </div>
+                <h2 class="type center">[[$TRANSLATE('Please Wait, Loading', LANG)]]...</h2>
+              </template>
+
+              <div class="layout horizontal end wrap">
+  
+                <paper-dropdown-menu label="[[$TRANSLATE('Discount Funds', LANG)]]" class="m-left-16">
+                  <paper-listbox class="dropdown-content" on-iron-activate="filterByFunds">
+                    <template is="dom-repeat" items="[[fundList]]">
+                      <paper-item>[[item.name]]</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+  
+                <paper-dropdown-menu label="[[$TRANSLATE('Discount By', LANG)]]" class="m-left-16">
+                  <paper-listbox class="dropdown-content" on-iron-activate="filterUsingDiscountBy">
+                    <template is="dom-repeat" items="[[discountByItemList]]">
+                      <paper-item>[[item]]</paper-item>
+                    </template>
+                  </paper-listbox>
+                </paper-dropdown-menu>
+  
+                <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
+                <template is="dom-if" if="[[!loadingCounter]]">
+                  <paper-button class="btn btn-success" raised on-tap="searchButtonClicked">[[$TRANSLATE('Search', LANG)]]</paper-button>
+                </template>
+                <paper-button raised on-tap="resetButtonClicked">[[$TRANSLATE('Reset', LANG)]]</paper-button>
+                <template is="dom-if" if="[[_isEmptyArray(matchingDiscountedInvoiceList)]]">
+                  <paper-button raised class="print-button-style" on-tap="_printButtonPressed">[[$TRANSLATE('Print the Report', LANG)]]</paper-button>
+                </template>
+  
+                <div style="color: rgb(182, 182, 182)" class="m-left-8 m-bottom-8">
+                  <span>[[$TRANSLATE('Press Search to Generate All The Reports', LANG)]]</span>
+                </div>
+  
+              </div>
+            </div>
+            <div class="card-content">
+  
+              <div class="header layout horizontal justified">
+                <div class="flex-2">[[$TRANSLATE('Date', LANG)]]</div>
+                <div class="flex-2 m-left-16"># [[$TRANSLATE('Invoice', LANG)]]</div>
+                <div class="flex-2">[[$TRANSLATE('Discount By', LANG)]]</div>
+                <div class="flex-2 m-right-16">[[$TRANSLATE('Discount Fund Name', LANG)]]</div>
+                <div class="flex-2">[[$TRANSLATE('Fund Discount', LANG)]]</div>
+                <div class="flex-2">[[$TRANSLATE('General Discount', LANG)]]</div>
+                <div class="flex-2">[[$TRANSLATE('Total Discount', LANG)]]</div>
+                <div class="flex-2">[[$TRANSLATE('Invoice Billed', LANG)]]</div>
+                <div class="flex-2">[[$TRANSLATE('Amount Received', LANG)]]</div>
+                <div class="flex-2">[[$TRANSLATE('View', LANG)]]</div>
+              </div>
+              <paper-listbox>
+                <template is="dom-if" if="[[!matchingDiscountedInvoiceList.length]]">
+                  <div class="layout horizontal center center-justified">[[$TRANSLATE('Empty', LANG)]]</div>
+                </template>
+                <template is="dom-repeat" items="[[matchingDiscountedInvoiceList]]" sort="_sortByDate">
+                  <paper-item>
+                    <div class="flex-2">[[$formatDateTime(item.createdDatetimeStamp)]]</div>
+                    <div class="flex-2 m-left-16">
+                      <template is="dom-if" if="[[!item.referenceNumber]]">
+                        <strong class="label">[[item.serial]]</strong>
+                      </template>
+                      <template is="dom-if" if="[[item.referenceNumber]]">
+                        <strong class="label">[[item.referenceNumber]]</strong>
+                      </template>
+                    </div>
+                    <div class="flex-2">[[item.discountBy]]</div>
+                    <div class="flex-2 m-right-16">[[item.discountFromFund.name]]</div>
+                    <div class="flex-2">[[item.discountFromFund.amount]]</div>
+                    <div class="flex-2">[[_calculateGeneralDiscount(item.discount, item.discountFromFund.amount)]]</div>
+                    <div class="flex-2">[[item.discount]]</div>
+                    <div class="flex-2">[[item.totalBilled]]</div>
+                    <div class="flex-2">[[item.totalAmountReceieved]]</div>
+                    <div class="flex-2">
+                      <paper-icon-button icon="launch" on-tap="viewCommissionButtonPressed"></paper-icon-button>
+                    </div>
+                  </paper-item>
+                </template>
+              </paper-listbox>
+  
+            </div>
+  
+            <div class="card-actions">
+              <strong> [[$TRANSLATE('Total Discount Given', LANG)]]: [[$formatCurrency(totalDiscount)]] </strong>
+            </div>
+          </paper-card>
+        </div>
+        
+
+        <!-- Print Preview -->
+        <div id="printPreview">
+          <div class="print-document">
+            <template is="dom-if" if="[[settings.printDecoration.headerLine]]">
+              <div class="print-header vertical layout center">[[settings.printDecoration.headerLine]]</div>
+            </template>
+
+            <div class="print-document-header horizontal layout center">
+
+              <template is="dom-if" if="[[organization.printSettings.headerLogoDataUri]]">
+                <img class="logo" src="[[organization.printSettings.headerLogoDataUri]]" alt="">
+              </template>
+
+              <div class="leftSide vertical layout">
+                <div class="leftSideLine1">[[settings.printDecoration.leftSideLine1]]</div>
+                <div class="leftSideLine2">[[settings.printDecoration.leftSideLine2]]</div>
+                <div class="leftSideLine3">[[settings.printDecoration.leftSideLine3]]</div>
+              </div>
+              <div class="flex"></div>
+              <div class="rightSide vertical layout end">
+                <div class="rightSideLine1">[[settings.printDecoration.rightSideLine1]]</div>
+                <div class="rightSideLine2">[[settings.printDecoration.rightSideLine2]]</div>
+                <div class="rightSideLine3">[[settings.printDecoration.rightSideLine3]]</div>
+              </div>
+            </div>
+
+            <div class="horiline"></div>
+            <div style="text-align: center">
+              <h1>[[$TRANSLATE('Discount Report', LANG)]]</h1>
+            </div>
+
+            <!-- Report Content -->
+            <div>
+              <table class="table m-top-16">
+                <thead>
+                  <tr>
+                    <th>[[$TRANSLATE('Date', LANG)]]</th>
+                    <th># [[$TRANSLATE('Invoice', LANG)]]</th>
+                    <th>[[$TRANSLATE('Discount By', LANG)]]</th>
+                    <th>[[$TRANSLATE('Discount Fund Name', LANG)]]</th>
+                    <th>[[$TRANSLATE('Fund Discount', LANG)]]</th>
+                    <th>[[$TRANSLATE('General Discount', LANG)]]</th>
+                    <th>[[$TRANSLATE('Total Discount', LANG)]]</th>
+                    <th>[[$TRANSLATE('Invoice Billed', LANG)]]</th>
+                    <th>[[$TRANSLATE('Amount Received', LANG)]]</th>
+                  </tr>
+                </thead>
+                <tbody class="p-top-16">
+                  <template is="dom-repeat" items="[[matchingDiscountedInvoiceList]]">
+                    <tr>
+                      <div class="horizontal layout">
+                        
+                        <td>[[$formatDateTime(item.createdDatetimeStamp)]]</td>
+                        <td>
+                          <template is="dom-if" if="[[!item.referenceNumber]]">
+                            <span>[[item.serial]]</span>
+                          </template>
+                          <template is="dom-if" if="[[item.referenceNumber]]">
+                            <span>[[item.referenceNumber]]</span>
+                          </template>
+                        </td>
+                        <td>[[item.discountBy]]</td>
+                        <td>[[item.discountFromFund.name]]</td>
+                        <td>[[item.discountFromFund.amount]]</td>
+                        <td>[[_calculateGeneralDiscount(item.discount, item.discountFromFund.amount)]]</td>
+                        <td>[[item.discount]]</td>
+                        <td>[[item.totalBilled]]</td>
+                        <td>[[item.totalAmountReceieved]]</td>
+
+                      </div>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+            <div class="p-top-16 p-bottom-16 bottom-total-style">
+              <strong> [[$TRANSLATE('Total Discount Given', LANG)]]: [[$formatCurrency(totalDiscount)]] </strong>
+            </div>
+            
+            <br>
+            <template is="dom-if" if="[[settings.printDecoration.footerLine]]">
+              <div class="footer vertical layout">[[settings.printDecoration.footerLine]]</div>
+            </template>
+            
+            <div style="text-align: center; margin-top: 16px">
+              <span class="type secondary">[[$TRANSLATE('Report Generation Date & Time', LANG)]] - [[_getFormattedCurrentDateTime(currentDateTime)]]</span>
+            </div>
+          </div>
+
+          <div class="horizontal layout center center-justified p-horizontal-16">
+            <div class="type body italic"><strong>[[$TRANSLATE('Printed by', LANG)]]: </strong>[[user.name]]</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+  </template>
+  <script src="page-discount-report.coffee-compiled.js"></script>
+</dom-module>

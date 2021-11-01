@@ -1,0 +1,409 @@
+<link rel="import" href="../../bower-assets/polymer/polymer.html">
+
+<!-- paper-* -->
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+
+
+<link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/db-using.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-my-attendance-sessions">
+  <template>
+
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        width: 90%;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-teal-500);
+      }
+
+      .search-area {
+        background-color: var(--paper-grey-100);
+        border-radius: 5px;
+        padding: 10px;
+      }
+      .checkbox-padding {
+        padding: 5px;
+      }
+      .actions {
+        border-top: 1px solid #eee;
+        padding-top: 10px;
+      }
+      .seat-list {
+        margin-top: 10px;
+      }
+
+      .seat-list>paper-item {
+        border-top: 1px solid #eee;
+      }
+
+      .pull-date-down {
+        position: relative;
+        top: 8px;
+      }
+
+      input {
+        background-color: #dde2e8;
+        border-radius: 6px;
+        height: 36px;
+        font-weight: 500;
+        padding: 0px 8px;
+        box-sizing: border-box;
+      }
+
+      .print-table {
+        table-layout: fixed;
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+      }
+
+      .print-table tr {
+        margin-bottom: 15px;
+      }
+
+      .print-table th {
+        background-color: var(--paper-grey-50);
+      }
+
+      .print-table td {
+        color: #444;
+      }
+
+      .print-table thead th {
+        word-wrap: normal;
+        padding: 10px 5px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+      .print-table tbody td,
+      .print-table tfoot th,
+      .print-footer-table th {
+        padding: 10px 5px;
+        border-bottom: 1px solid var(--paper-grey-100);
+      }
+
+      .print-table tr:last-child td {
+        border-bottom: 0;
+      }
+
+    </style>
+
+    <div id="tabContainer" class="tabs-container">
+      <paper-tabs selected="{{selectedPage}}" scrollable noink='true'>
+        <paper-tab>Upcoming Sessions</paper-tab>
+        <paper-tab>Completed Sessions</paper-tab>
+        <paper-tab>Session Statistics</paper-tab>  
+      </paper-tabs>
+    </div>
+
+    <div class="master-container">
+      <div class="limiting-container">
+        <paper-progress indeterminate hidden$="[[!loadingCounter]]"></paper-progress>
+        
+        <iron-pages selected="{{selectedPage}}">
+
+          <!-- Upcoming Sessions -->
+          <section id="upcomingSessionsId">
+            <paper-card heading="Upcoming Sessions">
+              <div class="card-content custom-input-field">
+                <!-- <div class="search-area">
+                  <custom-vital-search class="pull-date-down m-left-8" on-date-select="filterByDateClickedCurrentReport" on-clear="filterByDateClearButtonClickedCurrentReport"></custom-vital-search>
+                  <vaadin-combo-box class="m-left-8" label="Department" items="[[patientStayObject.departmentList]]"
+                    on-selected-item-changed="departmentDropdownValueChanged" item-label-path="name">
+                    <template>[[item.name]]</template>
+                  </vaadin-combo-box>
+                  <paper-checkbox class="checkbox-padding" checked="{{showVaccantOnly}}">Show Only Vacant</paper-checkbox>
+                </div> -->
+    
+                <vaadin-grid items="[[myUpcomingAttendanceSessions]]">
+                  <!-- <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter path="createdDatetimeStamp" direction="desc">[[$TRANSLATE('Date', LANG)]]</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <div>[[$formatDate(item.createdDatetimeStamp)]]</div>
+                    </template>
+                  </vaadin-grid-column> -->
+    
+                  <!-- <vaadin-grid-column width="120px" flex-grow="0" resizable>
+                    <template class="header">
+                      <vaadin-grid-filter aria-label="Name" path="category" value="[[searchString]]" style="margin-top: 6px;">
+                        <paper-input label="[[$TRANSLATE('Category', LANG)]]" value="{{searchString}}" no-label-float></paper-input>
+                      </vaadin-grid-filter>
+                    </template>
+                    <template>
+                      <div class="type caption-2 bg-gray success">[[item.category]]</div>
+                    </template>
+                  </vaadin-grid-column> -->
+    
+    
+                  <!-- title -->
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <span>[[$TRANSLATE('Title', LANG)]]</span>
+                    </template>
+                    <template>
+                      <div>[[item.title]]</div>
+                    </template>
+                    <template class="footer"><strong>[[$TRANSLATE('Total', LANG)]] : [[myUpcomingAttendanceSessions.length]]</strong></template>
+                  </vaadin-grid-column>
+    
+                  <!-- type -->
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <span>[[$TRANSLATE('Type', LANG)]]</span>
+                    </template>
+                    <template>
+                      <div>[[item.type]]</div>
+                    </template>
+                  </vaadin-grid-column>
+    
+                  <!--  date -->
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter path="startTime" direction="asc">[[$TRANSLATE('Date & Time', LANG)]]</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <div>[[$formatDate(item.startTime)]] ([[$getFormatted12HRTimeFromMS(item.startTime)]] to [[$getFormatted12HRTimeFromMS(item.endTime)]])</div>
+                    </template>
+                  </vaadin-grid-column>
+    
+                  <vaadin-grid-column resizable>
+                    <template class="header">[[$TRANSLATE('Action', LANG)]]
+                      <span></span>
+                    </template>
+                    <template>
+                      <div class="horizontal layout">
+                        <paper-button class="btn btn-success" on-tap="viewAttendanceSession">View</paper-button>
+                        <paper-button class="btn btn-success" on-tap="joinAttendanceSession" hidden$="[[!isJoinVisible(item)]]">Join</paper-button>
+                        <!-- <paper-icon-button icon="create" on-tap="editInvoiceButtonPressed" hidden$="[[!_checkUserAccess('C023')]]"></paper-icon-button> -->
+                      </div>
+                      
+                    </template>
+                  </vaadin-grid-column>
+                </vaadin-grid>
+    
+              </div>
+              </paper-card>
+          </section>
+
+          <!-- Completed Sessions -->
+          <section id="completedSessionsId">
+              <paper-card heading="Completed Sessions">
+                <div class="card-content custom-input-field">
+
+                  <vaadin-grid items="[[myCompletedAttendanceSessions]]">
+                    <!-- <vaadin-grid-column resizable>
+                      <template class="header">
+                        <vaadin-grid-sorter path="createdDatetimeStamp" direction="desc">[[$TRANSLATE('Date', LANG)]]</vaadin-grid-sorter>
+                      </template>
+                      <template>
+                        <div>[[$formatDate(item.createdDatetimeStamp)]]</div>
+                      </template>
+                    </vaadin-grid-column> -->
+      
+                    <!-- <vaadin-grid-column width="120px" flex-grow="0" resizable>
+                      <template class="header">
+                        <vaadin-grid-filter aria-label="Name" path="category" value="[[searchString]]" style="margin-top: 6px;">
+                          <paper-input label="[[$TRANSLATE('Category', LANG)]]" value="{{searchString}}" no-label-float></paper-input>
+                        </vaadin-grid-filter>
+                      </template>
+                      <template>
+                        <div class="type caption-2 bg-gray success">[[item.category]]</div>
+                      </template>
+                    </vaadin-grid-column> -->
+      
+      
+                    <!-- title -->
+                    <vaadin-grid-column resizable>
+                      <template class="header">
+                        <span>[[$TRANSLATE('Title', LANG)]]</span>
+                      </template>
+                      <template>
+                        <div>[[item.title]]</div>
+                      </template>
+                      <template class="footer"><strong>[[$TRANSLATE('Total', LANG)]] : [[myCompletedAttendanceSessions.length]]</strong></template>
+                    </vaadin-grid-column>
+      
+                    <!-- type -->
+                    <vaadin-grid-column resizable>
+                      <template class="header">
+                        <span>[[$TRANSLATE('Type', LANG)]]</span>
+                      </template>
+                      <template>
+                        <div>[[item.type]]</div>
+                      </template>
+                    </vaadin-grid-column>
+      
+                    <!--  date -->
+                    <vaadin-grid-column resizable>
+                      <template class="header">
+                        <vaadin-grid-sorter path="startTime" direction="asc">[[$TRANSLATE('Date & Time', LANG)]]</vaadin-grid-sorter>
+                      </template>
+                      <template>
+                        <div>[[$formatDate(item.startTime)]] ([[$getFormatted12HRTimeFromMS(item.startTime)]] to [[$getFormatted12HRTimeFromMS(item.endTime)]])</div>
+                      </template>
+                    </vaadin-grid-column>
+      
+                    <vaadin-grid-column resizable>
+                      <template class="header">[[$TRANSLATE('Action', LANG)]]
+                        <span></span>
+                      </template>
+                      <template>
+                        <div class="horizontal layout" hidden$="[[!isJoinVisible(item)]]">
+                          <paper-button class="btn btn-success" on-tap="viewAttendanceSession">View</paper-button>
+                          <!-- <paper-icon-button icon="create" on-tap="editInvoiceButtonPressed" hidden$="[[!_checkUserAccess('C023')]]"></paper-icon-button> -->
+                        </div>
+                        
+                      </template>
+                    </vaadin-grid-column>
+                  </vaadin-grid>
+                </div>
+              </paper-card>
+          </section>
+
+          <!-- Session statistics -->
+          <section id="sessionStatisticsId">
+
+            <paper-card heading="Summary Statistics" >
+
+              <table class="print-table">
+                <thead>
+                  <tr>
+                    <th>Types</th>
+                    <th>Total Completed</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <template is="dom-repeat" items="[[mySummarySessionStatistics.stats]]">
+                        <div class="m-bottom-8">
+                          <span><strong>[[item.type]] : </strong> [[item.presentCount]]/[[item.absentCount]]</span>
+                        </div>
+                      </template>
+                    </td>
+                    
+                    <td>
+                      <div class="m-bottom-8">
+                        <span>[[mySummarySessionStatistics.totalPresentCount]]/[[mySummarySessionStatistics.totalCount]]</span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </paper-card>
+
+            <paper-card heading="Session statistics" class="m-top-16">
+              <div class="card-content custom-input-field">
+                <div class="search-area">
+                  <div class="layout horizontal">
+                    <custom-vital-search class="pull-date-down m-left-8" on-date-select="filterByDateClickedSessionStat" on-clear="filterByDateClearButtonClickedSessionStat"></custom-vital-search>
+
+                    <vaadin-combo-box class="m-left-8" label="Type" items="[[mySessionTypes]]" value="{{sessionFilteringType}}"></vaadin-combo-box>
+                  </div>
+    
+                  <div class="m-top-16 layout horizontal">
+                    <!-- <paper-checkbox class="checkbox-padding" checked="{{showVaccantOnly}}">Show Only Vacant</paper-checkbox> -->
+                    <div class="flex"></div>
+                    <paper-button class="btn btn-primary" on-tap="filterStatisticsPressed">Search</paper-button>
+                  </div>
+                </div>
+
+                <vaadin-grid items="[[filteredSessionStatistics]]">
+                  <!-- type -->
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <span>[[$TRANSLATE('Type', LANG)]]</span>
+                    </template>
+                    <template>
+                      <div>[[item.type]]</div>
+                    </template>
+                    <template class="footer"><strong>[[$TRANSLATE('Total', LANG)]] : [[filteredSessionStatistics.length]]</strong></template>
+                  </vaadin-grid-column>
+
+                  <!-- subject -->
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <input placeholder="[[$TRANSLATE('Subject', LANG)]]" is="iron-input" bind-value="{{subjectFilteringString}}"/>
+                      <!-- <span>[[$TRANSLATE('Subject', LANG)]]</span> -->
+                    </template>
+                    <template>
+                      <div>[[item.subject]]</div>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <!-- presenter -->
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <input placeholder="[[$TRANSLATE('Presenter', LANG)]]" is="iron-input" bind-value="{{presenterFilteringString}}"/>
+                      <!-- <span>[[$TRANSLATE('Presenter', LANG)]]</span> -->
+                    </template>
+                    <template>
+                      <div>[[item.presenter.name]]</div>
+                    </template>
+                  </vaadin-grid-column>
+
+                  <!-- date -->
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <vaadin-grid-sorter path="startTime" direction="asc">[[$TRANSLATE('Date & Time', LANG)]]</vaadin-grid-sorter>
+                    </template>
+                    <template>
+                      <div>[[$formatDate(item.startTime)]] ([[$getFormatted12HRTimeFromMS(item.startTime)]] to [[$getFormatted12HRTimeFromMS(item.endTime)]])</div>
+                    </template>
+                  </vaadin-grid-column>
+    
+                  <!-- status -->
+                  <vaadin-grid-column resizable>
+                    <template class="header">
+                      <span>[[$TRANSLATE('Status', LANG)]]</span>
+                    </template>
+                    <template>
+                      <div>[[_getSessionAttendeeStatus(item)]]</div>
+                    </template>
+                  </vaadin-grid-column>
+    
+                  
+                </vaadin-grid>
+                
+              </div>
+            </paper-card>
+        </section>
+
+
+        </iron-pages>
+      </div>
+    </div>
+
+  </template>
+  <script src="page-my-attendance-sessions.coffee-compiled.js"></script>
+</dom-module>

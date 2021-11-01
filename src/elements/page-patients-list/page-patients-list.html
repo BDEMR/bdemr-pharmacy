@@ -1,0 +1,455 @@
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import " href='../../bower-assets/iron-list/iron-list.html'>
+<link rel="import " href='../../bower-assets/iron-list/demo/scroll-threshold.html'>
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-column.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
+
+
+<link rel="import" href="../bdemr-investigation/bdemr-investigation.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+<link rel="import" href="../page-dashboard/page-icons.html">
+
+<!-- <link rel="import" href= '@polymer/polymer/polymer-legacy.js'>
+<link rel="import" href= '@polymer/iron-flex-layout/iron-flex-layout.js'>
+<link rel="import" href= '@polymer/iron-scroll-threshold/iron-scroll-threshold.js'>
+<link rel="import" href= '@polymer/iron-image/iron-image.js'>
+<link rel="import" href= '@polymer/paper-styles/color.js'>
+<link rel="import" href= '@polymer/paper-styles/typography.js'>
+<link rel="import" href= '@polymer/app-layout/app-toolbar/app-toolbar.js'>
+<link rel="import" href= '@polymer/paper-spinner/paper-spinner.js'>
+<link rel="import" href= '@polymer/iron-ajax/iron-ajax.js'>
+
+<link rel="import" href=  '@polymer/polymer/lib/legacy/polymer-fn.js'> -->
+<!-- behavior -->
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+<script src="https://unpkg.com/@webcomponents/webcomponentsjs@^2.0.0/webcomponents-loader.js"></script>
+<dom-module id="page-patients-list">
+    <template>
+        <style is="custom-style" include="common-style">
+  app-header-layout ::content #contentContainer {
+        overflow: hidden !important;
+      }
+      :host {
+        /* height: calc(100% - 56px); */
+    position: relative;
+    width: 90%;
+    /* margin: 10px; */
+    margin: 0 auto;
+    display: flex;
+    /* justify-content: space-between; */
+    left: 0;
+    /* right: 0; */
+    /* top: 56px; */
+    border-radius: 10px;
+      }
+
+    /* iron-list {
+      flex: 1 1 auto;
+    } */
+      .container {
+        width: 100%;
+        height: 100%;
+        /* background-color: #fff; */
+      }
+
+      paper-dialog {
+        min-width: 450px;
+      }
+      vaadin-grid {
+        height: auto;
+      }
+
+      vaadin-grid#list {
+        height: auto;
+        font-family: Roboto, sans-serif;
+        --divider-color: rgba(0, 0, 0, var(--dark-divider-opacity));
+        padding: 20px;
+
+        --vaadin-grid-cell: {
+          padding: 0;
+        };
+
+        --vaadin-grid-header-cell: {
+          height: 48px;
+          /* color: rgba(0, 0, 0, var(--dark-secondary-opacity)); */
+          font-size: 16px;
+        };
+
+        --vaadin-grid-body-cell: {
+          /* height: 48px; */
+          color: rgba(0, 0, 0, var(--dark-primary-opacity));
+          font-size: 16px;
+        };
+
+        --vaadin-grid-body-row-hover-cell: {
+          background-color: var(--paper-grey-200);
+        };
+
+        --vaadin-grid-body-row-selected-cell: {
+          background-color: var(--paper-grey-100);
+        };
+
+        --vaadin-grid-focused-cell: {
+          box-shadow: none;
+          font-weight: bold;
+        };
+      }
+ 
+      .top-container {
+        /* background-color: #f3f5f7; */
+        box-shadow:rgba(0, 0, 0, .54) 0 -10px 6px -10px inset;
+        height: 310px;
+      }
+
+      #filter {
+        /* padding: 8px 8px 16px 8px; */
+       
+        position: relative;
+    margin: 10px 0px 0px 0px;
+    background: white;
+    padding: 20px;
+      }
+
+      .filter {
+        padding: 0 6px 1px 6px;
+      }
+
+      #editor {
+        background-color: #fff;
+        /* border: 1px solid rgba(0, 0, 0, var(--dark-divider-opacity)); */
+        position: relative;
+        height: 100%;
+        box-shadow: -3px -3px 2px rgba(0,0,0, 0.16);
+        
+      }
+
+     
+     
+
+      
+
+      input {
+        background-color: #dde2e8;
+        border-radius: 6px;
+        height: 36px;
+        font-weight: 500;
+        padding: 0px 8px;
+        box-sizing: border-box;
+      }
+
+  
+      .custom-button {
+        padding: 0.4em 2em;
+        font-size: 16px;
+        background-color: #fff;
+      }
+      .custom-button:hover {
+        color: white;
+        transition: 20ms all ease;
+        background-color: rgb(0, 159, 233);
+      }
+
+      .custom-flat-button {
+        font-weight: bold;
+        font-size: 14px;
+        text-transform: uppercase;
+      }
+
+      #importResult {
+        overflow-y: scroll;
+        height: 200px;
+        background: white;
+        padding: 12px;
+        margin-top: 16px;
+      }
+
+      .type.capton-2 {
+        line-height: 25px;
+      }
+
+      .left {
+        width: 30%;
+      }
+      .right {
+        width: 100%;
+        height: inherit;
+      }
+
+      @media screen and (max-width: 859px) {
+        .left, .right {
+          width: 100%;
+        }
+      }
+
+      @media screen and (max-width: 479px) {
+        .filter-input {
+          width: 100%;
+        }
+
+        #btnFilter {
+          margin-top: 8px;
+          margin-bottom: 8px;
+        }
+      }
+
+      #editor {
+        position: fixed;
+        right: 0;
+        top: 56px;
+        bottom: 0;
+        z-index: 1;
+        height: calc(100% - 156px);
+        border-left: 1px solid #eee;
+      }
+
+
+      .fixed-title {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 12px 8px 11px 12px;
+        border-bottom: 1px solid #eee;
+        z-index: 1;
+        background-color: #fafafa;
+        width: calc( 100% - 24px);
+      }
+      #pages {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 20px;
+      }
+
+      #pages > button {
+        user-select: none;
+        padding: 5px;
+        margin: 0 5px;
+        border-radius: 10%;
+        border: 0;
+        background: transparent;
+        font: inherit;
+        outline: none;
+        cursor: pointer;
+      }
+
+      #pages > button:hover,
+      #pages > button:focus {
+        color: var(--app-primary-color);
+        background-color: #eee;
+      }
+
+      #pages > button[selected] {
+        font-weight: bold;
+        color: white;
+        background-color: var(--app-primary-color);
+      }
+      .avatar {
+          height: 40px;
+          width: 40px;
+          border-radius: 20px;
+          box-sizing: border-box;
+          background-color: #DDD;
+        }
+
+        address {
+          font-size: 14px;
+          margin: 10px 0;
+        }
+
+        .spacer {
+          @apply --layout-flex;
+        }
+
+        .index {
+          width: 30px;
+        }
+      
+        </style>
+        <div class="right flex">
+
+            <!-- filter - start -->
+            <div id="filter" style="position: relative;
+            margin: 10px 0px 0px 0px;
+            background: white;
+            padding: 20px;
+            /* width: 80%; */
+            margin: 0 auto;
+            border-radius: 10px;" >
+          
+          
+              <!-- filter - form - start -->
+              <section>
+                <div class="horizontal layout center filter">
+                  <div class="horizontal layout center wrap flex">
+                    <vaadin-date-picker class="filter-input m-horizontal-8" type="date" max="" value="{{filterBy.fromDate}}" label="[[$TRANSLATE('From', LANG)]]"></vaadin-date-picker>
+                    <vaadin-date-picker class="filter-input m-horizontal-8" type="date" max="" value="{{filterBy.toDate}}" label="[[$TRANSLATE('To', LANG)]]"></vaadin-date-picker>
+                    <paper-button raised id="btnFilter" on-tap="onFilterTapped" class="custom-button m-top-8"><iron-icon class="m-right-8" icon="icons:sort"></iron-icon>[[$TRANSLATE('', LANG)]]</paper-button>
+                   
+                    <!-- <paper-button raised class="btn btn-success" on-tap="goToSupplierInvoice">Create Supplier invoice</paper-button> -->
+                  </div>
+    
+                  <paper-menu-button class="p-0" vertical-align="top" horizontal-align="right">
+                    <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
+                    <paper-menu class="dropdown-content">
+                    
+                      <paper-item on-tap="onClearFilterTapped"><iron-icon class="m-right-8" icon="icons:clear"></iron-icon>[[$TRANSLATE('Clear Filter', LANG)]]</paper-item>
+                     
+                      <!-- <paper-item on-tap="_downloadDemoTemplate"><iron-icon class="m-right-8" icon="icons:file-download"></iron-icon>Download CSV Template (Demo)</paper-item> -->
+                    </paper-menu>
+                  </paper-menu-button>
+                </div>
+        
+        
+              </section>
+              <!-- filter - form - end -->
+      
+          
+              
+            </div>
+      
+      <x-array-data-provider items="{{inventories}}"></x-array-data-provider>
+             
+        <vaadin-grid id="list" page-size="4" active-item="{{activeItem}}" >
+<!-- 
+            <vaadin-grid-column width="20px" frozen>
+              <template class="header">[[$TRANSLATE('No', LANG)]].</template>
+              <template>[[$returnSerial(index)]]</template>
+            </vaadin-grid-column> -->
+            <vaadin-grid-column width="6em">
+              <template class="header">
+                  [[$TRANSLATE('Avatar', LANG)]]
+              </template>
+              <template>
+                 <iron-icon icon$='[[item.icon]]'></iron-icon></span>
+              </template>
+            </vaadin-grid-column>
+  
+            <vaadin-grid-column width="12em" frozen>
+              <template class="header">
+                <vaadin-grid-sorter path="name" direction="asc">
+                  
+                  <vaadin-grid-filter aria-label="Name" path="name" value="[[searchString]]">
+                    <paper-input label="[[$TRANSLATE('Search By Name', LANG)]]" value="{{searchString}}" no-label-float></paper-input>
+                  </vaadin-grid-filter>
+              
+                </vaadin-grid-sorter>
+              </template>
+              <template>
+                [[item.name]]
+              </template>
+            </vaadin-grid-column>
+      
+            <vaadin-grid-column width="6em">
+              <template class="header">
+                <vaadin-grid-sorter path="actualCost" class="numeric">
+                  <div class="header-cell">
+                    [[$TRANSLATE('Address', LANG)]]
+                  </div>
+                </vaadin-grid-sorter>
+              </template>
+              <template>
+                [[item.address]]
+              </template>
+            </vaadin-grid-column>
+      
+            <vaadin-grid-column width="6em">
+              <template class="header">
+                <vaadin-grid-sorter path="price" class="numeric">
+                  <div class="header-cell">
+                    [[$TRANSLATE('Phone Number', LANG)]]
+                  </div>
+                </vaadin-grid-sorter>
+              </template>
+              <template>
+                <span class="total">
+                    [[item.number]]
+                </span>
+              </template>
+            </vaadin-grid-column>
+  
+            <vaadin-grid-column width="6em">
+                <template class="header">
+                  <vaadin-grid-sorter path="quantity" class="numeric">
+                    <div class="header-cell">
+                      [[$TRANSLATE('Age', LANG)]]
+                    </div>
+                  </vaadin-grid-sorter>
+                </template>
+                <template>
+                  <span class$="type {{_classForQuantityAlert(item)}}">
+                      [[item.age]]
+                    </span>
+                </template>
+              </vaadin-grid-column>
+  
+            <vaadin-grid-column width="6em">
+              <template class="header">
+                  [[$TRANSLATE('Gender', LANG)]]
+              </template>
+              <template>
+                <span>[[item.gender]]</span>
+              </template>
+            </vaadin-grid-column>
+             
+            <vaadin-grid-column width="12em">
+              <template class="header">
+                <vaadin-grid-sorter path="createdDatetimeStamp">
+                  <div class="header-cell">
+                   [[$TRANSLATE(' Added on', LANG)]]
+                  </div>
+                </vaadin-grid-sorter>
+              </template>
+              <template>
+                <span style="text-transform: capitalize;"></span>[[$formatDateTime(item.createdDatetimeStamp)]]</span>
+              </template>
+            </vaadin-grid-column>
+            <vaadin-grid-column width="12em">
+              <template class="header">
+                <vaadin-grid-sorter path="createdDatetimeStamp">
+                  <div class="header-cell">
+                   [[$TRANSLATE(' Action', LANG)]]
+                  </div>
+                </vaadin-grid-sorter>
+              </template>
+              <template>
+                <paper-button raised id="btnFilter" on-tap="" class="custom-button m-top-8"><iron-icon class="m-right-8" icon="icons:sort"></iron-icon>[[$TRANSLATE('View', LANG)]]</paper-button>
+                <paper-button raised id="btnFilter" on-tap="" class="custom-button m-top-8"><iron-icon class="m-right-8" icon="icons:sort"></iron-icon>[[$TRANSLATE('Edit', LANG)]]</paper-button>
+                <paper-button raised id="btnFilter" on-tap="" class="custom-button m-top-8"><iron-icon class="m-right-8" icon="icons:sort"></iron-icon>[[$TRANSLATE('Delete', LANG)]]</paper-button>
+
+              </template>
+            </vaadin-grid-column>
+        </vaadin-grid> 
+          
+          <div id="pages">
+            <button on-tap="_prev">&lt;</button>
+            <template is="dom-repeat" items="[[pages]]">
+              <button on-tap="_select" selected$="[[_isSelected(page, item)]]">[[item]]</button>
+            </template>
+            <button on-tap="_next">&gt;</button>
+          </div>
+            </div>
+    </template>
+    
+    <script src="page-patients-list.coffee-compiled.js"></script>
+    
+</dom-module>

@@ -1,0 +1,372 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-accounts-salary-creator">
+
+  <template>
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+
+      .limiting-container {
+        width: 100%;
+        margin: 0;
+      }
+      
+    </style>
+
+    <div class="master-container">
+      <div class="limiting-container">
+
+        <paper-card>
+          <div class="card-content">
+            <vaadin-grid items="[[employeeList]]">
+              <vaadin-grid-column resizable>
+                <template class="header">Employee Id</template>
+                <template>
+                  <span>[[item.employeeId]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Name</template>
+                <template>
+                  <span>[[item.name]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Mobile</template>
+                <template>
+                  <span>[[item.mobile]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Designation</template>
+                <template>
+                  <span>[[item.designationName]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Department</template>
+                <template>
+                  <span>[[item.departmentName]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Action</template>
+                <template>
+                  <div>
+                    <paper-button class="btn btn-primary" on-tap="paySalaryButtonClicked">Pay Salary</paper-button>
+                  </div>
+                </template>
+              </vaadin-grid-column>
+            </vaadin-grid>
+          </div>
+        </paper-card>
+
+        <paper-card class="m-top-8">
+          <div class="card-content">
+
+            <vaadin-grid items="[[salarySheet.data]]">
+              <vaadin-grid-column resizable frozen>
+                <template class="header">Employee Id</template>
+                <template>
+                  <span>[[item.employeeId]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable frozen>
+                <template class="header">Employee Name</template>
+                <template>
+                  <span>[[item.employeeName]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable frozen>
+                <template class="header">Basic Salary</template>
+                <template>
+                  <span>[[item.salaryUnitPrice]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable frozen>
+                <template class="header">Unit</template>
+                <template>
+                  <span>[[item.salaryUnit]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable frozen>
+                <template class="header">Total Basic Salary</template>
+                <template>
+                  <span>[[getTotal(item.salaryUnitPrice, item.salaryUnit)]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable frozen>
+                <template class="header">Total Days Worked</template>
+                <template>
+                  <span>[[item.dayCount]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Overtime/Unit</template>
+                <template>
+                  <span>[[item.overtimeUnitPrice]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Unit</template>
+                <template>
+                  <span>[[item.overtimeUnit]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Total Overtime</template>
+                <template>
+                  <span>[[getTotal(item.overtimeUnitPrice, item.overtimeUnit)]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Festival Bonus/Unit</template>
+                <template>
+                  <span>[[item.festivalBonusUnitPrice]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Unit</template>
+                <template>
+                  <span>[[item.festivalBonusUnit]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Total Bonus</template>
+                <template>
+                  <span>[[getTotal(item.festivalBonusUnitPrice, item.festivalBonusUnit)]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">House Rent</template>
+                <template>
+                  <span>[[item.houseRent]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Conveyance</template>
+                <template>
+                  <span>[[item.conveyance]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Medical Allowance</template>
+                <template>
+                  <span>[[item.medicalAllowance]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Education</template>
+                <template>
+                  <span>[[item.education]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">LFC</template>
+                <template>
+                  <span>[[item.lfc]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Dues Paid</template>
+                <template>
+                  <span>[[item.dues]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Advance Taken</template>
+                <template>
+                  <span>[[item.advances]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Tax Deduction</template>
+                <template>
+                  <span>[[item.taxDeduction]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Insurance</template>
+                <template>
+                  <span>[[item.insurance]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Provident Fund</template>
+                <template>
+                  <span>[[item.providentFund]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Gratuity</template>
+                <template>
+                  <span>[[item.gratuityFund]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Advance Deduction</template>
+                <template>
+                  <span>[[item.advanceDeduction]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Gross Salary</template>
+                <template>
+                  <span class="type primary">[[item.grossSalary]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Total Deductibles</template>
+                <template>
+                  <span class="type danger">[[item.totalDeductibles]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Net Salary</template>
+                <template>
+                  <span class="type bold">[[item.netSalary]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">Paid</template>
+                <template>
+                  <span class="type bold success">[[item.paid]]</span>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column>
+                <template class="header"></template>
+                <template>
+                  <paper-icon-button class="type danger" icon="delete" on-tap="deleteSalaryEntry"></paper-icon-button>
+                </template>
+              </vaadin-grid-column>
+
+            </vaadin-grid>
+
+            <div class="layout vertical">
+              <div class="layout horizontal m-top-8 type title-2 bold">
+                <label for="" class="flex-2">Total Salary Expense</label>
+                <div class="flex-4">
+                  [[$toTwoDecimalPlace(salarySheet.totalSalaryExpense)]]
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="card-actions">
+            <paper-button on-tap="cancelButtonClicked" class="btn btn-default">Cancel</paper-button>
+            <paper-button on-tap="saveButtonClicked" class="btn btn-success" raised>Save</paper-button>
+          </div>
+
+        </paper-card>
+
+        <paper-dialog id="salaryEditorDialog">
+          <h2 class="p-16">Salary Editor</h2>
+
+          <paper-dialog-scrollable>
+
+            <div class="layout horizontal">
+              <paper-input class="flex m-right-8" label="Basic Salary/Unit" value="{{salary.salaryUnitPrice}}" type="number"
+                readonly></paper-input>
+              <paper-input class="flex" label="Basic Salary Unit/ Per Day Basis" value="{{salary.salaryUnit}}" type="number" min='1'></paper-input>
+            </div>
+            <div class="layout horizontal">
+              <paper-input class="flex" label="Days Worked" auto-validate value="{{salary.dayCount}}" type="number" min='1' max='30' error-message="Value must be within 1-30"></paper-input>
+            </div>
+            <div class="layout horizontal">
+              <paper-input class="flex m-right-8" label="Overtime/Unit" value="{{salary.overtimeUnitPrice}}" type="number"
+                readonly></paper-input>
+              <paper-input class="flex" label="Overtime Unit" value="{{salary.overtimeUnit}}" type="number" min='0'></paper-input>
+            </div>
+            <div class="layout horizontal">
+              <paper-input class="flex m-right-8" label="Festival Bonus/Unit" value="{{salary.festivalBonusUnitPrice}}"
+                type="number" readonly></paper-input>
+              <paper-input class="flex m-right-8" label="Festival Bonus Unit" value="{{salary.festivalBonusUnit}}" type="number"
+                min='0'></paper-input>
+            </div>
+
+            <br>
+
+            <paper-toggle-button checked="{{showMore}}">Show More</paper-toggle-button>
+            <div hidden$="[[!showMore]]">
+              <br>
+              <h4>Addition</h4>
+              <div class="layout horizontal">
+                <paper-input class="flex m-right-8" label="Dues Paid" value="{{salary.dues}}" type="number" min="0"></paper-input>
+                <paper-input class="flex m-right-8" label="Advances Taken" value="{{salary.advances}}" type="number"
+                  min="0"></paper-input>
+              </div>
+
+              <div class="layout horizontal">
+                <paper-input label="House Rent" value="[[salary.houseRent]]" type="number" disabled></paper-input>
+                <paper-input label="Conveyance" value="[[salary.conveyance]]" type="number" disabled></paper-input>
+              </div>
+              <div class="layout horizontal">
+                <paper-input label="Medical Allowance" value="[[salary.medicalAllowance]]" type="number" disabled></paper-input>
+                <paper-input label="Education" value="[[salary.education]]" type="number" disabled></paper-input>
+              </div>
+              <paper-input label="lfc" value="[[salary.lfc]]" type="number" disabled></paper-input>
+
+              <br>
+              <h4>Subtraction</h4>
+              <paper-input label="Adjust Past Advances" value="{{salary.advanceDeduction}}" type="number" min="0"></paper-input>
+              <div class="layout horizontal">
+                <paper-input label="Tax Deduction" value="{{salary.taxDeduction}}" type="number" min="0"></paper-input>
+                <paper-input label="Insurance" value="{{salary.insurance}}" type="number" min="0"></paper-input>
+              </div>
+              <div class="layout horizontal">
+                <paper-input label="Provident Fund" value="{{salary.providentFund}}" type="number" min="0"></paper-input>
+                <paper-input label="Gratuity Fund" value="{{salary.gratuityFund}}" type="number" min="0"></paper-input>
+              </div>
+            </div>
+
+            <br>
+            <div class="layout horizontal">
+              <paper-input label="Gross" value="[[grossSalary]]" type="number" disabled></paper-input>
+              <paper-input label="Reduction" value="[[salaryDeductibles]]" type="number" disabled></paper-input>
+            </div>
+
+            <paper-input label="Salary Paid" value="[[salary.paid]]" type="number" on-change="salaryPaidChanged"></paper-input>
+
+          </paper-dialog-scrollable>
+
+          <div class="buttons">
+            <paper-button dialog-dismiss>Cancel</paper-button>
+            <paper-button raised on-tap="addSalaryButtonClicked">Add</paper-button>
+          </div>
+
+        </paper-dialog>
+
+      </div>
+    </div>
+
+
+
+
+  </template>
+  <script src="page-accounts-salary-creator.js"></script>
+</dom-module>

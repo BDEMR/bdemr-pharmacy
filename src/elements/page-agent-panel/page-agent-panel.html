@@ -1,0 +1,943 @@
+<link rel="import" href="../../bower-assets/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower-assets/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower-assets/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower-assets/iron-image/iron-image.html">
+
+<link rel="import" href="../../bower-assets/paper-card/paper-card.html">
+<link rel="import" href="../../bower-assets/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/paper-input/paper-input.html">
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower-assets/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower-assets/paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../../bower-assets/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower-assets/paper-item/paper-item.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker.html">
+
+<link rel="import" href="../../bower-assets/paper-toggle-button/paper-toggle-button.html">
+
+<link rel="import" href="../../bower-assets/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower-assets/paper-radio-button/paper-radio-button.html">
+
+<link rel="import" href="../../bower-assets/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../../bower-assets/app-layout/app-drawer/app-drawer.html">
+
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box-light.html">
+
+<!-- Custom AutoComplete -->
+<link rel="import" href="../../bower-assets/paper-autocomplete/paper-autocomplete.html">
+
+<link rel="import" href="../../behaviors/common-computes.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/translating.html">
+<!--Theme-->
+<link rel="import" href="../../styles/common-style.html">
+
+<dom-module id="page-agent-panel">
+  <template>
+    <style is="custom-style" include="common-style">
+      paper-dialog {
+        top: 64px !important;
+      }
+
+      .center {
+        margin: auto;
+        padding: 10px;
+      }
+
+      .limiting-container {
+        margin-top: 10px;
+      }
+
+      paper-dropdown-menu {
+        width: 100%;
+      }
+
+      .chamber {
+        border: 2px solid black;
+      }
+
+      .chamber-info {
+        margin-top: 10px;
+      }
+
+      .already-have-a-booking-message {
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+        /* padding: 20px; */
+        font-size: 15px;
+        color: var(--paper-green-500);
+      }
+
+      .search-results-style {
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+        padding: 20px;
+        font-size: 30px;
+        color: green;
+      }
+
+      .no-result-style {
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+        padding: 20px;
+        font-size: 30px;
+        color: red;
+      }
+
+      .my-booking-style {
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+        padding: 20px;
+        font-size: 30px;
+        color: teal;
+      }
+
+      h2 {
+        margin-bottom: 8px;
+      }
+
+      .status.awaiting {
+        color: orange;
+      }
+
+
+      /* Card Custom Header Start */
+      .card-custom-header {
+        padding: 15px;
+        margin-top: 64px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
+      .card-custom-header .title {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        color: var(--brand-primary-color);
+      }
+
+      /* Card Custom Header End */
+
+      .specialization-style {
+        background: #37474F;
+        color: #ffffff;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      .align-left {
+        float: left;
+        width: 50%;
+      }
+
+      .align-right {
+        float: right;
+        width: 50%;
+      }
+
+      /* Local Custom Input Field Style -- Start --*/
+      .local-custom-input ::content paper-input-container {
+        padding: 6px 4px;
+      }
+
+      .local-custom-input ::content .underline {
+        display: none;
+      }
+
+      .local-custom-input paper-input-container ::content .underline {
+        height: 0 !important;
+      }
+
+      .local-custom-input {
+        --paper-input-container-label: {
+          font-size: 22px;
+          color: #576374 !important;
+          font-weight: 800 !important;
+          z-index: var(--custom-input-z-index) !important;
+          padding-top: 15px !important;
+          padding-left: 10px !important;
+        }
+
+        ;
+
+        --paper-input-container-label-focus: {
+          color: var(--brand-primary-color);
+        }
+
+      }
+
+
+      .local-custom-input ::content paper-input-container ::content input {
+        background-color: var(--custom-input-box-color);
+        color: var(--custom-input-text-color);
+        border-radius: 6px;
+        height: 45px;
+        margin-top: 4px;
+        font-weight: 800;
+        font-size: 22px;
+        padding: 0 8px;
+        box-sizing: border-box;
+      }
+
+      .local-custom-input.no-padding {
+        padding: 0;
+      }
+
+      paper-autocomplete.local-custom-input ::content #clear {
+        position: absolute;
+        right: 10px;
+        top: 40px;
+      }
+
+      paper-autocomplete.local-custom-input ::content #autocompleteInput ::content paper-input-container #input {
+        padding-right: 35px;
+      }
+
+      .imageSizing {
+        margin-top: 24px;
+        height: 128px;
+        margin-right: 28px;
+        width: 128px;
+      }
+
+      .general-image-area {
+        position: relative;
+        height: 128px;
+        width: 128px;
+      }
+
+      .search-result-doctor-picture {
+        height: 128px;
+        width: 128px;
+        margin: auto;
+      }
+
+      .booking-label-style {
+        position: relative;
+        left: 47%;
+      }
+
+      .booking-available {
+        color: green;
+        font-size: large;
+      }
+
+      .booking-slot {
+        background-color: #fafafa;
+        text-align: center;
+        border: 1px solid #eee;
+        border-radius: 6px;
+        padding: 12px;
+      }
+
+      .fees-breakdown-container {
+        background-color: #fafafa;
+        border: 1px solid #eee;
+        border-radius: 6px;
+        padding: 12px;
+      }
+
+
+
+      @media only screen and (min-width: 320px) and (max-width: 800px) {
+
+        .table td,
+        .table th {
+          vertical-align: top;
+        }
+
+        .search {
+          margin-top: 10px;
+          @apply(--layout-start-justified);
+        }
+
+        .align-left {
+          float: left;
+          width: 100%;
+        }
+
+        .align-right {
+          float: right;
+          width: 100%;
+        }
+      }
+
+      .horizontal-layout {
+        @apply(--layout-horizontal);
+        margin: auto;
+        width: 90%;
+      }
+
+      .search-doctor-paper-card {
+        border-radius: 10px;
+        width: auto;
+        margin-right: 8px;
+      }
+
+      .booking-item {
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .search-result-div {
+        float: left !important;
+        /* width: 70%; */
+        margin-top: 10px;
+      }
+
+      .search-doctor-div {
+        float: right !important;
+        /* width: 30%; */
+        margin-left: 10px;
+      }
+
+      .search-result-paper-card {
+        margin: 8px;
+        border-radius: 10px;
+        width: 310px;
+        min-height: 400px;
+      }
+
+      .search-result-paper-card:hover {
+        cursor: pointer;
+        background-color: rgb(214, 214, 214);
+      }
+
+      #doctorBookingDetailsDialog {
+        border-radius: 10px;
+      }
+
+      app-drawer content:: #contentContainer {
+        width: 400px !important;
+      }
+
+      #notificationDrawer {
+        --app-drawer-content-container: {
+          width: fit-content;
+          text-align: left;
+          overflow: auto;
+        }
+      }
+
+      @media only screen and (min-width: 320px) and (max-width: 938px) {
+        .horizontal-layout {
+          @apply(--layout-vertical);
+          width: 100%;
+          ;
+        }
+
+        .search-doctor-paper-card {
+          border-radius: 10px;
+          width: auto;
+          margin-right: 8px;
+        }
+
+        .search-result-paper-card {
+          margin: 8px;
+          border-radius: 10px;
+          /* width: auto; */
+        }
+
+        .search-result-div {
+          width: auto;
+
+        }
+
+        .search-doctor-div {
+          width: auto;
+        }
+
+        .booking-item {
+          position: relative;
+          display: flex;
+          flex-wrap: wrap;
+        }
+
+      }
+
+      .btn {
+        border-radius: 6px !important;
+      }
+
+      #filterBtn {
+        background-color: #fafafa;
+        border-radius: 6px;
+        margin: 8px;
+        font-weight: bold;
+        color: var(--paper-green-500);
+      }
+      #changedTheme {
+        background: #03a83a;
+        color:white
+        
+      }
+
+      @media only screen and (min-width: 320px) and (max-width: 435px) {
+        .search-result-paper-card {
+          margin: 8px;
+          border-radius: 10px;
+          width: 300px;
+        }
+
+      }
+
+      .fixed-online-status {
+        position: absolute;
+        right: 4px;
+        top: 4px;
+      }
+
+      .drawer-actions {
+        bottom: 120px;
+        padding: 12px;
+        left: 0
+      }
+
+      .custom-radio-button {
+        border-radius: 6px;
+        text-align: left;
+        background-color: #eee;
+        width: 190px;
+        margin: 4px;
+      }
+
+      .custom-radio-button.extra-margin {
+        margin: 16px;
+      }
+
+      .custom-radio-button[active] {
+        background-color: var(--paper-green-500);
+        color: #fff !important
+      }
+
+      .custom-radio-button[active] ::content #radioLabel,
+      #offRadio {
+        color: #fff !important;
+        font-weight: bold;
+      }
+
+      .custom-radio-button[active] ::content #onRadio {
+        background-color: #fff !important;
+      }
+
+      .custom-radio-button[active] ::content #offRadio {
+        border-color: #fff !important;
+      }
+
+      .fees-breakdown {
+        width: 210px;
+      }
+
+      paper-dialog {
+        max-width: 610px;
+      }
+
+      .custom-radio-button.extra-margin {
+        margin: 16px;
+      }
+
+      @media only screen and (max-width: 639px) {
+
+        .custom-radio-button {
+          width: calc(100% - 8px);
+        }
+      }
+
+      .profile-image {
+        height: 48px;
+        width: 48px;
+        border-radius: 50%;
+        border: 1px solid #f7f7f7;
+      }
+
+      .profile-image.small {
+        height: 30px;
+        width: 30px;
+      }
+
+      .patient-container {
+        border-radius: 6px;
+        background-color: #fafafa;
+        margin-bottom: 8px;
+        padding: 8px 24px;
+      }
+
+      .enough-balance-style {
+        color: #FF5A5F;
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      #loader {
+        background: rgba(255, 255, 255, .87);
+        position: absolute;
+        left: 0;
+        top: 0;
+        /* border-radius: 16px; */
+        z-index: 1;
+        height: 100%;
+        width: 100%;
+      }
+
+      .custom-search-input {
+        background-color: #fafafa !important;
+        padding: 10px 8px !important;
+        box-sizing: border-box !important;
+        border-radius: 6px !important;
+        border: 1px solid black !important;
+        position: static !important;
+        color: black !important;
+        margin-left: 0px !important;
+      }
+
+      #patientSearch input {
+        width: calc(100% - 16px);
+        line-height: 32px;
+        font-size: 16px;
+        padding: 0 8px;
+        border-radius: 6px;
+        border: 1px solid rgba(0, 0, 0, .86);
+        background-color: white;
+      }
+    </style>
+
+
+
+    <div class="horizontal layout end-justified p-8">
+      
+      <div class="center type body-lead success">
+        Wallet Balance: [[walletBalance]]
+      </div>
+      
+      <div class="flex"></div>
+      <paper-toggle-button checked="{{showOnlineDoctorsOnly}}">Show Online Doctors Only</paper-toggle-button>
+      <paper-button id="filterBtn" on-tap="goToMyWallet" raised>
+        <iron-icon class="m-right-8" icon="icons:account-balance-wallet"></iron-icon>
+         My Wallet</paper-button>
+
+      <paper-button id="filterBtn" on-tap="goToMyBookings" raised>Show My Bookings</paper-button>
+      <paper-button id="filterBtn" on-tap="searchDoctorToggleBtnPrsed" raised>
+        <iron-icon class="m-right-8" icon="icons:filter-list"></iron-icon>
+        Filter
+      </paper-button>
+    </div>
+
+    <div class="horizontal-layout">
+
+      <!-- search doctor -->
+      <div style="position: absolute; z-index: 1;">
+        <app-drawer align="right" id="notificationDrawer" back>
+          <div class="card-custom-header">
+            <div class="layout horizontal center">
+              <div id="title-label" class="title flex">[[$TRANSLATE('Filter Doctor/Chamber',LANG)]]</div>
+              <div class="flex"></div>
+              <paper-icon-button style="bottom: 6px; color:rgba(0, 0, 0, .86)" icon="close" on-tap="clearSearchFilters"></paper-icon-button>
+            </div>
+          </div>
+
+          <div class="p-16">
+
+            <vaadin-combo-box no-label-float class="paper-custom-input flex" id="orgCountryId"
+              label="[[$TRANSLATE('Select Country',LANG)]]" items="[[countryWithCitiesList]]"
+              on-selected-item-changed="_countrySelected">
+            </vaadin-combo-box>
+            <br>
+
+            <vaadin-combo-box no-label-float class="paper-custom-input flex" id="orgCityId"
+              label="[[$TRANSLATE('Select City',LANG)]]" items="[[selectedCountryCitiesList]]"
+              on-selected-item-changed="_cityselected">
+            </vaadin-combo-box>
+            <br>
+
+            <vaadin-combo-box no-label-float hidden$="[[isOrganizationPreselected]]" id="organizationSearch"
+              class="paper-custom-input flex" label="[[$TRANSLATE('Select Organization',LANG)]]"
+              items="[[organizationList]]" item-label-path="name" value="{{filterByOrganizationName}}"
+              on-selected-item-changed="organizationSelected">
+              <template>
+                <div><strong>[[item.name]]</strong></div>
+              </template>
+            </vaadin-combo-box>
+            <template is="dom-if" if="[[filterByOrganizationId]]">
+              <div class="horizontal layout">
+                <div class="vertical layout m-top-8 m-left-16 flex">
+                  <p><strong>Address: </strong>{{orgAddress}}</p>
+                  <p><strong>Phone: </strong>{{orgPhone}}</p>
+                  <p>
+                    <strong>[[$TRANSLATE('Facilities include:', LANG)]]</strong>
+                    <template is="dom-repeat" items="[[otherFacilitiesList]]">
+                      <template is="dom-if" if="[[item.isChecked]]">
+                        <div>&nbsp;• [[item.label]]</div>
+                      </template>
+                    </template>
+                  </p>
+                </div>
+                <div class="general-image-area m-left-8 m-right-8">
+                  <img class="imageSizing" src$="[[organizationLogo]]" />
+                </div>
+              </div>
+            </template>
+            <br>
+
+            <!-- search by specialization -->
+            <vaadin-combo-box no-label-float id="specializationSearch" class="paper-custom-input flex"
+              label="[[$TRANSLATE('Select Department',LANG)]]" allow-custom-value="false"
+              value="{{filterBySpecialization}}" items="[[filteredSpecializationList]]"
+              loading="[[fetchingSpecializationList]]" on-selected-item-changed="specializationSelected">
+              <template>
+                <div><strong>[[$TRANSLATE(item,LANG)]]</strong></div>
+              </template>
+            </vaadin-combo-box>
+            <br>
+
+            <!-- search by doctor -->
+            <vaadin-combo-box no-label-float id="doctorSearch" class="paper-custom-input flex"
+              label="[[$TRANSLATE('Name of Doctor',LANG)]]" allow-custom-value item-label-path="name"
+              item-value-path="name" value="{{filterByDoctorName}}" items="[[filteredDoctorList]]"
+              on-selected-item-changed="doctorSelected">
+              <template>
+                <div><strong>[[item.name]]</strong></div>
+              </template>
+            </vaadin-combo-box>
+            <template is="dom-if" if="[[filterByDoctorId]]">
+              <div class="horizontal layout">
+                <div class="vertical layout m-top-8 m-left-16 flex">
+                  <p><strong>Name: </strong>{{filterByDoctorName}}</p>
+                  <!-- <p><strong>Phone: </strong>{{doctorPhone}}</p> -->
+                  <p><strong>Designation: </strong>{{doctorEmployment}}&nbsp;</p>
+                  <p><strong>Specializations: </strong>{{doctorSpecializations}}&nbsp;</p>
+                  <p><strong>Experience: </strong>{{doctorExperience}}&nbsp;</p>
+                </div>
+                <div class="general-image-area">
+                  <iron-image class="imageSizing" src$="[[doctorPicture]]" preload sizing="cover"></iron-image>
+                </div>
+              </div>
+            </template>
+
+            <paper-input class="paper-custom-input" type="date" label="[[$TRANSLATE('Select a Booking Date',LANG)]]"
+              value="{{dateString}}">
+            </paper-input>
+
+          </div>
+          <div class="drawer-actions">
+            <paper-button class="btn" raised on-tap="clearSearchFilters">Close</paper-button>
+            <paper-button class="btn btn-success" raised on-tap="searchBookingTapped">[[$TRANSLATE('Filter',LANG)]]
+            </paper-button>
+          </div>
+        </app-drawer>
+      </div>
+
+      <!-- search result -->
+      <div class="layout horizontal search-result-div">
+        <template is="dom-if" if="[[!chamberList.length]]">
+          <h1 style="margin: auto; color: #576374; margin-top: 100px;">Nothing Found Yet..</h1>
+        </template>
+        <div class="booking-item">
+
+          <template is="dom-repeat" items="[[chamberList]]" as="chamber" index-as="chamberIndex"
+            id="search-result-card-repeater">
+            <div on-click="doctorClicked" hidden$="[[!_checkIfDoctorIsOnline(showOnlineDoctorsOnly, chamber)]]">
+              <paper-card class="search-result-paper-card">
+                <div class="card-content">
+                  <div style="width: 128px; height: 128px; margin: auto;">
+                    <iron-image class="search-result-doctor-picture" style="border-radius: 50%;"
+                      src$="[[$getProfileImage(chamber.doctorPublicInfo.profileImage)]]" preload sizing="cover"
+                      alt="images/avatar.png">
+                    </iron-image>
+                  </div>
+
+                  <div class="chamber-info">
+                    <div class="text-center">
+                      <div>{{chamber.name}}</div>
+
+                      <h2>[[chamber.doctorPublicInfo.name]]</h2>
+                      <div class="type body">
+                        <div>{{chamber.doctorPublicInfo.degreeList}}</div>
+                        <div>{{chamber.doctorPublicInfo.experience}}</div>
+                        <div>{{chamber.doctorPublicInfo.specializationList}}</div>
+                      </div>
+
+                      <div class="type body-lead bold">[[$getDoctorFeeWithChargesIncluded(chamber.newPatientVisitFee)]]
+                        Taka</div>
+                    </div>
+                  </div>
+
+
+                  <!-- <div class="chamber-info">
+                    <template is="dom-if" if="[[chamber.alreadyHaveAnAppointment]]">
+                      <p class="already-have-a-booking-message">[[$TRANSLATE('You already have a booking here',LANG)]]
+                      </p>
+                    </template>
+
+                  </div> -->
+                </div>
+
+                <div class="fixed-online-status">
+                  <div hidden$="[[!chamber.isOnline]]" class="status booked label type bg-green m-4">Doctor is Online
+                  </div>
+                  <div hidden$="[[chamber.isOnline]]" class="status booked label type bg-gray m-4">Doctor is Offline
+                  </div>
+                </div>
+
+              </paper-card>
+            </div>
+          </template>
+        </div>
+
+      </div>
+
+      <!-- Selected doctor paper dialog start -->
+      <paper-dialog id="doctorBookingDetailsDialog" modal on-iron-overlay-opened="patchOverlay">
+        <div class="layout horizontal">
+          <h2>Confirm your booking</h2>
+          <div class="flex"></div>
+          <paper-icon-button style="bottom: 6px;" icon="close" dialog-dismiss></paper-icon-button>
+        </div>
+        <paper-dialog-scrollable>
+          
+            <div style="width: 128px; height: 128px; margin: auto;">
+              <iron-image class="search-result-doctor-picture" style="border-radius: 50%;"
+                src$="[[$getProfileImage(selectedDoctor.doctorPublicInfo.profileImage)]]" preload sizing="cover"
+                alt="images/avatar.png">
+              </iron-image>
+            </div>
+
+            <div class="text-center">
+              <h2>[[selectedDoctor.doctorPublicInfo.name]]</h2>
+              <div hidden$="[[!selectedDoctor.isOnline]]" class="status booked label type bg-green m-4">Doctor is Online
+              </div>
+              <div hidden$="[[selectedDoctor.isOnline]]" class="status booked label type bg-gray m-4">Doctor is Offline
+              </div>
+            </div>
+            <div>
+              <strong class="text-muted">[[$TRANSLATE('Chamber Name',LANG)]]:
+              </strong>[[selectedDoctor.name]]
+            </div>
+
+            <div>
+              <strong class="text-muted">[[$TRANSLATE('Organization',LANG)]]:
+              </strong>[[selectedDoctor.organizationName]]
+            </div>
+            <div>
+              <strong class="text-muted">[[$TRANSLATE('Specializations',LANG)]]:
+              </strong>[[selectedDoctor.doctorPublicInfo.specializationList]]
+            </div>
+            <div>
+              <strong class="text-muted">[[$TRANSLATE('Degrees',LANG)]]:
+              </strong>[[selectedDoctor.doctorPublicInfo.degreeList]]
+            </div>
+            <div>
+              <strong class="text-muted">[[$TRANSLATE('Experience',LANG)]]:
+              </strong>[[selectedDoctor.doctorPublicInfo.experience]]
+            </div>
+            <div>
+              <strong class="text-muted">[[$TRANSLATE('Designation',LANG)]]:
+              </strong>[[selectedDoctor.doctorPublicInfo.employment]]
+            </div>
+            <!-- Commented for new style in papaer dialog -->
+            <div>
+              <strong class="text-muted">[[$TRANSLATE('Address',LANG)]]: </strong>[[selectedDoctor.address]]
+            </div>
+            <div>
+              <strong class="text-muted">[[$TRANSLATE('City',LANG)]]: </strong>[[selectedDoctor.city]]
+            </div>
+            <br>
+            <div hidden$="[[!signupPatientDivHidden]]">
+              <h3>Patient Details:</h3>
+              <template is="dom-if" if="[[!selectedPatients]]">
+                <vaadin-combo-box-light id="patientSearch" filter="{{patientSearchQuery}}"
+                  loading="[[fetchingPatientSearchResult]]" item-label-path='name' item-value-path='id'
+                  value="{{item.slotId}}" on-selected-item-changed="patientSelected">
+                  <input class="filter-input" is="iron-input" placeholder="Search By Name/Mobile/Email">
+                  <template>
+                    <div class="horizontal layout center">
+                      <iron-image class="profile-image small m-right-8" src$="[[$getProfileImage(item.profileImage)]]"
+                        preload sizing="cover"></iron-image>
+                      <div class="flex">
+                        <div class="type body">[[item.name]]</div>
+                        <div class="type caption secondary m-bottom-8">[[item.phone]] - [[item.email]]</div>
+                      </div>
+                    </div>
+
+                  </template>
+                </vaadin-combo-box-light>
+              </template>
+              <br>
+              <template is="dom-if" if="{{selectedPatients}}">
+                <div class="patient-container horizontal layout center">
+                  <iron-image class="profile-image m-right-8" src$="[[$getProfileImage(selectedPatients.profileImage)]]"
+                    preload sizing="cover"></iron-image>
+                  <div class="flex">
+                    <div class="type body">{{selectedPatients.name}}</div>
+                    <div class="type body">{{selectedPatients.phone}}</div>
+                    <div class="type body">{{selectedPatients.email}}</div>
+                  </div>
+                  <paper-icon-button icon="delete" on-tap="_clearSelectedPatientData"></paper-icon-button>
+                </div>
+              </template>
+            </div>
+            <div hidden$="[[signupPatientDivHidden]]">
+              <paper-card>
+                <div class="card-content">
+                  <div class="type body-lead" style="color: #009688;">[[$TRANSLATE('Add new patient', LANG)]]</div>
+
+                  <paper-input required value="{{newPatient.name}}" label="[[$TRANSLATE('Full Name', LANG)]]" auto-validate
+                    error-message="Patient Name is Required!"></paper-input>
+              
+                  <vaadin-date-picker required auto-validate error-message="Date of Birth is Required!" type="date"
+                    value="{{newPatient.dateOfBirth}}" label="[[$TRANSLATE('Date of Birth', LANG)]]"></vaadin-date-picker>
+              
+                  <div class="type body secondary">[[$TRANSLATE('Gender', LANG)]]</div>
+                  <paper-radio-group selected="{{newPatient.gender}}">
+                    <paper-radio-button name="male">Male</paper-radio-button>
+                    <paper-radio-button name="female">Female</paper-radio-button>
+                    <paper-radio-button name="other">Other</paper-radio-button>
+                  </paper-radio-group>
+              
+                  <paper-input class="custom-input paper-custom full" class="p-horizontal-8" value="{{newPatient.phone}}"
+                    label="[[$TRANSLATE('Phone Number', LANG)]]" pattern="^[0-9]{11,11}(-[0-9]*){0,1}$" required auto-validate
+                    error-message="Phone Number Required. i.e.: 01712345678 or 01712345678-12'" char-counter minlength="11"
+                    maxlength="14">
+                    <div prefix>+88</div>
+                  </paper-input>
+
+                </div>
+                <div class="buttons m-top-16">
+                  <paper-button class="btn btn-warning" raised on-click="getSearchPatientBack">Go Back to Search</paper-button>
+                  <paper-button class="btn btn-success" on-click="signUpNewPatient" autofocus raised>[[$TRANSLATE('Signup', LANG)]]</paper-button>
+                </div>
+              </paper-card>
+            </div>
+            <br>
+            <h3>Consultation Fees For:</h3>
+
+            <div class="fees-breakdown-container">
+              <div class="horizontal layout">
+                <paper-radio-group class="m-12" selected="{{selectedDoctorVisitFee}}">
+                  <paper-radio-button class="custom-radio-button" name="[[selectedDoctor.newPatientVisitFee]]">
+                    <strong>New Patient</strong></paper-radio-button>
+                  <paper-radio-button class="custom-radio-button" name="[[selectedDoctor.oldPatientVisitFee]]">
+                    <strong>Old Patient</strong></paper-radio-button>
+                </paper-radio-group>
+              </div>
+
+              <div class="type body p-horizontal-16">
+
+                <div class="seperator"></div>
+
+                <div class="horizontal layout type success">
+                  <div class="flex"><strong>Doctor Fee:</strong></div>
+                  <div><strong>[[otherCharges.totalBillAmount]] BDT</strong></div>
+                </div>
+              </div>
+
+
+            </div>
+            <br>
+
+
+            <h3>Please Select a Time Slot to Book:</h3>
+
+            <div class="booking-slot m-top-8">
+              <iron-pages selected="{{selectedDoctor.selectedSchedulePage}}" on-iron-select="_scheduleSelected">
+                <template is="dom-repeat" items="[[selectedDoctor.scheduleList]]" as="schedule"
+                  index-as="scheduleIndex">
+                  <section>
+                    <div class="horizontal layout center">
+                      <paper-icon-button icon="chevron-left" on-click="prevSchedule"></paper-icon-button>
+                      <div class="flex"></div>
+                      <div class="type body-lead primary"> <strong>[[selectedDateString]]</strong></div>
+                      <div class="flex"></div>
+                      <paper-icon-button icon="chevron-right" on-tap="nextSchedule"></paper-icon-button>
+                    </div>
+
+                    <paper-radio-group class="m-top-16" selected="{{newScheduleSelected}}">
+                      <template is="dom-repeat" items="[[selectedTimeSlotFromSchduleDateDrpdwn]]" as="slot" index-as="slotIndex">
+                        <paper-radio-button class="custom-radio-button"
+                          hidden$="{{$compareFn(slot.availableCount, '<=', 0)}}" name="[[slotIndex]]">
+                          [[_getFormattedChamberTime(slot.timeSlot)]]
+                          <!-- <span class="booking-available">([[$TRANSLATE('Available', LANG)]][[$TRANSLATE_NUMBER(slot.availableCount, LANG)]])</span> -->
+                        </paper-radio-button>
+                      </template>
+                    </paper-radio-group>
+
+                  </section>
+                </template>
+              </iron-pages>
+            </div>
+            <br>
+            <h3>Select Booking Type:</h3>
+
+            <div class="fees-breakdown-container">
+              <div class="horizontal layout">
+                <paper-radio-group class="m-12" selected="{{selectedBookingType}}">
+                  <paper-radio-button class="custom-radio-button" name="video-call"><strong>Online Appointment</strong>
+                  </paper-radio-button>
+                  <paper-radio-button class="custom-radio-button" name="chamber-booking"><strong>Physical
+                      Appointment</strong></paper-radio-button>
+                </paper-radio-group>
+              </div>
+
+            </div>
+        </paper-dialog-scrollable>
+        
+        <div class="buttons layout horizontal">
+          <paper-button class="btn" dialog-dismiss>Close</paper-button>
+          <div class="flex"></div>
+
+          <template is="dom-if" if="[[$gte(walletBalance, otherCharges.totalBillAmount)]]">
+            <div hidden>[[selectedDoctor]]</div>
+            <template is="dom-if" if="[[!alreadyHaveAppointment]]">
+            <paper-button class="btn colored" raised on-tap="payFromWalletTapped" >PAY
+              [[otherCharges.totalBillAmount]]/= from Wallet</paper-button></template>
+            <!-- <div class="" hidden$="[[!$equals(selectedBookingType, 'video-call')]]">
+              <paper-button class="btn colored" raised on-tap="payFromWalletTapped">PAY
+                [[otherCharges.totalBillAmount]]/= from Wallet</paper-button>
+            </div>
+            <div class="" hidden$="[[!$equals(selectedBookingType, 'chamber-booking')]]">
+              <paper-button class="btn colored" raised on-tap="payFromWalletTapped">PAY
+                [[otherCharges.totalBillAmount]]/= from Wallet</paper-button>
+              <paper-button class="btn colored" raised on-tap="bookDoctorTapped">Book</paper-button>
+            </div> -->
+          </template>
+          <template is="dom-if" if="[[!$gte(walletBalance, selectedDoctor.newPatientVisitFee)]]">
+            <div class="horizontal layout center">
+              <div class="type danger"> <strong>You do not have Enough Balance on Wallet!</strong></div>
+            </div>
+          </template>
+
+          <div class="chamber-info m-bottom-8">
+            <template is="dom-if" if="[[alreadyHaveAppointment]]">
+              <p class="already-have-a-booking-message">[[$TRANSLATE('You already have a booking here',LANG)]]</p>
+            </template>
+          </div>
+        </div>
+      </paper-dialog>
+      <!-- Selected doctor paper dialog end -->
+      <paper-dialog id="agentNotRegistered" modal on-iron-overlay-opened="patchOverlay">
+        <div class="layout horizontal">
+          <h2>You are not registered as a Agent</h2>
+          <div class="flex"></div>
+          <paper-icon-button style="bottom: 6px;" icon="close" dialog-dismiss></paper-icon-button>
+        </div>
+        </paper-dialog>
+    </div>
+
+
+  </template>
+  <script src='page-agent-panel.coffee-compiled.js'></script>
+</dom-module>

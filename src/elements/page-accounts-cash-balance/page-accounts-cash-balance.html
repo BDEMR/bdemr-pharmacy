@@ -1,0 +1,135 @@
+<link rel="import" href="../../bower-assets/paper-button/paper-button.html">
+<link rel="import" href="../../bower-assets/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower-assets/paper-material/paper-material.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+<link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
+<link rel="import" href="../custom-vital-search/custom-vital-search.html">
+<link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html">
+
+<!-- style -->
+<link rel="import" href="../../styles/common-style.html">
+
+<!-- behavior -->
+<link rel="import" href="../../behaviors/translating.html">
+<link rel="import" href="../../behaviors/page-like.html">
+<link rel="import" href="../../behaviors/api-calling.html">
+<link rel="import" href="../../behaviors/db-using.html">
+<link rel="import" href="../../behaviors/common-computes.html">
+
+<!-- custom-elements -->
+
+<!-- element -->
+<dom-module id="page-accounts-cash-balance">
+
+  <template>
+    <!-- style -->
+    <style is="custom-style" include="common-style">
+      .limiting-container {
+        width: 100%;
+        margin: 0;
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--paper-orange-500);
+      }
+
+      .search {
+        background-color: #fff;
+        border: 1px solid #dadada;
+        padding: 8px;
+        margin: 4px 0;
+      }
+
+      #expenseList {
+        height: 520px;
+      }
+
+      paper-material {
+        background-color: #fff;
+      }
+
+      paper-tab[link] a {
+        @apply --layout-horizontal;
+        @apply --layout-center-center;
+        color: #fff;
+        text-decoration: none;
+      }
+    </style>
+
+    <!-- <module-accounts-top-nav page-name="accounts-cash-balance" organization-id="[[organization.idOnServer]]"></module-accounts-top-nav> -->
+
+
+    <!-- INCOME SECTION -->
+    <div class="master-container">
+
+      <div class="limiting-container custom-input-field">
+
+        <div class="p-8 layout horizontal center wrap">
+          <h2 class="type secondary">[[$TRANSLATE('Petty Cash Balance', LANG)]]</h2>
+          <div class="flex"></div>
+          <!-- <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search> -->
+        </div>
+
+        <paper-card>
+          <div class="card-content">
+            <vaadin-grid id="expenseList" items="[[matchingCashBalanceList]]">
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <vaadin-grid-sorter path="date" direction="desc">[[$TRANSLATE('Date', LANG)]]</vaadin-grid-sorter>
+                </template>
+                <template>
+                  <div class="">[[$formatDate(item.date)]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>[[$TRANSLATE('Balance Forward', LANG)]]</span>
+                </template>
+                <template>
+                  <div class="">[[$formatCurrency(item.previousBalance)]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>[[$TRANSLATE('Earning', LANG)]]</span>
+                </template>
+                <template>
+                  <div class="">[[$formatCurrency(item.earning)]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>[[$TRANSLATE('Expenditure', LANG)]]</span>
+                </template>
+                <template>
+                  <div class="">[[$formatCurrency(item.expenditure)]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>[[$TRANSLATE('Gross', LANG)]]</span>
+                </template>
+                <template>
+                  <div class="">[[$formatCurrency(item.gross)]]</div>
+                </template>
+              </vaadin-grid-column>
+              <vaadin-grid-column resizable>
+                <template class="header">
+                  <span>[[$TRANSLATE('Net', LANG)]]</span>
+                </template>
+                <template>
+                  <div class="">[[$formatCurrency(item.net)]]</div>
+                </template>
+              </vaadin-grid-column>
+            </vaadin-grid>
+          </div>
+        </paper-card>
+      </div>
+    </div>
+
+  </template>
+  <script src="page-accounts-cash-balance.js"></script>
+</dom-module>

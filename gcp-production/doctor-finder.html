@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!--Basic Page Needs-->
+    <meta charset="utf-8">
+    <title>BDEMR - Doctor Finder</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!--Mobile Specific Metas-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--FONT-->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,600" rel="stylesheet" type="text/css">
+    <!--CSS-->
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/main.css">
+    <!--Favicon-->
+    <link rel="icon" type="image/ico" href="images/favicon.ico">
+  </head>
+  <body>
+    <div class="toolbar size-normal">
+      <div class="top-bar"><a href="https://bdemr.com" class="logo"><img src="images/logo-clinic-app.png" alt="BDEMR"></a>
+        <div class="topbar-action"><a href="/help" class="btn transparent toggleTopBarBtn">help</a><a href="/faq" class="btn transparent toggleTopBarBtn">faq</a><a href="/video-gallery" class="btn transparent toggleTopBarBtn">video</a><a href="/doctor-finder" class="btn transparent toggleTopBarBtn">doctor finder</a><a href="/agent" class="btn transparent toggleTopBarBtn">agent</a><a href="/signup" class="btn transparent toggleTopBarBtn">signup</a><a href="https://clinic.bdemr.com/app/" class="btn shadow danger">login</a></div>
+        <button id="toggleMenuBar" onclick="toggleMenu()">☰</button>
+        <ul id="toggleMenu">
+          <li class="toogleMenuItem"><a href="/doctor-finder">Doctor Finder</a></li>
+          <li class="toogleMenuItem"><a href="/agent">Find Agent</a></li>
+          <li class="toogleMenuItem"><a href="/signup">signup</a></li>
+          <li class="toogleMenuItem"><a href="/faq">faq</a></li>
+          <li class="toogleMenuItem"><a href="/help">Help</a></li>
+          <li class="toogleMenuItem"><a href="/video-gallery">Video Gallery</a></li>
+          <li><a href="#" onclick="dialogValidateVoucher()">Validate Voucher</a></li>
+          <li><a href="#" onclick="dialogPurchaseVoucher()">Purchase Voucher</a></li>
+        </ul>
+      </div>
+    </div>
+    <div id="faq" class="section">
+      <div class="container">
+        <div id="listViewWrapper">
+          <div class="card bg-gray">
+            <h1 class="m-bottom-16">Doctor Finder</h1>
+            <div class="search-box"><img src="images/ico_search.png" alt="">
+              <input type="text" placeholder="Search Doctor by Name, Specialization, Country" class="search">
+            </div>
+          </div>
+          <div class="card p-0">
+            <div id="doctorList" class="list"></div>
+            <ul class="pagination"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="dialogContent"></div>
+    <script type="text/javascript" src="js/sjcl.js"></script>
+    <script type="text/javascript" src="js/system-configs.js"></script>
+    <script type="text/javascript" src="js/client-libraries.js"></script>
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/list.min.js"></script>
+    <script type="text/javascript" src="js/list.pagination.min.js"></script>
+    <script type="text/javascript" src="js/doctor-finder.js"></script>
+    <script type="text/javascript" src="js/toolbar.js"></script>
+  </body>
+</html>

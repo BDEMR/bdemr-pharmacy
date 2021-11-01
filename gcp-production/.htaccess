@@ -1,0 +1,20 @@
+RewriteEngine on 
+
+RewriteRule ^/?signup$ signup.html
+RewriteRule ^/?login$ login.html
+RewriteRule ^/?agent$ agent.html
+RewriteRule ^/?anaesmon-welcome$ anaesmon-welcome.html
+RewriteRule ^/?clinic-welcome$ clinic-welcome.html
+RewriteRule ^/?patient-welcome$ patient-welcome.html
+RewriteRule ^/?doctor-welcome$ doctor-welcome.html
+RewriteRule ^/?doctor-finder$ doctor-finder.html
+RewriteRule ^/?faq$ faq.html
+RewriteRule ^/?help$ help.html
+RewriteRule ^/?video-gallery$ video-gallery.html
+RewriteRule ^/?terms-and-condition$ terms-and-condition.html
+RewriteRule ^/?privacy-policy$ privacy-policy.html
+RewriteRule ^/?hospital-finder$ hospital-finder.html
+RewriteRule ^/?sms$ sms.html
+
+RewriteRule ^/?staff/([a-zA-Z_\-]+)$ staff.html?which=$1
+RewriteRule ^/?staff/([a-zA-Z_\/\.\-]+)$ /$1
