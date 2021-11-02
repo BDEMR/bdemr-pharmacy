@@ -14,9 +14,6 @@ Polymer {
     qrCode:
       type: String
       value: ''
-    addRemarks:
-      type: String
-      value: ''
 
     isQrCodeActive:
       type: Boolean
@@ -25,7 +22,7 @@ Polymer {
     activeUserList:
       type: Array
       value: []
-  
+
     user:
       type: Object
       value: -> (app.db.find 'user')[0]
@@ -42,9 +39,6 @@ Polymer {
       type: Object
       value: null
 
-    isDefault:
-      type: Boolean
-      value: false
     isLoading:
       type: Boolean
       value: false
@@ -52,8 +46,7 @@ Polymer {
     tokenObject:
       type: Object
       value: null
-    activeItem:
-      observer: '_itemsChanged'
+
     patientSearchQuery:
       type: String
       value: -> ""
@@ -79,12 +72,6 @@ Polymer {
     scheduleForMonth:
       type: Array
       value: -> []
-    hideDone :
-      type: Boolean
-      value:true
-    agentHide :
-      type: Boolean
-      value:true
     
     bookingList:
       type: Array,
@@ -93,15 +80,6 @@ Polymer {
   listeners:
     'active-users': '_activeUsersHandler'
 
-
-  showAgentDetails:(e)->
-    @set 'agentHide',false
-
-  showChamberDetails:()->
-    @$$('#chamber-details').toggle()
-  _itemsChanged: ()-> 
-    console.log 'selected item', @schedule.bookingList
-    this.$.visitList.items = @schedule.bookingList
 
   _activeUsersHandler: (e)->
     activeUserList = e.detail.activeUserList
@@ -112,7 +90,7 @@ Polymer {
       @set "schedule.bookingList.#{index}.isOnline", isOnline
       if book.agentId
         isAgentOnline = activeUserList.some (item) => book.agentId is item.userId
-        @set "schedule.bookingList.#{index}.isAgentOnline", isAgentOnline
+        @set "schedule.bookingList.#{index}.isAgentOnline", isAgentOnline      
 
   _notify: (patientId, message)->
     user = @getCurrentUser()
@@ -144,10 +122,6 @@ Polymer {
         if chamber.shortCode is this.chamberShortCode
           this.chamber = chamber
           break
-      if !this.chamber
-        @domHost.toggleModalLoader()
-        @domHost.navigateToPage '#/chamber-manager'
-
       cbfn()
       
   _getScheduleForMonth: (monthString, chamberSerial, cbfn)->
@@ -188,9 +162,6 @@ Polymer {
         otherList.push item
 
     return bookedList.concat otherList
-  chamberSelected:(e)->
-    index = e.detail.selected
-    @chamberSelectedData = @matchingChamberList[index]
      
   _getScheduleForDate: (dateString, cbfn)->
     monthString = this._getMonthString()
@@ -205,7 +176,7 @@ Polymer {
         @set "schedule", selectedSchedule
       if this.schedule
         this._computeTimeSlotAvailability()
-      console.log {selectedSchedule}
+      # console.log {selectedSchedule}
       # console.log this.schedule
       cbfn()
 
@@ -243,7 +214,7 @@ Polymer {
         @domHost.showModalDialog 'Successfuly Sent'
   
   sendSMSButtonClicked: (e)->
-    entry = @actionData
+    {entry} = e.model
     @_callSendSmsUsingOrganization entry
 
   # _searchOnline: ->
@@ -277,7 +248,7 @@ Polymer {
     patient = e.detail.value
     # console.log {patient}
     @newBookingEntry patient, 'booked', =>
-      @$$("#patientSearch").value = null
+      
       this._getScheduleForDate this.dateString, =>
         @isLoading = false
     
@@ -322,7 +293,7 @@ Polymer {
       patientEmail: patient.email
       patientPhone: patient.phone
       patientSerial: patient.serial # extra
-      patientProfilePicture: patient.profileImage
+      patientAcceptedBooking: 'pending'
       timeSlot: @_getAvailableTimeSlot()
       paymentStatus: 'manual' # 'manual', 'online-pending', 'online-successful', 'online-failure'
       status: currentStatus # 'booked','awaiting', 'completed', 'require-second-visit', 'canceled'
@@ -340,11 +311,13 @@ Polymer {
     this.push('schedule.bookingList', newEntry)
     this._setScheduleForDate this.schedule, =>
       this._getScheduleForDate this.dateString, =>
+        @$$("#patientSearch").value = null
         message = "#{this.user.name} of #{this.chamber.name} created an appointment for you on #{this.dateString} at #{newEntry.timeSlot.replace(/\-/g,':')}"
         messageToDoctor = "#{this.user.name} of #{this.chamber.name} has booked a patient named #{newEntry.patientFullName} #{this.dateString} at #{newEntry.timeSlot.replace(/\-/g,':')}"
         this._notify(newEntry.patientId, message)
         this._notify(newEntry.bookedByUserId, messageToDoctor)
         this._calculatePatientsBookingStatusCount this.schedule.bookingList
+        
         cbfn()
 
 
@@ -399,86 +372,35 @@ Polymer {
         this._calculatePatientsBookingStatusCount this.schedule.bookingList
         null
   
-  _transferBalance: (patientId, agentId, transactionId, serviceChargeIncluded, cbfn)->
-    data =
-      apiKey: @user.apiKey
-      patientId: patientId
-      agentId: agentId
-      transactionId: transactionId
-      serviceChargeIncluded: serviceChargeIncluded
-
-    @callApi '/bdemr-wallet-transfer-balance', data, (err, response)=>
-      if response.hasError
-        this.domHost.showModalDialog response.error.message
-      else
-        cbfn()
-  addRemarksTapped: (e)->
-    entry = @actionData
-    console.log entry 
-
-    @$$('#action-modal').toggle()
-    @addRemarksClicked (answer)=>
-      if answer
-        entry.remarks = @addRemarks
-        this._setScheduleForDate this.schedule, =>
-          this._getScheduleForDate this.dateString, =>
-              message = "#{this.user.name} of #{this.chamber.name} added remarks  on #{this.dateString}"
-              this._notify(entry.patientId, message)
-              if entry.agentId
-                this._notify(entry.agentId, message)
-              this._calculateAppoinmentCallForPatient this.schedule.bookingList
-              this._calculatePatientsBookingStatusCount this.schedule.bookingList
-
-  addRemarksClicked:(cbfn)->
-    @$$('#remarksDialog').toggle()
-    @addRemarksClosedCallback = cbfn
-  
   markAsDoneTapped: (e)->
-    entry = @actionData
-    console.log entry 
-
-    @$$('#action-modal').toggle()
-    @markAsDoneClicked (answer)=>
-      if answer
-        if entry.paymentStatus != 'online-pending' or 'manual'
-          entry.status= 'completed'
-
-          { transactionId, patientId, agentId, serviceChargeIncluded } = entry;
-
-          console.log entry
-
-          console.log { transactionId, patientId, agentId, serviceChargeIncluded }
-
-          if entry.activityLog
-            entry.activityLog.push {
-              status: 'completed'
-              createdDateTimeStamp: lib.datetime.now()
-              createdByUserId: @user.idOnServer
-            }
-          
-          this._setScheduleForDate this.schedule, =>
-            this._getScheduleForDate this.dateString, =>
-              message = "#{this.user.name} of #{this.chamber.name} completed your appointment on #{this.dateString}"
-              this._notify(entry.patientId, message)
-              if entry.agentId
-                this._notify(entry.agentId, message)
-              this._calculateAppoinmentCallForPatient this.schedule.bookingList
-              this._calculatePatientsBookingStatusCount this.schedule.bookingList
-              if entry.paymentStatus != 'online-pending' or 'manual'
-                this._transferBalance patientId, agentId, transactionId, serviceChargeIncluded, =>
-                  null
+    { entry } = e.model
+    console.log entry
+    e.model.set('entry.status', 'completed')
+    if e.model.entry.activityLog
+      e.model.push('entry.activityLog', {
+        status: 'completed'
+        createdDateTimeStamp: lib.datetime.now()
+        createdByUserId: @user.idOnServer
+      })
+    this._setScheduleForDate this.schedule, =>
+      this._getScheduleForDate this.dateString, =>
+        message = "#{this.user.name} of #{this.chamber.name} completed your appointment on #{this.dateString}"
+        this._notify(entry.patientId, message)
+        if entry.agentId
+          this._notify(entry.agentId, message)
+        this._calculateAppoinmentCallForPatient this.schedule.bookingList
+        this._calculatePatientsBookingStatusCount this.schedule.bookingList
+        null
         
   requiresSecondVisitTapped: (e)->
-    # { entry } = e.model   
-    entry = @actionData
-    @$$('#action-modal').toggle()
-    entry.status= 'require-second-visit'
-    if entry.activityLog
-      entry.activityLog.push {
+    { entry } = e.model   
+    e.model.set('entry.status', 'require-second-visit')
+    if e.model.entry.activityLog
+      e.model.push('entry.activityLog', {
         status: 'require-second-visit'
         createdDateTimeStamp: lib.datetime.now()
         createdByUserId: @user.idOnServer
-      }
+      })
     this._setScheduleForDate this.schedule, =>
       this._getScheduleForDate this.dateString, =>
         message = "#{this.user.name} of #{this.chamber.name} completed your appointment on #{this.dateString} and required a second visit"
@@ -487,18 +409,15 @@ Polymer {
         null
 
   doctorCancelTapped: (e)->
-    # { entry } = e.model
-    entry = @actionData
-    @$$('#action-modal').toggle()
-
+    { entry } = e.model
     # console.log 'entry obj after cancel tapped', entry
-    entry.status='canceled'
-    if entry.activityLog
-      entry.activityLog.push {
+    e.model.set('entry.status', 'canceled')
+    if e.model.entry.activityLog
+      e.model.push('entry.activityLog', {
         status: 'canceled'
         createdDateTimeStamp: lib.datetime.now()
         createdByUserId: @user.idOnServer
-      }
+      })
     this._setScheduleForDate this.schedule, =>
       this._getScheduleForDate this.dateString, =>
         message = "#{this.user.name} of #{this.chamber.name} canceled your appointment on #{this.dateString}"
@@ -625,13 +544,7 @@ Polymer {
     
     @domHost.setCurrentPatientsDetails patient
     @createdPatientVisitedLog patient
-    @today= @formatDate
-    visitSerial= 'new'
-    # window.open('#/patient-viewer/patient:' + patient.serial + '/selected:0')
-    window.localStorage.setItem('navigate',this.chamberShortCode)
-    window.localStorage.setItem('newVisitButton', 'remove')
-    window.localStorage.setItem('dateString',this.dateString)
-    @domHost.navigateToPage '#/visit-editor/visit:' + visitSerial + '/patient:' + patient.serial
+    window.open('#/patient-viewer/patient:' + patient.serial + '/selected:0')
     # @domHost.navigateToPage '#/patient-viewer/patient:' + patient.serial + '/selected:0'
     @domHost.selectedPatientPageIndex = 0
 
@@ -651,59 +564,21 @@ Polymer {
 
 
   getDateString: ()->
-    dateString = this.dateString
+    dateString = this.domHost.getPageParams()['date']
     dateString = dateString.split('-')
     dateString = dateString.join('')
     return dateString
     
-  cancelAction:()->
-    @actionData=[]
 
   viewChamberPatient: (e)->
-    entry = @actionData
-    patientSerial = @actionData.patientSerial
-    @$$('#action-modal').toggle()
-    if(entry.visitSerial)
-      @_checkIfPatientAvailableOrImport patientSerial, (patient)=>
-        @domHost.setCurrentPatientsDetails patient
-        @createdPatientVisitedLog patient
-        window.localStorage.setItem('newVisitButton', 'remove')
-        window.localStorage.setItem('navigate',this.chamberShortCode)
-        window.localStorage.setItem('dateString',this.dateString)
-        window.localStorage.setItem('referralDoctor', entry.referralDoctor)
-        @domHost.navigateToPage '#/visit-editor/visit:' + entry.visitSerial + '/patient:' + patientSerial
-
-    else
-      @_checkIfPatientAvailableOrImport patientSerial, (patient)=>
-        if entry.originalPayload
-          if entry.originalPayload.agentName
-            window.localStorage.setItem('patientId', entry.patientId)
-            window.localStorage.setItem('bookedDatetimeStamp', entry.bookedDatetimeStamp)
-            window.localStorage.setItem('scheduleId', @schedule._id)
-            window.localStorage.setItem('referralDoctor', entry.referralDoctor)
-
-            
-          else
-            window.localStorage.removeItem('patientId')
-            window.localStorage.removeItem('bookedDatetimeStamp')
-            window.localStorage.removeItem('scheduleId')
-            window.localStorage.setItem('referralDoctor', entry.referralDoctor)
-
-            
-        else
-          window.localStorage.removeItem('patientId')
-          window.localStorage.removeItem('bookedDatetimeStamp')
-          window.localStorage.removeItem('scheduleId')
-          window.localStorage.setItem('referralDoctor', entry.referralDoctor)
-
-          
-     
-          
-        @goPatientViewPage patient
+    {entry} = e.model
+    patientSerial = entry.patientSerial
+    @_checkIfPatientAvailableOrImport patientSerial, (patient)=>
+      @goPatientViewPage patient
       
   
   generateToken: (e)->
-    entry = @actionData
+    {entry} = e.model
     @set 'tokenObject', null
 
     token =
@@ -729,12 +604,6 @@ Polymer {
     @set 'tokenObject', token
 
     @$$('#tokenDialog').toggle();
-  setDefaultChamber:()->
-    window.localStorage.setItem('defaultChamberCode',this.chamberShortCode)
-    window.localStorage.setItem('dateString',this.dateString)
-    @defaultChamberCode =  window.localStorage.getItem('defaultChamberCode')
-   
-
   
   _callSetGenerateTokenApi: (cbfn)->
     data =
@@ -758,35 +627,14 @@ Polymer {
     @_callSetGenerateTokenApi (tokenId)=>
       @domHost.navigateToPage '#/token-preview/id:' + tokenId
       @$$('#tokenDialog').close();
-  addRemarksConfirm:(e)->
-    console.log @addRemarks
-    unless @addRemarks
-      @domHost.showToast 'Please fillup requrired fields!'
-      return
-    @$$('#remarksDialog').close();
 
-  navigateToChamber: ()->
-    @domHost.navigateToPage '#/chamber-manager'
+
   startVideoChatWithPatient: (e)->
-    entry = e.model.item
-    console.log 'patient id in chamber', entry
-
-    return unless entry.patientId
-    @domHost.initiateVideoCallToPatient entry.patientId
-  startVideoChatViaPatient: (e)->
-    entry = @actionData
+    { entry } = e.model
     return unless entry.patientId
     # console.log 'patient id in chamber', entry.patientId
-    @domHost.initiateVideoCallToPatient entry.patientId
-  reloadPage: ()->
-    window.location.reload()
-  startVideoChatViaAgent: (e)->
-    entry  = e.model.item
-    console.log 'patient id in chamber', entry
-    return @domHost.showModalDialog "Invalid/Missing AgentID!" unless entry.agentId
-    # console.log 'patient id in chamber', entry.patientId
-    @domHost.initiateVideoCallToPatient entry.agentId
-
+    @domHost.navigateToPage '#/video-chat/patientId:' + entry.patientId
+  
 
   ## qr code - start
   _showQrCodeDialog: ()->
@@ -826,7 +674,7 @@ Polymer {
       @set "schedule.bookingList.#{index}.isOnline", isOnline
       if book.agentId
         isAgentOnline = activeUserList.some (item) => book.agentId is item.userId
-        @set "schedule.bookingList.#{index}.isAgentOnline", isAgentOnline
+        @set "schedule.bookingList.#{index}.isAgentOnline", isAgentOnline      
 
   _goToDisplayQueue: ()->
     url = "https://clinic.bdemr.com/app/#/patients-queue/chamber:#{@chamber.serial}"
@@ -834,50 +682,16 @@ Polymer {
 
   # view patient data from chamber - end
   navigatedIn: ->
-    @domHost.toggleModalLoader 'Loading, please wait...'
-    # this.dateString =  this.domHost.getPageParams()['date']
-    
+    @domHost.toggleModalLoader 'Loading, please wait...' 
     organization = @getCurrentOrganization()
     if organization
       @set 'organization', organization
-      # if window.localStorage.getItem('navigate')
-      #   @_getChamberList @organization.idOnServer, ()=> null
-      #   this.chamberShortCode=window.localStorage.getItem('navigate')
-      #   window.localStorage.removeItem('navigate')
-      # else
       @_getChamberList @organization.idOnServer, ()=> null
-        # if !window.localStorage.getItem('navigate')
-       
-      if this.domHost.getPageParams()['chamber'] && this.domHost.getPageParams()['date']
-              this.chamberShortCode = this.domHost.getPageParams()['chamber']
-              this.dateString =  this.domHost.getPageParams()['date']
-              
-      
-        
-      else
-          if window.localStorage.getItem('defaultChamberCode')
-            this.chamberShortCode = window.localStorage.getItem('defaultChamberCode')
-            this.dateString = window.localStorage.getItem('dateString')
-            
-            @defaultChamberCode =  window.localStorage.getItem('defaultChamberCode')
-            this.domHost.navigateToPage "#/chamber-patients/chamber:#{this.chamberShortCode}/date:#{this.dateString}"
-          else
-            this.domHost.navigateToPage "#/chamber-manager"
-            window.location.reload()
-          # window.localStorage.removeItem('navigate')
-          # window.localStorage.removeItem('dateString')
-      if @defaultChamberCode
-          if @defaultChamberCode is this.chamberShortCode
-            @isDefault = true
-          else
-            @isDefault = false
-      
     else
       @domHost.navigateToPage '#/select-organization'
-    # @_getDefaultChember()
-    
 
-
+    this.chamberShortCode = this.domHost.getPageParams()['chamber']
+    this.dateString =  this.domHost.getPageParams()['date']
     this._getChamber =>
       this._getScheduleForDate this.dateString, =>
         this.createDefaultSchedule this.dateString, =>
@@ -891,13 +705,14 @@ Polymer {
         
 
   _calculatePatientsBookingStatusCount: (bookingList)->
-    this.availableSlot = 0
+    this.acceptedPatientCount= 0
     this.awatingPatientCount = 0
     this.completedPatientCount = 0
     this.secondVisitPatientCount = 0
-    this.availableSlot= this.getFreeSlots(this.timeSlotAvailability)
     return unless bookingList.length
     for item in bookingList
+      if item.patientAcceptedBooking is 'accepted'
+        this.acceptedPatientCount++
       if item.status is 'awaiting'
         this.awatingPatientCount++
       if item.status is 'completed'
@@ -978,54 +793,20 @@ Polymer {
       @sampleModalDoneCallBack false
     @sampleModalDoneCallBack = null
 
-  showAvailableSlot: ()->
-    @$$('#available-slot').toggle()
+
   # Time Slot Modal
-  actionPressed:(e)->
-    @actionData = e.model.item
-    console.log 'actionData',@actionData
-    @$$('#action-modal').toggle()
   
   showTimeSlotClicked: (cbfn)->
     @$$('#time-slot-modal').toggle()
     @timeSlotModalDoneCallBack = cbfn
-
-  markAsDoneClicked :(cbfn)->
-    @$$('#mark-asDone-modal').toggle()
-    @markAsDoneClosedCallback = cbfn
-  showChamber: (cbfn)->
-    @$$('#select-chamber').toggle()
-    @chamberClosedCallback = cbfn
-  showSelectedChamber:(e)->
-    @_getChamberList @organization.idOnServer, ()=> null
-
-    @showChamber (answer)=>
-      if answer
-        
-        # console.log 'chamberdata ',chamberData
-        @isLoading = true
-        this.chamberShortCode= @chamberData.shortCode
-        this._getChamber =>
-          this._getScheduleForDate this.dateString, =>
-            this.createDefaultSchedule this.dateString, =>
-              this._calculatePatientsBookingStatusCount(this.schedule.bookingList)
-              this.loadNewPatientFromChamber()
-              this.updatePatientOnlineStatus()
-              @isLoading = false
   
   setTimeSlotClicked: (e)->
-    entry = e.model.item
-    console.log 'entry',entry
+    { entry } = e.model
     @showTimeSlotClicked (answer)=>
       if answer
         newTimeSlot = this.timeSlot
         oldTimeSlot = entry.timeSlot
-        console.log 'newtime',newTimeSlot
-        entry.timeSlot= newTimeSlot
-        
-
-        console.log 'entry.timeSlot',entry.timeSlot
-
+        e.model.set('entry.timeSlot', newTimeSlot)
         this._setScheduleForDate this.schedule, =>
           this._getScheduleForDate this.dateString, =>
             message = "#{this.user.name} of #{this.chamber.name} changed your timeslot on #{this.dateString} from (#{oldTimeSlot}) to (#{newTimeSlot})"
@@ -1039,24 +820,6 @@ Polymer {
     else
       @timeSlotModalDoneCallBack false
     @timeSlotModalDoneCallBack = null
-  markAsDoneClosed: (e)->
-    if e.detail.confirmed
-      
-      console.log 'detais', e.detail
-      @markAsDoneClosedCallback true
-    else
-      @markAsDoneClosedCallback false
-    @markAsDoneClosedCallback = null
-  addRemarksClosed: (e)->
-    if e.detail.confirmed
-      
-      console.log 'detais', e.detail
-      @addRemarksClosedCallback true
-    else
-      @addRemarksClosedCallback false
-    @addRemarksClosedCallback = null
-
-
   
   newPatientButtonPressed: ()->
     @domHost.navigateToPage '#/patient-signup/chamber:' + @chamberShortCode
@@ -1068,8 +831,9 @@ Polymer {
       list = app.db.find 'patient-list', ({serial})-> serial is patientIdentifier
       if list.length is 1
         patient = list[0]
-        @newBookingEntry patient, 'booked', =>
-          window.localStorage.setItem('newPatientSerialFromChamber', null)
+        window.localStorage.setItem('newPatientSerialFromChamber', null)
+        @newBookingEntry patient, 'booked', => null
+          
 
   
   _generateTimeSlotList: (startTimeString, endTimeString, bookingSlotSizeInMinutes)->
@@ -1099,7 +863,6 @@ Polymer {
         rescheduleDelayInMinutes: 0
         timeSlotList: this._generateTimeSlotList(this.chamber.startTimeString, this.chamber.endTimeString, this.chamber.bookingSlotSizeInMinutes)
         bookingList:[]
-        
       }
       console.log schedule
       this._setScheduleForDate schedule, =>
@@ -1110,8 +873,6 @@ Polymer {
   
   goToChamberCalanderView: (e)->
     this.domHost.navigateToPage "#/chamber/which:#{this.chamber.shortCode}"
-    
-    # window.location.reload()
 
   # COPIED THESE CODES BELOW FROM CHAMBER MANAGER TO SHOW THE CHAMBER-STAT TABLE IN CHAMBER-PATIENTS PAGE. Removed codes that are not necessary
   _getChamberList: (organizationIdentifier, cbfn)->
@@ -1120,29 +881,18 @@ Polymer {
       organizationId: organizationIdentifier
       dateString: (new Date()).toISOString().split('T')[0]
     }
-    this.isLoading = true
+    this.isLoading = true;
     this.callApi '/bdemr-booking--clinic--get-chamber-schedule-report', data, (err, response)=>
-      this.isLoading = false
+      this.isLoading = false;
       if response.hasError
-        # this.domHost.showModalDialog response.error.message
-        this.domHost.navigateToPage "#/chamber-manager"
-        window.location.reload()
-
+        this.domHost.showModalDialog response.error.message
       else if response.data
         matchingChamberList = response.data
-        if matchingChamberList.length is 0
-          this.domHost.navigateToPage "#/chamber-manager"
-          window.location.reload()
-
-        else
-
-          matchingChamberList.sort (a, b)->
-            return -1 if a.name < b.name
-            return 1 if a.name > b.name
-            return 0        
-          @set 'matchingChamberList', matchingChamberList
-          console.log 'mathcng',this.matchingChamberList
-
+        matchingChamberList.sort (a, b)->
+          return -1 if a.name < b.name
+          return 1 if a.name > b.name
+          return 0        
+        @set 'matchingChamberList', matchingChamberList
         cbfn()
       else
         this.matchingChamberList = []
@@ -1156,9 +906,9 @@ Polymer {
       organizationId: this.organization.idOnServer
       dateString: (new Date()).toISOString().split('T')[0]
     }
-    # this.isLoading = true;
+    this.isLoading = true;
     @callApi '/bdemr-booking--clinic--get-chamber-schedule-report', data, (err, response)=>
-      # this.isLoading = false;
+      this.isLoading = false;
       if response.hasError
         @domHost.showModalDialog response.error.message
       else
@@ -1186,23 +936,11 @@ Polymer {
     return [year, month, day].join('-')
 
   viewChamberSchedule: (e)->
-    @chamberData = e.model.item
-    @$$('#select-chamber').toggle()
-    this.domHost.navigateToPage "#/chamber-patients/chamber:#{@chamberData.shortCode}/date:#{this.dateString}"
-    this.schedule.bookingList=[]
-    this.chamberShortCode= @chamberData.shortCode
-    this._getChamber =>
-          this._getScheduleForDate this.dateString, =>
-            this.createDefaultSchedule this.dateString, =>
-              this._calculatePatientsBookingStatusCount(this.schedule.bookingList)
-              this.loadNewPatientFromChamber()
-              this.updatePatientOnlineStatus()
-              @isLoading = false
-   
-          # @domHost.toggleModalLoader()
-    # today = this.formatDate()
-    # this.domHost.navigateToPage "#/chamber-patients/chamber:#{@chamberSelectedData.shortCode}/date:#{today}"
-    # window.location.reload()
+    { item } = e.model
+    today = this.formatDate()
+    this.domHost.navigateToPage "#/chamber-patients/chamber:#{item.shortCode}/date:#{today}"
+    window.location.reload()
+
 
   viewTodaysPatient: (e)->
     {item} = e.model

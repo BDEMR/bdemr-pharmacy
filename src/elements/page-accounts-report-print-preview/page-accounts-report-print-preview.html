@@ -148,8 +148,8 @@
       }
 
       .table {
-        width: 50%;
-        /* border-collapse: collapse; */
+        width: 100%;
+        border-collapse: collapse;
       }
 
       .table th {
@@ -214,156 +214,90 @@
             <br>
 
             <template is='dom-if' if='[[saveReportToLocalStorageObj]]'>
-
-              <div class="horizontal layout">
-
-                <table class="table flex-1 m-right-8" style="border: 1px solid #eee;;">
-                  <tr>
-                    <th colspan="2">Incomes</th>
-                  </tr>
-
-                  <template is='dom-repeat' items='[[saveReportToLocalStorageObj.incomeByInvoiceCategory]]'>
-                    <template is="dom-if" if="[[$equals(item.category, 'outdoor')]]">
-                      <tr>
-                        <td>Investigation: TK.</td>
-                        <td>[[item.value]]</td>
-                      </tr>
-                    </template>
-                  </template>
-                  <template is='dom-repeat' items='[[saveReportToLocalStorageObj.dueByInvoiceCategory]]'>
-                    <template is="dom-if" if="[[$equals(item.category, 'outdoor')]]">
-                      <tr>
-                        <td>Investigation due collection: TK.</td>
-                        <td>[[item.value]]</td>
-                      </tr>
-                    </template>
-                  </template>
-                  <tr>
-                    <td>Advance Balance</td>
-                    <td width="150px">[[saveReportToLocalStorageObj.totalAdvanceBalanceFromInvoice]]</td>
-                  </tr>
-                  <tr>
-                    <td>ADMISSION FEE: TK.</td>
-                    <td width="150px">[[saveReportToLocalStorageObj.totalIncomeFromAdmissionCategory]]</td>
-                  </tr>
-                  <template is='dom-repeat' items='[[saveReportToLocalStorageObj.incomeByInvoiceCategory]]'>
-                    <template is="dom-if" if="[[$equals(item.category, 'indoor')]]">
-                      <tr>
-                        <td>INDOOR COLLECTION: TK.</td>
-                        <td>[[item.value]]</td>
-                      </tr>
-                    </template>
-                  </template>
-                  <template is='dom-repeat' items='[[saveReportToLocalStorageObj.dueByInvoiceCategory]]'>
-                    <template is="dom-if" if="[[$equals(item.category, 'indoor')]]">
-                      <tr>
-                        <td>INDOOR DUE COLLECTION: TK.</td>
-                        <td>[[item.value]]</td>
-                      </tr>
-                    </template>
-                  </template>
-                  <!-- <tr>
-                    <td>Vat/Tax Collected</td>
-                    <td width="150px">[[saveReportToLocalStorageObj.totalIncomeVatOrTax]]</td>
-                  </tr>
-                  <tr>
-                    <td>Discount Given</td>
-                    <td>-[[saveReportToLocalStorageObj.totalIncomeDiscount]]</td>
-                  </tr> -->
-                  <!-- <tr>
-                    <td>Dues</td>
-                    <td>[[saveReportToLocalStorageObj.totalIncomeDueCombined]]</td>
-                  </tr> -->
-                  <tr>
-                    <th>Total Incomes</th>
-                    <th>[[$formatCurrency(totalIncome)]]</th>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <th>Total Cash</th>
-                    <th>[[$formatCurrency(totalIncome)]]</th>
-                  </tr>
-                  <tr>
-                    <th>Credit</th>
-                    <th>[[$formatCurrency(totalDueOrCredit)]]</th>
-                  </tr>
-                  <tr>
-                    <th>Total Expenditure</th>
-                    <th>[[$formatCurrency(totalExpense)]]</th>
-                  </tr>
-                  <tr>
-                    <th>Net Cash</th>
-                    <th>[[$formatCurrency(profitOrLoss)]]</th>
-                  </tr>
-                </table>
-
-                <div class="vertiline"></div>
-                
-                <table class="table m-left-8 flex-1" style="border: 1px solid #eee;">
-                  <tr>
-                    <th colspan="2">Expenses</th>
-                  </tr>
-                  <template is='dom-repeat' items='[[saveReportToLocalStorageObj.expenseByCategory]]'>
+              
+                <div class="horizontal layout">
+  
+                  <table class="table flex-1 m-right-8" style="border: 1px solid #eee;;">
                     <tr>
-                      <td>[[item.category]]</td>
-                      <td>[[item.value]]</td>
+                      <th colspan="2">Incomes</th>
                     </tr>
-                  </template>
-                  <tr>
-                    <td>Vat/Tax Paid</td>
-                    <td width="150px">[[saveReportToLocalStorageObj.totalExpenseVatOrTax]]</td>
-                  </tr>
-                  <tr>
-                    <td>Discount Received</td>
-                    <td>-[[saveReportToLocalStorageObj.totalExpenseDiscount]]</td>
-                  </tr>
-                  <tr>
-                    <td>Dues</td>
-                    <td>[[saveReportToLocalStorageObj.totalDueFromExpense]]</td>
-                  </tr>
-                  <tr>
-                    <th>Total Expenses</th>
-                    <th>[[$formatCurrency(totalExpense)]]</th>
-                  </tr>
-                </table>
-              </div>
+  
+                    <template is='dom-repeat' items='[[saveReportToLocalStorageObj.incomeByCategory]]'>
+                      <tr>
+                        <td>[[item.category]]</td>
+                        <td>[[item.value]]</td>
+                      </tr>
+                    </template>
+                    <tr>
+                      <td>Vat/Tax Collected</td>
+                      <td width="150px">[[saveReportToLocalStorageObj.totalIncomeVatOrTax]]</td>
+                    </tr>
+                    <tr>
+                      <td>Discount Given</td>
+                      <td>-[[saveReportToLocalStorageObj.totalIncomeDiscount]]</td>
+                    </tr>
+                    <tr>
+                      <td>Dues</td>
+                      <td>[[saveReportToLocalStorageObj.totalIncomeDueCombined]]</td>
+                    </tr>
+                    <tr>
+                      <th>Total Incomes</th>
+                      <th>[[$formatCurrency(totalIncome)]]</th>
+                    </tr>
+                  </table>
+                  <div class="vertiline"></div>
+                  <table class="table m-left-8 flex-1"  style="border: 1px solid #eee;">
+                    <tr>
+                      <th colspan="2">Expenses</th>
+                    </tr>
+                    <template is='dom-repeat' items='[[saveReportToLocalStorageObj.expenseByCategory]]'>
+                      <tr>
+                        <td>[[item.category]]</td>
+                        <td>[[item.value]]</td>
+                      </tr>
+                    </template>
+                    <tr>
+                      <td>Vat/Tax Paid</td>
+                      <td width="150px">[[saveReportToLocalStorageObj.totalExpenseVatOrTax]]</td>
+                    </tr>
+                    <tr>
+                      <td>Discount Received</td>
+                      <td>-[[saveReportToLocalStorageObj.totalExpenseDiscount]]</td>
+                    </tr>
+                    <tr>
+                      <td>Dues</td>
+                      <td>[[saveReportToLocalStorageObj.totalDueFromExpense]]</td>
+                    </tr>
+                    <tr>
+                      <th>Total Expenses</th>
+                      <th>[[$formatCurrency(totalExpense)]]</th>
+                    </tr>
+                  </table>
+                </div>
+                
+              </template>
 
-            </template>
-
-            <!-- <template is='dom-if' if='[[saveReportToLocalStorageObj]]'>
+            <template is='dom-if' if='[[saveReportToLocalStorageObj]]'>
               <table class="table m-top-16">
                 <tr>
-                  <th>Total Cash</th>
-                  <th width="150px">[[$formatCurrency(totalIncome)]]</th>
-                </tr>
-                <tr>
-                  <th>Credit</th>
-                  <th width="150px">[[$formatCurrency(totalDueOrCredit)]]</th>
-                </tr>
-                <tr>
-                  <th>Total Expenditure</th>
-                  <th width="150px">[[$formatCurrency(totalExpense)]]</th>
+                  <th>Total Amount Received</th>
+                  <th width="150px">[[$formatCurrency(saveReportToLocalStorageObj.totalAmountReceivedCombined)]]</th>
                 </tr>
               </table>
             </template>
 
             <table class="table m-top-16">
               <tr>
-                <th>Net Cash</th>
+                <th>Profit/Loss</th>
                 <th width="150px">[[$formatCurrency(profitOrLoss)]]</th>
               </tr>
-            </table> -->
+            </table>
 
             <br>
             <template is="dom-if" if="[[settings.printDecoration.footerLine]]">
-              <div class="footer vertical layout" style="white-space: pre-wrap; text-align: center;">
-                [[settings.printDecoration.footerLine]]
-              </div>
+              <div class="footer vertical layout">[[settings.printDecoration.footerLine]]</div>
             </template>
-
+            
             <div style="text-align: center; margin-top: 16px">
               <span class="type secondary">Report Generation Date & Time - [[_formatDateTime(reportCreatedTime)]]</span>
             </div>
@@ -408,12 +342,6 @@
           value: null
         },
 
-        organization: {
-          type: Object,
-          notify: true,
-          value: (app.db.find('organization'))[0]
-        },
-
         settings: {
           type: Object,
           notify: true,
@@ -426,23 +354,9 @@
         },
 
         totalIncome: Number,
-        totalDueOrCredit: Number,
         totalExpense: Number,
         profitOrLoss: Number
       },
-
-      // _getSettings() {
-      //   const list = app.db.find('settings', ({ serial }) => serial === this.getSerialForSettings());
-      //   if (list.length > 0) {
-      //     this.settings = list[0];
-      //     if ((typeof this.settings.settingsModifiedBy === 'undefined') || (this.settings.settingsModifiedBy === 'organization')) {
-      //       if (this.organization.printSettings) {
-      //         this.settings.printDecoration = this.organization.printSettings;
-      //       }
-      //     }          
-      //   }
-      // },
-
 
 
       printButtonPressed(e) {
@@ -462,21 +376,17 @@
 
       calculateTotal() {
         if (!this.saveReportToLocalStorageObj) return;
-        let grossIncome = this.saveReportToLocalStorageObj.incomeByInvoiceCategory.reduce((total, item) => {
+        let grossIncome = this.saveReportToLocalStorageObj.incomeByCategory.reduce((total, item) => {
           return total += item.value;
         }, 0);
-        let grossCollectionFromDue = this.saveReportToLocalStorageObj.dueByInvoiceCategory.reduce((total, item) => {
-          return total += item.value;
-        }, 0);        
         let grossExpense = this.saveReportToLocalStorageObj.expenseByCategory.reduce((total, item) => {
           return total += item.value;
         }, 0);
-        this.totalIncome = grossIncome;
-        this.totalExpense = (grossExpense + this.saveReportToLocalStorageObj.totalExpenseVatOrTax) - this.saveReportToLocalStorageObj.totalExpenseDiscount;
-        this.totalDueOrCredit = this.saveReportToLocalStorageObj.totalDueFromInvoice
+        this.totalIncome = grossIncome + this.saveReportToLocalStorageObj.totalIncomeVatOrTax - this.saveReportToLocalStorageObj.totalIncomeDiscount;
+        this.totalExpense = grossExpense + this.saveReportToLocalStorageObj.totalExpenseVatOrTax - this.saveReportToLocalStorageObj.totalExpenseDiscount;
         this.profitOrLoss = this.totalIncome - this.totalExpense;
       },
-
+      
       loadAccountsReportFromLocalStorage() {
         report = localStorage.getItem("saveReportToLocalStorageObj");
         report = JSON.parse(report);
@@ -501,9 +411,6 @@
           return this.domHost.navigateToPage("#/select-organization");
         }
         this._loadUser();
-        // this.$getOrganizationSpecificUserSettings(this.user.apiKey, this.organization.idOnServer, (settings) => {
-        //   this.set('settings', settings)
-        // });
         this.loadAccountsReportFromLocalStorage();
       },
 

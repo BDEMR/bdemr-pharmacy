@@ -61,7 +61,7 @@ Polymer {
     selectedDoctorId:
       type: Number,
       value: 0
-    
+
 
   # REGION START public info 
 
@@ -94,7 +94,6 @@ Polymer {
       apiKey: this.user.apiKey
     }
     Object.assign(data, publicInfo)
-
     this.callApi '/bdemr-booking--doctor--set-doctor-public-info', data, (err, response)=>
       if response.hasError
         this.domHost.showModalDialog response.error.message
@@ -104,7 +103,6 @@ Polymer {
   _getPublicInfo: ->
     data = { 
       apiKey: this.user.apiKey
-
     }
     @loadingCounter++
     @callApi '/bdemr-booking--doctor--get-doctor-public-info', data, (err, response)=>
@@ -356,7 +354,14 @@ Polymer {
       if response.data
         @set 'chamberList', response.data
         cbfn()
-      
+  
+
+  startVideoChatWithPatient: (e)->
+    { entry } = e.model
+    return unless entry.patientId
+    console.log 'patient id in chamber', entry.patientId
+    @domHost.navigateToPage '#/video-chat/patientId:' + entry.patientId
+  
 
   _setChamberList: (chamber, cbfn)->
     data = { 
@@ -423,12 +428,6 @@ Polymer {
       else
         cbfn() 
 
-
-  startVideoChatWithPatient: (e)->
-    { entry } = e.model
-    return unless entry.patientId
-    console.log 'patient id in chamber', entry.patientId
-    @domHost.navigateToPage '#/video-chat/patientId:' + entry.patientId
   
   chamberSaveTapped: (e)->
     chamber = @currentlyEditingChamber
@@ -507,7 +506,6 @@ Polymer {
     { chamber } = e.model
     today = this.formatDate()
     this.domHost.navigateToPage "#/chamber-patients/chamber:#{chamber.shortCode}/date:#{today}"
-    window.location.reload()
 
   # REGION END chamber
 
@@ -521,10 +519,7 @@ Polymer {
     this._getServiceQueue => 
       this._setServiceQueue this.serviceQueue, => null
     this._getChamberList => null
-
-    if @organization.userList?.length > 0
-      this._loadMemberList()
-
+    this._loadMemberList()
       
 
   _loadUser:()->
@@ -580,19 +575,34 @@ Polymer {
 
     doctor = @memberList[@selectedDoctorId]
     console.log 'Selected Doctor Info', doctor
-    {email, fileNameOnServer, idOnServer, name, phone, specializationList, degreeList, experience} = doctor
+    {email, idOnServer, fileNameOnServer, name, phone, specializationList, degreeList, experience, employment} = doctor
     @currentlyEditingChamber.doctorId = idOnServer
     @currentlyEditingChamber.doctorName = name
     @currentlyEditingChamber.doctorPhone = phone
     @currentlyEditingChamber.email = email
     @set 'currentlyEditingChamber.specialization', specializationList
+    if doctor.fileNameOnServer
+      @_loadDoctorPicture(doctor.idOnServer)
     @selectedDoctorInfo = {
       publicNameOfDoctor: name,
-      specializationList, degreeList, experience
+      specializationList, degreeList, experience, employment
       doctorId: idOnServer
-      fileNameOnServer: fileNameOnServer or null
+      fileNameOnServer: fileNameOnServer
     }
   
+  _loadDoctorPicture: (doctorId)->
+    data = { 
+      userIdOnServer: doctorId
+    }
+    @callApi '/bdemr--patient-booking-get-doctor-picture', data, (err, response)=>
+      if response.hasError
+        @domHost.showModalDialog response.error.message
+      else
+        console.log "picture", response.data
+        @set 'selectedDoctorInfo.profilePicture', response.data
+        @set 'profilePicture', response.data
+        console.log @selectedDoctorInfo
+
   assignDoctorToChamber: (e)->
   
     if @selectedDoctorId is -1
@@ -604,22 +614,16 @@ Polymer {
       
       console.log (this.currentlyEditingChamber)
       doctor = this.memberList[this.selectedDoctorId]
-      console.log({doctor})
-      {email, fileNameOnServer, profileImage, idOnServer, name, phone, specializationList, degreeList, experience} = doctor
+      {email, idOnServer, fileNameOnServer, name, phone, specializationList, degreeList, experience, employment} = doctor
       
       for item in @currentlyEditingChamber.assignedDoctors
         if item.idOnServer is idOnServer
           @domHost.showToast 'This User has been assigned already!'
           return
-      
+
       @push 'currentlyEditingChamber.assignedDoctors', {
-        email, fileNameOnServer, idOnServer, name, phone, specializationList, degreeList, experience
+        email, idOnServer, fileNameOnServer, @profilePicture, name, phone, specializationList, degreeList, experience, employment
       }
-
-      @set "currentlyEditingChamber.doctorPublicInfo", {
-        email, fileNameOnServer, profileImage, idOnServer, name, phone, specializationList, degreeList, experience
-      }
-
 
   _includeSrvcChrgTapped: (e)->
     if @currentlyEditingChamber.newPatientVisitFee >= 25
@@ -638,7 +642,6 @@ Polymer {
     @domHost.showModalDialog "Charge will be excluded after SAVE"
 
 
-
   _deleteDoctorFromChamber:(e)->
     index = e.model.index
     @splice 'currentlyEditingChamber.assignedDoctors', index, 1
@@ -651,5 +654,5 @@ Polymer {
       return true
     else
       return false
-  
+
 }

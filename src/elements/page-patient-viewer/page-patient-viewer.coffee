@@ -358,29 +358,16 @@ Polymer {
   _loadTestResults: (patientIdentifier, organizationIdentifier)->
     # console.log patientIdentifier
 
-    collectionName = 'bdemr--patient-test-results'
-    data={
-      apiKey : @user.apiKey
-      patientSerial : patientIdentifier
-      collectionName : collectionName
-      hospitalId : organizationIdentifier
-    }
-    @callApi 'bdemr--get-patient-details', data, (err, response)=>
-        if response.hasError
-          @domHost.showModalDialog response.error.message
-        else
-          collectedData = response.data
-          # console.log 'medicinelist',collectedData
-   
-          testResultList = collectedData
-          testResultList.sort (left, right)->
-            return -1 if left.createdDatetimeStamp > right.createdDatetimeStamp
-            return 1 if left.createdDatetimeStamp < right.createdDatetimeStamp
-            return 0
+    testResultList = app.db.find 'patient-test-results', ({patientSerial, hospitalId})-> patientSerial is patientIdentifier and hospitalId is organizationIdentifier
+    # console.log 'testResultList', testResultList
+    testResultList.sort (left, right)->
+      return -1 if left.createdDatetimeStamp > right.createdDatetimeStamp
+      return 1 if left.createdDatetimeStamp < right.createdDatetimeStamp
+      return 0
 
     
 
-          @matchingTestResultsList = testResultList
+    @matchingTestResultsList = testResultList
 
     # console.log 'matchingTestResultsList', @matchingTestResultsList
 
@@ -391,18 +378,8 @@ Polymer {
 
 
   _getVisitDataForTestResults: (visitIdentifier, testResultIndex)->
-    data={
-      apiKey : @user.apiKey
-      visitSerial : visitIdentifier
-    }
-    @domHost.toggleModalLoader('Loading data...')
-    @callApi '/bdemr-get-doctor-visit-suggestion', data, (err, response)=>
-      @domHost.toggleModalLoader()
-      if response.hasError
-        @domHost.showModalDialog response.error.message
-        return
-      else
-        list = response.data
+    list = app.db.find 'doctor-visit', ({serial})=> serial is visitIdentifier
+    # console.log list
     if list.length is 1
       @matchingTestResultsList[testResultIndex].visitObject = list[0]
 
@@ -572,32 +549,18 @@ Polymer {
 
   # Patient Stay [START]
   # ================================
-  _loadPatientStay: (collectionName, patientSerial,cbfn)->
-      data = {
-        apiKey: @user.apiKey
-        patientSerial : patientSerial
-        collectionName : collectionName
-      }
-      this.domHost.toggleModalLoader 'Please Wait'
-      @callApi '/bdemr--get-patient-details', data, (err, response)=>
-        this.domHost.toggleModalLoader()
-        if response.hasError
-          @domHost.showModalDialog response.error.message
-        else
-          collectedData = response.data
-          cbfn collectedData
-  _loadPatientStayList: (patientIdentifier) ->
-    collectionName = "bdemr--patient-stay"
-    @_loadPatientStay collectionName ,patientIdentifier ,(loadedData)=>
-    # list = app.db.find 'visit-patient-stay', ({patientSerial})-> patientSerial is patientIdentifier
-    
-      patientStayList = [].concat loadedData
-      patientStayList.sort (left, right)->
-        return -1 if left.createdDatetimeStamp > right.createdDatetimeStamp
-        return 1 if left.createdDatetimeStamp < right.createdDatetimeStamp
-        return 0
 
-      @set 'matchingPatientStayList', patientStayList
+  _loadPatientStayList: (patientIdentifier) ->
+
+    list = app.db.find 'visit-patient-stay', ({patientSerial})-> patientSerial is patientIdentifier
+    
+    patientStayList = [].concat list
+    patientStayList.sort (left, right)->
+      return -1 if left.createdDatetimeStamp > right.createdDatetimeStamp
+      return 1 if left.createdDatetimeStamp < right.createdDatetimeStamp
+      return 0
+
+    @set 'matchingPatientStayList', patientStayList
 
 
   
@@ -1190,10 +1153,10 @@ Polymer {
     @domHost.navigateToPage '#/create-invoice/invoice:new/patient:' + @patient.serial
 
   editInvoiceItemClicked: (e)->
-    @domHost.navigateToPage '#/create-invoice/invoice:' + e.model.item.serial + '/patient:' + @patient.serial
+    @domHost.navigateToPage '#/create-invoice/invoice:' + e.model.item.referenceNumber + '/patient:' + @patient.serial
 
   previewInvoiceItemClicked: (e)->
-    @domHost.navigateToPage '#/print-invoice/invoice:' + e.model.item.serial + '/patient:' + @patient.serial
+    @domHost.navigateToPage '#/print-invoice/invoice:' + e.model.item.referenceNumber + '/patient:' + @patient.serial
   
   invoiceMarkedAsCompleteButtonClicked: (e)->
     item = e.model.item

@@ -14,8 +14,6 @@
 
 <!-- custom-elements -->
 
-<script src="./numwords.js"></script>
-
 <!-- element -->
 <dom-module id="page-print-invoice">
   <template>
@@ -128,10 +126,6 @@
       .rightSideLine1 {
         font-size: 22px;
       }
-
-      .rightSideLine2 {
-        font-size: 20px;
-      }     
 
       .item {
         padding: 10px;
@@ -255,12 +249,9 @@
       <div class="document-header horizontal layout justified">
         <template is="dom-if" if="[[patient]]">
           <div class="leftSide vertical layout">
-            <div><strong>PID: </strong>[[patient.organizationPatientId]]</div>
             <div><strong>Patient's Name: </strong>[[$getFullName(patient.name)]]</div>
             <div><strong>Phone: </strong>[[patient.phone]]</div>
             <div><strong>Age: </strong>[[$computeAge(patient.dateOfBirth)]]</div>
-            <div><strong>Gender: </strong><span style="text-transform: capitalize;">[[patient.gender]]</span></div>
-            <span hidden$="[[!invoice.referralDoctor.name]]"><strong>Referred By:</strong> [[invoice.referralDoctor.name]]</span>
             <!-- <div>Allergy: [[patient.allergy]]</div>
             <div>Blood Group: [[patient.bloodGroup]]</div> -->
             <!-- <div>Serial: <span class="type caption-2 bg-gray">[[patient.serial]]</span></div> -->
@@ -270,7 +261,7 @@
         <div class="flex"></div>
 
         <div class="rightSide vertical layout end">
-          <h3>Invoice#: [[invoice.referenceNumber]]</h3>
+          <strong>Invoice#: [[invoice.referenceNumber]]</strong>
           <span>Date: [[$formatDateTime(invoice.createdDatetimeStamp)]]</span>
           <span hidden$="[[!invoice.reportDeliveryDateTime]]">
             <strong>Delivery Date and Time: </strong>[[$formatDateTime(invoice.reportDeliveryDateTime)]]
@@ -278,8 +269,8 @@
           <span hidden$="[[!invoice.nextPaymentDate]]">
             <strong>Next Payment Date: </strong>[[$formatDate(invoice.nextPaymentDate)]]
           </span>
-          <span hidden$="[[!invoice.referenceBy]]">C/O: [[invoice.referenceBy]]</span>
-          
+          <span hidden$="[[!invoice.referralDoctor.name]]">Referred By: [[invoice.referralDoctor.name]]</span>
+          <span>Created By: [[invoice.createdByUserName]]</span>
         </div>
 
       </div>
@@ -304,12 +295,12 @@
             <div class="flex-1">
               <strong>Price</strong>
             </div>
-            <!-- <div class="flex-1">
+            <div class="flex-1">
               <strong>Discount</strong>
             </div>
             <div class="flex-1">
               <strong>Discounted Price</strong>
-            </div> -->
+            </div>
           </paper-item>
           <template is="dom-repeat" items="[[invoice.data]]">
             <paper-listbox>
@@ -333,28 +324,57 @@
                 <div class="flex-1">[[item.totalPrice]]
                   <span class="text-mute">BDT</span>
                 </div>
-                <!-- <div class="flex-1">[[item.discountAmount]]
+                <div class="flex-1">[[item.discountAmount]]
                   <span class="text-mute">BDT</span>
                 </div>
                 <div class="flex-1">[[item.discountedPrice]]
                   <span class="text-mute">BDT</span>
-                </div> -->
+                </div>
               </paper-item>
             </paper-listbox>
+          </template>
+          <hr>
+          <template is="dom-if" if="[[invoice.finalBill]]">
+            <template is="dom-repeat" items="[[invoice.previousInvoiceData]]">
+              <paper-listbox>
+                <paper-item class="invoice-item">
+                  <div>[[_returnSerial(index)]]</div>
+                  <div class="flex-7 layout vertical m-left-8">
+                    <div>
+                      <strong>[[item.name]]</strong> &nbsp;
+                      <template is="dom-if" if="[[item.type]]">
+                        <span class="type secondary">[[item.type]]</span>
+                      </template>
+                    </div>
+                    <div>
+                      <template is="dom-repeat" items="[[item.itemList]]" as="packageItem">
+                        <div> - [[packageItem.name]]</div>
+                      </template>
+                    </div>
+                  </div>
+                  <div class="flex-2">[[item.price]]</div>
+                  <div class="flex-1">[[item.qty]]</div>
+                  <div class="flex-1">[[item.totalPrice]]
+                    <span class="text-mute">BDT</span>
+                  </div>
+                  <div class="flex-1">[[item.discountAmount]]
+                    <span class="text-mute">BDT</span>
+                  </div>
+                  <div class="flex-1">[[item.discountedPrice]]
+                    <span class="text-mute">BDT</span>
+                  </div>
+                </paper-item>
+              </paper-listbox>
+            </template>
           </template>
           <div class="horiline"></div>
 
           <div class="layout horizontal">
             <!-- left panel start -->
-            <div class="layout vertical m-top-8">
-              <h1>Due: [[$calculateDue(invoice.advancePayment, invoice.totalBilled, invoice.totalAmountReceieved)]] BDT</h1>
-              <br>
-              <template is="dom-if" if="[[isFullPaid]]">
-                <div style="font-size:18px; margin-top: 10px; font-weight: bold;">In Words:
-                  [[_getTotalPaidInWords(invoice.totalAmountReceieved)]] BDT</div>
-              </template>
+            <div class="">
+              <h3>Due: [[$calculateDue(invoice.advancePayment, invoice.totalBilled, invoice.totalAmountReceieved)]] BDT
+              </h3>
             </div>
-
             <!-- left panel end -->
 
             <div class="flex"></div>
@@ -388,14 +408,12 @@
               <div>
                 <h3>Total Paid: [[$toTwoDecimalPlace(invoice.totalAmountReceieved)]] BDT</h3>
               </div>
-              <br>
-              <span style="font-size: 18px;">Created By: [[invoice.createdByUserName]]</span>
             </div>
             <!-- right panel end -->
           </div>
 
 
-          <div class="layout horizontal m-top-64">
+          <div class="layout horizontal">
             <div class="signature">
               <div class="underline"></div>
               <div>Authorized Signature</div>
@@ -404,12 +422,11 @@
           </div>
 
           <br>
-          <div style="text-align: center; color: green;">
-            <template is="dom-if" if="[[isFullPaid]]">
-              <span style="font-size: 42px; font-weight: bolder;">Full Paid</span>
+          <div style="text-align: center; color: green; margin-bottom: 16px;">
+            <template is="dom-if" if="[[invoice.finalBill]]">
+              <span style="font-size: 42px; font-weight: bolder;">DUE Paid</span>
             </template>
           </div>
-          <br>
           <template is="dom-if" if="[[settings.printDecoration.footerLine]]">
             <div class="footer vertical layout" style="white-space: pre-wrap;">
               <div>

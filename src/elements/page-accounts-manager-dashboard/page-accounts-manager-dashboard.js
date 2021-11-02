@@ -1,14 +1,4 @@
-// -- Details on How Accounts Dashboard works --
-// SO basically this feature/Report consists of two types of financial statements
-// Income and Expense Statements
-// Income > So for incomes there are two types of data we are fetching here, first is patient invoices, which are generated from outpatient, inpatient, Emergency, Pharmacy, Spectacles manager Invoices..
-// Income > The second type of invoice that income has is generated from Income manager, Its not related to patients per say, but multitude of things can be added in a income manager invoice, there is no limit.
-// Expense > Expense fairly simple, all expense invoices are generated are from Expense manager and Third party Commission payment invoice(which by the will also show up in expense manager table).
-// Accounts dashboard can be filtered with dates and Flagged as error invoices. However coming to this page will automatically generate Report, but Search button can be used with filters, search button has te be pressed if any filters are given or changed.
-// Accounts Dashboard Print button will print the whole report populated in both tables.
-// Individual Income or Expense item can be printed as well
 
-// API Based Feature
 
 Polymer({
   is: 'page-accounts-manager-dashboard',

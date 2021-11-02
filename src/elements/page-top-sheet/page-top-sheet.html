@@ -12,9 +12,6 @@
 <link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
-<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
-<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
-<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
 
 <link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html">
 <!-- style -->
@@ -227,7 +224,7 @@
                 <div class="card-content custom-input-field">
       
                   <div class="layout horizontal end wrap">
-                    <paper-input type="search" class="filter-query m-right-8" label="[[$TRANSLATE('Filter By Mobile', LANG)]]" no-label-float value="{{mobileSearchString}}"></paper-input>
+                    <paper-input type="search" class="filter-query m-right-8" label="[[$TRANSLATE('Filter By Name or Mobile', LANG)]]" no-label-float value="{{searchString}}"></paper-input>
       
                     <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
       
@@ -244,103 +241,7 @@
                   <template is="dom-if" if="[[!topSheetEntryList.length]]">
                     <h3 class="type center">[[$TRANSLATE('NO DATA YET', LANG)]]</h3>
                   </template>
-                  <template is="dom-if" if=[[topSheetEntryList.length]]>
-
-                     <vaadin-grid class="custom-agent-table" id="paymentList" items="[[topSheetEntryList]]">
-                <vaadin-grid-column resizable>
-                  <template class="header">
-                    <vaadin-grid-sorter path="name">
-                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Name', LANG)]]" path="name"
-                        value="[[filterName]]">
-                        <paper-input label="[[$TRANSLATE('Name', LANG)]]" value="{{filterName}}" no-label-float>
-                        </paper-input>
-                      </vaadin-grid-filter>
-                    </vaadin-grid-sorter>
-                  </template>
-                  <template>
-                    <div class="layout vertical">
-                      [[item.name]]
-                      </div>
-                  </template>
-                </vaadin-grid-column>
-                <vaadin-grid-column resizable>
-                  <template class="header">
-                    <vaadin-grid-sorter path="mobile">
-                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Mobile', LANG)]]" path="mobile"
-                        value="[[filterMobile]]">
-                        <paper-input label="[[$TRANSLATE('Mobile', LANG)]]" value="{{filterMobile}}" no-label-float>
-                        </paper-input>
-                      </vaadin-grid-filter>
-                    </vaadin-grid-sorter>
-                  </template>
-                  <template>
-                    <div class="layout vertical">
-                      [[item.mobile]]
-                      </div>
-                  </template>
-                </vaadin-grid-column>
-                <vaadin-grid-column resizable>
-                  <template class="header">
-                    [[$TRANSLATE('Added On', LANG)]]
-                  </template>
-                  <template>
-                    <div class="layout vertical">
-                      [[_formatDateTime(item.addedOn)]]
-                      </div>
-                  </template>
-                </vaadin-grid-column>
-                <vaadin-grid-column resizable>
-                  <template class="header">
-                    [[$TRANSLATE('Total Billed', LANG)]]
-                  </template>
-                  <template>
-                    <div class="layout vertical">
-                      [[item.totalBilled]] BDT
-                      </div>
-                  </template>
-                </vaadin-grid-column>
-                <vaadin-grid-column resizable>
-                  <template class="header">
-                    [[$TRANSLATE('Total Discount', LANG)]]
-                  </template>
-                  <template>
-                    <div class="layout vertical">
-                      [[item.totalDiscount]] BDT
-                      </div>
-                  </template>
-                </vaadin-grid-column>
-                <vaadin-grid-column resizable>
-                  <template class="header">
-                    [[$TRANSLATE('Total Fund Discount', LANG)]]
-                  </template>
-                  <template>
-                    <div class="layout vertical">
-                      [[item.totalFundDiscount]] BDT
-                      </div>
-                  </template>
-                </vaadin-grid-column>
-                <vaadin-grid-column resizable>
-                  <template class="header">
-                    [[$TRANSLATE('Total Due', LANG)]]
-                  </template>
-                  <template>
-                    <div class="layout vertical">
-                      [[item.totalDue]] BDT
-                      </div>
-                  </template>
-                </vaadin-grid-column>
-                <vaadin-grid-column resizable>
-                  <template class="header">
-                    [[$TRANSLATE('Cash Handover', LANG)]]
-                  </template>
-                  <template>
-                    <div class="layout vertical">
-                      [[item.totalCashHandover]] BDT
-                      </div>
-                  </template>
-                </vaadin-grid-column>
-                  </template>
-                  <!-- <table class="table">
+                  <table class="table">
                     <tr>
                       <th>[[$TRANSLATE('Name', LANG)]]</th>
                       <th>[[$TRANSLATE('Mobile', LANG)]]</th>
@@ -350,7 +251,7 @@
                       <th>[[$TRANSLATE('Total Fund Discount', LANG)]]</th>
                       <th>[[$TRANSLATE('Total Due', LANG)]]</th>
                       <th>[[$TRANSLATE('Cash Handover', LANG)]]</th>
-                      
+                      <!-- <th>Actions</th> -->
                     </tr>
                     <template is="dom-if" if="[[!topSheetEntryList.length]]">
                       <h3 class="type center">[[$TRANSLATE('NO DATA YET', LANG)]]</h3>
@@ -365,10 +266,12 @@
                         <td>[[item.totalFundDiscount]] BDT</td>
                         <td>[[item.totalDue]] BDT</td>
                         <td>[[item.totalCashHandover]] BDT</td>
-                       
+                        <!-- <td>
+                          <paper-button raised class="btn btn-danger" on-tap="_deleteEntry">Delete</paper-button>
+                        </td> -->
                       </tr>
                     </template>
-                  </table> -->
+                  </table>
     
                   <div class="layout vertical">
                     <div class="m-top-16 m-bottom-8">

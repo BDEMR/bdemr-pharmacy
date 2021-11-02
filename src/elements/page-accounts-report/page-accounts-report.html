@@ -2,10 +2,7 @@
 <link rel="import" href="../../bower-assets/paper-progress/paper-progress.html">
 
 <link rel="import" href="../custom-vital-search/custom-vital-search.html">
-<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
-<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
-<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
-<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
+<!-- <link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html"> -->
 
 <link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html">
 <!-- style -->
@@ -47,7 +44,8 @@
       }
 
       .table {
-        width: 50%;
+        width: 100%;
+        border-collapse: collapse;
       }
 
       .table th {
@@ -80,7 +78,7 @@
       <div class="limiting-container">
 
         <!-- Card - Search - start -->
-        <paper-card heading="Accounts Report">
+        <paper-card heading="[[$TRANSLATE('Accounts Report', LANG)]]">
 
           <paper-progress indeterminate hidden$="[[!loading]]"></paper-progress>
 
@@ -88,23 +86,15 @@
 
             <div class="search layout horizontal center wrap">
 
-              <vaadin-combo-box label="Search By User" class="organization-dropdown m-right-8 m-bottom-8" items="[[memberList]]"
-                item-label-path="name" on-selected-item-changed="memberSelected">
-                <template>
-                  <div><strong>[[item.name]]</strong></div>
-                  <div><span>[[item.phone]]</span></div>
-                </template>
-              </vaadin-combo-box>
-
               <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
 
               <div class="flex"></div>
 
               <div>
-                <paper-button raised class="btn btn-success btn-large" on-tap="searchButtonClicked">Search</paper-button>
-                <paper-button raised on-tap="resetButtonClicked">Reset</paper-button>
+                <paper-button raised class="btn btn-success btn-large" on-tap="searchButtonClicked">[[$TRANSLATE('Search', LANG)]]</paper-button>
+                <paper-button raised on-tap="resetButtonClicked">[[$TRANSLATE('Reset', LANG)]]</paper-button>
                 <template is="dom-if" if="[[report]]">
-                  <paper-button raised class="print-button-style" on-tap="_printButtonPressed">Print the Report</paper-button>
+                  <paper-button raised class="print-button-style" on-tap="_printButtonPressed">[[$TRANSLATE('Print the Report', LANG)]]</paper-button>
                 </template>
               </div>
 
@@ -116,78 +106,36 @@
 
                 <table class="table flex-1 m-right-8" style="border: 1px solid #eee;">
                   <tr>
-                    <th colspan="2">Incomes</th>
+                    <th colspan="2">[[$TRANSLATE('Incomes', LANG)]]</th>
                   </tr>
 
-                  <template is='dom-repeat' items='[[report.incomeByInvoiceCategory]]'>
-                    <template is="dom-if" if="[[$equals(item.category, 'outdoor')]]">
-                      <tr>
-                        <td>Outdoor Collection:</td>
-                        <td>[[item.value]]</td>
-                      </tr>
-                    </template>
-                  </template>
-                  <template is='dom-repeat' items='[[report.dueByInvoiceCategory]]'>
-                    <template is="dom-if" if="[[$equals(item.category, 'outdoor')]]">
-                      <tr>
-                        <td>Outdoor Due Collection:</td>
-                        <td>[[item.value]]</td>
-                      </tr>
-                    </template>
+                  <template is='dom-repeat' items='[[report.incomeByCategory]]'>
+                    <tr>
+                      <td>[[item.category]]</td>
+                      <td>[[item.value]]</td>
+                    </tr>
                   </template>
                   <tr>
-                    <td>Advance Balance</td>
-                    <td width="150px">[[report.totalAdvanceBalanceFromInvoice]]</td>
-                  </tr>
-                  <!-- <tr>
-                    <td>ADMISSION FEE: TK.</td>
-                    <td width="150px">[[report.totalIncomeFromAdmissionCategory]]</td>
-                  </tr> -->
-                  <template is='dom-repeat' items='[[report.incomeByInvoiceCategory]]'>
-                    <template is="dom-if" if="[[$equals(item.category, 'admission')]]">
-                      <tr>
-                        <td>ADMISSION FEE: TK.</td>
-                        <td>[[item.value]]</td>
-                      </tr>
-                    </template>
-                  </template>
-                  <template is='dom-repeat' items='[[report.incomeByInvoiceCategory]]'>
-                    <template is="dom-if" if="[[$equals(item.category, 'indoor')]]">
-                      <tr>
-                        <td>Indoor Collection:</td>
-                        <td>[[item.value]]</td>
-                      </tr>
-                    </template>
-                  </template>
-                  <template is='dom-repeat' items='[[report.dueByInvoiceCategory]]'>
-                    <template is="dom-if" if="[[$equals(item.category, 'indoor')]]">
-                      <tr>
-                        <td>Indoor Due Collection:</td>
-                        <td>[[item.value]]</td>
-                      </tr>
-                    </template>
-                  </template>
-                  <tr>
-                    <td>Vat/Tax Collected</td>
+                    <td>[[$TRANSLATE('Vat/Tax Collected', LANG)]]</td>
                     <td width="150px">[[report.totalIncomeVatOrTax]]</td>
                   </tr>
                   <tr>
-                    <td>Discount Given</td>
+                    <td>[[$TRANSLATE('Discount Given', LANG)]]</td>
                     <td>-[[report.totalIncomeDiscount]]</td>
                   </tr>
-                  <!-- <tr>
-                    <td>Dues</td>
+                  <tr>
+                    <td>[[$TRANSLATE('Dues', LANG)]]</td>
                     <td>[[report.totalIncomeDueCombined]]</td>
                   </tr>
                   <tr>
-                    <th>Total Incomes</th>
+                    <th>[[$TRANSLATE('Total Incomes', LANG)]]</th>
                     <th>[[$formatCurrency(totalIncome)]]</th>
-                  </tr> -->
+                  </tr>
                 </table>
 
                 <table class="table m-left-8 flex-1"  style="border: 1px solid #eee;">
                   <tr>
-                    <th colspan="2">Expenses</th>
+                    <th colspan="2">[[$TRANSLATE('Expenses', LANG)]]</th>
                   </tr>
                   <template is='dom-repeat' items='[[report.expenseByCategory]]'>
                     <tr>
@@ -196,19 +144,19 @@
                     </tr>
                   </template>
                   <tr>
-                    <td>Vat/Tax Paid</td>
+                    <td>[[$TRANSLATE('Vat/Tax Paid', LANG)]]</td>
                     <td width="150px">[[report.totalExpenseVatOrTax]]</td>
                   </tr>
                   <tr>
-                    <td>Discount Received</td>
+                    <td>[[$TRANSLATE('Discount Received', LANG)]]</td>
                     <td>-[[report.totalExpenseDiscount]]</td>
                   </tr>
                   <tr>
-                    <td>Dues</td>
+                    <td>[[$TRANSLATE('Dues', LANG)]]</td>
                     <td>[[report.totalDueFromExpense]]</td>
                   </tr>
                   <tr>
-                    <th>Total Expenses</th>
+                    <th>[[$TRANSLATE('Total Expenses', LANG)]]</th>
                     <th>[[$formatCurrency(totalExpense)]]</th>
                   </tr>
                 </table>
@@ -219,23 +167,15 @@
             <template is='dom-if' if='[[report]]'>
               <table class="table m-top-16">
                 <tr>
-                  <th>Total Cash</th>
-                  <th width="150px">[[$formatCurrency(totalIncome)]]</th>
-                </tr>
-                <tr>
-                  <th>Credit</th>
-                  <th width="150px">[[$formatCurrency(totalDueOrCredit)]]</th>
-                </tr>
-                <tr>
-                  <th>Total Expenditure</th>
-                  <th width="150px">[[$formatCurrency(totalExpense)]]</th>
+                  <th>[[$TRANSLATE('Total Amount Received', LANG)]]</th>
+                  <th width="150px">[[$formatCurrency(report.totalAmountReceivedCombined)]]</th>
                 </tr>
                 </table>
             </template>
 
             <table class="table m-top-16">
               <tr>
-                <th>Net Cash</th>
+                <th>[[$TRANSLATE('Profit/Loss', LANG)]]</th>
                 <th width="150px">[[$formatCurrency(profitOrLoss)]]</th>
               </tr>
             </table>
@@ -288,15 +228,12 @@
 
         totalIncome: Number,
         totalExpense: Number,
-        totalDueOrCredit: Number,
         profitOrLoss: Number
       },
 
       navigatedIn() {
         this._loadUser();
-        this._loadOrganization(()=> {
-          this._loadMemberList()
-        })
+        this._loadOrganization(_ => null)
       },
 
       _loadUser() {
@@ -328,45 +265,6 @@
         });
       },
 
-      _loadMemberList() {
-        var data, user;
-        data = {
-          apiKey: this.user.apiKey,
-          organizationId: this.organization.idOnServer,
-          overrideWithIdList: (function () {
-            var i, len, ref, results;
-            ref = this.organization.userList;
-            results = [];
-            for (i = 0, len = ref.length; i < len; i++) {
-              user = ref[i];
-              results.push(user.id);
-            }
-            return results;
-          }).call(this),
-          searchString: 'N/A'
-        };
-        return this.callApi('/bdemr-organization-find-user', data, (function (_this) {
-          return function (err, response) {
-            if (response.hasError) {
-              return _this.domHost.showModalDialog(response.error.message);
-            } else {
-              _this.set('memberList', response.data.matchingUserList);
-              return
-            }
-          };
-        })(this));
-      },
-
-      memberSelected(e) {
-        var user;
-        if (!e.detail.value) {
-          return;
-        }
-        user = e.detail.value;
-        console.log(user)
-        return this.selectedUserSerial = user.serial;
-      },
-
       filterByDateClicked(e) {
         const startDate = new Date(e.detail.startDate);
         startDate.setHours(0, 0, 0, 0);
@@ -387,15 +285,13 @@
 
       _loadAccountsReport() {
         let query = {
-          createdByUserSerial: this.selectedUserSerial,
           apiKey: this.user.apiKey,
           dateCreatedFrom: this.startDate,
           dateCreatedTo: this.endDate,
           organizationIdList: [this.organization.idOnServer]
         }
-        console.log(query)
         this.loading = true;
-        this.callApi('/bdemr--organization-accounts-report-rmh', query, (err, response) => {
+        this.callApi('/bdemr--organization-accounts-report', query, (err, response) => {
           this.loading = false;
           if (err) return this.domHost.showModalDialog(err.message);
           if (response.hasError) return this.domHost.showModalDialog(response.error.message);
@@ -412,23 +308,14 @@
 
       calculateTotal() {
         if (!this.report) return;
-        let grossIncome = this.report.incomeByInvoiceCategory.reduce((total, item) => {
-          return total += item.value;
-        }, 0);
-        let grossCollectionFromDue = this.report.dueByInvoiceCategory.reduce((total, item) => {
+        let grossIncome = this.report.incomeByCategory.reduce((total, item) => {
           return total += item.value;
         }, 0);
         let grossExpense = this.report.expenseByCategory.reduce((total, item) => {
           return total += item.value;
         }, 0);
-        this.totalIncome = grossIncome;
-        this.totalExpense = (grossExpense + this.report.totalExpenseVatOrTax) - this.report.totalExpenseDiscount;
-        
-        let totalDueFromInvoice = this.report.totalDueFromInvoice;
-
-
-        this.totalDueOrCredit =  (Math.sign(totalDueFromInvoice) === -1) ? 0 :totalDueFromInvoice;
-        
+        this.totalIncome = grossIncome + this.report.totalIncomeVatOrTax - this.report.totalIncomeDiscount;
+        this.totalExpense = grossExpense + this.report.totalExpenseVatOrTax - this.report.totalExpenseDiscount;
         this.profitOrLoss = this.totalIncome - this.totalExpense;
       },
 
@@ -436,9 +323,6 @@
         this.domHost.navigateToPage("#/accounts-report-print-preview");
       },
 
-      resetButtonClicked() {
-        window.location.reload()
-      },
       navigatedOut() {
         this.report = null;
         this.totalIncome = 0;

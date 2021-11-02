@@ -921,7 +921,7 @@ app.pages.pageList = [
     showPatientsDetails: false
     icon: 'date-range'
     accessId: 'C016'
-    showOnSideNav: false
+    showOnSideNav: true
     index: 89
   }
 
@@ -1346,7 +1346,7 @@ app.pages.pageList = [
     showAccountsDashboardTabs: true
     showMediumTallToolbar: true    
     accessId: 'D016'
-    showOnSideNav: false
+    showOnSideNav: true
     icon: 'assessment'
     index: 99
   }
@@ -2109,7 +2109,7 @@ app.pages.pageList = [
     showAccountsDashboardTabs: true
     showMediumTallToolbar: true
     accessId: 'D019'
-    showOnSideNav: false
+    showOnSideNav: true
     icon: 'account-balance-wallet'
     index: 89
   }
@@ -2250,7 +2250,7 @@ app.pages.pageList = [
     showAccountsDashboardTabs: true
     showMediumTallToolbar: true    
     accessId: 'C070'
-    showOnSideNav: false
+    showOnSideNav: true
     icon: 'assessment'
     index: 89
   }
@@ -2464,7 +2464,7 @@ app.pages.pageList = [
     headerType: 'normal'
     leftMenuEnabled: true
     accessId: 'D021'
-    showOnSideNav: false
+    showOnSideNav: true
     showAccountsDashboardTabs: true
     showMediumTallToolbar: true    
     icon: 'assessment'

@@ -94,7 +94,7 @@ Polymer {
           user = (app.db.find 'user')[0]
           user.accountExpiresOnDate = response.data.accountExpiresOnDate
           app.db.update 'user', user._id, user
-          @domHost.navigateToPage '#/pharmacy-manager'
+          @domHost.navigateToPage '#/dashboard'
           @domHost.showModalDialog 'Activation Successful.'
         else
           @domHost.navigateToPage '#/select-organization'

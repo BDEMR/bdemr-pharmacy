@@ -146,7 +146,6 @@ Polymer {
     { item } = e.model
     today = this.formatDate()
     this.domHost.navigateToPage "#/chamber-patients/chamber:#{item.shortCode}/date:#{today}"
-    # window.location.reload()
 
 
   viewTodaysPatient: (e)->

@@ -135,7 +135,7 @@
         width: 100%;
       }
 
-      /* .print-header {
+      .print-header {
         position: relative;
         border-top-left-radius: inherit;
         border-top-right-radius: inherit;
@@ -143,8 +143,8 @@
         border-bottom: 1px solid #eeeeee;
         background-color: #fafafa;
         padding: 16px
-      } */
-/* 
+      }
+
       .print-document-header {
         padding-left: 10px;
         padding-right: 10px;
@@ -153,7 +153,7 @@
       .print-document-header .logo {
         max-width: 128px;
         max-height: 128px;
-      } */
+      }
 
       .document-header .logo {
         max-width: 128px;
@@ -218,13 +218,7 @@
 
       <div class="limiting-container custom-input-field">
 
-        <template is="dom-if" if="[[loading]]">
-          <div class="layout horizontal center type bold text-center">
-            <span>Please wait...</span>
-            <paper-progress class="progress" indeterminate></paper-progress>
-          </div>
-        </template>
-        <!-- <paper-progress indeterminate hidden$="[[!loading]]"></paper-progress> -->
+        <paper-progress indeterminate hidden$="[[!loading]]"></paper-progress>
 
         <div class="hideOnPrint">
           <div class="p-8 layout horizontal center wrap">

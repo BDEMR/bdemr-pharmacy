@@ -504,9 +504,8 @@ Polymer {
   # category - investigaiton - end
 
   _callGetTags:()->
-    unless @organization.idOnServer
-      return @domHost.showModalDialog "Organization ID invalid"
-    @domHost.callApi '/bdemr-get-common-product-tags-single-organization', { apiKey: @user.apiKey, orgId: @organization.idOnServer }, (err, response)=>
+
+    @domHost.callApi '/bdemr-get-common-product-tags', { apiKey: @user.apiKey }, (err, response)=>
       if response.hasError
         @set 'tags', []
       else
@@ -966,6 +965,7 @@ Polymer {
   
 
   navigatedIn: ->
+    console.log 'hello from navigatedIn'
     @_callGetInventory @filterBy, =>
       @_getCategories()
       @_callGetTags()

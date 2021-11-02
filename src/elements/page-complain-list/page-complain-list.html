@@ -109,12 +109,7 @@
           <div class="type caption-2 secondary" style="text-align: center; background: #fff; padding: 16px;">[[$TRANSLATE('No Complain(s) Available', LANG)]]</div>
         </template>
         <template is="dom-if" if="[[!$isEmptyArray(matchingComplaintList.length)]]">
-          <vaadin-grid id="complains" items="{{matchingComplaintList}}" class="grid-table" active-item="{{activeItem}}" style="padding: 10px;
-          width: 90%;
-          margin: 0 auto;
-          margin-top: 20px;
-          border-radius: 10px;
-          box-shadow: 1px 2px 3px #858585;">
+          <vaadin-grid id="complains" items="{{matchingComplaintList}}" class="grid-table" active-item="{{activeItem}}">
   
             <vaadin-grid-column width="8em">
               <template class="header">

@@ -145,9 +145,6 @@
       .paper-menu-width {
         width: 200px;
       }
-      .custom-input-field{
-        padding: 15px;
-      }
 
       @media only screen and (max-width: 1024px) {
         .page-invoice {
@@ -217,7 +214,6 @@
         position: relative;
         left: 50%;
       }
-
     </style>
 
     <div class="master-container">
@@ -297,9 +293,9 @@
                 <paper-input no-label-float class="m-left-8" label="Mobile No." type="number"
                   value="{{invoice.referralDoctor.mobile}}"></paper-input>
               </div>
-              <paper-button raised class="btn btn-sm btn-success" on-tap="showAddNewReferralDoctorForm">Add New +</paper-button>
             </div>
             <paper-button raised class="m-8 fixed-btn btn-add colored" on-tap="showPatientMedicine">Show Medicine</paper-button>
+            <paper-button raised class="m-8 fixed-btn btn-add colored" on-tap="showPatientPreviousInvoiceItems">Final Bill</paper-button>
             <br>
             <!-- Contact Address - start -->
             <div class="card-item p-6">
@@ -393,7 +389,7 @@
 
         <!-- Invoice -->
         <paper-card heading="Invoice">
-          <div class="custom-input-field" >
+          <div class="card-custom-header custom-input-field">
             
             <template is="dom-if" if="[[showCategoryAndItemSearch]]">
               <div class="layout horizontal">
@@ -515,7 +511,53 @@
                   <paper-icon-button class="flex-1" icon="delete" on-tap="deleteInvoiceItem"></paper-icon-button>
                 </paper-item>
               </template>
+              <hr>
+              <template id="invoice-item-repeater" is="dom-repeat" items="{{previousInvoiceDataList}}">
+                <paper-item class="invoice-item">
+                  <template is="dom-if" if="[[item.price]]">
+                    <div class="flex-1">[[item.price]]</div>
+                  </template>
+                  <template is="dom-if" if="[[!item.price]]">
+                    <paper-input class="flex-1" type="number" min="0" on-change="itemUnitPriceChanged" no-label-float
+                      style="padding-right:10px;"></paper-input>
+                  </template>
+                  <paper-input class="flex-1" label="Qty" type="number" min="0" value="[[item.qty]]"
+                    on-input="quantityChanged" no-label-float style="padding-right:10px;"></paper-input>
+                  <div class="flex-2 layout vertical">
+                    <div>
+                      <strong>[[item.name]]</strong>
+                      <template is="dom-if" if="[[item.type]]">
+                        <span class="type secondary">[[item.type]]</span>
+                      </template>
+                    </div>
+                    <template is="dom-if" if="[[item.itemList]]">
+                      <ul>
+                        <template is="dom-repeat" items="[[item.itemList]]" as="packageItem">
+                          <li>[[packageItem.name]] - [[packageItem.price]] BDT</li>
+                        </template>
+                      </ul>
+                    </template>
+                  </div>
+                  <div class="flex-2">[[item.totalPrice]]
+                    <span class="text-mute">BDT</span>
+                  </div>
+                  <div class="flex-4">
+                    <span>[[item.location]]</span>
+                  </div>
+                  <paper-input class="flex-2" label="Discount" type="number" min="0" value="[[item.discountAmount]]"
+                    on-input="discountAmountChanged" no-label-float style="padding-right:10px;"></paper-input>
 
+                  <div class="flex-2">[[item.discountedPrice]]
+                    <span class="text-mute">BDT</span>
+                  </div>
+
+                  <div class="flex-2">
+                    <paper-input class="flex-1" type="number" min="0" on-change="itemCommissionPriceChanged"
+                      no-label-float style="padding-right:10px;"></paper-input>
+                  </div>
+                  <paper-icon-button class="flex-1" icon="delete" on-tap="deleteInvoiceItem"></paper-icon-button>
+                </paper-item>
+              </template>
 
               <div class="layout vertical calculation p-16">
 
@@ -556,33 +598,6 @@
                     </paper-dropdown-menu>
                     <template is="dom-if" if="[[fundList.length]]">
                       <paper-dropdown-menu class="m-left-8" label="Discount Fund Type">
-                        <paper-menu selected-item-label="{{discountFundType}}" id="discountFundType" class="dropdown-content" on-iron-activate="discountfundTypeSelected">
-                          <paper-item>General</paper-item>
-                          <paper-item>Special</paper-item>
-                        </paper-menu>
-                      </paper-dropdown-menu>
-                      <template is="dom-if" if="[[showFund]]">
-                        <paper-dropdown-menu  label="Discount From Fund" class="m-left-8"
-                        on-iron-activate="discountfundSelected">
-                        <paper-menu class="dropdown-content">
-                          <template is="dom-repeat" items="[[fundList]]">
-                            <paper-item>[[item.name]]</paper-item>
-                          </template>
-                        </paper-menu>
-                      </paper-dropdown-menu>
-                      </template>
-                      
-                      <!-- <paper-dropdown-menu hidden$="[[!discountFundType]]" label="Discount From Fund" class="m-left-8"
-                        on-iron-activate="discountfundSelected">
-                        <paper-menu class="dropdown-content">
-                          <template is="dom-repeat" items="[[fundList]]">
-                            <paper-item>[[item.name]]</paper-item>
-                          </template>
-                        </paper-menu>
-                      </paper-dropdown-menu> -->
-                    </template>
-                    <!-- <template is="dom-if" if="[[fundList.length]]">
-                      <paper-dropdown-menu class="m-left-8" label="Discount Fund Type">
                         <paper-menu selected="{{discountFundType}}" id="discountFundType" class="dropdown-content">
                           <paper-item>General</paper-item>
                           <paper-item>Special</paper-item>
@@ -596,7 +611,7 @@
                           </template>
                         </paper-menu>
                       </paper-dropdown-menu>
-                    </template> -->
+                    </template>
 
                   </div>
                 </div>
@@ -964,22 +979,7 @@
         <paper-button raised on-tap="customUnitAddButtonClicked">Add</paper-button>
       </div>
     </paper-dialog>
-    <!-- Dialog for - Add New doctor - start -->
-    <paper-dialog class="custom-input-field" id="addNewDoctorDialog" style="width: 500px;">
-      <div class="type body-lead" style="color: green;">
-        <iron-icon icon="add" class="m-right-8 m-bottom-8"></iron-icon>[[$TRANSLATE('Add Doctor Details', LANG)]]
-      </div>
-      <paper-input label="[[$TRANSLATE('Name', LANG)]]" value="{{referralDoctorObj.name}}"></paper-input>
-      <paper-input label="[[$TRANSLATE('Mobile', LANG)]]" value="{{referralDoctorObj.phone}}" required></paper-input>
-      <paper-input label="[[$TRANSLATE('Email', LANG)]]" value="{{referralDoctorObj.email}}"></paper-input>
-      <paper-input label="[[$TRANSLATE('Address', LANG)]]" value="{{referralDoctorObj.address}}"></paper-input>
-    
-      <div class="buttons">
-        <paper-button dialog-dismiss>[[$TRANSLATE('Dismiss', LANG)]]</paper-button>
-        <paper-button class="colored" on-click="_addDoctor" autofocus raised>[[$TRANSLATE('Add', LANG)]]</paper-button>
-      </div>
-    </paper-dialog>
-    <!-- Dialog for - Add New doctor - end -->
+
   </template>
 
   <script src="page-outpatient-invoice.coffee-compiled.js"></script>

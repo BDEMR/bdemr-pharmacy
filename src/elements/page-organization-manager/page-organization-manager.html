@@ -87,11 +87,6 @@
       .modifier.type1 {
         background: #757575;
       }
-      .dashboard-item:hover .modifier.type1{
-        background: #fff;
-        color: #47baaf;
-        transition: 20ms all ease;
-      }
 
 
       .organization-info-card-counter {
@@ -100,22 +95,16 @@
         margin-right: 10px;
         color: #777777;
       }
-      .caption{
-      color: white;
-    }
-    
 
       .dashboard-item {
         position: relative;
         margin: 6px;
         padding: 8px;
         /* border: 1px solid #eee; */
-        border-radius: 5px;
+        border-radius: 4px;
         background-color: #fafafa;
         width: calc(25% - 28px);
         text-align: center;
-        box-shadow: 1px 1px 4px rgb(194, 194, 194);
-        transition: all 0.2s ease-in-out;
       }
       .dashboard-item-2 {
         position: relative;
@@ -133,10 +122,6 @@
 
       .dashboard-item:hover {
         cursor: pointer;
-        background-color: #47baaf;
-        color: white;
-        transform: scale(1.05);
-        
       }
 
       .dashboard-item .title {
@@ -155,13 +140,6 @@
         width: 40px;
         background: #eee;
         margin: 26px 0 8px 0;
-      }
-      .dashboard-item:hover .profile-pic{
-        background: #3a9990;
-        transition: 20ms all ease;
-      }
-      .dashboard-item:hover .caption{
-        color: white;
       }
 
       iron-icon {
@@ -200,7 +178,7 @@
         <!-- Organization list - start -->
         <paper-card>
 
-          <div class="p-8" >
+          <div class="p-8" style="background-color: #fff;">
 
             <div class="type caption-2 secondary"><iron-icon icon="icons:info-outline" class="icon small-tiny m-right-8"></iron-icon>You belong in total [[organizationsIBelongToList.length]] organizations.</div>
             

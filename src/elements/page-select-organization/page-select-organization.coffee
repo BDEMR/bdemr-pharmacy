@@ -47,8 +47,6 @@ Polymer {
     
   _loadUser:()->
     userList = app.db.find 'user'
-    
-
     if userList.length is 1
       @user = userList[0]
 
@@ -84,10 +82,6 @@ Polymer {
   navigatedIn: ->
     @_loadUser()
     @_findOrganizationsUserBelongsTo @user.apiKey
-    @isUserAgent = @domHost.isUserAgent
-    console.log 'agent' ,@isUserAgent
-    
-
     
   navigatedOut: ->
     @isOrganizationValid = false
@@ -108,20 +102,6 @@ Polymer {
   
   expiredWarningClass: (daysLeft)->
     return 'expired' if daysLeft < 7
-  _getUserInfo: ()->
-    @domHost.toggleModalLoader 'Getting your Information...'
-    @callApi '/get-user-info', { apiKey: @user.apiKey, organizationId: @organization.idOnServer }, (err, response)=>
-      @domHost.toggleModalLoader()
-      console.log response
-      if response.hasError
-        @domHost.showModalDialog response.error.message
-      else
-        user = response.data
-        user.fullName = @$getFullName user.name
-        user.apiKey = @user.apiKey
-
-        @set 'user', user
-        console.log 'user', @user
 
   navigateWithOrganizationSelected: ->
 
@@ -138,16 +118,11 @@ Polymer {
           selectedUserRole = @userRoleList[@selectedUserRoleIndex]
           if selectedUserRole
             @_getUserRoleDetails selectedUserRole, organization, =>
-              console.log 'roleList' , @roleList
-              @domHost.navigateToPage "#/pharmacy-manager"
+              @domHost.navigateToPage "#/patient-manager"
               window.location.reload()
           else
-            if @isUserAgent
-              @domHost.navigateToPage "#/pharmacy-manager"
-              window.location.reload()
-            else
-              @domHost.navigateToPage "#/pharmacy-manager"
-              window.location.reload()
+            @domHost.navigateToPage "#/patient-manager"
+            window.location.reload()
 
     else
       @domHost.showModalDialog "Chose an Organization to Continue"
@@ -165,7 +140,6 @@ Polymer {
       else
         # selectedOrganization = @organizationsIBelongToList[@selectedOrganizationIndex]
         organization.userActiveRole = response.data
-        @roleList=organization.userActiveRole
         app.db.upsert 'organization', organization, ({idOnServer})=> organization.idOnServer is idOnServer 
         cbfn()
 

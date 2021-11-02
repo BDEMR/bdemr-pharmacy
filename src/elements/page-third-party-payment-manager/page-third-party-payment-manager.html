@@ -12,11 +12,6 @@
 <link rel="import" href="../../bower-assets/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower-assets/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
-<link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
-<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
-<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
-<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid.html">
-
 
 <link rel="import" href="../module-accounts-top-nav/module-accounts-top-nav.html">
 
@@ -136,7 +131,7 @@
           <div class="card-content custom-input-field">
 
             <div class="layout horizontal end wrap">
-              <paper-input type="search" class="filter-query m-right-8" label="[[$TRANSLATE('Filter By Name or Mobile', LANG)]]" no-label-float value="{{mobileSearchString}}"></paper-input>
+              <paper-input type="search" class="filter-query m-right-8" label="[[$TRANSLATE('Filter By Name or Mobile', LANG)]]" no-label-float value="{{searchString}}"></paper-input>
 
               <custom-vital-search on-date-select="filterByDateClicked" on-clear="filterByDateClearButtonClicked"></custom-vital-search>
 
@@ -145,140 +140,10 @@
             </div>
           </div>
           <div class="card-content">
-            <!-- <template is="dom-if" if="[[!thirdPartyPaymentList.length]]">
+            <template is="dom-if" if="[[!thirdPartyPaymentList.length]]">
               <h3 class="type center">[[$TRANSLATE('NO DATA YET', LANG)]]</h3>
-            </template> -->
-            
-              <vaadin-grid class="custom-agent-table" id="paymentList" items="[[thirdPartyPaymentList]]">
-                <vaadin-grid-column resizable>
-                  <template class="header">
-                    <vaadin-grid-sorter path="name">
-                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Name', LANG)]]" path="name"
-                        value="[[filterName]]">
-                        <paper-input label="[[$TRANSLATE('Name', LANG)]]" value="{{filterName}}" no-label-float>
-                        </paper-input>
-                      </vaadin-grid-filter>
-                    </vaadin-grid-sorter>
-                  </template>
-                  <template>
-                    <div class="layout vertical">
-                      [[item.name]]
-                      </div>
-                  </template>
-                </vaadin-grid-column>
-                <vaadin-grid-column resizable>
-                  <template class="header">
-                    <vaadin-grid-sorter path="mobile">
-                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Mobile', LANG)]]" path="mobile"
-                        value="[[filterMobile]]">
-                        <paper-input label="[[$TRANSLATE('Mobile', LANG)]]" value="{{filterMobile}}" no-label-float>
-                        </paper-input>
-                      </vaadin-grid-filter>
-                    </vaadin-grid-sorter>
-                  </template>
-                  <template>
-                    <div class="layout vertical">
-                      [[item.mobile]]
-                      </div>
-                  </template>
-                </vaadin-grid-column>
-                <vaadin-grid-column resizable>
-                  <template class="header">
-                    <vaadin-grid-sorter path="address">
-                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Address', LANG)]]" path="address"
-                        value="[[filterAddress]]">
-                        <paper-input label="[[$TRANSLATE('Address', LANG)]]" value="{{filterAddress}}" no-label-float>
-                        </paper-input>
-                      </vaadin-grid-filter>
-                    </vaadin-grid-sorter>
-                  </template>
-                  <template>
-                    <div class="layout vertical">
-                      [[item.address]]
-                      </div>
-                  </template>
-                </vaadin-grid-column>
-                <vaadin-grid-column resizable>
-                  <template class="header">
-                    <vaadin-grid-sorter path="billedDateFrom">
-                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Billed Date From', LANG)]]" path="billedDateFrom"
-                        value="[[filterBilledDateFrom]]">
-                        <paper-input label="[[$TRANSLATE('Billed Date From', LANG)]]" value="{{filterBilledDateFrom}}" no-label-float>
-                        </paper-input>
-                      </vaadin-grid-filter>
-                    </vaadin-grid-sorter>
-                  </template>
-                  <template>
-                    <div class="layout vertical">
-                      [[ $formatDateTime(item.billedDateFrom)]]
-                      </div>
-                  </template>
-                </vaadin-grid-column>
-                <vaadin-grid-column resizable>
-                  <template class="header">
-                    <vaadin-grid-sorter path="billedDateTo">
-                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Billed date to', LANG)]]" path="billedDateTo"
-                        value="[[filterBilledDateTo]]">
-                        <paper-input label="[[$TRANSLATE('Billed date to', LANG)]]" value="{{filterBilledDateTo}}" no-label-float>
-                        </paper-input>
-                      </vaadin-grid-filter>
-                    </vaadin-grid-sorter>
-                  </template>
-                  <template>
-                    <div class="layout vertical">
-                      [[$formatDateTime(item.billedDateTo)]]
-                      </div>
-                  </template>
-                </vaadin-grid-column>
-                <vaadin-grid-column resizable>
-                  <template class="header">
-                    <vaadin-grid-sorter path="createdDatetimeStamp">
-                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Payment date', LANG)]]" path="createdDatetimeStamp"
-                        value="[[filterPayDate]]">
-                        <paper-input label="[[$TRANSLATE('Payment date', LANG)]]" value="{{filterPayDate}}" no-label-float>
-                        </paper-input>
-                      </vaadin-grid-filter>
-                    </vaadin-grid-sorter>
-                  </template>
-                  <template>
-                    <div class="layout vertical">
-                      [[$formatDateTime(item.createdDatetimeStamp)]]
-                      </div>
-                  </template>
-                </vaadin-grid-column>
-                <vaadin-grid-column resizable>
-                  <template class="header">
-                    <vaadin-grid-sorter path="paymentAmount">
-                      <vaadin-grid-filter aria-label="[[$TRANSLATE('Payment amount', LANG)]]" path="paymentAmount"
-                        value="[[filterPayment]]">
-                        <paper-input label="[[$TRANSLATE('Payment amount', LANG)]]" value="{{filterPayment}}" no-label-float>
-                        </paper-input>
-                      </vaadin-grid-filter>
-                    </vaadin-grid-sorter>
-                  </template>
-                  <template>
-                    <div class="layout vertical">
-                      [[item.paymentAmount]]
-                      </div>
-                  </template>
-                </vaadin-grid-column>
-                <vaadin-grid-column resizable>
-                  <template class="header">
-                    [[$TRANSLATE('Actions', LANG)]]
-                  </template>
-                  <template>
-                    <div class="layout vertical">
-                      <paper-button raised class="btn btn-danger" on-tap="_deletePayment">[[$TRANSLATE('Delete', LANG)]]</paper-button>
-  
-                      </div>
-                  </template>
-                </vaadin-grid-column>
-                </vaadin-grid>
-            
-            
-
-
-            <!-- <table class="table">
+            </template>
+            <table class="table">
               <tr>
                 <th>[[$TRANSLATE('Name', LANG)]]</th>
                 <th>[[$TRANSLATE('Mobile', LANG)]]</th>
@@ -297,8 +162,8 @@
                   <td>[[item.name]]</td>
                   <td>[[item.mobile]]</td>
                   <td>[[item.address]]</td>
-                  <td>[[ $formatDateTime(item.billedDateFrom)]]</td>
-                  <td>[[ $formatDateTime(item.billedDateTo)]]</td>
+                  <td>[[_formatDateTime(item.billedDateFrom)]]</td>
+                  <td>[[_formatDateTime(item.billedDateTo)]]</td>
                   <td>[[$formatDateTime(item.createdDatetimeStamp)]]</td>
                   <td>[[item.paymentAmount]] BDT</td>
                   <td>
@@ -306,7 +171,7 @@
                   </td>
                 </tr>
               </template>
-            </table> -->
+            </table>
           </div>
         </paper-card>
 

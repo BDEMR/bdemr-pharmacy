@@ -140,7 +140,7 @@
             <section>
               <paper-card>
                 <div class="p-12 horizontal layout end-justified">
-                  <paper-button raised class="custom-input colored" on-tap="showAddNewThirdPartyDialog">[[$TRANSLATE('add new third party', LANG)]]</paper-button>
+                  <paper-button raised class="custom-input colored" on-tap="showThirdPartyDialog">[[$TRANSLATE('add new third party', LANG)]]</paper-button>
                 </div>
       
                 <div class="">
@@ -166,7 +166,6 @@
                           <div class="type caption secondary"><i>[[$TRANSLATE('Added on', LANG)]] [[_formatDate(item.createdDatetimeStamp)]]</i></div>
                           <div class="type caption-2">[[item.data.user.phone]]</div>
                           <div class="type caption-2">[[item.data.user.email]]</strong></div>
-                          <div class="type caption-2">[[item.data.user.supervisorId]]</strong></div>
                         </template>
                       </vaadin-grid-column>
       
@@ -190,7 +189,6 @@
                         <template>
                           <div class="horizontal layout wrap center center-justified">
                             <paper-icon-button style="color: red;" on-tap="_onTapDeleteThirdParty" icon="delete"></paper-icon-button>
-                            <!-- <paper-button raised class="custom-button btn btn-success m-4" on-tap="_onTapEditThirdParty">Add/Edit Supervisor ID</paper-button> -->
                           </div>
                         </template>
                       </vaadin-grid-column>
@@ -256,17 +254,9 @@
 
     <!-- Dialog - Third party - start -->
     <paper-dialog class="custom-input-field" id="dialogThirdParty">
-      <div class="type title-2 bold text-success">[[$TRANSLATE('+ New Third Party', LANG)]]</div>
-      <!-- <vaadin-combo-box no-label-float id="userSearch" class="flex"
-        label="[[$TRANSLATE('Search By Name/Mobile/Email or Input Name', LANG)]]" item-label-path="name"
-        filter="{{userSearchQuery}}" loading="[[fetchingUserSearchResult]]" on-selected-item-changed="userSelected"
-        value="">
-        <template>
-          <div><strong>[[$getFullName(item.name)]]</strong></div>
-          <div><small>[[item.phone]] | [[item.email]]</small></div>
-        </template>
-      </vaadin-combo-box> -->
-      <paper-autocomplete class="flex" id="userSearch" label="[[$TRANSLATE('Type Mobile/Name and Press Enter',LANG)]]" on-autocomplete-selected="userSelected"
+      <div class="type title-2 bold text-success">[[$TRANSLATE('New Third Party', LANG)]]</div>
+
+      <paper-autocomplete class="flex" id="userSearch" label="[[$TRANSLATE('Search User',LANG)]]" on-autocomplete-selected="userSelected"
         on-autocomplete-reset="userSearchCleared" on-keyup="userSearchEnterKeyPressed" error-message="Input Required"
         text-property="name" value-property="idOnServer" required>
         <template autocomplete-custom-template>

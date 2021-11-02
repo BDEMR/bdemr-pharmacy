@@ -198,14 +198,13 @@ Polymer({
         dateCreatedFrom: this.dateCreatedFrom != null ? this.dateCreatedFrom : (this.dateCreatedFrom = ""),
         dateCreatedTo: this.dateCreatedTo != null ? this.dateCreatedTo : (this.dateCreatedTo = ""),
         searchString: this.searchString,
-        searchStringSuperVisorId: this.searchStringSuperVisorId,
         commissionCategorySerial: this.selectedCategorySerial,
         paidStatus: this.paidStatus,
         thirdPartyIdList: this.thirdPartyIdList
       }
     };
     this.isLoading = true;
-    return this.callApi('/bdemr--clinic-commission-report-cmh', query, (err, response) => {
+    return this.callApi('/bdemr--clinic-commission-report', query, (err, response) => {
       this.isLoading = false;
       if (response.hasError) {
         return this.domHost.showModalDialog(response.error.message);

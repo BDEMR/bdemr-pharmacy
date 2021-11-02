@@ -239,9 +239,6 @@ Polymer {
   managePatientsScheduleTapped: (e)->
     { entry } = e.model
     dateString = this._getMonthString() + '-' + (if entry.date < 10 then '0' else '') + entry.date
-    # window.localStorage.setItem('navigate',this.chamberShortCode)
-    # window.localStorage.setItem('dateString',dateString)
-
     this.domHost.navigateToPage "#/chamber-patients/chamber:#{this.chamberShortCode}/date:#{dateString}"
 
   navigatedIn: ->

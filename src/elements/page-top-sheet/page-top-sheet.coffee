@@ -160,56 +160,38 @@ Polymer {
   
   searchButtonClicked: ()->
 
-    # searchParameters = {
-    #   dateCreatedFrom: @dateCreatedFrom?=""
-    #   dateCreatedTo: @dateCreatedTo?=""
-    #   searchString: @searchString.toLowerCase()
-    # }
-
-    # console.log 'from date', searchParameters.dateCreatedFrom
-    # console.log 'to date', searchParameters.dateCreatedTo
-    # console.log 'search string', searchParameters.searchString
-
-
-    # filteredTopSheetEntryList = []
-
-    # if @dateCreatedFrom
-    #   filteredTopSheetEntryList = @topSheetEntryListOriginal.filter (item) =>
-    #     return true if (searchParameters.dateCreatedFrom <= item.addedOn <= searchParameters.dateCreatedTo)
-
-    # if @searchString
-    #   filteredTopSheetEntryList = @topSheetEntryListOriginal.filter (item) =>
-    #     return true if (searchParameters.searchString is item.name.toLowerCase()) or (searchParameters.searchString is item.mobile)
-
-    # if @dateCreatedFrom and @searchString
-    #   filteredTopSheetEntryList = @topSheetEntryListOriginal.filter (item) =>
-    #     return true if (searchParameters.dateCreatedFrom <= item.addedOn <= searchParameters.dateCreatedTo) and (searchParameters.searchString is item.name.toLowerCase() or searchParameters.searchString is item.mobile)
-    
-    # filteredTopSheetEntryList.sort (left, right)=>
-    #   return 1 if left.addedOn < right.addedOn
-    #   return -1 if left.addedOn > right.addedOn
-    #   return 0
-
-    # console.log 'filtered top sheet entry list', filteredTopSheetEntryList
-    # @set 'topSheetEntryList', filteredTopSheetEntryList
-
-    data = { 
-      apiKey: @user.apiKey
-      organizationId: @organization.idOnServer
-      searchParameters: {
-        dateCreatedFrom: @dateCreatedFrom?=""
-        dateCreatedTo: @dateCreatedTo?=""
-        mobileSearchString: @mobileSearchString.toLowerCase()
-      }          
+    searchParameters = {
+      dateCreatedFrom: @dateCreatedFrom?=""
+      dateCreatedTo: @dateCreatedTo?=""
+      searchString: @searchString.toLowerCase()
     }
-    @callApi '/bdemr--clinic-topsheet-report', data, (err, response)=>
-      if response.hasError
-        @domHost.showModalDialog response.error.message
-      else
-        data = response.data
-        console.log data
-        @set 'thirdPartyPaymentList', data
 
+    console.log 'from date', searchParameters.dateCreatedFrom
+    console.log 'to date', searchParameters.dateCreatedTo
+    console.log 'search string', searchParameters.searchString
+
+
+    filteredTopSheetEntryList = []
+
+    if @dateCreatedFrom
+      filteredTopSheetEntryList = @topSheetEntryListOriginal.filter (item) =>
+        return true if (searchParameters.dateCreatedFrom <= item.addedOn <= searchParameters.dateCreatedTo)
+
+    if @searchString
+      filteredTopSheetEntryList = @topSheetEntryListOriginal.filter (item) =>
+        return true if (searchParameters.searchString is item.name.toLowerCase()) or (searchParameters.searchString is item.mobile)
+
+    if @dateCreatedFrom and @searchString
+      filteredTopSheetEntryList = @topSheetEntryListOriginal.filter (item) =>
+        return true if (searchParameters.dateCreatedFrom <= item.addedOn <= searchParameters.dateCreatedTo) and (searchParameters.searchString is item.name.toLowerCase() or searchParameters.searchString is item.mobile)
+    
+    filteredTopSheetEntryList.sort (left, right)=>
+      return 1 if left.addedOn < right.addedOn
+      return -1 if left.addedOn > right.addedOn
+      return 0
+
+    console.log 'filtered top sheet entry list', filteredTopSheetEntryList
+    @set 'topSheetEntryList', filteredTopSheetEntryList
 
 
   _addNewEntryButtonClicked: (e)-> 
@@ -297,17 +279,7 @@ Polymer {
     if !@topSheetEntryObject.serial
       @topSheetEntryObject.serial = @generateSerialForTopSheetEntry()
     
-    # app.db.insert 'top-sheet-entry-list', @topSheetEntryObject
-    data = { 
-      apiKey: @user.apiKey
-      topSheetEntryObject: @topSheetEntryObject  
-    }
-    @callApi '/bdemr--clinic-add-topsheet-entry', data, (err, response)=>
-      if response.hasError
-        @domHost.showModalDialog response.error.message
-      else
-        data = response.data
-        console.log data    
+    app.db.insert 'top-sheet-entry-list', @topSheetEntryObject
     console.log 'top sheet entry object', @topSheetEntryObject
     @_makeNewTopSheetEntryObject()
     @getTopSheetEntryList()

@@ -22,10 +22,7 @@ Polymer {
     dateString:
       type: String
       value: ()-> ""
-    newScheduleSelected: 
-      type: String
-      observer: 'userSelectedForm'
-      
+
     showOnlineDoctorsOnly:
       type: Boolean
       value: false
@@ -129,9 +126,6 @@ Polymer {
     fetchingSpecializationList:
       type: Boolean
       value: false
-    alreadyHaveAppointment:
-      type: Boolean
-      value: false
 
     orgAddress: String
     orgPhone: String
@@ -147,33 +141,7 @@ Polymer {
   
   listeners:
     'active-users': '_activeUsersHandler'
-
-  # ///////Todo task////////
   
-  userSelectedForm:(selectedSchedule)->
-    timeSlot = @selectedDoctor.scheduleList[@selectedDoctor.selectedSchedulePage].timeSlotList[selectedSchedule].timeSlot
-    console.log 'selected',timeSlot
-    if @selectedPatients
-      query = {
-        apiKey: @user.apiKey
-        patientId: @selectedPatients.idOnServer
-        timeSlot: timeSlot
-        dateString : @selectedDateString
-        chamberName: @selectedDoctor.name
-      }
-      @callApi '/bdemr--agent-check-existing-patient-booking', query, (err, response)=>
-        if response.hasError
-          this.domHost.showModalDialog response.error.message
-        else
-          details = response.data
-          console.log 'details',details
-          if details > 0
-            @alreadyHaveAppointment = true
-          else
-            @alreadyHaveAppointment = false
-
-
-
   patientSearchInputChanged: (searchQuery)->
     unless searchQuery.length > 2
       return
@@ -203,7 +171,6 @@ Polymer {
   patientSelected: (e)->
     return unless e.detail.value
     @set "selectedPatients", e.detail.value
-    @userSelectedForm @newScheduleSelected
   
   _clearSelectedPatientData: ()->
     @set "patientSearchQuery", ''
@@ -237,8 +204,6 @@ Polymer {
     totalBillAmount = doctorFee + govSourceChargeAmount + bdmerServiceCharge
 
     totalBillAmount +=  agentCommissionAmount if @isUserAgent 
-    console.log 'totalbill',totalBillAmount
-
 
     @set "otherCharges.totalBillAmount", totalBillAmount
     @set "otherCharges.agentCharge", agentCommissionAmount
@@ -311,9 +276,7 @@ Polymer {
       @set "chamberList.#{index}.isOnline", isOnline
   
   goToMyBookings: ()->
-    @domHost.navigateToPage '#/agent-bookings'
-  goToMyWallet: ()->
-    @domHost.navigateToPage '#/my-wallet'
+    @domHost.navigateToPage '#/my-bookings'
   
   navigatedIn: ()->
     @user = (app.db.find 'user')[0]
@@ -324,9 +287,6 @@ Polymer {
 
     @isUserAgent = @domHost.isUserAgent
     console.log "@isUserAgent", @isUserAgent
-    if !@isUserAgent
-      this.domHost.navigateToPage '#/patient-manager'
-      @$$('#agentNotRegistered').toggle()
 
     this.walletBalance = @domHost.walletBalance
     console.log @walletBalance
@@ -362,14 +322,14 @@ Polymer {
       serviceChargeIncluded
       _id
     } = @selectedDoctor
-    dateString = @selectedDateString
+    dateString = @selectedDoctor.scheduleList[0].dateString
 
-    console.log @newScheduleSelected
+    console.log @selectedDoctor._selectedTimeSlotIndex
 
-    return @domHost.showToast "Select a Timeslot First!" if @newScheduleSelected is undefined
-    return @domHost.showToast "Select a Timeslot First!" if @newScheduleSelected is -1
+    return @domHost.showToast "Select a Timeslot First!" if @selectedDoctor._selectedTimeSlotIndex is undefined
+    return @domHost.showToast "Select a Timeslot First!" if @selectedDoctor._selectedTimeSlotIndex is -1
       
-    timeSlot = @selectedDoctor.scheduleList[@selectedDoctor.selectedSchedulePage].timeSlotList[@newScheduleSelected].timeSlot
+    timeSlot = @selectedDoctor.scheduleList[0].timeSlotList[@selectedDoctor._selectedTimeSlotIndex].timeSlot
 
     details = {
       dateString
@@ -397,7 +357,7 @@ Polymer {
       # agentData: @selectedAgentDetails
     }
     console.log details
-    notes = "#{@selectedDoctor.assignedDoctors.name} Consultation Fee"
+    notes = "#{@selectedDoctor.doctorPublicInfo.name} Consultation Fee"
 
     if @isUserAgent
       details.bookedType = 'agent'
@@ -415,12 +375,12 @@ Polymer {
     this._bookAppointment details, (schedule)=>
       this._chargeUser @otherCharges, details.patientId, schedule._id, notes, (transactionId)=>
         
-        details.paymentStatus = 'online successful by patient'
+        details.paymentStatus = 'online-successful-by-patient'
         details.bookedByUserType = 'patient'
         details.transactionId = transactionId
 
         if @isUserAgent
-          details.paymentStatus = 'online successful by agent'
+          details.paymentStatus = 'online-successful-by-agent'
           details.bookedByUserType = 'agent'
         
         this._bookAppointment details, (schedule2)=>
@@ -429,7 +389,6 @@ Polymer {
           this.domHost.toggleModalLoader()
           @$$('#doctorBookingDetailsDialog').close()
           @domHost.showModalDialog "Your Booking & Payment has been completed Successfully!"
-          this.walletBalance = @domHost.walletBalance
             # this.searchBookingTapped(null)
 
 
@@ -450,12 +409,12 @@ Polymer {
     } = @selectedDoctor
     dateString = @selectedDoctor.scheduleList[0].dateString
 
-    console.log @newScheduleSelected
+    console.log @selectedDoctor._selectedTimeSlotIndex
 
-    return @domHost.showToast "Select a Timeslot First!" if @newScheduleSelected is undefined
-    return @domHost.showToast "Select a Timeslot First!" if @newScheduleSelected is -1
+    return @domHost.showToast "Select a Timeslot First!" if @selectedDoctor._selectedTimeSlotIndex is undefined
+    return @domHost.showToast "Select a Timeslot First!" if @selectedDoctor._selectedTimeSlotIndex is -1
       
-    timeSlot = @selectedDoctor.scheduleList[0].timeSlotList[@newScheduleSelected].timeSlot
+    timeSlot = @selectedDoctor.scheduleList[0].timeSlotList[@selectedDoctor._selectedTimeSlotIndex].timeSlot
 
     details = {
       dateString
@@ -503,7 +462,7 @@ Polymer {
       this.domHost._loadWallet()
       this.domHost.toggleModalLoader()
       @$$('#doctorBookingDetailsDialog').close()
-      @domHost.showModalDialog "Your Booking has been completed Successfully!"
+      @domHost.showModalDialog "Your Booking & Payment has been completed Successfully!"
         # this.searchBookingTapped(null)
 
     
@@ -583,15 +542,31 @@ Polymer {
     data = {}
     Object.assign(data, filters)
     @domHost.toggleModalLoader 'Please Wait...'
-    this.domHost.callApi '/bdemr-search-doctor-chamber', data, (err, response)=>
+    this.domHost.callApi '/bdemr-public-booking--patient--search-doctor-to-book', data, (err, response)=>
       @domHost.toggleModalLoader()
       if response.hasError
-        # this.domHost.showModalDialog response.error.message
+        this.domHost.showModalDialog response.error.message
+      else if response.data.chamberList.length
         this.chamberList = []
+        chamberList = response.data.chamberList
+        # for chamber in chamberList
+        #   chamber._selectedTimeSlotIndex = 0
+        #   dateString = chamber.scheduleList[0].dateString
+        #   if (this.myBookingList and this.myBookingList.length > 0)
+        #     for myBooking in this.myBookingList
+        #       if chamber.name is myBooking.chamberName and chamber.doctorId is myBooking.doctorId and myBooking.dateString is dateString and not myBooking.isCanceled
+        #         chamber.alreadyHaveAnAppointment = true
+
+        this.chamberList = chamberList
+        this.updateDoctorOnlineStatus()
+        console.log 'CHMABERS', chamberList
+        ## reason - it takes time to load
+        if chamberList.length
+          for chamber in chamberList
+            @_getLatestNamePictureOfDoctor(chamber.doctorPublicInfo.idOnServer)
         cbfn()
       else
-        this.chamberList = response.data
-        this.updateDoctorOnlineStatus()
+        this.chamberList = []
         cbfn()
 
 
@@ -805,7 +780,6 @@ Polymer {
       filterByShortCode: filterByShortCode or null
       filterByChamberAddress: filterByChamberAddress or null
       filterByOrganizationId: filterByOrganizationId or null
-      filterByChamberName: null
       dateString: dateString or lib.datetime.mkDate(d)
     }
 
@@ -817,7 +791,7 @@ Polymer {
     this._searchDoctorToBook data, =>
       console.log(this.chamberList)
       @$$("#notificationDrawer").close()
-      this.walletBalance = @domHost.walletBalance
+      null
 
   # ====================================== NEW BOOK END
 
@@ -961,9 +935,9 @@ Polymer {
     # chamber = @chamberList[index]
 
     path = 'selectedDoctor.selectedSchedulePage'
-    timeSlotPath = 'newScheduleSelected'
-   
-    @set timeSlotPath, +1
+    timeSlotPath = 'selectedDoctor._selectedTimeSlotIndex'
+
+    @set timeSlotPath, -1
 
     if @selectedDoctor.selectedSchedulePage > 0
       @set path, @selectedDoctor.selectedSchedulePage - 1
@@ -975,7 +949,7 @@ Polymer {
       schedule = @selectedDoctor.scheduleList[@selectedDoctor.scheduleList.length - 1]
       @selectedDateString = schedule.dateString
       @selectedTimeSlotFromSchduleDateDrpdwn = schedule.timeSlotList          
-    @userSelectedForm @newScheduleSelected  
+
 
   nextSchedule: (e)->
     # el = @locateParentNode e.target, 'PAPER-ICON-BUTTON'
@@ -988,9 +962,9 @@ Polymer {
     # timeSlotPath = 'chamberList.' + index + '._selectedTimeSlotIndex'
 
     path = 'selectedDoctor.selectedSchedulePage'
-    timeSlotPath = 'newScheduleSelected'
-    
-    @set timeSlotPath, +1    
+    timeSlotPath = 'selectedDoctor._selectedTimeSlotIndex'
+
+    @set timeSlotPath, -1    
 
     if @selectedDoctor.selectedSchedulePage < @selectedDoctor.scheduleList.length - 1
       @set path, @selectedDoctor.selectedSchedulePage + 1
@@ -1001,88 +975,26 @@ Polymer {
     else
       @set path, 0
       schedule = @selectedDoctor.scheduleList[0]
-      console.log schedule
-
       @selectedDateString = schedule.dateString
       @selectedTimeSlotFromSchduleDateDrpdwn = schedule.timeSlotList  
-    @userSelectedForm @newScheduleSelected  
-    
 
   patchOverlay: (e)->
     if e.target.withBackdrop
       e.target.parentNode.insertBefore e.target.backdropElement, e.target
-  activeButton:()->
-
-    return $gte @walletBalance, @otherCharges.totalBillAmount && !@alreadyHaveAppointment
-  
-  _getChamberSchedule: (chamber, cbfn)->
-    data = { 
-      serial: chamber.serial
-      maximumVisitorPerBookingSlot: chamber.maximumVisitorPerBookingSlot
-    }
-    this.domHost.callApi '/bdemr-get-chamber-upcoming-schedules', data, (err, response)=>
-      if response.hasError
-        this.domHost.showModalDialog response.error.message
-      else
-        cbfn response.data
-
 
   doctorClicked: (e)->
     item = e.model.__data__.chamber
     console.log item
+    dateString = item.scheduleList[0].dateString
+    console.log dateString
+    for myBooking in this.myBookingList
+      if item.name is myBooking.chamberName and item.doctorId is myBooking.doctorId and myBooking.dateString is dateString and not myBooking.isCanceled
+        item.alreadyHaveAnAppointment = true    
+    @set 'selectedDoctor', item
+    @set "selectedDoctorVisitFee", item.newPatientVisitFee
+    @makeNewSignupPatientObject()
+    @$$('#doctorBookingDetailsDialog').toggle()
 
-    @domHost.toggleModalLoader 'Getting Schedules...'
-    @_getChamberSchedule item, (scheduleList)=>
-      @domHost.toggleModalLoader()
-      item.scheduleList = scheduleList
-      @count = 0
-      
-      dateString = @$getDay 0
-      console.log "@dateString", dateString
-
-      @isUserAgent = @domHost.isUserAgent
-      console.log "@isUserAgent", @isUserAgent
-      console.log @count
-      for myBooking in this.myBookingList
-        if item.name is myBooking.chamberName and item.doctorId is myBooking.doctorId and myBooking.dateString is dateString and not myBooking.isCanceled
-          item.alreadyHaveAnAppointment = true 
-
-      @set 'selectedDoctor', item
-      @selectedDoctor.doctorId = @selectedDoctor.assignedDoctors[0].idOnServer
-      @set 'selectedDoctor.selectedSchedulePage' , 0
-
-
-      console.log {@selectedDoctor}
-
-      item.scheduleList.map (scheduleString)=>
-        console.log scheduleString.dateString
-
-        if scheduleString.dateString is dateString
-          @selectedDoctor.selectedSchedulePage = @count
-          
-        else @count++
-
-      # @selectedDoctor.selectedSchedulePage = @count
-      console.log @selectedDoctor.scheduleList
-      console.log @selectedDoctor.selectedSchedulePage
-
-      schedule= @selectedDoctor.scheduleList[@selectedDoctor.selectedSchedulePage]
-      @selectedDateString = schedule.dateString
-      @selectedTimeSlotFromSchduleDateDrpdwn = schedule.timeSlotList
-
-      
-      
-      @set 'selectedDoctorVisitFee', item.newPatientVisitFee
-      @set 'selectedBookingType', 'video-call'
-      @set 'newScheduleSelected', 0
-      
-
-      console.log 'selected' , item.newPatientVisitFee
-      
-      @makeNewSignupPatientObject()
-      @$$('#doctorBookingDetailsDialog').toggle()
-    
-    console.log 'selectedTimeSlotFromSchduleDateDrpdwn' , @selectedTimeSlotFromSchduleDateDrpdwn
   # ------------ signup new patient start ------------
 
   getSearchPatientBack: ()->

@@ -107,14 +107,13 @@
       .card-custom-header {
         padding: 15px;
         border-bottom: 1px solid var(--paper-grey-200);
-        background-color: #47baaf !important;
-        
+        background-color: var(--paper-grey-50);
       }
 
       .card-custom-header .title {
         font-size: 20px;
         font-weight: 500;
-        
+        color: var(--brand-primary-color);
       }
 
       .card-sub-header {
@@ -171,7 +170,7 @@
                 <div class="type caption-2">[[$TRANSLATE('SMS Balance', LANG)]]: [[userSmsBalance]]</div>
               </div>
               <paper-menu-button class="p-0" horizontal-align="right">
-                <paper-icon-button icon="icons:more-vert" class="dropdown-trigger wallat-icon" alt="options" style="color:white"></paper-icon-button>
+                <paper-icon-button icon="icons:more-vert" class="dropdown-trigger" alt="options"></paper-icon-button>
                 <paper-menu class="dropdown-content">
                   <paper-item on-tap="showAddFundsDialog">Add Funds</paper-item>
                   <paper-item on-tap="showBuySmsDialog">Buy Bulk SMS</paper-item>
@@ -202,7 +201,7 @@
             </div>
           </template>
           <template is="dom-if" if="[[!$isEmptyArray(walletTransactionList.length)]]">
-            <vaadin-grid items="[[walletTransactionList]]" id="transactionList" active-item="{{activeItem}}" style="padding:20px">
+            <vaadin-grid items="[[walletTransactionList]]" id="transactionList" active-item="{{activeItem}}">
               <vaadin-grid-column width="8em" resizable>
                 <template class="header">
                   <vaadin-grid-sorter path="name" direction="asc">

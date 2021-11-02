@@ -41,17 +41,11 @@
       }
 
       :host {
-        /* height: calc(100% - 56px); */
-    position: relative;
-    width: 90%;
-    /* margin: 10px; */
-    margin: 0 auto;
-    display: flex;
-    /* justify-content: space-between; */
-    left: 0;
-    /* right: 0; */
-    /* top: 56px; */
-    border-radius: 10px;
+        height: calc(100% - 56px);
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 56px;
       }
 
       .container {
@@ -68,11 +62,10 @@
         height: inherit;
         font-family: Roboto, sans-serif;
         --divider-color: rgba(0, 0, 0, var(--dark-divider-opacity));
-        padding: 20px;
 
-        --vaadin-grid-cell: {
+        /* --vaadin-grid-cell: {
           padding: 0;
-        };
+        }; */
 
         --vaadin-grid-header-cell: {
           height: 48px;
@@ -108,11 +101,8 @@
 
       #filter {
         /* padding: 8px 8px 16px 8px; */
-       
+        background-color: #f3f5f7;
         position: relative;
-    margin: 10px 0px 0px 0px;
-    background: white;
-    padding: 20px;
       }
 
       .filter {
@@ -171,11 +161,6 @@
         padding: 0.4em 2em;
         font-size: 16px;
         background-color: #fff;
-      }
-      .custom-button:hover {
-        color: white;
-        transition: 20ms all ease;
-        background-color: rgb(0, 159, 233);
       }
 
       .custom-flat-button {

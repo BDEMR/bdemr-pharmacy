@@ -77,23 +77,20 @@ Polymer {
           title: 'Agent Panel'
           icon: 'icons:account-box'
           info: ''
-          imagePath: 'images/icons/add_user.png'
           urlPath: '#/agent-panel'
           accessId: ''
         }
         {
           title: 'Bill View'
-          icon: 'extra-icons:billview'
+          icon: 'icons:open-in-new'
           info: ''
-          imagePath: 'images/icons/bill view.svg'
           urlPath: '#/sample-invoice'
           accessId: ''
         }
         {
           title: 'Chamber Manager'
-          icon: 'extra-icons:chamber'
+          icon: 'icons:open-in-new'
           info: ''
-          imagePath: 'images/icons/chamber.svg'
           urlPath: '#/chamber-manager'
           accessId: ''
         }
@@ -106,9 +103,8 @@ Polymer {
         # }
         {
           title: 'Assistant Manager'
-          icon: 'extra-icons:assistant'
+          icon: 'icons:open-in-new'
           info: ''
-          imagePath: 'images/icons/assistant.svg'
           urlPath: '#/assistant-manager'
           accessId: ''
         }
@@ -121,9 +117,8 @@ Polymer {
         # }
         {
           title: 'Invoice Manager'
-          icon: 'extra-icons:invoice'
+          icon: 'icons:open-in-new'
           info: ''
-          imagePath: 'images/icons/invoice.svg'
           urlPath: '#/invoice-manager'
           accessId: ''
         }
@@ -136,41 +131,36 @@ Polymer {
         # }
         {
           title: 'Commission Report'
-          icon: 'extra-icons:commission'
+          icon: 'icons:open-in-new'
           info: ''
-          imagePath: 'images/icons/commission.svg'
           urlPath: '#/commission-report'
           accessId: ''
         }
         {
           title: 'Attendance Manager'
-          icon: 'extra-icons:attendence'
+          icon: 'icons:open-in-new'
           info: ''
-          imagePath: 'images/icons/attendance.svg'
           urlPath: '#/attendance-manager'
           accessId: ''
         }
         {
           title: 'Pharmacy Manager'
-          icon: 'extra-icons:pharmacy'
+          icon: 'icons:open-in-new'
           info: ''
-          imagePath: 'images/icons/pharmacy.svg'
           urlPath: '#/pharmacy-manager'
           accessId: ''
         }
         {
           title: 'Organization Manager'
-          icon: 'extra-icons:organization'
+          icon: 'icons:open-in-new'
           info: ''
-          imagePath: 'images/icons/org manager.svg'
           urlPath: '#/organization-manager'
           accessId: ''
         }
         {
           title: 'Send Notification'
-          icon: 'extra-icons:notification'
+          icon: 'icons:open-in-new'
           info: ''
-          imagePath: 'images/icons/notification.svg'
           urlPath: '#/notification-panel'
           accessId: ''
         }
@@ -190,9 +180,8 @@ Polymer {
         # }
         {
           title: 'Settings'
-          icon: 'extra-icons:settings'
+          icon: 'settings'
           info: ''
-          imagePath: 'images/icons/settings.svg'
           urlPath: '#/settings'
           accessId: ''
         }

@@ -91,14 +91,12 @@ Polymer({
     return this.domHost.navigateToPreviousPage();
   },
 
-  showAddNewThirdPartyDialog() {
-  //  console.log("Hello", this.thirdParty, thirdParty);
+  showThirdPartyDialog() {
     this._resetThirdPartyObject();
     this.$$('#dialogThirdParty').toggle();
   },
 
   _resetThirdPartyObject() {
-   // console.log("Hello", this.thirdParty, thirdParty);
     var thirdParty = {
       serial: null,
       lastModifiedDatetimeStamp: null,
@@ -114,45 +112,24 @@ Polymer({
         
     };
     this.set('thirdParty', thirdParty);
-   // console.log("Hello", this.thirdParty, thirdParty);
   },
 
   addBtnPressed() {
-   // console.log(this.thirdParty.data.user);
+    console.log(this.thirdParty);
     if (this.thirdParty.data.user == null) {
-     return this.domHost.showToast('Add a user first!');
-     
-    } else {
-      if (this.thirdParty.serial == null) {
-        this.thirdParty.serial = this.generateSerialForThirdParty();
-      }
-  
-      this.thirdParty.createdDatetimeStamp = lib.datetime.now();
-  
-      this.updateThirdParty(this.thirdParty, () => {
-        this.$$('#dialogThirdParty').close();
-      })
+      this.domHost.showToast('Add a user first!');
+      return;
     }
 
-    ;
-  },
-  userSelected: function (e) {
-    this.thirdParty.data.user = e.detail.option;
-    if (this.thirdParty.data.user == null) {
-      return this.domHost.showToast('Add a user first!');
-      
-     } else {
-       if (this.thirdParty.serial == null) {
-         this.thirdParty.serial = this.generateSerialForThirdParty();
-       }
-   
-       this.thirdParty.createdDatetimeStamp = lib.datetime.now();
-   
-       this.updateThirdParty(this.thirdParty, () => {
-         this.$$('#dialogThirdParty').close();
-       })
-     }
-    console.log(this.thirdParty);
+    if (this.thirdParty.serial  == null) {
+      this.thirdParty.serial = this.generateSerialForThirdParty();
+    }
+
+    this.thirdParty.createdDatetimeStamp = lib.datetime.now();
+
+    this.updateThirdParty(this.thirdParty, () => {
+      this.$$('#dialogThirdParty').close();
+    });
   },
 
   updateThirdParty(data, cbfn) {
@@ -276,12 +253,6 @@ Polymer({
       this._callGetThirdPartiesApi();
     });
   },
-
-  _onTapEditThirdParty(e) {
-    index = e.model.index;
-    item = this.thirdParties[index];
-    console.log(item.data.user)
-  },
   
   // Search for user - start
   _searchUser: function (id, searchQuery) {
@@ -331,24 +302,9 @@ Polymer({
     searchQuery = this.$$("#userSearch").text;
     return this._searchUser(id, searchQuery);
   },
-  // userSelected: function (e) {
-  //   this.thirdParty.data.user = e.detail.option;
-  //   if (this.thirdParty.data.user == null) {
-  //     return this.domHost.showToast('Add a user first!');
-      
-  //    } else {
-  //      if (this.thirdParty.serial == null) {
-  //        this.thirdParty.serial = this.generateSerialForThirdParty();
-  //      }
-   
-  //      this.thirdParty.createdDatetimeStamp = lib.datetime.now();
-   
-  //      this.updateThirdParty(this.thirdParty, () => {
-  //        this.$$('#dialogThirdParty').close();
-  //      })
-  //    }
-  //   console.log(this.thirdParty);
-  // },
+  userSelected: function (e) {
+    this.thirdParty.data.user = e.detail.option;
+  },
 
   userSearchCleared: function () {
     return this.$$("#userSearch").clear();

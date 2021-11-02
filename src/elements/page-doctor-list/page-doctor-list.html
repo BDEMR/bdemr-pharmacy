@@ -77,14 +77,65 @@
         /* background-color: #fff; */
       }
 
+      #doctorPhoto {
+        height: 64px;
+        width: 64px;
+        background-color: #fafafa;
+        border-radius: 50%;
+        margin-top: 6px;
+        margin-bottom: 6px;
+      }
 
       .custom-tab {
         font-size: 18px;
         color: white;
-        background-color: var(--custom-input-box-color);
+        background-color: --brand-primary-color;
       }
 
-    
+      vaadin-grid.grid-table {
+        height: inherit;
+        /* overflow: auto; */
+        font-family: Roboto, sans-serif;
+        --divider-color: rgba(0,0,0, .54);
+
+
+        /* --vaadin-grid-cell: {
+          padding: 0;
+        }; */
+
+        --vaadin-grid-header-cell: {
+          height: 48px;
+          /* color: rgba(0, 0, 0, var(--dark-secondary-opacity)); */
+          font-size: 16px;
+          text-align: left;
+          
+          border-right: 1px solid rgba(0,0,0, .64);
+        };
+
+        --vaadin-grid-body-cell: {
+          min-height: 54px;
+          color: rgba(0, 0, 0, var(--dark-primary-opacity));
+          font-size: 16px;
+          padding: 0 8px;
+          border-right: 1px solid rgba(0,0,0, .64) !important;
+          border-bottom: 1px solid rgba(0,0,0, .64) !important;
+          text-align: left;
+        };
+
+        --vaadin-grid-body-row-hover-cell: {
+          background-color: var(--paper-grey-200);
+        };
+
+        --vaadin-grid-body-row-selected-cell: {
+          background-color: var(--paper-grey-100);
+        };
+
+        --vaadin-grid-focused-cell: {
+          box-shadow: none;
+          font-weight: bold;
+        };
+
+      }
 
     </style>
 
@@ -105,7 +156,7 @@
 
           <template is="dom-if" if="[[!$isEmptyArray(verifiedDoctors.length)]]">
             <div class="type caption-2 secondary" style="background: #fff; padding: 16px;"><strong>{{verifiedDoctors.length}} Verifeid doctor(s)</strong></div>
-            <vaadin-grid items="{{verifiedDoctors}}" class="custom-vaadin-grid" active-item="{{activeItem}}">
+            <vaadin-grid items="{{verifiedDoctors}}" class="grid-table" active-item="{{activeItem}}">
 
               <vaadin-grid-column width="14em" frozen>
                 <template class="header">
@@ -115,9 +166,7 @@
                 </template>
                 <template>
                   <div class="horizontal layout center" style="text-transform: capitalize;">
-                    <div class="user-image-container m-right-8">
-                      <iron-image class="user-image" src$="[[$getProfileImage(item.profilePhoto)]]" preload sizing="cover"></iron-image>
-                    </div>
+                    <iron-image id="doctorPhoto" src="{{$getProfileImage(item.profilePhoto)}}" preload sizing="cover"></iron-image>
                     <div class="m-left-8 flex">[[item.doctorName]]</div>
                   </div>
                 </template>
@@ -176,7 +225,7 @@
           
           <template is="dom-if" if="[[!$isEmptyArray(unverifiedDoctors.length)]]">
             <div class="type caption-2 secondary" style="background: #fff; padding: 16px;"><strong>{{unverifiedDoctors.length}} Unverifeid doctor(s)</strong></div>
-            <vaadin-grid items="{{unverifiedDoctors}}" class="custom-vaadin-grid" active-item="{{activeItem}}">
+            <vaadin-grid items="{{unverifiedDoctors}}" class="grid-table" active-item="{{activeItem}}">
 
               <vaadin-grid-column width="14em" frozen>
                 <template class="header">
@@ -186,12 +235,9 @@
                 </template>
                 <template>
                   <div class="horizontal layout center" style="text-transform: capitalize;">
-                    <div class="horizontal layout center" style="text-transform: capitalize;">
-                      <div class="user-image-container m-right-8">
-                        <iron-image class="user-image" src$="[[$getProfileImage(item.profilePhoto)]]" preload sizing="cover"></iron-image>
-                      </div>
-                      <div class="m-left-8 flex">[[item.doctorName]]</div>
-                    </div>
+                    <iron-image id="doctorPhoto" src="{{item.doctorPhoto}}" preload sizing="cover"></iron-image>
+                    <div class="m-horizontal-4"></div> 
+                    <div>[[item.doctorName]]</div>
                   </div>
                 </template>
               </vaadin-grid-column>
@@ -250,7 +296,7 @@
 
           <template is="dom-if" if="[[!$isEmptyArray(flaggedDoctors.length)]]">
             <div class="type caption-2 secondary" style="background: #fff; padding: 16px;"><strong>{{flaggedDoctors.length}} Flagged doctor(s)</strong></div>
-            <vaadin-grid items="{{flaggedDoctors}}" class="custom-vaadin-grid" active-item="{{activeItem}}">
+            <vaadin-grid items="{{flaggedDoctors}}" class="grid-table" active-item="{{activeItem}}">
 
               <vaadin-grid-column width="14em" frozen>
                 <template class="header">
@@ -260,12 +306,8 @@
                 </template>
                 <template>
                   <div class="horizontal layout center" style="text-transform: capitalize;">
-                    <div class="horizontal layout center" style="text-transform: capitalize;">
-                      <div class="user-image-container m-right-8">
-                        <iron-image class="user-image" src$="[[$getProfileImage(item.profilePhoto)]]" preload sizing="cover"></iron-image>
-                      </div>
-                      <div class="m-left-8 flex">[[item.doctorName]]</div>
-                    </div>
+                    <iron-image id="doctorPhoto" src="{{$getProfileImage(item.profilePhoto)}}" preload sizing="cover"></iron-image>
+                    <div class="m-left-8 flex">[[item.doctorName]]</div>
                   </div>
                 </template>
               </vaadin-grid-column>

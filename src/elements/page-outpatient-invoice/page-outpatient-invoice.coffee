@@ -85,6 +85,10 @@ Polymer {
       type: Array
       value: []
 
+    previousInvoiceDataList:
+      type: Array
+      value: []
+
     servicePriceList:
       type: Object
       notify: true
@@ -201,7 +205,7 @@ Polymer {
     doctorSearchQuery:
       type: String
       value: -> ""
-      observer: 'doctorSearchInputChanged'
+      observer: 'doctorSearcInputChanged'
 
     generalDiscountPercentageLimit:
       type: Number
@@ -486,7 +490,29 @@ Polymer {
       else
         @set "availableBalance", response.data.totalAvailableBalance
         @set "previouseDue", response.data.totalAvailableDue
-        
+
+
+  showPatientPreviousInvoiceItems: ()->
+    if !@patient.serial
+      return @domHost.showToast 'Please Select Patient First!'    
+    data = {
+      apiKey: @user.apiKey
+      patientSerial: @patient.serial
+    }
+
+    @callApi '/bdemr--clinic-show-patient-previous-invoice-items', data, (err, response)=>
+      if response.hasError
+        # console.log response
+        @domHost.showToast response.error.message
+      else
+        list = response.data
+        @set 'previousInvoiceDataList', list
+        @invoice.previousInvoiceData = list
+        @invoice.finalBill = true
+        console.log "list", list
+          
+
+
   showPatientMedicine: ()->
     console.log {@patient}
     if !@patient.serial
@@ -740,15 +766,15 @@ Polymer {
         # @navigateToPage "#/select-organization"
         return true
   
-  doctorSearchInputChanged: (searchQuery)->
-    @debounce 'search-doctor', ()=>
+  doctorSearcInputChanged: (searchQuery)->
+    @debounce 'search-patient', ()=>
       @_searchDoctor(searchQuery)
     , 300
   
   _searchDoctor: (searchQuery)->
     return unless searchQuery
     @fetchingDoctorSearchResult = true;
-    @callApi '/bdemr--clinic-referral-doctor-search', { apiKey: @user.apiKey, searchQuery: searchQuery}, (err, response)=>
+    @callApi '/bdemr-doctor-search', { apiKey: @user.apiKey, searchQuery: searchQuery}, (err, response)=>
       @fetchingDoctorSearchResult = false
       if response.hasError
         @domHost.showModalDialog response.error.message
@@ -765,52 +791,7 @@ Polymer {
     user = e.detail.value
     @set 'invoice.referralDoctor.name', user.name
     @set 'invoice.referralDoctor.mobile', user.phone
-    @set 'invoice.referralDoctor.id', user.serial
-
-
-  _makeNewDoctorObject: ()-> 
-    referralDoctorObj = {
-      createdDatetimeStamp: lib.datetime.now(),
-      lastModifiedDatetimeStamp: null,
-      organizationId: @organization.idOnServer,
-      serial: null,
-      name: '',
-      phone: '',
-      email: '',
-      address: '',
-    }
-    @set 'referralDoctorObj', referralDoctorObj
-
-  showAddNewReferralDoctorForm: (e)->
-    @$$("#addNewDoctorDialog").toggle()
-    @_makeNewDoctorObject()
-
-  _addDoctor: ()->
-    if @referralDoctorObj.name is '' or @referralDoctorObj.phone is ''
-      return @domHost.showModalDialog 'Need Name and Mobile Atleast!'
-
-    @referralDoctorObj.lastModifiedDatetimeStamp = lib.datetime.now()
-    @referralDoctorObj.paymentDate = lib.datetime.now()
-    if !@referralDoctorObj.serial
-      @referralDoctorObj.serial = @generateSerialForReferralDoctor()
-
-    console.log {@referralDoctorObj}
-    if @referralDoctorObj.serial
-      data = { 
-        apiKey: @user.apiKey
-        referralDoctorDetails: @referralDoctorObj
-      }
-      @callApi '/bdemr--clinic-add-update-referral-doctor', data, (err, response)=>
-        if response.hasError
-          @domHost.showModalDialog response.error.message
-        else
-          user = response.data
-          @set 'invoice.referralDoctor.name', user.data.name
-          @set 'invoice.referralDoctor.mobile', user.data.phone
-          @set 'invoice.referralDoctor.id', user.data.serial
-          @domHost.showToast "Doctor added"
-          return this.$$('#addNewDoctorDialog').close();
-
+    @set 'invoice.referralDoctor.id', user.idOnServer
 
   _loadOrganizationSettings: (organizationIdentifier)->
     list = app.db.find 'organization-settings', ({ serial })=> serial is organizationIdentifier
@@ -865,13 +846,6 @@ Polymer {
   _loadCommissionCategoryList: ()->
     @commissionCategoryList = app.db.find 'commission-category-list', ({ organizationId }) => organizationId is @organization.idOnServer
 
-  discountfundTypeSelected: (e)->
-    @selectedItem = e.detail.selected
-    @showFund = false if @selectedItem is 0 
-    @showFund = true if @selectedItem is 1
-    console.log "showFund" , @showFund
-    console.log "fundItem" , @selectedItem
-
   discountfundSelected: (e)->
     index = e.detail.selected
     fund = @fundList[index]
@@ -888,7 +862,6 @@ Polymer {
 
   getSpecialDiscountPercentage: (value)->
     if @discountType
-    # console.log @discountType
       return 0 unless value > @generalDiscountPercentageLimit and @fundList.length
       return @$toTwoDecimalPlace(value - @generalDiscountPercentageLimit)
     else
@@ -1189,10 +1162,12 @@ Polymer {
       discountItemWise: null
       totalAmountReceieved: null
       cashBackPaid: 0
+      finalBill: false
       flags:
         flagAsError: false
         markAsCompleted: false
       data: []
+      previousInvoiceData: []
       commission: []
       availableToPatient: true
       reportDeliveryDateTime: null
@@ -1414,7 +1389,7 @@ Polymer {
       @set 'invoice.discountFromFund.amount', fundDiscountAmt
     else
       @set 'discountFundType', 0
-      @set 'invoice.discountFromFund.amount', discountAmt
+      @set 'invoice.discountFromFund.amount', 0
   
   calculateNewDiscount: ()->
     return unless @invoiceDiscount
@@ -1431,8 +1406,8 @@ Polymer {
   calculateGrossPrice: ->
     return unless @invoice.data
     price = @invoice.data.reduce (total, item)->
-      return total += (item.price * item.qty) - item.discountAmount
-      # return total += item.discountedPrice
+      # return total += item.price * item.qty
+      return total += item.discountedPrice
     , 0
     
     @set "invoiceGrossPrice", price
@@ -1467,11 +1442,13 @@ Polymer {
   _calculateAvailableBalance: (bill=0, paid=0, availableBalance=0, cashBackPaid=0, previouseDue=0)->
     bill = if Number.isNaN(bill) then 0 else parseFloat bill
     paid = if Number.isNaN(paid) then 0 else parseFloat paid
-    previouseDue = if Number.isNaN(previouseDue) then 0 else parseFloat previouseDue
     availableBalance = if Number.isNaN(paid) then 0 else parseFloat availableBalance
     cashBackPaid = if Number.isNaN(cashBackPaid) then 0 else parseFloat cashBackPaid
+    previouseDue = if Number.isNaN(previouseDue) then 0 else parseFloat previouseDue
 
-    totalAvailableBalance = (paid + availableBalance) - cashBackPaid - previouseDue
+    bill = bill + previouseDue
+
+    totalAvailableBalance = (paid + availableBalance) - cashBackPaid
     
     if (totalAvailableBalance > bill)
       return totalAvailableBalance = totalAvailableBalance - bill
@@ -2452,7 +2429,6 @@ Polymer {
       phone: null
       email: ''
       address: ''
-      supervisorId: ''
       billed: null
       amount: null
     }

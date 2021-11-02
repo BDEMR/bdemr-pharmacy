@@ -12,8 +12,6 @@
 <link rel="import" href="../../elements/custom-vital-search/custom-vital-search.html">
 <link rel="import" href="../../bower-assets/vaadin-date-picker/vaadin-date-picker-light.html">
 <link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
-<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-filter.html">
-<link rel="import" href="../../bower-assets/vaadin-grid/vaadin-grid-sorter.html">
 
 <link rel="import" href="../../elements/bdemr-generic-template/bdemr-generic-template.html">
 
@@ -188,7 +186,6 @@
                   value="{{otManagementObject.data.typeOfAnaesthesia}}">
                 </vaadin-combo-box>
               </div>
-              <div style="border-bottom:1px solid rgb(189, 189, 189) ;">
 
               <div class="layout horizontal center">
                 <span class="ot-input-field-style"><strong>[[$TRANSLATE('Anaesthesist', LANG)]]</strong></span>
@@ -199,7 +196,6 @@
                   error-message="Input Required" required>
                 </paper-autocomplete>
               </div>
-              
 
               <div class="layout horizontal center">
                 <span class="ot-input-field-style assistants-font-color"><strong>[[$TRANSLATE('Assistant Anaesthesist #1', LANG)]]</strong></span>
@@ -233,8 +229,7 @@
                   required>
                 </paper-autocomplete>
               </div>
-              </div>
-              <div style="border-bottom:1px solid rgb(189, 189, 189) ;">
+
               <div class="layout horizontal center">
                 <span class="ot-input-field-style"><strong>[[$TRANSLATE('Surgeon', LANG)]]</strong></span>
                 <paper-autocomplete class="flex m-left-36" text="{{otManagementObject.data.surgeon.name}}"
@@ -274,7 +269,7 @@
                   on-keyup="onlineSearchEnterKeyPressedForAssistantSurgeon3" error-message="Input Required" required>
                 </paper-autocomplete>
               </div>
-</div>
+
               <div class="layout horizontal center">
                 <span class="ot-input-field-style"><strong>[[$TRANSLATE('Pediatrician', LANG)]]</strong></span>
                 <paper-autocomplete class="flex m-left-36" text="{{otManagementObject.data.pediatrician.name}}"
@@ -348,160 +343,91 @@
       <div class="limiting-container custom-input-field">
         <br>
         <paper-card>
-
           <div class="card-custom-header">
             <div class="layout horizontal center">
               <div class="title flex">[[$TRANSLATE('Operation Theater(OT) Management Table', LANG)]]</div>
             </div>
           </div>
           <div class="card-content">
-            <vaadin-grid class="custom-agent-table" id="visitList" items="[[otManagementList]]">
-              <vaadin-grid-column resizable>
-                <template class="header">
-                  <vaadin-grid-sorter path="data.theaterName">
-                    <vaadin-grid-filter aria-label="[[$TRANSLATE('Theater Name', LANG)]]" path="data.theaterName"
-                      value="[[filterTheaterName]]">
-                      <paper-input label="[[$TRANSLATE('Theater Name', LANG)]]" value="{{filterTheaterName}}" no-label-float>
-                      </paper-input>
-                    </vaadin-grid-filter>
-                  </vaadin-grid-sorter>
-                </template>
-                <template>
-                  <div class="layout vertical">
-                    [[item.data.theaterName]]
-                    </div>
-                </template>
-              </vaadin-grid-column>
-
-              <vaadin-grid-column resizable width="180px">
-                <template class="header">
-                  <vaadin-grid-sorter path="data.nameOfThePatient">
-                    <vaadin-grid-filter aria-label="[[$TRANSLATE('Patient Details', LANG)]]" path="data.nameOfThePatient"
-                      value="[[filterPatientName]]">
-                      <paper-input label="[[$TRANSLATE('Patient Details', LANG)]]" value="{{filterPatientName}}" no-label-float>
-                      </paper-input>
-                    </vaadin-grid-filter>
-                  </vaadin-grid-sorter>
-                </template>
-                <template>
-                  <div class="layout vertical">
+            <table class="table">
+              <tr>
+                <th>[[$TRANSLATE('Theater Name', LANG)]]</th>
+                <th>[[$TRANSLATE('Patient Details', LANG)]]</th>
+                <th>[[$TRANSLATE('Operation info', LANG)]]</th>
+                <th>[[$TRANSLATE('Operation Date', LANG)]]</th>
+                <th>[[$TRANSLATE('Operation Timings', LANG)]]</th>
+                <th>[[$TRANSLATE('Status', LANG)]]</th>
+                <th>[[$TRANSLATE('Surgery Prioritys', LANG)]]</th>
+                <th>[[$TRANSLATE('Special Notes', LANG)]]</th>
+                <th>[[$TRANSLATE('Actions', LANG)]]</th>
+              </tr>
+              <template is="dom-repeat" items="[[otManagementList]]">
+                <tr>
+                  <td>[[item.data.theaterName]]</td>
+                  <td>
+                    <div class="layout vertical">
                       <div class="m-bottom-8">
                         <span>[[$getFullName(item.data.nameOfThePatient)]]</span></div>
                       <div class="m-bottom-8">
                         <span class="type secondary">([[item.data.patientId]])</span></div>
                     </div>
-                </template>
-              </vaadin-grid-column>
-              <vaadin-grid-column resizable>
-                <template class="header">
-                  [[$TRANSLATE('Operation info', LANG)]]
-                </template>
-                <template>
-                  <div class="layout vertical">
-                    <div class="m-bottom-8">
-                      <span class="type secondary">[[$TRANSLATE('Operation Name', LANG)]]:
-                      </span>[[item.data.operationName]]</div>
-                    <div class="m-bottom-8">
-                      <span class="type secondary">[[$TRANSLATE('Institution Name', LANG)]]:
-                      </span>[[item.data.nameOfTheInstitution]]</div>
-                    <div class="m-bottom-8">
-                      <span class="type secondary">[[$TRANSLATE('Organization Name', LANG)]]:
-                      </span>[[item.data.nameOfTheOrganization]]
+                  </td>
+                  <td>
+                    <div class="layout vertical">
+                      <div class="m-bottom-8">
+                        <span class="type secondary">[[$TRANSLATE('Operation Name', LANG)]]:
+                        </span>[[item.data.operationName]]</div>
+                      <div class="m-bottom-8">
+                        <span class="type secondary">[[$TRANSLATE('Institution Name', LANG)]]:
+                        </span>[[item.data.nameOfTheInstitution]]</div>
+                      <div class="m-bottom-8">
+                        <span class="type secondary">[[$TRANSLATE('Department Name', LANG)]]:
+                        </span>[[item.data.nameOfTheDepartment]]</div>
+                      <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Surgeon', LANG)]]:
+                        </span>[[item.data.surgeon.name]]</div>
+                      <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Anaesthesist', LANG)]]:
+                        </span>[[item.data.anaesthesist.name]]</div>
+                      <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Pediatrician', LANG)]]:
+                        </span>[[item.data.pediatrician.name]]</div>
+                      <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Assistant Surgeon #1', LANG)]]:
+                        </span>[[item.data.assistantSurgeon1.name]]</div>
+                      <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Assistant Surgeon #2', LANG)]]:
+                        </span>[[item.data.assistantSurgeon2.name]]</div>
+                      <div><span class="type secondary">[[$TRANSLATE('Assistant Surgeon #3', LANG)]]:
+                        </span>[[item.data.assistantSurgeon3.name]]</div>
+                      <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Assistant Anaesthesist #1', LANG)]]:
+                        </span>[[item.data.assistantAnaesthesist1.name]]</div>
+                      <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Assistant Anaesthesist #2', LANG)]]:
+                        </span>[[item.data.assistantAnaesthesist2.name]]</div>
+                      <div><span class="type secondary">[[$TRANSLATE('Assistant Anaesthesist #3', LANG)]]:
+                        </span>[[item.data.assistantAnaesthesist3.name]]</div>
                     </div>
-                    <div class="m-bottom-8">
-                      <span class="type secondary">[[$TRANSLATE('Department Name', LANG)]]:
-                      </span>[[item.data.nameOfTheDepartment]]</div>
-                    <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Surgeon', LANG)]]:
-                      </span>[[item.data.surgeon.name]]</div>
-                    <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Anaesthesist', LANG)]]:
-                      </span>[[item.data.anaesthesist.name]]</div>
-                    <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Pediatrician', LANG)]]:
-                      </span>[[item.data.pediatrician.name]]</div>
-                    <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Assistant Surgeon #1', LANG)]]:
-                      </span>[[item.data.assistantSurgeon1.name]]</div>
-                    <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Assistant Surgeon #2', LANG)]]:
-                      </span>[[item.data.assistantSurgeon2.name]]</div>
-                    <div><span class="type secondary">[[$TRANSLATE('Assistant Surgeon #3', LANG)]]:
-                      </span>[[item.data.assistantSurgeon3.name]]</div>
-                    <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Assistant Anaesthesist #1', LANG)]]:
-                      </span>[[item.data.assistantAnaesthesist1.name]]</div>
-                    <div class="m-bottom-8"><span class="type secondary">[[$TRANSLATE('Assistant Anaesthesist #2', LANG)]]:
-                      </span>[[item.data.assistantAnaesthesist2.name]]</div>
-                    <div><span class="type secondary">[[$TRANSLATE('Assistant Anaesthesist #3', LANG)]]:
-                      </span>[[item.data.assistantAnaesthesist3.name]]</div>
-                  </div>
-                </template>
-              </vaadin-grid-column>
-              <vaadin-grid-column resizable>
-                <template class="header">
-                  <vaadin-grid-sorter path="data.startTime">
-                    <vaadin-grid-filter aria-label="[[$TRANSLATE('Operation Date', LANG)]]" path="data.startTime"
-                      value="[[filterDates]]">
-                      <paper-input label="[[$TRANSLATE('Operation Date', LANG)]]" value="{{filterDates}}" no-label-float>
-                      </paper-input>
-                    </vaadin-grid-filter>
-                  </vaadin-grid-sorter>
-                </template>
-                <template>
-                  <div class="layout vertical">
-                    <div class="m-bottom-8">
-                      <span class="type secondary">[[$TRANSLATE('Start Time', LANG)]]:
-                      </span>[[$formatTimeString(item.data.startTime)]]
+                  </td>
+                  <td>[[$formatDate(item.data.operationDate)]]</td>
+                  <td>
+                    <div class="layout vertical">
+                      <div class="m-bottom-8">
+                        <span class="type secondary">[[$TRANSLATE('Start Time', LANG)]]:
+                        </span>[[$formatTimeString(item.data.startTime)]]</div>
+                      <div class="m-bottom-8">
+                        <span class="type secondary">[[$TRANSLATE('End Time', LANG)]]:
+                        </span>[[$formatTimeString(item.data.endTime)]]</div>
+                      <div class="m-bottom-8">
+                        <span class="type secondary">[[$TRANSLATE('Expected Time', LANG)]]:
+                        </span>[[item.data.expectedTime]]</div>
                     </div>
-                    <div class="m-bottom-8">
-                      <span class="type secondary">[[$TRANSLATE('End Time', LANG)]]:
-                      </span>[[$formatTimeString(item.data.endTime)]]</div>
-                    <div class="m-bottom-8">
-                      <span class="type secondary">[[$TRANSLATE('Expected Time', LANG)]]:
-                      </span>[[item.data.expectedTime]]</div>
-                  </div>
-                </template>
-              </vaadin-grid-column>
-              <vaadin-grid-column resizable >
-                <template class="header">
-                  <vaadin-grid-sorter path="data.operationDate">
-                    <vaadin-grid-filter aria-label="[[$TRANSLATE('Operation Timings', LANG)]]" path="data.operationDate"
-                      value="[[filterDate]]">
-                      <paper-input label="[[$TRANSLATE('Operation Timings', LANG)]]" value="{{filterDate}}" no-label-float>
-                      </paper-input>
-                    </vaadin-grid-filter>
-                  </vaadin-grid-sorter>
-                </template>
-                <template>
-                  <div class="layout vertical">
-                    [[$formatDate(item.data.operationDate)]]
-                  </div>
-                </template>
-              </vaadin-grid-column>
-              <vaadin-grid-column resizable >
-                <template class="header">
-                  <vaadin-grid-sorter path="data.otStatus">
-                    <vaadin-grid-filter aria-label="[[$TRANSLATE('Status', LANG)]]" path="data.otStatus"
-                      value="[[filterStatus]]">
-                      <paper-input label="[[$TRANSLATE('Status', LANG)]]" value="{{filterStatus}}" no-label-float>
-                      </paper-input>
-                    </vaadin-grid-filter>
-                  </vaadin-grid-sorter>
-                </template>
-                <template>
-                  <div class="layout vertical">
+                  </td>
+                  <td>
                     <paper-dropdown-menu label="[[$TRANSLATE('Status', LANG)]]">
-                      <paper-listbox class="dropdown-content" on-iron-activate="otManagementStatusChanged"
+                      <paper-listbox class="dropdown-content" on-iron-activate="otManagementStatusChangedFromTheTable"
                         selected="[[getOtStatusListIndex(item.data.otStatus)]]">
                         <template is="dom-repeat" items="[[otStatusList]]">
                           <paper-item>[[item]]</paper-item>
                         </template>
                       </paper-listbox>
                     </paper-dropdown-menu>
-                  </div>
-                </template>
-              </vaadin-grid-column>
-              <vaadin-grid-column resizable >
-                <template class="header">
-                  [[$TRANSLATE('Surgery Priority', LANG)]]
-                </template>
-                <template>
-                  <div class="layout vertical">
+                  </td>
+                  <td>
                     <paper-dropdown-menu label="[[$TRANSLATE('Surgery Priority', LANG)]]">
                       <paper-listbox class="dropdown-content" on-iron-activate="surgeryPriorityChangedFromTheTable"
                         selected="[[getSurgeryPriorityListIndex(item.data.surgeryPriorityStatus)]]">
@@ -510,41 +436,16 @@
                         </template>
                       </paper-listbox>
                     </paper-dropdown-menu>
-                  </div>
-                </template>
-              </vaadin-grid-column>
-              <vaadin-grid-column resizable >
-                <template class="header">
-                  <vaadin-grid-sorter path="data.specialNotes">
-                    <vaadin-grid-filter aria-label="[[$TRANSLATE('Special Notes', LANG)]]" path="data.specialNotes"
-                      value="[[filterSpecialNotes]]">
-                      <paper-input label="[[$TRANSLATE('Special Notes', LANG)]]" value="{{filterSpecialNotes}}" no-label-float>
-                      </paper-input>
-                    </vaadin-grid-filter>
-                  </vaadin-grid-sorter>
-                </template>
-                <template>
-                  <div class="layout vertical">
-                    [[item.data.specialNotes]]
-                  </div>
-                </template>
-              </vaadin-grid-column>
-              <vaadin-grid-column resizable >
-                <template class="header">
-                  [[$TRANSLATE('Actions', LANG)]]
-                 
-                </template>
-                <template>
-                  <div class="layout vertical">
-                    
-                    <paper-button raised class="btn btn-default" on-tap="editOtButtonPressed">[[$TRANSLATE('Edit', LANG)]]</paper-button>
+                  </td>
+                  <td>[[item.data.specialNotes]]</td>
+                  <td>
+                    <paper-button raised class="btn btn-default" on-tap="editOtButtonPressed">[[$TRANSLATE('Edit', LANG)]]
+                    </paper-button>
                     <paper-button raised class="btn btn-danger" on-tap="deleteOtButtonPressed">[[$TRANSLATE('Delete', LANG)]]</paper-button>
-                 
-                  </div>
-                </template>
-              </vaadin-grid-column>
-              </vaadin-grid>
-           
+                  </td>
+                </tr>
+              </template>
+            </table>
 
           </div>
         </paper-card>

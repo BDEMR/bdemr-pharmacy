@@ -57,7 +57,6 @@
         padding: 15px;
         border-bottom: 1px solid var(--paper-grey-200);
         background-color: var(--paper-grey-50);
-        color: gray;
       }
 
       .card-custom-header .title {
@@ -79,7 +78,9 @@
         color: var(--paper-grey-700);
       }
 
-     
+      .text-warning {
+        color: var(--paper-orange-600);
+      }
 
       .invoice-item {
         padding: 10px 0;
@@ -94,6 +95,11 @@
 
       .add {
         color: var(--paper-green-500);
+      }
+
+      .page-invoice {
+        @apply(--layout-horizontal);
+        width: 100%;
       }
 
       .calculation {
@@ -124,12 +130,36 @@
         padding: 0 15px;
       }
 
+      .big-text-input {
+        width: 300px;
+
+        --paper-input-container-input: {
+          font-size: 21px;
+        }
+
+        --paper-input-prefix: {
+          font-size: 21px;
+        }
+      }
 
       .paper-menu-width {
         width: 200px;
       }
 
-     
+      @media only screen and (max-width: 1024px) {
+        .page-invoice {
+          @apply(--layout-vertical);
+        }
+
+        .choice-list,
+        .invoice-list {
+          height: 100%;
+        }
+
+        .invoice-list {
+          margin-left: 0;
+        }
+      }
 
       @media screen and (min-width: 656px) {
         .paper-custom {
@@ -158,6 +188,20 @@
         box-sizing: border-box;
       }
 
+      .move-right {
+        position: relative;
+        float: right;
+      }
+
+      .patient-card-button {
+        background-color: #436aa8;
+        color: #fff;
+      }
+
+      .disabledbutton {
+        pointer-events: none;
+        opacity: 0.4;
+      }
 
       .pull-input-down{
         position: relative;

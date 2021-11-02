@@ -78,7 +78,7 @@ Polymer {
       value: null
   
   _calculateTotalBill: (data)->
-    # console.log data
+    console.log data
     return 0 if !data
     accumulator = 0
     for item in data
@@ -136,18 +136,17 @@ Polymer {
     if patient
       @set 'patient', patient
       @set "address", @$getAddress patient
-    # console.log "petent", patient
+
   _getPatientInfoBySerial: (patientSerial, cbfn)->
     @loadingCounter++
-    data = { apiKey: @user.apiKey, patientSerial, currentOrganizationId: @organization.idOnServer }
-    @callApi '/cmh-bdemr-get-patient-info-by-serial', data, (err, response)=>
+    data = { apiKey: @user.apiKey, patientSerial }
+    @callApi '/bdemr-get-patient-info-by-serial', data, (err, response)=>
       @loadingCounter--
       if response.hasError
         # @domHost.showModalDialog response.error.message
         @_notifyInvalidPatient()
       else
         patient = response.data
-        # console.log "patient", patient
         @set 'patient', patient
         return cbfn()    
 
@@ -197,7 +196,6 @@ Polymer {
       else
         invoice = response.data[0]
         @set 'invoice', invoice
-        console.log "Invoice", @invoice
         return cbfn()
 
   _notifyInvalidInvoice: ->
@@ -279,7 +277,7 @@ Polymer {
       return 0
 
   $calculateGrossTotalToTwoDecimal: (totalBilled=0, discount=0, vattax=0)->
-    # console.log totalBilled, discount, vattax
+    console.log totalBilled, discount, vattax
     return app.behaviors.commonComputes.$toTwoDecimalPlace (totalBilled-(discount+vattax))
 
 
@@ -313,11 +311,5 @@ Polymer {
       @set 'printTypeOffice', false
     else
       return
-
-  _getTotalPaidInWords: (amount)->
-    inWords = numWords amount
-    return "#{inWords.substring(0, 1).toUpperCase()}#{inWords.substring(1)}"
-
-
 
 }

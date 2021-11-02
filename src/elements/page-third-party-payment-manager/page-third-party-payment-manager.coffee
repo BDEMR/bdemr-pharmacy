@@ -69,7 +69,7 @@ Polymer {
     @_loadOrganization (organizationIdentifier)=>    
       @isLoading = false
       @_makeNewPayment()
-      @searchButtonClicked()
+      @getPaymentList()
       
 
   _loadUser:()->
@@ -99,6 +99,12 @@ Polymer {
     
   _notifyInvalidOrganization: ->
     @domHost.showModalDialog 'No Organization is Present. Please Select an Organization first.'
+
+  getPaymentList: ()-> 
+    @loadingCounter++
+    @thirdPartyPaymentList = app.db.find('third-party-payment-list', ({ organizationId }) => organizationId is @organization.idOnServer)
+    @loadingCounter--
+    console.log(@thirdPartyPaymentObject)
   
 
   filterByDateClicked: (e)->
@@ -112,47 +118,30 @@ Polymer {
   filterByDateClearButtonClicked: ->
     @dateCreatedFrom = 0
     @dateCreatedTo = 0
-
+    @getPaymentList()
   
   searchButtonClicked: ()->
-    # searchParameters = {
-    #   dateCreatedFrom: @dateCreatedFrom?=""
-    #   dateCreatedTo: @dateCreatedTo?=""
-    #   mobileSearchString: @mobileSearchString.toLowerCase()
-    # }    
+    searchParameters = {
+      dateCreatedFrom: @dateCreatedFrom?=""
+      dateCreatedTo: @dateCreatedTo?=""
+      searchString: @searchString.toLowerCase()
+    }    
 
-    # if @dateCreatedFrom
-    #   filteredThirdPartyPaymentList = @thirdPartyPaymentList.filter (item) =>
-    #     return true if (searchParameters.dateCreatedFrom <= item.createdDatetimeStamp <= searchParameters.dateCreatedTo)
+    if @dateCreatedFrom
+      filteredThirdPartyPaymentList = @thirdPartyPaymentList.filter (item) =>
+        return true if (searchParameters.dateCreatedFrom <= item.createdDatetimeStamp <= searchParameters.dateCreatedTo)
 
-    # if @searchString
-    #   filteredThirdPartyPaymentList = @thirdPartyPaymentList.filter (item) =>
-    #     return true if (searchParameters.searchString is item.name.toLowerCase()) or (searchParameters.searchString is item.mobile)
+    if @searchString
+      filteredThirdPartyPaymentList = @thirdPartyPaymentList.filter (item) =>
+        return true if (searchParameters.searchString is item.name.toLowerCase()) or (searchParameters.searchString is item.mobile)
 
-    # if @dateCreatedFrom and @searchString
-    #   filteredThirdPartyPaymentList = @thirdPartyPaymentList.filter (item) =>
-    #     return true if (searchParameters.dateCreatedFrom <= item.createdDatetimeStamp <= searchParameters.dateCreatedTo) and (searchParameters.searchString is item.name.toLowerCase() or searchParameters.searchString is item.mobile)
+    if @dateCreatedFrom and @searchString
+      filteredThirdPartyPaymentList = @thirdPartyPaymentList.filter (item) =>
+        return true if (searchParameters.dateCreatedFrom <= item.createdDatetimeStamp <= searchParameters.dateCreatedTo) and (searchParameters.searchString is item.name.toLowerCase() or searchParameters.searchString is item.mobile)
     
 
-    # console.log {filteredThirdPartyPaymentList}
-    # @set 'thirdPartyPaymentList', filteredThirdPartyPaymentList
-
-    data = { 
-      apiKey: @user.apiKey
-      organizationId: @organization.idOnServer
-      searchParameters: {
-        dateCreatedFrom: @dateCreatedFrom?=""
-        dateCreatedTo: @dateCreatedTo?=""
-        mobileSearchString: @mobileSearchString.toLowerCase()
-      }          
-    }
-    @callApi '/bdemr--clinic-third-party-payment-report', data, (err, response)=>
-      if response.hasError
-        @domHost.showModalDialog response.error.message
-      else
-        data = response.data
-        console.log data
-        @set 'thirdPartyPaymentList', data
+    console.log {filteredThirdPartyPaymentList}
+    @set 'thirdPartyPaymentList', filteredThirdPartyPaymentList
 
 
   _addNewPaymentButtonClicked: (e)-> 
@@ -204,40 +193,22 @@ Polymer {
     if @customBilledDateTo
       @_setBilledDateTo()
 
-    # app.db.insert 'third-party-payment-list', @thirdPartyPaymentObject
-    data = { 
-      apiKey: @user.apiKey
-      thirdPartyPaymentObject: @thirdPartyPaymentObject  
-    }
-    @callApi '/bdemr--clinic-add-third-party-payment', data, (err, response)=>
-      if response.hasError
-        @domHost.showModalDialog response.error.message
-      else
-        data = response.data
-        console.log data
-
+    app.db.insert 'third-party-payment-list', @thirdPartyPaymentObject
     console.log {@thirdPartyPaymentObject}
     @_makeNewPayment()
-    @searchButtonClicked()
+    @getPaymentList()
     return this.$$('#dialogAddNewPayment').close();
 
 
   _deletePayment:(e)->
-    { item } = e.model
-    console.log item
+    {item, index} = e.model
     @domHost.showModalPrompt "Are you sure?", (answer)=>
       if answer
-        data = { 
-          apiKey: @user.apiKey
-          id: item._id
-        }
-        @callApi '/bdemr--clinic-delete-third-party-payment', data, (err, response)=>
-          if response.hasError
-            @domHost.showModalDialog response.error.message
-          else
-            @domHost.showToast "Payment Deleted"
-            @searchButtonClicked()
-            return
+        @splice 'thirdPartyPaymentList', index, 1
+        app.db.remove 'third-party-payment-list', item._id
+        app.db.insert 'third-party-payment-list--deleted', item
+        console.log "Deleted"
+        return
 
 
   resetButtonClicked: (e)->

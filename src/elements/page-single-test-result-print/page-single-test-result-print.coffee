@@ -186,42 +186,26 @@ Polymer {
 
   _getAttachements: (serialList)->
 
-  _loadTestResultData: (collectionName, testIdentifier,cbfn)->
-      data = {
-        apiKey: @user.apiKey
-        serial : testIdentifier
-        collectionName : collectionName
-      }
-      this.domHost.toggleModalLoader 'Please Wait'
-      @callApi '/bdemr--get-patient-details', data, (err, response)=>
-        this.domHost.toggleModalLoader()
-        if response.hasError
-          @domHost.showModalDialog response.error.message
-        else
-          collectedData = response.data
-          cbfn collectedData
 
   _loadTestResults: (testIdentifier)->
-    collectionName = "bdemr--patient-test-results"
-    @_loadTestResultData collectionName ,testIdentifier ,(loadedData)=>
-
-    # list = app.db.find 'patient-test-results', ({serial})-> serial is testIdentifier
+    
+    list = app.db.find 'patient-test-results', ({serial})-> serial is testIdentifier
  
-      if loadedData.length is 1
-        @testResult = loadedData[0]
-        console.log @testResult
-        @isTestValid = true
+    if list.length is 1
+      @testResult = list[0]
+      console.log @testResult
+      @isTestValid = true
 
-        if @testResult.attachmentSerialList.length > 0
-          @_loadAttachmentList testIdentifier
-          @set 'haveAttachment', true
+      if @testResult.attachmentSerialList.length > 0
+        @_loadAttachmentList testIdentifier
+        @set 'haveAttachment', true
 
-        else
-          @set 'haveAttachment', false
-        
-        console.log 'test results', @testResult
       else
-        @_notifyInvalidTest()
+        @set 'haveAttachment', false
+      
+      console.log 'test results', @testResult
+    else
+      @_notifyInvalidTest()
 
 
   navigatedIn: ->

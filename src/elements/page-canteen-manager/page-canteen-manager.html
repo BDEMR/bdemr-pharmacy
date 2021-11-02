@@ -264,7 +264,7 @@
       
           <!-- filter - form - start -->
           <section hidden$="{{!isBulkImportHidden}}">
-            <div class="horizontal layout center filter" style="padding: 10px;">
+            <div class="horizontal layout center filter">
               <div class="horizontal layout center wrap flex">
                 <vaadin-date-picker class="filter-input m-horizontal-8" type="date" max="" value="{{filterBy.fromDate}}" label="[[$TRANSLATE('From', LANG)]]"></vaadin-date-picker>
                 <vaadin-date-picker class="filter-input m-horizontal-8" type="date" max="" value="{{filterBy.toDate}}" label="[[$TRANSLATE('To', LANG)]]"></vaadin-date-picker>
@@ -364,7 +364,7 @@
             <template class="header">
               <vaadin-grid-sorter path="actualCost" class="numeric">
                 <div class="header-cell">
-                  [[$TRANSLATE('Actual Cost', LANG)]]
+                  [$TRANSLATE('Actual Cost[', LANG)]]
                 </div>
               </vaadin-grid-sorter>
             </template>

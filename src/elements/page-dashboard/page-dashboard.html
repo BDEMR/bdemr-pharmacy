@@ -13,7 +13,7 @@
 
 <!-- style -->
 <link rel="import" href="../../styles/common-style.html">
-<link rel="import" href="./page-icons.html">
+
 
 <link rel="import" href="../custom-vital-search/custom-vital-search.html">
 <link rel="import" href="../../bower-assets/vaadin-combo-box/vaadin-combo-box.html">
@@ -35,18 +35,64 @@
     <!-- style -->
 
     <style is="custom-style" include="common-style">
-      
-      .navigate-to{
-        justify-content: left;
-            display: flex;
-            position: relative;
+      .row.one {
+        margin-top: 10px;
+        margin-bottom: 10px;
       }
 
+      .row.one .card-group {
+        @apply(--layout-horizontal);
+        @apply(--layout-flex);
+        margin-left: 5px;
+        margin-right: 5px;
+      }
+
+      /*.row.one .card-group:first-child {
+        margin-left: 10px;
+      }
+      
+      .row.one .card-group:last-child {
+        margin-right: 10px;
+      }*/
 
       .card {
         @apply(--layout-flex);
         min-height: 100px;
         margin: 3px;
+      }
+
+      .row.one .card:first-child {
+        margin-left: 0px;
+      }
+
+      .row.one .card:last-child {
+        margin-right: 0px;
+      }
+
+      @media screen and (max-width: 740px) {
+        .row.one .card-group:first-child {
+          margin-right: 10px;
+        }
+
+        .row.one .card-group:last-child {
+          margin-top: 10px;
+          margin-left: 10px;
+        }
+      }
+
+      @media screen and (max-width: 480px) {
+        .row.one .card-group {
+          display: block;
+        }
+
+        .row.one .card:first-child {
+          margin-right: 0px;
+        }
+
+        .row.one .card:last-child {
+          margin-top: 10px;
+          margin-left: 0px;
+        }
       }
 
       .card-content.single-block .number {
@@ -57,10 +103,41 @@
         text-transform: uppercase;
       }
 
-   
+      .row.two {
+        @apply(--layout-horizontal);
+        margin-left: 10px;
+        margin-right: 10px;
+      }
 
+      .row.two .card.one {
+        @apply(--layout-flex);
+        margin-right: 5px;
+      }
 
+      .row.two .card.two {
+        margin-left: 5px;
+        padding-left: 10px;
+        @apply(--layout-flex-3);
+      }
 
+      @media screen and (max-width: 740px) {
+        .row.two {
+          margin-left: 5px;
+          margin-right: 5px;
+          display: block;
+        }
+
+        .row.two .card.one {
+          margin-left: 5px;
+          margin-right: 5px;
+        }
+
+        .row.two .card.two {
+          margin-top: 10px;
+          margin-left: 5px;
+          margin-right: 5px;
+        }
+      }
 
       .right-hand-text {
         padding-left: 20px;
@@ -74,7 +151,9 @@
       }
 
 
-    
+      .footer-text {
+        margin-top: 30px;
+      }
 
       .dashboard-item {
         position: relative;
@@ -82,13 +161,8 @@
         padding: 8px;
         border: 1px solid #eee;
         background-color: #f7f7f7;
-        width: calc(15% - 26px);
+        width: calc(20% - 26px);
         text-align: center;
-        border-radius: 20px;
-        box-shadow: 5px 5px 10px #b9b9b9;
-        /* color: white; */
-        margin: 10px;
-        transition: all 0.2s ease-in-out;
       }
 
       .dashboard-item-2 {
@@ -126,15 +200,6 @@
         --iron-icon-height: 40px;
         --iron-icon-width: 40px;
       }
-      .dashboard-item:hover iron-icon{
-        color:white;
-      }
-      .dashboard-item:hover {
-        background-color:var(--app-primary-color);
-        color: white;
-        transform: scale(1.1);
-        
-      }
 
       .hide-on-mobile {
         display: block;
@@ -159,11 +224,17 @@
 
       }
 
+      .card-custom-header {
+        padding: 15px;
+        border-bottom: 1px solid var(--paper-grey-200);
+        background-color: var(--paper-grey-50);
+      }
+
       .card-custom-header .title {
         font-size: 20px;
         font-weight: 500;
         line-height: 28px;
-        /* color: var(--brand-primary-color); */
+        color: var(--brand-primary-color);
       }
 
       paper-tabs.basic-tabs {
@@ -191,7 +262,7 @@
         padding-left: 10px;
         padding-right: 5px;
       }
-     
+
     </style>
 
     <!-- local DOM -->
@@ -212,15 +283,12 @@
         </div>
 
         <paper-card heading="[[$TRANSLATE('Manage Patients', LANG)]]">
-          <div class="p-8" >
-            <div class="layout horizontal wrap" style="justify-content: center;
-            display: flex;
-            position: relative;">
+          <div class="p-8" style="background-color: #fff;">
+            <div class="layout horizontal wrap">
               <template is="dom-repeat" items="[[managePatientLinkList]]">
                 <div class="dashboard-item-2" on-tap="goToUrlForManagePatientList">
                   <div class="icon">
-                    <img width="64" height="64"  src$="{{item.imagePath}}" />
-                    
+                    <img width="64" height="64" src$="{{item.imagePath}}" />
                   </div>
                   <div class="type body secondary">[[$TRANSLATE(item.subTitle, LANG)]]</div>
                   <div class="type body-lead uppercase">[[$TRANSLATE(item.title, LANG)]]</div>
@@ -233,7 +301,7 @@
 
         <paper-card heading="[[$TRANSLATE('Manage Samples', LANG)]]" style="margin-top: 20px;">
           <div >
-            <div class="layout horizontal center man-samples">
+            <div class="layout horizontal center">
               <paper-input class="flex" label="[[$TRANSLATE('Insert Sample Code for Tests', LANG)]]" value="{{sampleCodeToJump}}"></paper-input>
               <paper-button raised on-tap="sampleCodeJumpTapped">[[$TRANSLATE('Jump To Test Results', LANG)]]</paper-button>
             </div>
@@ -427,14 +495,13 @@
         </template>
 
         <paper-card heading="[[$TRANSLATE('Navigate to', LANG)]]" class="m-top-8">
-          <div class="p-12">
-            <div class="layout horizontal wrap navigate-to" >
+          <div class="p-12" style="background-color: #fff;">
+            <div class="layout horizontal wrap">
 
               <template is="dom-repeat" items="[[sortcutList]]">
                 <div class="dashboard-item" on-tap="goToUrlForShortcutNav">
                   <div class="icon">
-                    <!-- <img width="64" height="64"  src$="{{item.imagePath}}" /> -->
-                    <iron-icon icon$='[[item.icon]]'></iron-icon>
+                    <iron-icon icon="{{item.icon}}"></iron-icon>
                   </div>
                   <div class="type body uppercase">[[$TRANSLATE(item.title, LANG)]]</div>
                   <div class="type caption secondary">[[$TRANSLATE(item.info, LANG)]]</div>

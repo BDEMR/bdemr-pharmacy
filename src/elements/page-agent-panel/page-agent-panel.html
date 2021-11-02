@@ -47,11 +47,6 @@
         top: 64px !important;
       }
 
-      .center {
-        margin: auto;
-        padding: 10px;
-      }
-
       .limiting-container {
         margin-top: 10px;
       }
@@ -71,8 +66,8 @@
       .already-have-a-booking-message {
         @apply(--layout-vertical);
         @apply(--layout-center);
-        /* padding: 20px; */
-        font-size: 15px;
+        padding: 20px;
+        font-size: 20px;
         color: var(--paper-green-500);
       }
 
@@ -380,11 +375,6 @@
         font-weight: bold;
         color: var(--paper-green-500);
       }
-      #changedTheme {
-        background: #03a83a;
-        color:white
-        
-      }
 
       @media only screen and (min-width: 320px) and (max-width: 435px) {
         .search-result-paper-card {
@@ -519,17 +509,7 @@
 
 
     <div class="horizontal layout end-justified p-8">
-      
-      <div class="center type body-lead success">
-        Wallet Balance: [[walletBalance]]
-      </div>
-      
-      <div class="flex"></div>
       <paper-toggle-button checked="{{showOnlineDoctorsOnly}}">Show Online Doctors Only</paper-toggle-button>
-      <paper-button id="filterBtn" on-tap="goToMyWallet" raised>
-        <iron-icon class="m-right-8" icon="icons:account-balance-wallet"></iron-icon>
-         My Wallet</paper-button>
-
       <paper-button id="filterBtn" on-tap="goToMyBookings" raised>Show My Bookings</paper-button>
       <paper-button id="filterBtn" on-tap="searchDoctorToggleBtnPrsed" raised>
         <iron-icon class="m-right-8" icon="icons:filter-list"></iron-icon>
@@ -546,7 +526,7 @@
             <div class="layout horizontal center">
               <div id="title-label" class="title flex">[[$TRANSLATE('Filter Doctor/Chamber',LANG)]]</div>
               <div class="flex"></div>
-              <paper-icon-button style="bottom: 6px; color:rgba(0, 0, 0, .86)" icon="close" on-tap="clearSearchFilters"></paper-icon-button>
+              <paper-icon-button style="bottom: 6px;" icon="close" on-tap="clearSearchFilters"></paper-icon-button>
             </div>
           </div>
 
@@ -655,15 +635,13 @@
                 <div class="card-content">
                   <div style="width: 128px; height: 128px; margin: auto;">
                     <iron-image class="search-result-doctor-picture" style="border-radius: 50%;"
-                      src$="[[$getProfileImage(chamber.doctorPublicInfo.profileImage)]]" preload sizing="cover"
+                      src$="[[$getProfileImage(chamber.doctorPublicInfo.profilePicture)]]" preload sizing="cover"
                       alt="images/avatar.png">
                     </iron-image>
                   </div>
 
                   <div class="chamber-info">
                     <div class="text-center">
-                      <div>{{chamber.name}}</div>
-
                       <h2>[[chamber.doctorPublicInfo.name]]</h2>
                       <div class="type body">
                         <div>{{chamber.doctorPublicInfo.degreeList}}</div>
@@ -677,13 +655,13 @@
                   </div>
 
 
-                  <!-- <div class="chamber-info">
+                  <div class="chamber-info">
                     <template is="dom-if" if="[[chamber.alreadyHaveAnAppointment]]">
                       <p class="already-have-a-booking-message">[[$TRANSLATE('You already have a booking here',LANG)]]
                       </p>
                     </template>
 
-                  </div> -->
+                  </div>
                 </div>
 
                 <div class="fixed-online-status">
@@ -708,10 +686,10 @@
           <paper-icon-button style="bottom: 6px;" icon="close" dialog-dismiss></paper-icon-button>
         </div>
         <paper-dialog-scrollable>
-          
+          <div>
             <div style="width: 128px; height: 128px; margin: auto;">
               <iron-image class="search-result-doctor-picture" style="border-radius: 50%;"
-                src$="[[$getProfileImage(selectedDoctor.doctorPublicInfo.profileImage)]]" preload sizing="cover"
+                src$="[[$getProfileImage(selectedDoctor.doctorPublicInfo.profilePicture)]]" preload sizing="cover"
                 alt="images/avatar.png">
               </iron-image>
             </div>
@@ -722,10 +700,6 @@
               </div>
               <div hidden$="[[selectedDoctor.isOnline]]" class="status booked label type bg-gray m-4">Doctor is Offline
               </div>
-            </div>
-            <div>
-              <strong class="text-muted">[[$TRANSLATE('Chamber Name',LANG)]]:
-              </strong>[[selectedDoctor.name]]
             </div>
 
             <div>
@@ -756,71 +730,73 @@
               <strong class="text-muted">[[$TRANSLATE('City',LANG)]]: </strong>[[selectedDoctor.city]]
             </div>
             <br>
-            <div hidden$="[[!signupPatientDivHidden]]">
-              <h3>Patient Details:</h3>
-              <template is="dom-if" if="[[!selectedPatients]]">
-                <vaadin-combo-box-light id="patientSearch" filter="{{patientSearchQuery}}"
-                  loading="[[fetchingPatientSearchResult]]" item-label-path='name' item-value-path='id'
-                  value="{{item.slotId}}" on-selected-item-changed="patientSelected">
-                  <input class="filter-input" is="iron-input" placeholder="Search By Name/Mobile/Email">
-                  <template>
-                    <div class="horizontal layout center">
-                      <iron-image class="profile-image small m-right-8" src$="[[$getProfileImage(item.profileImage)]]"
-                        preload sizing="cover"></iron-image>
-                      <div class="flex">
-                        <div class="type body">[[item.name]]</div>
-                        <div class="type caption secondary m-bottom-8">[[item.phone]] - [[item.email]]</div>
+            <div hidden$=[[!isUserAgent]]>
+              <div hidden$="[[!signupPatientDivHidden]]">
+                <h3>Patient Details:</h3>
+                <template is="dom-if" if="[[!selectedPatients]]">
+                  <vaadin-combo-box-light id="patientSearch" filter="{{patientSearchQuery}}"
+                    loading="[[fetchingPatientSearchResult]]" item-label-path='name' item-value-path='id'
+                    value="{{item.slotId}}" on-selected-item-changed="patientSelected">
+                    <input class="filter-input" is="iron-input" placeholder="Search By Name/Mobile/Email">
+                    <template>
+                      <div class="horizontal layout center">
+                        <iron-image class="profile-image small m-right-8" src$="[[$getProfileImage(item.profileImage)]]"
+                          preload sizing="cover"></iron-image>
+                        <div class="flex">
+                          <div class="type body">[[item.name]]</div>
+                          <div class="type caption secondary m-bottom-8">[[item.phone]] - [[item.email]]</div>
+                        </div>
                       </div>
+  
+                    </template>
+                  </vaadin-combo-box-light>
+                </template>
+                <br>
+                <template is="dom-if" if="{{selectedPatients}}">
+                  <div class="patient-container horizontal layout center">
+                    <iron-image class="profile-image m-right-8" src$="[[$getProfileImage(selectedPatients.profileImage)]]"
+                      preload sizing="cover"></iron-image>
+                    <div class="flex">
+                      <div class="type body">{{selectedPatients.name}}</div>
+                      <div class="type body">{{selectedPatients.phone}}</div>
+                      <div class="type body">{{selectedPatients.email}}</div>
                     </div>
-
-                  </template>
-                </vaadin-combo-box-light>
-              </template>
-              <br>
-              <template is="dom-if" if="{{selectedPatients}}">
-                <div class="patient-container horizontal layout center">
-                  <iron-image class="profile-image m-right-8" src$="[[$getProfileImage(selectedPatients.profileImage)]]"
-                    preload sizing="cover"></iron-image>
-                  <div class="flex">
-                    <div class="type body">{{selectedPatients.name}}</div>
-                    <div class="type body">{{selectedPatients.phone}}</div>
-                    <div class="type body">{{selectedPatients.email}}</div>
+                    <paper-icon-button icon="delete" on-tap="_clearSelectedPatientData"></paper-icon-button>
                   </div>
-                  <paper-icon-button icon="delete" on-tap="_clearSelectedPatientData"></paper-icon-button>
-                </div>
-              </template>
-            </div>
-            <div hidden$="[[signupPatientDivHidden]]">
-              <paper-card>
-                <div class="card-content">
-                  <div class="type body-lead" style="color: #009688;">[[$TRANSLATE('Add new patient', LANG)]]</div>
-
-                  <paper-input required value="{{newPatient.name}}" label="[[$TRANSLATE('Full Name', LANG)]]" auto-validate
-                    error-message="Patient Name is Required!"></paper-input>
-              
-                  <vaadin-date-picker required auto-validate error-message="Date of Birth is Required!" type="date"
-                    value="{{newPatient.dateOfBirth}}" label="[[$TRANSLATE('Date of Birth', LANG)]]"></vaadin-date-picker>
-              
-                  <div class="type body secondary">[[$TRANSLATE('Gender', LANG)]]</div>
-                  <paper-radio-group selected="{{newPatient.gender}}">
-                    <paper-radio-button name="male">Male</paper-radio-button>
-                    <paper-radio-button name="female">Female</paper-radio-button>
-                    <paper-radio-button name="other">Other</paper-radio-button>
-                  </paper-radio-group>
-              
-                  <paper-input class="custom-input paper-custom full" class="p-horizontal-8" value="{{newPatient.phone}}"
-                    label="[[$TRANSLATE('Phone Number', LANG)]]" pattern="^[0-9]{11,11}(-[0-9]*){0,1}$" required auto-validate
-                    error-message="Phone Number Required. i.e.: 01712345678 or 01712345678-12'" char-counter minlength="11"
-                    maxlength="14">
-                    <div prefix>+88</div>
-                  </paper-input>
-
-                </div>
-                <div class="buttons m-top-16">
-                  <paper-button class="btn btn-warning" raised on-click="getSearchPatientBack">Go Back to Search</paper-button>
-                  <paper-button class="btn btn-success" on-click="signUpNewPatient" autofocus raised>[[$TRANSLATE('Signup', LANG)]]</paper-button>
-                </div>
-              </paper-card>
+                </template>
+              </div>
+              <div hidden$="[[signupPatientDivHidden]]">
+                <paper-card>
+                  <div class="card-content">
+                    <div class="type body-lead" style="color: #009688;">[[$TRANSLATE('Add new patient', LANG)]]</div>
+  
+                    <paper-input required value="{{newPatient.name}}" label="[[$TRANSLATE('Full Name', LANG)]]" auto-validate
+                      error-message="Patient Name is Required!"></paper-input>
+                
+                    <vaadin-date-picker required auto-validate error-message="Date of Birth is Required!" type="date"
+                      value="{{newPatient.dateOfBirth}}" label="[[$TRANSLATE('Date of Birth', LANG)]]"></vaadin-date-picker>
+                
+                    <div class="type body secondary">[[$TRANSLATE('Gender', LANG)]]</div>
+                    <paper-radio-group selected="{{newPatient.gender}}">
+                      <paper-radio-button name="male">Male</paper-radio-button>
+                      <paper-radio-button name="female">Female</paper-radio-button>
+                      <paper-radio-button name="other">Other</paper-radio-button>
+                    </paper-radio-group>
+                
+                    <paper-input class="custom-input paper-custom full" class="p-horizontal-8" value="{{newPatient.phone}}"
+                      label="[[$TRANSLATE('Phone Number', LANG)]]" pattern="^[0-9]{11,11}(-[0-9]*){0,1}$" required auto-validate
+                      error-message="Phone Number Required. i.e.: 01712345678 or 01712345678-12'" char-counter minlength="11"
+                      maxlength="14">
+                      <div prefix>+88</div>
+                    </paper-input>
+  
+                  </div>
+                  <div class="buttons m-top-16">
+                    <paper-button class="btn btn-warning" raised on-click="getSearchPatientBack">Go Back to Search</paper-button>
+                    <paper-button class="btn btn-success" on-click="signUpNewPatient" autofocus raised>[[$TRANSLATE('Signup', LANG)]]</paper-button>
+                  </div>
+                </paper-card>
+              </div>
             </div>
             <br>
             <h3>Consultation Fees For:</h3>
@@ -851,7 +827,6 @@
 
 
             <h3>Please Select a Time Slot to Book:</h3>
-
             <div class="booking-slot m-top-8">
               <iron-pages selected="{{selectedDoctor.selectedSchedulePage}}" on-iron-select="_scheduleSelected">
                 <template is="dom-repeat" items="[[selectedDoctor.scheduleList]]" as="schedule"
@@ -860,13 +835,13 @@
                     <div class="horizontal layout center">
                       <paper-icon-button icon="chevron-left" on-click="prevSchedule"></paper-icon-button>
                       <div class="flex"></div>
-                      <div class="type body-lead primary"> <strong>[[selectedDateString]]</strong></div>
+                      <div class="type body-lead primary"> <strong>[[schedule.dateString]]</strong></div>
                       <div class="flex"></div>
                       <paper-icon-button icon="chevron-right" on-tap="nextSchedule"></paper-icon-button>
                     </div>
 
-                    <paper-radio-group class="m-top-16" selected="{{newScheduleSelected}}">
-                      <template is="dom-repeat" items="[[selectedTimeSlotFromSchduleDateDrpdwn]]" as="slot" index-as="slotIndex">
+                    <paper-radio-group class="m-top-16" selected="{{selectedDoctor._selectedTimeSlotIndex}}">
+                      <template is="dom-repeat" items="[[schedule.timeSlotList]]" as="slot" index-as="slotIndex">
                         <paper-radio-button class="custom-radio-button"
                           hidden$="{{$compareFn(slot.availableCount, '<=', 0)}}" name="[[slotIndex]]">
                           [[_getFormattedChamberTime(slot.timeSlot)]]
@@ -885,10 +860,10 @@
             <div class="fees-breakdown-container">
               <div class="horizontal layout">
                 <paper-radio-group class="m-12" selected="{{selectedBookingType}}">
-                  <paper-radio-button class="custom-radio-button" name="video-call"><strong>Online Appointment</strong>
+                  <paper-radio-button class="custom-radio-button" name="video-call"><strong>Video Call</strong>
                   </paper-radio-button>
-                  <paper-radio-button class="custom-radio-button" name="chamber-booking"><strong>Physical
-                      Appointment</strong></paper-radio-button>
+                  <paper-radio-button class="custom-radio-button" name="chamber-booking"><strong>Chamber
+                      Booking</strong></paper-radio-button>
                 </paper-radio-group>
               </div>
 
@@ -901,10 +876,7 @@
 
           <template is="dom-if" if="[[$gte(walletBalance, otherCharges.totalBillAmount)]]">
             <div hidden>[[selectedDoctor]]</div>
-            <template is="dom-if" if="[[!alreadyHaveAppointment]]">
-            <paper-button class="btn colored" raised on-tap="payFromWalletTapped" >PAY
-              [[otherCharges.totalBillAmount]]/= from Wallet</paper-button></template>
-            <!-- <div class="" hidden$="[[!$equals(selectedBookingType, 'video-call')]]">
+            <div class="" hidden$="[[!$equals(selectedBookingType, 'video-call')]]">
               <paper-button class="btn colored" raised on-tap="payFromWalletTapped">PAY
                 [[otherCharges.totalBillAmount]]/= from Wallet</paper-button>
             </div>
@@ -912,7 +884,7 @@
               <paper-button class="btn colored" raised on-tap="payFromWalletTapped">PAY
                 [[otherCharges.totalBillAmount]]/= from Wallet</paper-button>
               <paper-button class="btn colored" raised on-tap="bookDoctorTapped">Book</paper-button>
-            </div> -->
+            </div>
           </template>
           <template is="dom-if" if="[[!$gte(walletBalance, selectedDoctor.newPatientVisitFee)]]">
             <div class="horizontal layout center">
@@ -921,20 +893,14 @@
           </template>
 
           <div class="chamber-info m-bottom-8">
-            <template is="dom-if" if="[[alreadyHaveAppointment]]">
+            <template is="dom-if" if="[[selectedDoctor.alreadyHaveAnAppointment]]">
               <p class="already-have-a-booking-message">[[$TRANSLATE('You already have a booking here',LANG)]]</p>
             </template>
           </div>
         </div>
       </paper-dialog>
       <!-- Selected doctor paper dialog end -->
-      <paper-dialog id="agentNotRegistered" modal on-iron-overlay-opened="patchOverlay">
-        <div class="layout horizontal">
-          <h2>You are not registered as a Agent</h2>
-          <div class="flex"></div>
-          <paper-icon-button style="bottom: 6px;" icon="close" dialog-dismiss></paper-icon-button>
-        </div>
-        </paper-dialog>
+
     </div>
 
 

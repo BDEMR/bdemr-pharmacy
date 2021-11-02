@@ -492,7 +492,6 @@ Polymer {
           'medicineRoute': item.route or ''
           'medicineDirection': item.direction or ''
           'vendorName': item.vendorName or ''
-          'supplier': item.supplier or ''
         }
           
       return exportableList
@@ -636,9 +635,12 @@ Polymer {
     @_callGetInventory @filterBy, =>
       @_resetProductObject()
 
-  goToPharmacyInvoice: ()->
-    @domHost.navigateToPage("#/pharmacy-invoice-editor/location:pharmacy/invoice:new")
+  # goToPharmacyInvoice: ()->
+  #   @domHost.navigateToPage("#/pharmacy-invoice-editor/location:pharmacy/invoice:new")
 
+  goToPharmacyInvoice: ()->
+    @domHost.navigateToPage("#/outpatient-invoice")
+  
   goToOutPatientInvoice: ()->
     @domHost.navigateToPage("#/outpatient-invoice")
 
