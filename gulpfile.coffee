@@ -121,7 +121,7 @@ gulp.task 'serve-debug', ->
     }
     directoryListing: false
     host: 'localhost'
-    port: 8008
+    port: 8005
     open: false
     fallback: '404.html'
   }
@@ -290,6 +290,7 @@ gulp.task 'polymer-build-onsite', ->
   })
   
   waitFor = (stream) ->
+    console.log "-------------->", stream
     return new Promise( (resolve, reject) =>
       stream.on('end', resolve)
       stream.on('error', reject)
