@@ -807,7 +807,7 @@ Polymer {
 
   logoutPressed: (e)->
     user = (app.db.find 'user')[0]
-    @_closeSocket()
+    # @_closeSocket()
     if navigator.onLine and e
       @callApi '/bdemr-app-logout', {apiKey: user.apiKey}, (err, response)=> @$$('app-drawer').toggle()
 
