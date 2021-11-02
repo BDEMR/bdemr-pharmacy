@@ -9,7 +9,7 @@ window.app =
 
     clientName: 'bdemr'
 
-    clientVersion: '1.1.448'
+    clientVersion: '1.1.456'
 
     clientPlatform: 'web' # can be - 'web', 'android', 'ios', 'windows', 'osx', 'ubuntu'
 
