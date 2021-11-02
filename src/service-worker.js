@@ -1,4 +1,4 @@
-var CACHE_NAME = 'clinic-app-v1';
+var CACHE_NAME = 'pharmacy-app-v1';
 var urlsToCache = [
   '/index.html'
 ];
