@@ -1,7 +1,7 @@
 
 window.app = 
 
-  mode: 'development' # can be - 'production' or 'development'
+  mode: 'production' # can be - 'production' or 'development'
 
   config:
 

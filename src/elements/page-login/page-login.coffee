@@ -150,7 +150,7 @@ Polymer {
         @loginDbAction user, @shouldRememberUser
         # @_checkUserActivation user, ()=>
         @domHost._callAfterUserLogsIn()
-        @domHost.navigateToPage '#/'
+        @domHost.navigateToPage '#/pharmacy-manager'
   
   _navigateToSingupForm: ()->
     @set 'selectedPage', 1

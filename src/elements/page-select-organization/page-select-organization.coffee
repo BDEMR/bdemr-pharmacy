@@ -118,10 +118,10 @@ Polymer {
           selectedUserRole = @userRoleList[@selectedUserRoleIndex]
           if selectedUserRole
             @_getUserRoleDetails selectedUserRole, organization, =>
-              @domHost.navigateToPage "#/patient-manager"
+              @domHost.navigateToPage "#/pharmacy-manager"
               window.location.reload()
           else
-            @domHost.navigateToPage "#/patient-manager"
+            @domHost.navigateToPage "#/pharmacy-manager"
             window.location.reload()
 
     else

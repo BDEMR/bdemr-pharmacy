@@ -625,6 +625,10 @@ Polymer {
     return
 
   navigatedIn: ->
+    # currentOrganization = @getCurrentOrganization()
+    unless @organization
+      return @domHost.navigateToPage "#/select-organization"
+
     console.log @organization
     # only for Shamsun Nahar Clinic start
     if @organization.idOnServer is '6129c836bd6d475eb7b85d0a'
