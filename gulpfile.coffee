@@ -121,7 +121,7 @@ gulp.task 'serve-debug', ->
     }
     directoryListing: false
     host: 'localhost'
-    port: 8005
+    port: 8009
     open: false
     fallback: '404.html'
   }
