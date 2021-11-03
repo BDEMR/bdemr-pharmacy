@@ -1406,8 +1406,9 @@ Polymer {
   calculateGrossPrice: ->
     return unless @invoice.data
     price = @invoice.data.reduce (total, item)->
+      return total += (item.price * item.qty) - item.discountAmount
       # return total += item.price * item.qty
-      return total += item.discountedPrice
+      # return total += item.discountedPrice
     , 0
     
     @set "invoiceGrossPrice", price
@@ -1488,6 +1489,8 @@ Polymer {
       return null
 
   _calculateTotalAmtReceived: (paid=0, lastPaid=0)->
+    paid = parseFloat paid
+    lastPaid = parseFloat lastPaid
     @debounce 'totalReceived', ()=>
       paid = if Number.isNaN(paid) then 0 else parseFloat paid
       lastPaid = if Number.isNaN(lastPaid) then 0 else parseFloat lastPaid
