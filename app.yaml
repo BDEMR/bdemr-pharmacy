@@ -1,0 +1,104 @@
+service: "pharmacy"
+runtime: python27
+api_version: 1
+threadsafe: yes
+default_expiration: "1m"
+
+handlers:
+  - url: /assets
+    static_dir: build-debug/assets
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+
+  - url: /vendor-assets
+    static_dir: build-debug/vendor-assets
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+
+  - url: /styles
+    static_dir: build-debug/styles
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+
+  - url: /static-data
+    static_dir: build-debug/static-data
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+
+  - url: /behaviors
+    static_dir: build-debug/behaviors
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+
+  - url: /bower-assets
+    static_dir: build-debug/bower-assets
+    secure: always
+    expiration: "1d"
+    http_headers:
+      Cache-Control: private
+
+  - url: /elements
+    static_dir: build-debug/elements
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+
+  - url: /images
+    static_dir: build-debug/images
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+
+  - url: /all.js
+    static_files: build-debug/all.js
+    upload: build-debug/all.js
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+      Content-Type: text/javascript
+
+  - url: /favicon.ico
+    static_files: build-debug/favicon.ico
+    upload: build-debug/favicon.ico
+    secure: always
+    expiration: "1d"
+    http_headers:
+      Cache-Control: private
+
+  - url: /manifest.json
+    static_files: build-debug/manifest.json
+    upload: build-debug/manifest.json
+    secure: always
+    expiration: "1d"
+    http_headers:
+      Cache-Control: private
+
+  - url: /service-worker.js
+    static_files: build-debug/service-worker.js
+    upload: build-debug/service-worker.js
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
+      Content-Type: text/javascript
+
+  - url: /.*
+    static_files: build-debug/index.html
+    upload: build-debug/index.html
+    secure: always
+    expiration: "1m"
+    http_headers:
+      Cache-Control: private
